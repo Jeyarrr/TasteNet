@@ -122,7 +122,6 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <!-- Replace with your logo -->
                 <img src="images/logo.png" alt="Logo" />
                 <h2>Caballeros TasteNet</h2>
                 <span>Admin</span>
@@ -136,16 +135,13 @@
 
                 <div class="menu-title">Users</div>
                 <a href="UserManagement.aspx">
-                    <i class="fa-solid fa-users"></i> User Management
+                    <i class="fa-solid fa-user"></i> User Management
                 </a>
                 <a href="DeliveryPersonnel.aspx">
-                    <i class="fa-solid fa-user"></i> Delivery Personnel
+                    <i class="fa-solid fa-motorcycle"></i> Delivery Personnel
                 </a>
 
                 <div class="menu-title">Menu & Stock</div>
-                <a href="AvailableItems.aspx">
-                    <i class="fa-solid fa-utensils"></i> Available Items
-                </a>
                 <a href="StockManagement.aspx">
                     <i class="fa-solid fa-box"></i> Stock Management
                 </a>
@@ -157,10 +153,6 @@
                 <a href="AllOrders.aspx">
                     <i class="fa-solid fa-receipt"></i> All Orders
                 </a>
-                <a href="ActiveOrders.aspx">
-                    <i class="fa-solid fa-clock"></i> Active Orders
-                </a>
-
                 <div class="menu-title">Payments</div>
                 <a href="Transactions.aspx">
                     <i class="fa-solid fa-dollar-sign"></i> Transaction
@@ -169,6 +161,10 @@
                 <div class="menu-title">Analytics</div>
                 <a href="Reports.aspx">
                     <i class="fa-solid fa-chart-column"></i> Reports
+                </a>
+                <div class="menu-title">Analytics</div>
+                <a href="PromoCodes.aspx">
+                    <i class="fa-solid fa-tag"></i> Promo Codes
                 </a>
 
                 <div class="menu-title">Settings</div>

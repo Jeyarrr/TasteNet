@@ -21,7 +21,7 @@ namespace TasteNet
             string password = txtPassword.Text;
 
             // TODO: Replace with hashed password & MSSQL validation
-            if (username == "admin" && password == "1234")
+            if (username == "admin" && password == "admin")
             {
                 Response.Redirect("Dashboard.aspx");
             }

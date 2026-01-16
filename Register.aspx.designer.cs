@@ -11,7 +11,7 @@ namespace TasteNet
 {
 
 
-    public partial class Login
+    public partial class Register
     {
 
         /// <summary>
@@ -24,6 +24,15 @@ namespace TasteNet
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// txtFullName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFullName;
+
+        /// <summary>
         /// txtUsername control.
         /// </summary>
         /// <remarks>
@@ -31,6 +40,15 @@ namespace TasteNet
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtUsername;
+
+        /// <summary>
+        /// txtEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEmail;
 
         /// <summary>
         /// txtPassword control.
@@ -42,21 +60,21 @@ namespace TasteNet
         protected global::System.Web.UI.WebControls.TextBox txtPassword;
 
         /// <summary>
-        /// btnLogin control.
+        /// txtConfirmPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLogin;
+        protected global::System.Web.UI.WebControls.TextBox txtConfirmPassword;
 
         /// <summary>
-        /// lnkRegister control.
+        /// btnRegister control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkRegister;
+        protected global::System.Web.UI.WebControls.Button btnRegister;
     }
 }

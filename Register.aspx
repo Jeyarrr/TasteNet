@@ -1,31 +1,30 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="TasteNet.Login" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="TasteNet.Register" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Login | TasteNet</title>
+    <title>Register | TasteNet</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
     <style>
         body {
             margin: 0;
-            padding: 0;
             font-family: 'Segoe UI', sans-serif;
             background: radial-gradient(circle at top, #a00000, #000000);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .login-card {
-            width: 420px;
+        .register-card {
+            width: 450px;
             background: #4b0000;
             border-radius: 25px;
             padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,.3);
+            box-shadow: 0 15px 30px rgba(0,0,0,.4);
             color: #fff;
         }
 
@@ -43,14 +42,13 @@
         }
 
         .input-box {
-            width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
         }
 
         .input-box input {
             width: 100%;
             height: 48px;
-            padding: 0px 20px;
+            padding: 0 20px;
             border-radius: 30px;
             border: none;
             outline: none;
@@ -67,117 +65,99 @@
             position: absolute;
             right: 18px;
             top: 50%;
-            transform: translateY(-50%) scale(1);
-            color: #777;
+            transform: translateY(-50%);
             cursor: pointer;
-            transition: transform 0.25s ease, opacity 0.25s ease;
+            color: #777;
+            transition: transform 0.25s ease;
         }
 
         .password-box i.active {
             transform: translateY(-50%) scale(1.2);
-            opacity: 0.85;
+            color: #a10000;
         }
 
-
-        .btn-login {
+        .btn-register {
             margin-top: 15px;
             background: linear-gradient(to right, #4b0000, #a10000);
-            border: 2px solid rgba(255, 255, 255, 0.25);
+            border: 2px solid rgba(255,255,255,0.25);
             padding: 14px;
-            width: 60%;
+            width: 65%;
             color: #fff;
             font-size: 15px;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
 
-        .btn-login:hover {
+        .btn-register:hover {
             box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
-            border-color: #ffb3b3;
         }
-
 
         .extra-text {
             margin-top: 18px;
             font-size: 13px;
         }
 
-        .create-account {
-            color: #ffffff;
-            text-decoration: none;
+        .extra-text a {
+            color: #fff;
             font-weight: 600;
+            text-decoration: none;
         }
 
-        .create-account:hover {
+        .extra-text a:hover {
             text-decoration: underline;
             color: #ffd6d6;
         }
-
-        .social-login {
-            margin-top: 15px;
-        }
-
-        .social-login i {
-            width: 45px;
-            height: 45px;
-            line-height: 45px;
-            border-radius: 50%;
-            background: #fff;
-            color: #000;
-            font-size: 20px;
-            margin: 0 6px;
-            cursor: pointer;
-        }
-
-        .social-login .fa-facebook-f {
-            color: #1877F2;
-        }
-
-        .social-login .fa-google {
-            color: #DB4437;
-        }
     </style>
 </head>
+
 <body>
     <form id="form1" runat="server">
-        <div class="login-card">
+
+        <div class="register-card">
 
             <div class="logo">
-                <img src="Images/LOGO.png" alt="Logo" />
+                <!-- Replace with your logo -->
+                <img src="Images/logo.png" alt="Logo" />
             </div>
 
-            <h2>Sign In</h2>
+            <h2>Create Account</h2>
 
             <div class="input-box">
-                <asp:TextBox ID="txtUsername" runat="server" placeholder="Username"></asp:TextBox>
+                <asp:TextBox ID="txtFullName" runat="server" placeholder="Full Name" />
+            </div>
+
+            <div class="input-box">
+                <asp:TextBox ID="txtUsername" runat="server" placeholder="Username" />
+            </div>
+
+            <div class="input-box">
+                <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" placeholder="Email" />
             </div>
 
             <div class="input-box password-box">
-                <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Password"></asp:TextBox>
+                <asp:TextBox ID="txtPassword" runat="server"
+                    TextMode="Password" placeholder="Password" />
                 <i id="togglePwd" class="fa fa-eye-slash"></i>
             </div>
 
-            <asp:Button ID="btnLogin" runat="server" Text="Log In" CssClass="btn-login" OnClick="btnLogin_Click" />
-
-            <div class="extra-text">
-                <asp:HyperLink 
-                    ID="lnkRegister" 
-                    runat="server" 
-                    NavigateUrl="~/Register.aspx"
-                    CssClass="create-account">
-                    Create your account
-                </asp:HyperLink>
-                <br />
-                Or Sign In with
+            <div class="input-box">
+                <asp:TextBox ID="txtConfirmPassword" runat="server"
+                    TextMode="Password" placeholder="Confirm Password" />
             </div>
 
-            <div class="social-login">
-                <i class="fab fa-facebook-f"></i>
-                <i class="fab fa-google"></i>
+            <asp:Button ID="btnRegister" runat="server"
+                Text="Register"
+                CssClass="btn-register"
+                OnClick="btnRegister_Click" />
+
+            <div class="extra-text">
+                Already have an account?
+                <a href="Login.aspx">Sign In</a>
             </div>
 
         </div>
+
     </form>
 
     <script>
@@ -198,5 +178,6 @@
             setTimeout(() => toggle.classList.remove("active"), 200);
         });
     </script>
+
 </body>
 </html>
