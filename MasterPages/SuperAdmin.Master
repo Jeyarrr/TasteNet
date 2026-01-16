@@ -119,38 +119,38 @@
         <a href="/Users/SuperAdmin/UserManagement.aspx">
             <i class="fa-solid fa-user"></i> User Management
         </a>
-        <a href="/DeliveryPersonnel.aspx">
+        <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
             <i class="fa-solid fa-motorcycle"></i> Delivery Personnel
         </a>
 
         <div class="menu-title">Menu & Stock</div>
-        <a href="/StockManagement.aspx">
+        <a href="/Users/SuperAdmin/StockManagement.aspx">
             <i class="fa-solid fa-box"></i> Stock Management
         </a>
-        <a href="/Categories.aspx">
+        <a href="/Users/SuperAdmin/Categories.aspx">
             <i class="fa-solid fa-list"></i> Categories
         </a>
 
         <div class="menu-title">Orders</div>
-        <a href="/AllOrders.aspx">
+        <a href="/Users/SuperAdmin/AllOrders.aspx">
             <i class="fa-solid fa-receipt"></i> All Orders
         </a>
 
         <div class="menu-title">Payments</div>
-        <a href="/Transactions.aspx">
+        <a href="/Users/SuperAdmin/Transactions.aspx">
             <i class="fa-solid fa-dollar-sign"></i> Transaction
         </a>
 
         <div class="menu-title">Analytics</div>
-        <a href="/Reports.aspx">
+        <a href="/Users/SuperAdmin/Reports.aspx">
             <i class="fa-solid fa-chart-column"></i> Reports
         </a>
-        <a href="/PromoCodes.aspx">
+        <a href="/Users/SuperAdmin/PromoCodes.aspx">
             <i class="fa-solid fa-tag"></i> Promo Codes
         </a>
 
         <div class="menu-title">Account</div>
-        <a href="/Settings.aspx">
+        <a href="/Users/SuperAdmin/Settings.aspx">
             <i class="fa-solid fa-gear"></i> Settings
         </a>
         <a href="/Login.aspx">
