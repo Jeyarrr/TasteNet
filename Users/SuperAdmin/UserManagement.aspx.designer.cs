@@ -7,20 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TasteNet
+namespace TasteNet.Users.SuperAdmin
 {
 
 
-    public partial class Sidebar
+    public partial class UserManagement
     {
 
         /// <summary>
-        /// MainContent control.
+        /// rptCustomers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContent;
+        protected global::System.Web.UI.WebControls.Repeater rptCustomers;
     }
 }

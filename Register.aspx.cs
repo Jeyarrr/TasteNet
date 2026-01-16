@@ -15,21 +15,43 @@ namespace TasteNet
         }
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // Password validation
-            if (txtPassword.Text != txtConfirmPassword.Text)
+            // 1. Get values from inputs
+            string fullName = txtFullName.Text.Trim();
+            string username = txtUsername.Text.Trim();
+            string email = txtEmail.Text.Trim();
+            string mobile = txtMobile.Text.Trim();
+            string password = txtPassword.Text.Trim();
+            string confirmPassword = txtConfirmPassword.Text.Trim();
+            string gender = rblGender.SelectedValue;
+
+            // 2. Not Null Validation Logic
+            if (string.IsNullOrEmpty(fullName) ||
+                string.IsNullOrEmpty(username) ||
+                string.IsNullOrEmpty(email) ||
+                string.IsNullOrEmpty(mobile) ||
+                string.IsNullOrEmpty(password) ||
+                string.IsNullOrEmpty(gender))
             {
-                ClientScript.RegisterStartupScript(this.GetType(),
-                    "alert", "alert('Passwords do not match');", true);
+                // Display an error message (You can use a Label or JavaScript Alert)
+                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('All fields are required!');", true);
                 return;
             }
 
-            // TODO:
-            // - Hash password
-            // - Insert into MSSQL
-            // - Redirect to Login
+            // 3. Password Match Validation
+            if (password != confirmPassword)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Passwords do not match!');", true);
+                return;
+            }
 
-            ClientScript.RegisterStartupScript(this.GetType(),
-                "alert", "alert('Registration successful!');", true);
+            // 4. If all checks pass, proceed to Database logic
+            RegisterUserInDatabase(fullName, username, email, mobile, password, gender);
+        }
+
+        private void RegisterUserInDatabase(string name, string user, string mail, string phone, string pass, string gen)
+        {
+            // Your SQL connection and Insert logic goes here
+            // Example: INSERT INTO Users (FullName, Username, Email, Mobile, Password, Gender) ...
         }
     }
 }

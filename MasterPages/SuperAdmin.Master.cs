@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace TasteNet
+namespace TasteNet.MasterPages
 {
-    public partial class Sidebar : System.Web.UI.MasterPage
+    public partial class SuperAdmin : System.Web.UI.MasterPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

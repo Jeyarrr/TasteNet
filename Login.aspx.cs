@@ -14,21 +14,24 @@ namespace TasteNet
         protected void Page_Load(object sender, EventArgs e)
         {
         }
-
         protected void btnLogin_Click(object sender, EventArgs e)
         {
             string username = txtUsername.Text;
             string password = txtPassword.Text;
 
-            // TODO: Replace with hashed password & MSSQL validation
             if (username == "admin" && password == "admin")
             {
-                Response.Redirect("Dashboard.aspx");
+                Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
+
             }
             else
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "alert",
-                    "alert('Invalid username or password');", true);
+                ClientScript.RegisterStartupScript(
+                    this.GetType(), 
+                    "alert",
+                    "alert('Invalid username or password');", 
+                    true
+                    );
             }
         }
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace TasteNet
+namespace TasteNet.Users.SuperAdmin
 {
     public partial class UserManagement : System.Web.UI.Page
     {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="User Management" Language="C#" MasterPageFile="~/Sidebar.Master" AutoEventWireup="true" CodeBehind="UserManagement.aspx.cs" Inherits="TasteNet.UserManagement" %>
+﻿<%@ Page Title="User Management" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="UserManagement.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.UserManagement" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">

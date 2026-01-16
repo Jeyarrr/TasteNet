@@ -4,9 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Login | TasteNet</title>
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-
     <style>
         body {
             margin: 0;
@@ -22,11 +20,24 @@
         .login-card {
             width: 420px;
             background: #4b0000;
-            border-radius: 25px;
             padding: 40px 30px;
+            border-radius: 25px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,.3);
             color: #fff;
+            border: 2px solid #ffc107;
+            box-shadow: 0 0 10px #ffc107, 
+                        0 0 20px #ffc107, 
+                        0 0 40px rgba(255, 193, 7, 0.3),
+                        inset 0 0 10px rgba(255, 193, 7, 0.2);
+            transition: all 0.3s ease;
+            animation: glowPulse 1.5s infinite alternate;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
 
         .logo img {
@@ -42,15 +53,29 @@
             font-weight: 600;
         }
 
-        .input-box {
+        .input-group {
             width: 100%;
-            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-box-wrapper {
+            position: relative;
+            width: 85%;
+        }
+
+        .input-box {
+            width: 85%;
+            margin: 0 auto 15px auto;
+            position: relative;
         }
 
         .input-box input {
             width: 100%;
             height: 48px;
-            padding: 0px 20px;
+            padding: 0 45px 0 20px;
             border-radius: 30px;
             border: none;
             outline: none;
@@ -93,10 +118,24 @@
         }
 
         .btn-login:hover {
-            box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
-            border-color: #ffb3b3;
+            background: linear-gradient(to right, #6a0000, #c20000);
+            box-shadow:
+                0 0 8px #ffc107,
+                0 0 16px #ffc107,
+                0 0 32px rgba(255, 193, 7, 0.7);
+            border-color: #ffc107;
+            transform: translateY(-1px);
+            animation: glowPulse 1.5s infinite alternate;
         }
 
+        @keyframes glowPulse{
+            from{
+                box-shadow: 0 0 8px #ffc107;
+            }
+            to{
+                box-shadow: 0 0 20px #ffc107, 0 0 40px rgba(255, 193, 7, 0.8);
+            }
+        }
 
         .extra-text {
             margin-top: 18px;
