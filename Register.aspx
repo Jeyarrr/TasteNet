@@ -46,7 +46,6 @@
             font-weight: 600;
         }
 
-        /* Layout for side-by-side inputs */
         .input-row {
             display: flex;
             gap: 15px;
@@ -69,7 +68,6 @@
             box-sizing: border-box;
         }
 
-        /* Gender Category Styling */
         .gender-container {
             text-align: left;
             margin: 20px 0;
@@ -88,12 +86,10 @@
             gap: 10px;
         }
 
-        /* Hide the radio bullet */
         .gender-category-list input[type="radio"] {
             display: none;
         }
 
-        /* Style the labels as buttons/categories */
         .gender-category-list label {
             flex: 1;
             display: block;
@@ -112,7 +108,6 @@
             background: rgba(255, 212, 29, 0.1);
         }
 
-        /* Highlight the selected option */
         .gender-category-list input[type="radio"]:checked + label {
             background: #FFD41D;
             color: #4b0000;

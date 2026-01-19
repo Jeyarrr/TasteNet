@@ -19,7 +19,6 @@
 
         .dashboard-wrapper { padding: 20px; }
 
-        /* HEADER SECTION */
         .dashboard-header {
             display: flex;
             justify-content: space-between;
@@ -57,7 +56,6 @@
             box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
         }
 
-        /* STAT CARDS */
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -98,7 +96,6 @@
             font-size: 16px;
         }
 
-        /* MAIN GRID */
         .main-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -122,7 +119,6 @@
             align-items: center;
         }
 
-        /* TOP SELLING LIST */
         .meal-item {
             display: flex;
             align-items: center;
@@ -163,7 +159,6 @@
         .in-stock { background: #e6f4f1; color: #2d9d78; }
         .low-stock { background: #fff4e6; color: #d97706; }
 
-        /* CHART TOGGLES */
         .chart-controls {
             display: flex;
             background: #f3ebe0;
@@ -184,7 +179,6 @@
 
         .chart-btn.active { background: var(--primary-maroon); color: white; }
 
-        /* Chart container to fix resizing/infinite growth issues */
         .chart-container {
             position: relative;
             height: 300px;
@@ -316,38 +310,65 @@
                             <tr style="text-align: left; border-bottom: 2px solid #f3ebe0; color: #8a6d6d;">
                                 <th style="padding: 12px 8px;">Order ID</th>
                                 <th style="padding: 12px 8px;">Customer</th>
-                                <th style="padding: 12px 8px;">Restaurant</th>
+                                <th style="padding: 12px 8px;">Mode of Payment</th>
+                                <th style="padding: 12px 8px;">Items</th>
                                 <th style="padding: 12px 8px;">Amount</th>
                                 <th style="padding: 12px 8px;">Status</th>
+                                <th style="padding: 12px 8px;">Time</th>
                                 <th style="padding: 12px 8px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr style="border-bottom: 1px solid #f3ebe0;">
                                 <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12345</td>
-                                <td style="padding: 12px 8px;">Juan dela Cruz</td>
-                                <td style="padding: 12px 8px;">Sizzling House</td>
-                                <td style="padding: 12px 8px; font-weight: 600;">₱350</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Jay-r Casano</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Cash On Delivery</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Tapsilog x2</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱350</td>
                                 <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
                                 <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
                             </tr>
                             <tr style="border-bottom: 1px solid #f3ebe0;">
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12344</td>
-                                <td style="padding: 12px 8px;">Maria Santos</td>
-                                <td style="padding: 12px 8px;">Silog Express</td>
-                                <td style="padding: 12px 8px; font-weight: 600;">₱280</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock" style="background:#e0f2fe; color:#0369a1;">ACTIVE</span></td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12346</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">George Gonzaga</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">GCash</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Tofu Sisig x2</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱65</td>
+                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
                                 <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
                             </tr>
-                            <tr>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12340</td>
-                                <td style="padding: 12px 8px;">Lisa Manalo</td>
-                                <td style="padding: 12px 8px;">Sizzling House</td>
-                                <td style="padding: 12px 8px; font-weight: 600;">₱310</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock" style="background:#fee2e2; color:#b91c1c;">CANCELLED</span></td>
+                            <tr style="border-bottom: 1px solid #f3ebe0;">
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12347</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Zea Mae Sulit</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Paypal</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Arrozcaldo x1</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱50</td>
+                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
                                 <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
                             </tr>
-                        </tbody>
+                            <tr style="border-bottom: 1px solid #f3ebe0;">
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12348</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Lalaine Reyes</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Cash On Delivery</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Goto Special x2</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱120</td>
+                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
+                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #f3ebe0;">
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12349</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Bryle Andre Magallano</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">GoTyme</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Tapsilog x2</td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱350</td>
+                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
+                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            </tr>
                     </table>
                 </div>
             </div>
@@ -390,7 +411,7 @@
 
             const ctx = canvas.getContext('2d');
 
-            // Prevent infinite loop/flicker by destroying old instance
+            // Para di mag infinite loop
             if (myRevenueChart !== null) {
                 myRevenueChart.destroy();
             }
@@ -441,10 +462,10 @@
             });
         }
 
-        // Initial Load
+        // chart to
         document.addEventListener("DOMContentLoaded", initDashboardChart);
 
-        // Fix for ASP.NET UpdatePanels (Partial Postbacks)
+        // para updated ang panels postbacks
         if (typeof (Sys) !== 'undefined') {
             var prm = Sys.WebForms.PageRequestManager.getInstance();
             prm.add_endRequest(function () {
