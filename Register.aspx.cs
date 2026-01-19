@@ -15,7 +15,7 @@ namespace TasteNet
         }
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // 1. Get values from inputs
+            // Kunin ang value sa inputs
             string fullName = txtFullName.Text.Trim();
             string username = txtUsername.Text.Trim();
             string email = txtEmail.Text.Trim();
@@ -24,7 +24,7 @@ namespace TasteNet
             string confirmPassword = txtConfirmPassword.Text.Trim();
             string gender = rblGender.SelectedValue;
 
-            // 2. Not Null Validation Logic
+            // Not Null Logic
             if (string.IsNullOrEmpty(fullName) ||
                 string.IsNullOrEmpty(username) ||
                 string.IsNullOrEmpty(email) ||
@@ -37,14 +37,14 @@ namespace TasteNet
                 return;
             }
 
-            // 3. Password Match Validation
+            // Password Match
             if (password != confirmPassword)
             {
                 ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Passwords do not match!');", true);
                 return;
             }
 
-            // 4. If all checks pass, proceed to Database logic
+            // If all checks pass, proceed to Database logic
             RegisterUserInDatabase(fullName, username, email, mobile, password, gender);
         }
 
