@@ -113,8 +113,8 @@
         </a>
 
         <div class="menu-title">Users</div>
-        <a href="/Users/SuperAdmin/UserManagement.aspx">
-            <i class="fa-solid fa-user"></i> User Management
+        <a href="/Users/SuperAdmin/CustomerManagement.aspx">
+            <i class="fa-solid fa-user"></i> Customer Management
         </a>
         <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
             <i class="fa-solid fa-motorcycle"></i> Delivery Personnel

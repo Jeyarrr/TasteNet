@@ -176,9 +176,11 @@
     <Content Include="Scripts\WebForms\WebForms.js" />
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
+    <Content Include="Users\SuperAdmin\Categories.aspx" />
+    <Content Include="Users\SuperAdmin\CustomerManagement.aspx" />
     <Content Include="Users\SuperAdmin\Dashboard.aspx" />
     <Content Include="Users\SuperAdmin\DeliveryPersonnel.aspx" />
-    <Content Include="Users\SuperAdmin\UserManagement.aspx" />
+    <Content Include="Users\SuperAdmin\StockManagement.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
@@ -211,6 +213,20 @@
     <Compile Include="MasterPages\SuperAdmin.Master.designer.cs">
       <DependentUpon>SuperAdmin.Master</DependentUpon>
     </Compile>
+    <Compile Include="Users\SuperAdmin\Categories.aspx.cs">
+      <DependentUpon>Categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Categories.aspx.designer.cs">
+      <DependentUpon>Categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\CustomerManagement.aspx.cs">
+      <DependentUpon>CustomerManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\CustomerManagement.aspx.designer.cs">
+      <DependentUpon>CustomerManagement.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Users\SuperAdmin\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -225,12 +241,12 @@
     <Compile Include="Users\SuperAdmin\DeliveryPersonnel.aspx.designer.cs">
       <DependentUpon>DeliveryPersonnel.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Users\SuperAdmin\UserManagement.aspx.cs">
-      <DependentUpon>UserManagement.aspx</DependentUpon>
+    <Compile Include="Users\SuperAdmin\StockManagement.aspx.cs">
+      <DependentUpon>StockManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Users\SuperAdmin\UserManagement.aspx.designer.cs">
-      <DependentUpon>UserManagement.aspx</DependentUpon>
+    <Compile Include="Users\SuperAdmin\StockManagement.aspx.designer.cs">
+      <DependentUpon>StockManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
