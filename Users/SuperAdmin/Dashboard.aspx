@@ -2,117 +2,170 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary-maroon: #6b0d1e;
             --soft-cream: #fffaf3;
             --text-dark: #4a0e0e;
+            --muted-text: #8a6d6d;
+            --success-green: #2d9d78;
+            --warning-orange: #d97706;
             --card-shadow: 0 10px 30px rgba(107, 13, 30, 0.05);
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 25px;
         }
 
         body {
             background-color: var(--soft-cream) !important;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-family: 'Poppins', sans-serif;
             color: var(--text-dark);
         }
 
-        .dashboard-wrapper { padding: 20px; }
+        .dashboard-wrapper { padding: 25px 35px; }
 
         .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
-        .welcome h1 { font-size: 28px; font-weight: 700; margin: 0; color: var(--text-dark); }
-        .welcome p { color: #8a6d6d; margin: 5px 0 0 0; }
+        .welcome h1 { 
+            font-size: 32px; 
+            font-weight: 700; 
+            margin: 0; 
+            color: var(--text-dark); 
+            letter-spacing: -0.5px;
+        }
+        .welcome p { 
+            color: var(--muted-text); 
+            margin: 8px 0 0 0; 
+            font-size: 16px; 
+        }
 
-        .header-actions { display: flex; gap: 12px; }
+        .header-actions { 
+            display: flex; 
+            gap: 20px; 
+            align-items: center; 
+        }
 
         .filter-dropdown {
-            padding: 8px 15px;
-            border-radius: 8px;
-            border: 1px solid #e2d1d1;
+            padding: 14px 20px;
+            border-radius: 16px;
+            border: 2px solid #e2d1d1;
             background: white;
             color: #555;
             outline: none;
+            font-size: 15px;
+            font-weight: 500;
+            min-width: 150px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-dropdown:focus {
+            border-color: var(--primary-maroon);
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.05);
         }
 
         .btn-export {
             background: var(--primary-maroon);
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
+            padding: 16px 32px;
+            border-radius: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
         }
 
         .btn-export:hover {
-            background: #4a0914;
-            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
+            background: #5a0b19;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107, 13, 30, 0.3);
         }
 
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 25px;
+            margin-bottom: 35px;
         }
 
         .stat-card {
             background: white;
-            padding: 25px;
-            border-radius: 20px;
+            padding: 30px 25px;
+            border-radius: var(--radius-2xl);
             box-shadow: var(--card-shadow);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 40px rgba(107, 13, 30, 0.12);
+        }
 
         .stat-label {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 500;
-            color: #8a6d6d;
+            color: var(--muted-text);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
         }
 
-        .stat-value { font-size: 32px; font-weight: 700; color: var(--primary-maroon); margin: 10px 0; }
-        .stat-trend { font-size: 12px; font-weight: 600; }
-        .trend-up { color: #2d9d78; }
+        .stat-value { 
+            font-size: 40px; 
+            font-weight: 700; 
+            color: var(--primary-maroon); 
+            margin: 10px 0; 
+            line-height: 1;
+        }
+        
+        .stat-trend { 
+            font-size: 14px; 
+            font-weight: 600; 
+            margin-top: 12px;
+        }
+        
+        .trend-up { 
+            color: var(--success-green); 
+        }
 
         .icon-box {
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 20px;
         }
 
         .main-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 25px;
+            gap: 30px;
         }
 
         .chart-box, .side-box {
             background: white;
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: var(--radius-2xl);
+            padding: 30px;
             box-shadow: var(--card-shadow);
         }
 
         .box-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: var(--primary-maroon);
             display: flex;
             justify-content: space-between;
@@ -122,67 +175,278 @@
         .meal-item {
             display: flex;
             align-items: center;
-            padding: 12px;
-            border-radius: 15px;
+            padding: 18px;
+            border-radius: 18px;
             background: #fffcf8;
-            margin-bottom: 12px;
-            border: 1px solid #f3ebe0;
+            margin-bottom: 15px;
+            border: 2px solid #f3ebe0;
+            transition: all 0.3s ease;
+        }
+
+        .meal-item:hover {
+            background: #fefaf5;
+            border-color: #e2d1d1;
+            transform: translateX(5px);
         }
 
         .meal-rank {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: var(--primary-maroon);
             color: white;
-            border-radius: 50%;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 12px;
-            margin-right: 15px;
+            font-size: 16px;
+            margin-right: 20px;
             flex-shrink: 0;
         }
 
-        .meal-info { flex-grow: 1; }
-        .meal-name { font-weight: 600; font-size: 14px; margin: 0; color: var(--text-dark); }
-        .meal-sales { font-size: 12px; color: #8a6d6d; margin: 0; }
-        .meal-price { font-weight: 700; color: var(--primary-maroon); margin-left: 10px; }
+        .meal-info { 
+            flex-grow: 1; 
+        }
+        
+        .meal-name { 
+            font-weight: 600; 
+            font-size: 16px; 
+            margin: 0 0 5px 0; 
+            color: var(--text-dark); 
+        }
+        
+        .meal-sales { 
+            font-size: 14px; 
+            color: var(--muted-text); 
+            margin: 0; 
+        }
+        
+        .meal-price { 
+            font-weight: 700; 
+            color: var(--primary-maroon); 
+            font-size: 16px;
+            margin-left: 15px;
+        }
 
         .badge-stock {
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 10px;
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
+            display: inline-block;
         }
-        .in-stock { background: #e6f4f1; color: #2d9d78; }
-        .low-stock { background: #fff4e6; color: #d97706; }
+        
+        .in-stock { 
+            background: #e6f4f1; 
+            color: var(--success-green); 
+        }
+        
+        .low-stock { 
+            background: #fff4e6; 
+            color: var(--warning-orange); 
+        }
 
         .chart-controls {
             display: flex;
             background: #f3ebe0;
-            padding: 4px;
-            border-radius: 10px;
+            padding: 6px;
+            border-radius: 16px;
+            gap: 5px;
         }
 
         .chart-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 14px;
             border: none;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             background: transparent;
-            color: #8a6d6d;
+            color: var(--muted-text);
+            transition: all 0.3s ease;
         }
 
-        .chart-btn.active { background: var(--primary-maroon); color: white; }
+        .chart-btn.active { 
+            background: var(--primary-maroon); 
+            color: white; 
+            box-shadow: 0 2px 8px rgba(107, 13, 30, 0.2);
+        }
+
+        .chart-btn:hover:not(.active) {
+            background: rgba(107, 13, 30, 0.05);
+        }
 
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 320px;
             width: 100%;
+        }
+
+        /* CHUBBY TABLE STYLES */
+        .table-container {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 10px 20px 20px;
+            box-shadow: var(--card-shadow);
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .custom-table th {
+            padding: 22px 16px;
+            text-align: center;
+            font-size: 16px;
+            color: var(--muted-text);
+            font-weight: 600;
+            border-bottom: 2px solid #f3ebe0;
+            letter-spacing: 0.3px;
+        }
+
+        .custom-table td {
+            padding: 24px 16px;
+            border-bottom: 1px solid #f9f4ee;
+            font-size: 16px;
+            vertical-align: middle;
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .custom-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #fefaf5;
+            transform: scale(1.005);
+        }
+
+        .order-id {
+            color: var(--primary-maroon) !important;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .customer-name {
+            color: var(--text-dark) !important;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            background: #f9f4ee;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--muted-text);
+        }
+
+        .action-icon:hover {
+            background: var(--primary-maroon);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* CHUBBY QUICK ACTION BUTTONS */
+        .btn-quick {
+            background: var(--primary-maroon);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
+            width: 100%;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-quick:hover {
+            background: #5a0b19;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(107, 13, 30, 0.3);
+        }
+
+        .btn-quick.yellow {
+            background: #ffcc00;
+            color: #4a0e0e;
+            box-shadow: 0 4px 12px rgba(255, 204, 0, 0.2);
+        }
+
+        .btn-quick.yellow:hover {
+            background: #e6b800;
+            box-shadow: 0 6px 18px rgba(255, 204, 0, 0.3);
+        }
+
+        .btn-quick.outline {
+            background: white;
+            color: var(--primary-maroon);
+            border: 2px solid var(--primary-maroon);
+            box-shadow: 0 2px 8px rgba(107, 13, 30, 0.1);
+        }
+
+        .btn-quick.outline:hover {
+            background: var(--soft-cream);
+            border-color: #5a0b19;
+        }
+
+        .alert-badge {
+            background: var(--primary-maroon);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+        }
+
+        .view-all-link {
+            font-size: 14px;
+            color: var(--primary-maroon);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 12px;
+            background: #f9f4ee;
+        }
+
+        .view-all-link:hover {
+            background: var(--primary-maroon);
+            color: white;
         }
     </style>
 
@@ -197,7 +461,7 @@
                     <asp:ListItem Text="Last 7 days" Value="7" />
                     <asp:ListItem Text="Last 30 days" Value="30" />
                 </asp:DropDownList>
-                <button type="button" class="btn-export">Export Report</button>
+                <button type="button" class="btn-export"><i class="fas fa-download me-2"></i>Export Report</button>
             </div>
         </div>
 
@@ -298,106 +562,108 @@
                 </div>
             </div>
         </div>
-        <div class="main-grid" style="margin-top: 25px;">
+        
+        <div class="main-grid" style="margin-top: 30px;">
             <div class="chart-box">
                 <div class="box-title">
                     Recent Orders
-                    <a href="#" style="font-size: 12px; color: var(--primary-maroon); text-decoration: none;">View All →</a>
+                    <a href="#" class="view-all-link">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <div class="table-container">
+                    <table class="custom-table">
                         <thead>
-                            <tr style="text-align: left; border-bottom: 2px solid #f3ebe0; color: #8a6d6d;">
-                                <th style="padding: 12px 8px;">Order ID</th>
-                                <th style="padding: 12px 8px;">Customer</th>
-                                <th style="padding: 12px 8px;">Mode of Payment</th>
-                                <th style="padding: 12px 8px;">Items</th>
-                                <th style="padding: 12px 8px;">Amount</th>
-                                <th style="padding: 12px 8px;">Status</th>
-                                <th style="padding: 12px 8px;">Time</th>
-                                <th style="padding: 12px 8px;">Actions</th>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Mode of Payment</th>
+                                <th>Items</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="border-bottom: 1px solid #f3ebe0;">
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12345</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Jay-r Casano</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Cash On Delivery</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Tapsilog x2</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱350</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
-                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            <tr>
+                                <td class="order-id">#12345</td>
+                                <td class="customer-name">Jay-r Casano</td>
+                                <td>Cash On Delivery</td>
+                                <td>Tapsilog x2</td>
+                                <td style="font-weight:700; color:var(--primary-maroon);">₱350</td>
+                                <td><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #f3ebe0;">
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12346</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">George Gonzaga</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">GCash</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Tofu Sisig x2</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱65</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
-                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            <tr>
+                                <td class="order-id">#12346</td>
+                                <td class="customer-name">George Gonzaga</td>
+                                <td>GCash</td>
+                                <td>Tofu Sisig x2</td>
+                                <td style="font-weight:700; color:var(--primary-maroon);">₱65</td>
+                                <td><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #f3ebe0;">
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12347</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Zea Mae Sulit</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Paypal</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Arrozcaldo x1</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱50</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
-                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            <tr>
+                                <td class="order-id">#12347</td>
+                                <td class="customer-name">Zea Mae Sulit</td>
+                                <td>Paypal</td>
+                                <td>Arrozcaldo x1</td>
+                                <td style="font-weight:700; color:var(--primary-maroon);">₱50</td>
+                                <td><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #f3ebe0;">
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12348</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Lalaine Reyes</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Cash On Delivery</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Goto Special x2</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱120</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
-                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            <tr>
+                                <td class="order-id">#12348</td>
+                                <td class="customer-name">Lalaine Reyes</td>
+                                <td>Cash On Delivery</td>
+                                <td>Goto Special x2</td>
+                                <td style="font-weight:700; color:var(--primary-maroon);">₱120</td>
+                                <td><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #f3ebe0;">
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">#12349</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Bryle Andre Magallano</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">GoTyme</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">Tapsilog x2</td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">₱350</td>
-                                <td style="padding: 12px 8px;"><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="padding: 12px 8px; font-weight: 600; color: var(--primary-maroon);">10:00 AM</td>
-                                <td style="padding: 12px 8px;"><i class="fas fa-eye" style="cursor:pointer; color:#8a6d6d;"></i></td>
+                            <tr>
+                                <td class="order-id">#12349</td>
+                                <td class="customer-name">Bryle Andre Magallano</td>
+                                <td>GoTyme</td>
+                                <td>Tapsilog x2</td>
+                                <td style="font-weight:700; color:var(--primary-maroon);">₱350</td>
+                                <td><span class="badge-stock in-stock">COMPLETED</span></td>
+                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="side-box">
                 <div class="box-title">
-                    Stock Alerts <span style="background: var(--primary-maroon); color: white; border-radius: 50%; padding: 2px 8px; font-size: 10px; margin-left: 5px;">3</span>
+                    Stock Alerts <span class="alert-badge">2</span>
                 </div>
                 
                 <div class="meal-item" style="background: #fff4e6; border-color: #fed7aa;">
                     <div class="meal-info">
                         <p class="meal-name">Pork Sisig</p>
-                        <p class="meal-sales" style="color: #c2410c;">Low stock (3 left)</p>
+                        <p class="meal-sales" style="color: #c2410c; font-weight: 600;">Low stock (3 left)</p>
                     </div>
                 </div>
 
                 <div class="meal-item" style="background: #fee2e2; border-color: #fecaca;">
                     <div class="meal-info">
                         <p class="meal-name">Goto Overload</p>
-                        <p class="meal-sales" style="color: #b91c1c;">Out of stock</p>
+                        <p class="meal-sales" style="color: #b91c1c; font-weight: 600;">Out of stock</p>
                     </div>
                 </div>
 
-                <button type="button" class="btn-export" style="width: 100%; background: #ffcc00; color: #4a0e0e; margin-bottom: 25px;">Manage Stock</button>
+                <button type="button" class="btn-quick yellow"><i class="fas fa-boxes me-2"></i>Manage Stock</button>
 
-                <div class="box-title" style="margin-top: 20px;">Quick Actions</div>
-                <button type="button" class="btn-export" style="width: 100%; margin-bottom: 10px;">Add New Menu Item</button>
-                <button type="button" class="btn-export" style="width: 100%; background: white; color: var(--primary-maroon); border: 1px solid var(--primary-maroon); margin-bottom: 10px;">Update Stock Levels</button>
-                <button type="button" class="btn-export" style="width: 100%; background: white; color: var(--primary-maroon); border: 1px solid var(--primary-maroon);">View Low Stock Items</button>
+                <div class="box-title" style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #f3ebe0;">Quick Actions</div>
+                <button type="button" class="btn-quick"><i class="fas fa-plus me-2"></i>Add New Menu Item</button>
+                <button type="button" class="btn-quick outline"><i class="fas fa-sync-alt me-2"></i>Update Stock Levels</button>
+                <button type="button" class="btn-quick outline"><i class="fas fa-exclamation-triangle me-2"></i>View Low Stock Items</button>
             </div>
         </div>
     </div>
@@ -411,7 +677,6 @@
 
             const ctx = canvas.getContext('2d');
 
-            // Para di mag infinite loop
             if (myRevenueChart !== null) {
                 myRevenueChart.destroy();
             }
@@ -435,37 +700,69 @@
                         pointBackgroundColor: '#6b0d1e',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(74, 14, 14, 0.9)',
+                            titleFont: { size: 14, family: "'Poppins', sans-serif" },
+                            bodyFont: { size: 13, family: "'Poppins', sans-serif" },
+                            padding: 12,
+                            cornerRadius: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: function (context) {
+                                    return '₱' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: { color: '#f3ebe0', drawBorder: false },
+                            grid: {
+                                color: '#f3ebe0',
+                                drawBorder: false,
+                                lineWidth: 2
+                            },
                             ticks: {
                                 color: '#8a6d6d',
-                                font: { size: 11 },
+                                font: { size: 12, family: "'Poppins', sans-serif" },
+                                padding: 10,
                                 callback: function (value) { return '₱' + value.toLocaleString(); }
                             }
                         },
                         x: {
-                            grid: { display: false },
-                            ticks: { color: '#8a6d6d', font: { size: 11 } }
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#8a6d6d',
+                                font: { size: 12, family: "'Poppins', sans-serif" },
+                                padding: 10
+                            }
                         }
                     }
                 }
             });
         }
 
-        // chart to
         document.addEventListener("DOMContentLoaded", initDashboardChart);
 
-        // para updated ang panels postbacks
+        // Handle chart controls
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
         if (typeof (Sys) !== 'undefined') {
             var prm = Sys.WebForms.PageRequestManager.getInstance();
             prm.add_endRequest(function () {
