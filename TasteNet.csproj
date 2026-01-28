@@ -183,6 +183,7 @@
     <Content Include="Users\SuperAdmin\DeliveryPersonnel.aspx" />
     <Content Include="Users\SuperAdmin\PromoCodes.aspx" />
     <Content Include="Users\SuperAdmin\Reports.aspx" />
+    <Content Include="Users\SuperAdmin\Settings.aspx" />
     <Content Include="Users\SuperAdmin\StockManagement.aspx" />
     <Content Include="Users\SuperAdmin\Transactions.aspx" />
     <Content Include="ViewSwitcher.ascx" />
@@ -265,6 +266,13 @@
     </Compile>
     <Compile Include="Users\SuperAdmin\Reports.aspx.designer.cs">
       <DependentUpon>Reports.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Settings.aspx.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Settings.aspx.designer.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\StockManagement.aspx.cs">
       <DependentUpon>StockManagement.aspx</DependentUpon>
