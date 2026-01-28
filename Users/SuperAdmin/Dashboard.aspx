@@ -283,7 +283,6 @@
             width: 100%;
         }
 
-        /* CHUBBY TABLE STYLES */
         .table-container {
             background: white;
             border-radius: var(--radius-xl);
@@ -366,7 +365,6 @@
             transform: scale(1.1);
         }
 
-        /* CHUBBY QUICK ACTION BUTTONS */
         .btn-quick {
             background: var(--primary-maroon);
             color: white;
@@ -755,7 +753,7 @@
 
         document.addEventListener("DOMContentLoaded", initDashboardChart);
 
-        // Handle chart controls
+        // eto yung sa chart yung nag cocontrol
         document.querySelectorAll('.chart-btn').forEach(btn => {
             btn.addEventListener('click', function () {
                 document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));

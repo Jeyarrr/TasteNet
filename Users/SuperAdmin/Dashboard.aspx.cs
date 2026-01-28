@@ -13,7 +13,7 @@ namespace TasteNet.Users.SuperAdmin
         {
             if (!IsPostBack)
             {
-                // Load dashboard data here later
+
             }
         }
     }

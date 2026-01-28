@@ -282,7 +282,6 @@
             transform: scale(1.1);
         }
 
-        /* CHUBBIER BUTTONS - Main Changes Here */
         .btn-maroon {
             background: var(--primary-maroon);
             color: white;
@@ -327,7 +326,6 @@
             box-shadow: 0 6px 18px rgba(255, 204, 0, 0.3);
         }
 
-        /* Additional chubby styling for table rows */
         .custom-table tbody tr {
             transition: all 0.3s ease;
             border-radius: 12px;
@@ -339,7 +337,6 @@
             box-shadow: 0 4px 12px rgba(107, 13, 30, 0.05);
         }
 
-        /* Chubbier pagination/controls if you add later */
         .pagination {
             display: flex;
             gap: 8px;
