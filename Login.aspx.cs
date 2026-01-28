@@ -6,7 +6,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using WebGrease.Activities;
 
 namespace TasteNet
 {
@@ -25,21 +24,43 @@ namespace TasteNet
             lblError.Visible = false;
             lblError.Text = "";
 
-            if (username == "superadmin" && password == "superadmin")
+            switch (username.ToLower())
             {
-                Session["Username"] = username;
-                Session["IsSuperAdmin"] = true;
+                case "superadmin" when password == "superadmin":
+                    SetUserSession(username, "SuperAdmin");
+                    Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
+                    return;
 
-                Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
-            }
-            else
-            {
-                lblError.Text = "Invalid username or password";
-                lblError.Visible = true;
+                case "admin" when password == "admin":
+                    SetUserSession(username, "Admin");
+                    Response.Redirect(ResolveUrl("~/Users/Admin/palitanmotopagmayadminna.aspx"));
+                    return;
 
-                txtPassword.Text = "";
-                txtUsername.Focus();
+                case "rider" when password == "rider":
+                    SetUserSession(username, "Rider");
+                    Response.Redirect(ResolveUrl("~/Users/Rider/palitankotopagmayridersidena.aspx"));
+                    return;
+
+                case "customer" when password == "customer":
+                    SetUserSession(username, "Customer");
+                    Response.Redirect(ResolveUrl("~/Users/Customer/LandingPage.aspx"));
+                    return;
+
+                default:
+                    lblError.Text = "Invalid username or password";
+                    lblError.Visible = true;
+                    txtPassword.Text = "";
+                    txtUsername.Focus();
+                    return;
             }
+        }
+
+        private void SetUserSession(string username, string userType)
+        {
+            Session["Username"] = username;
+            Session["UserType"] = userType;
+            Session[$"Is{userType}"] = true;
+            Session["LoginTime"] = DateTime.Now;
         }
     }
 }
