@@ -181,6 +181,7 @@
     <Content Include="Users\SuperAdmin\CustomerManagement.aspx" />
     <Content Include="Users\SuperAdmin\Dashboard.aspx" />
     <Content Include="Users\SuperAdmin\DeliveryPersonnel.aspx" />
+    <Content Include="Users\SuperAdmin\PromoCodes.aspx" />
     <Content Include="Users\SuperAdmin\Reports.aspx" />
     <Content Include="Users\SuperAdmin\StockManagement.aspx" />
     <Content Include="Users\SuperAdmin\Transactions.aspx" />
@@ -250,6 +251,13 @@
     </Compile>
     <Compile Include="Users\SuperAdmin\DeliveryPersonnel.aspx.designer.cs">
       <DependentUpon>DeliveryPersonnel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\PromoCodes.aspx.cs">
+      <DependentUpon>PromoCodes.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\PromoCodes.aspx.designer.cs">
+      <DependentUpon>PromoCodes.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\Reports.aspx.cs">
       <DependentUpon>Reports.aspx</DependentUpon>
