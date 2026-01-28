@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebGrease.Activities;
 
 namespace TasteNet
 {
@@ -13,25 +14,31 @@ namespace TasteNet
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            lblError.Visible = false;
         }
+
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = txtUsername.Text;
+            string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
 
-            if (username == "admin" && password == "admin")
-            {
-                Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
+            lblError.Visible = false;
+            lblError.Text = "";
 
+            if (username == "superadmin" && password == "superadmin")
+            {
+                Session["Username"] = username;
+                Session["IsSuperAdmin"] = true;
+
+                Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
             }
             else
             {
-                ClientScript.RegisterStartupScript(
-                    this.GetType(), 
-                    "alert",
-                    "alert('Invalid username or password');", 
-                    true
-                    );
+                lblError.Text = "Invalid username or password";
+                lblError.Visible = true;
+
+                txtPassword.Text = "";
+                txtUsername.Focus();
             }
         }
     }

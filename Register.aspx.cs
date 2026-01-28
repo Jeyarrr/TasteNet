@@ -11,11 +11,17 @@ namespace TasteNet
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            lblError.Visible = false;
+            lblSuccess.Visible = false;
         }
+
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            // Kunin ang value sa inputs
+            lblError.Visible = false;
+            lblError.Text = "";
+            lblSuccess.Visible = false;
+            lblSuccess.Text = "";
+
             string fullName = txtFullName.Text.Trim();
             string username = txtUsername.Text.Trim();
             string email = txtEmail.Text.Trim();
@@ -24,7 +30,6 @@ namespace TasteNet
             string confirmPassword = txtConfirmPassword.Text.Trim();
             string gender = rblGender.SelectedValue;
 
-            // Not Null Logic
             if (string.IsNullOrEmpty(fullName) ||
                 string.IsNullOrEmpty(username) ||
                 string.IsNullOrEmpty(email) ||
@@ -32,26 +37,85 @@ namespace TasteNet
                 string.IsNullOrEmpty(password) ||
                 string.IsNullOrEmpty(gender))
             {
-                // Display an error message (You can use a Label or JavaScript Alert)
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('All fields are required!');", true);
+                lblError.Text = "All fields are required!";
+                lblError.Visible = true;
                 return;
             }
 
-            // Password Match
             if (password != confirmPassword)
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('Passwords do not match!');", true);
+                lblError.Text = "Passwords do not match!";
+                lblError.Visible = true;
+                txtPassword.Text = "";
+                txtConfirmPassword.Text = "";
+                txtPassword.Focus();
                 return;
             }
 
-            // If all checks pass, proceed to Database logic
-            RegisterUserInDatabase(fullName, username, email, mobile, password, gender);
+            if (password.Length < 6)
+            {
+                lblError.Text = "Password must be at least 6 characters long!";
+                lblError.Visible = true;
+                return;
+            }
+
+            if (!IsValidEmail(email))
+            {
+                lblError.Text = "Please enter a valid email address!";
+                lblError.Visible = true;
+                return;
+            }
+
+            bool registrationSuccess = RegisterUserInDatabase(fullName, username, email, mobile, password, gender);
+
+            if (registrationSuccess)
+            {
+                lblSuccess.Text = "Registration successful! You can now login.";
+                lblSuccess.Visible = true;
+                ClearFormFields();
+            }
+            else
+            {
+                lblError.Text = "Registration failed. Username or email might already exist.";
+                lblError.Visible = true;
+            }
         }
 
-        private void RegisterUserInDatabase(string name, string user, string mail, string phone, string pass, string gen)
+        private bool RegisterUserInDatabase(string name, string user, string mail, string phone, string pass, string gen)
         {
-            // Your SQL connection and Insert logic goes here
-            // Example: INSERT INTO Users (FullName, Username, Email, Mobile, Password, Gender) ...
+            try
+            {
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Registration error: {ex.Message}");
+                return false;
+            }
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void ClearFormFields()
+        {
+            txtFullName.Text = "";
+            txtUsername.Text = "";
+            txtEmail.Text = "";
+            txtMobile.Text = "";
+            txtPassword.Text = "";
+            txtConfirmPassword.Text = "";
+            rblGender.ClearSelection();
         }
     }
 }

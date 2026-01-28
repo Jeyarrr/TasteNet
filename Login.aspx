@@ -103,6 +103,66 @@
             opacity: 0.85;
         }
 
+        .remember-forgot {
+            width: 85%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px auto 20px auto;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #ffc107;
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+        }
+
+        .remember-me input[type="checkbox"]:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .remember-me label {
+            cursor: pointer;
+            color: #fff;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .remember-me:hover label {
+            color: #ffd6d6;
+        }
+
+        .forgot-password,
+        .create-account {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .forgot-password:hover,
+        .create-account:hover {
+            background: rgba(255, 193, 7, 0.2);
+            text-decoration: none;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+        }
 
         .btn-login {
             margin-top: 15px;
@@ -115,6 +175,8 @@
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .btn-login:hover {
@@ -124,7 +186,7 @@
                 0 0 16px #ffc107,
                 0 0 32px rgba(255, 193, 7, 0.7);
             border-color: #ffc107;
-            transform: translateY(-1px);
+            transform: translateY(-3px) scale(1.02);
             animation: glowPulse 1.5s infinite alternate;
         }
 
@@ -136,21 +198,20 @@
                 box-shadow: 0 0 20px #ffc107, 0 0 40px rgba(255, 193, 7, 0.8);
             }
         }
+        
+        .error-message {
+            color: #d8000c;
+            background-color: #ffbaba;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 10px 0;
+            display: block;
+        }
 
         .extra-text {
             margin-top: 18px;
             font-size: 13px;
-        }
-
-        .create-account {
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .create-account:hover {
-            text-decoration: underline;
-            color: #ffd6d6;
+            color: #fff;
         }
 
         .social-login {
@@ -167,6 +228,12 @@
             font-size: 20px;
             margin: 0 6px;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .social-login i:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
         }
 
         .social-login .fa-facebook-f {
@@ -195,6 +262,23 @@
             <div class="input-box password-box">
                 <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Password"></asp:TextBox>
                 <i id="togglePwd" class="fa fa-eye-slash"></i>
+            </div>
+
+            <asp:Label ID="lblError" runat="server" CssClass="error-message" 
+               ForeColor="Red" Visible="false"></asp:Label>
+
+            <div class="remember-forgot">
+                <div class="remember-me">
+                    <asp:CheckBox ID="chkRemember" runat="server" />
+                    <asp:Label ID="lblRemember" runat="server" Text="Remember me" AssociatedControlID="chkRemember"></asp:Label>
+                </div>
+                <asp:HyperLink 
+                    ID="lnkForgot" 
+                    runat="server" 
+                    NavigateUrl="~/ForgotPassword.aspx"
+                    CssClass="forgot-password">
+                    Forgot Password?
+                </asp:HyperLink>
             </div>
 
             <asp:Button ID="btnLogin" runat="server" Text="Log In" CssClass="btn-login" OnClick="btnLogin_Click" />

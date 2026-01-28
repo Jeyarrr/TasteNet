@@ -66,6 +66,12 @@
             outline: none;
             font-size: 14px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .input-box input:focus {
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+            border: 1px solid #ffc107;
         }
 
         .gender-container {
@@ -106,6 +112,8 @@
         .gender-category-list label:hover {
             border-color: #FFD41D;
             background: rgba(255, 212, 29, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
         }
 
         .gender-category-list input[type="radio"]:checked + label {
@@ -113,29 +121,42 @@
             color: #4b0000;
             border-color: #FFD41D;
             font-weight: 600;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+
+        .password-box {
+            position: relative;
         }
 
         .password-box i {
             position: absolute;
             right: 18px;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) scale(1);
             cursor: pointer;
             color: #777;
-            transition: 0.25s;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        .password-box i.active {
+            transform: translateY(-50%) scale(1.2);
+            opacity: 0.85;
         }
 
         .btn-register {
             margin-top: 10px;
             background: linear-gradient(to right, #4b0000, #a10000);
-            border: 2px solid rgba(255,255,255,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
             padding: 14px;
             width: 60%;
             color: #fff;
             font-size: 15px;
             border-radius: 30px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .btn-register:hover {
@@ -145,7 +166,7 @@
                 0 0 16px #ffc107,
                 0 0 32px rgba(255, 193, 7, 0.7);
             border-color: #ffc107;
-            transform: translateY(-1px);
+            transform: translateY(-3px) scale(1.02);
             animation: glowPulse 1.5s infinite alternate;
         }
 
@@ -161,24 +182,64 @@
         .extra-text {
             margin-top: 18px;
             font-size: 13px;
-        }
-
-        .extra-text a {
             color: #fff;
-            font-weight: 600;
-            text-decoration: none;
         }
 
-        .extra-text a:hover {
-            text-decoration: underline;
+        .sign-in-link {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .sign-in-link:hover {
+            background: rgba(255, 193, 7, 0.2);
+            text-decoration: none;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        .password-box i:hover {
+            color: #ffc107;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .error-message {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #ffebee;
+            border: 1px solid #ffcdd2;
+            border-radius: 4px;
+            color: #c62828;
+        }
+
+        .success-message {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 4px;
+            color: #2e7d32;
         }
     </style>
 </head>
 
 <body>
     <form id="form1" runat="server">
-
         <div class="register-card">
+            <asp:Label ID="lblError" runat="server" CssClass="error-message" 
+                       ForeColor="Red" Visible="false"></asp:Label>
+
+            <asp:Label ID="lblSuccess" runat="server" CssClass="success-message" 
+                       ForeColor="Green" Visible="false"></asp:Label>
 
             <div class="logo">
                 <img src="Images/logo.png" alt="Logo" />
@@ -209,8 +270,9 @@
                     <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Password" />
                     <i id="togglePwd" class="fa fa-eye-slash"></i>
                 </div>
-                <div class="input-box">
+                <div class="input-box password-box">
                     <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password" placeholder="Confirm Password" />
+                    <i id="toggleConfirmPwd" class="fa fa-eye-slash"></i>
                 </div>
             </div>
 
@@ -233,18 +295,19 @@
 
             <div class="extra-text">
                 Already have an account?
-                <a href="Login.aspx">Sign In</a>
+                <a href="Login.aspx" class="sign-in-link">Sign In</a>
             </div>
-
         </div>
-
     </form>
 
     <script>
         const toggle = document.getElementById("togglePwd");
         const pwd = document.getElementById('<%= txtPassword.ClientID %>');
+        const toggleConfirm = document.getElementById("toggleConfirmPwd");
+        const confirmPwd = document.getElementById('<%= txtConfirmPassword.ClientID %>');
 
         toggle.addEventListener("click", () => {
+            toggle.classList.add("active");
             if (pwd.type === "password") {
                 pwd.type = "text";
                 toggle.classList.replace("fa-eye-slash", "fa-eye");
@@ -252,8 +315,20 @@
                 pwd.type = "password";
                 toggle.classList.replace("fa-eye", "fa-eye-slash");
             }
+            setTimeout(() => toggle.classList.remove("active"), 200);
+        });
+
+        toggleConfirm.addEventListener("click", () => {
+            toggleConfirm.classList.add("active");
+            if (confirmPwd.type === "password") {
+                confirmPwd.type = "text";
+                toggleConfirm.classList.replace("fa-eye-slash", "fa-eye");
+            } else {
+                confirmPwd.type = "password";
+                toggleConfirm.classList.replace("fa-eye", "fa-eye-slash");
+            }
+            setTimeout(() => toggleConfirm.classList.remove("active"), 200);
         });
     </script>
-
 </body>
 </html>
