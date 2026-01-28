@@ -182,6 +182,7 @@
     <Content Include="Users\SuperAdmin\Dashboard.aspx" />
     <Content Include="Users\SuperAdmin\DeliveryPersonnel.aspx" />
     <Content Include="Users\SuperAdmin\StockManagement.aspx" />
+    <Content Include="Users\SuperAdmin\Transactions.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
@@ -255,6 +256,13 @@
     </Compile>
     <Compile Include="Users\SuperAdmin\StockManagement.aspx.designer.cs">
       <DependentUpon>StockManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Transactions.aspx.cs">
+      <DependentUpon>Transactions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Transactions.aspx.designer.cs">
+      <DependentUpon>Transactions.aspx</DependentUpon>
     </Compile>
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
