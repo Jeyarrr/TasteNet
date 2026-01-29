@@ -36,7 +36,6 @@
             height: 100%;
         }
 
-        /* Hero Section */
         .hero-container {
             position: relative;
             min-height: 100vh;
@@ -54,7 +53,6 @@
             padding: 80px 20px 60px;
         }
 
-        /* Navbar Overlay */
         .navbar {
             position: fixed;
             top: 0;
@@ -181,7 +179,6 @@
             bottom: -35px;
         }
 
-        /* Hero Content */
         .hero-content { max-width: 900px; width: 100%; }
         .hero-content h1 { 
             font-size: 3.5rem; 
@@ -214,7 +211,6 @@
             line-height: 1.6; 
         }
 
-        /* Search Bar */
         .search-box {
             background: var(--text-white);
             border-radius: 50px;
@@ -296,7 +292,6 @@
             }
         }
 
-        /* CTA Buttons */
         .cta-group { display: flex; gap: 20px; justify-content: center; }
         .btn-cta { 
             padding: 15px 35px; 
@@ -349,7 +344,6 @@
             box-shadow: 0 15px 25px rgba(0,0,0,0.3);
         }
 
-        /* About Caballeros Section */
         .about-section {
             background: #FFFFFF; 
             padding: 100px 8%;
@@ -382,59 +376,39 @@
             font-weight: 600;
         }
 
-        .food-grid {
-            display: flex;
-            justify-content: flex-start; 
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .food-card {
-            width: calc(33.33% - 20px);
-            min-width: 300px;
-            background: #F9F9F9; 
-            border-radius: 15px;
-            padding: 20px;
-            border-bottom: 5px solid var(--accent-yellow); 
-            transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .food-card:hover { 
-            transform: translateY(-10px) scale(1.02); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15); 
-        }
-
-        .food-image {
+        .content-box {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #fdfaf5 0%, #fff9f0 100%);
+            border-radius: 15px;
+            padding: 40px 50px;
+            border-left: 8px solid var(--accent-yellow);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin: 0 auto;
+            max-width: 900px;
+        }
+
+        .content-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            border-left: 8px solid var(--primary-maroon);
+        }
+
+        .content-text {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .content-text p {
             margin-bottom: 20px;
-            transition: transform 0.5s ease;
-        }
-        .food-card:hover .food-image {
-            transform: scale(1.05);
         }
 
-        .food-name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-maroon); 
-            margin-bottom: 10px;
-            transition: color 0.3s ease;
-        }
-        .food-card:hover .food-name {
-            color: #5a0819;
+        .content-text p:last-child {
+            margin-bottom: 0;
         }
 
-        .food-description {
-            font-size: 1rem;
-            color: var(--text-muted); 
-            line-height: 1.6;
-        }
-
-        /* Why Customers Love Us Section */
         .love-us-section {
             background: linear-gradient(135deg, #fdfaf5 0%, #fff9f0 100%);
             padding: 100px 8%;
@@ -479,8 +453,8 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 columns */
-            grid-template-rows: repeat(2, 1fr); /* 2 rows */
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 30px;
             margin-top: 40px;
             max-width: 1000px;
@@ -546,7 +520,6 @@
             padding: 0 10px;
         }
 
-        /* --- Discover Menu Styles --- */
         .menu-display-section {
             padding: 80px 8%;
             background-color: #fdfaf5;
@@ -579,7 +552,7 @@
             border-radius: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
-            margin-bottom: 50px; /* Added space between containers */
+            margin-bottom: 50px;
         }
         .menu-container:hover {
             transform: translateY(-5px);
@@ -641,7 +614,6 @@
             transform: scale(1.1);
         }
 
-        /* --- Order in 3 Easy Steps Section --- */
         .order-steps-section {
             padding: 100px 8%;
             background: linear-gradient(135deg, #fdfaf5 0%, #fff9f0 100%);
@@ -745,7 +717,6 @@
             line-height: 1.6;
         }
 
-        /* Connecting line between steps on desktop */
         .steps-grid::before {
             content: '';
             position: absolute;
@@ -845,15 +816,13 @@
             color: var(--accent-yellow);
         }
 
-        /* Horizontal Divider */
         .divider {
-            width: 90%; /* Make it slightly narrower */
+            width: 90%;
             height: 2px;
             background: linear-gradient(to right, transparent, var(--accent-yellow), transparent);
-            margin: 60px auto; /* Center it */
+            margin: 60px auto;
         }
 
-        /* NEW: Contact & Map Bottom Section */
         .contact-map-section {
             background: var(--primary-maroon);
             color: var(--text-white);
@@ -975,7 +944,6 @@
             transform: scale(1.05);
         }
 
-        /* NEW: Main Footer with Logo and Quick Links */
         .main-footer {
             background: #5a0819;
             color: var(--text-white);
@@ -1164,7 +1132,6 @@
             color: #ffed4e;
         }
 
-        /* Security Notice */
         .security-notice {
             position: fixed;
             top: 80px;
@@ -1183,7 +1150,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        /* Responsive adjustments for steps */
         @media (max-width: 992px) {
             .steps-grid {
                 justify-content: center;
@@ -1191,7 +1157,7 @@
             }
             
             .steps-grid::before {
-                display: none; /* Hide connecting line on mobile */
+                display: none;
             }
             
             .step-card {
@@ -1277,7 +1243,6 @@
             .contact-info-sidebar {
                 padding: 20px;
             }
-            .food-card { width: 100%; }
             .about-title { font-size: 2.2rem; }
             .hero-content h1 { font-size: 2.5rem; }
             .love-us-title { font-size: 2.2rem; }
@@ -1304,10 +1269,16 @@
             .quick-links-grid {
                 grid-template-columns: 1fr;
             }
-            /* For responsive design */
-            /* 2x2 grid to 1 column on mobile */
+            
+            .content-box {
+                padding: 30px 25px;
+            }
+            .content-text {
+                font-size: 1.1rem;
+            }
+            
             .features-grid {
-                grid-template-columns: 1fr; /* 1 column on mobile */
+                grid-template-columns: 1fr;
                 grid-template-rows: auto;
                 gap: 25px;
             }
@@ -1326,7 +1297,6 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <!-- Security Notice -->
         <div class="security-notice">
             Not secure | https://localhost:44348/Users/Customer/LandingPage
         </div>
@@ -1368,7 +1338,6 @@
             </div>
         </div>
 
-        <!-- Rest of your code remains the same... -->
         <section class="about-section">
             <div class="about-container">
                 <h2 class="about-title">ABOUT CABALLEROS</h2>
@@ -1376,29 +1345,10 @@
                     Bringing The Authentic Taste Of Filipino Home Based Meals to your Doorstep
                 </p>
                 
-                <div class="food-grid">
-                    <div class="food-card">
-                        <img src='<%= ResolveUrl("~/Images/Hotsilog.jpg") %>' alt="Silog" class="food-image" />
-                        <h3 class="food-name">Silog</h3>
-                        <p class="food-description">
-                            Classic Filipino breakfast combos with garlic rice, egg, and your choice of meat. Freshly prepared every single morning.
-                        </p>
-                    </div>
-                    
-                    <div class="food-card">
-                        <img src='<%= ResolveUrl("~/Images/Sisig.jpg") %>' alt="Goto" class="food-image" />
-                        <h3 class="food-name">Goto</h3>
-                        <p class="food-description">
-                            Hearty Filipino rice porridge with tender meat and savory toppings, perfect for rainy days or anytime cravings.
-                        </p>
-                    </div>
-                    
-                    <div class="food-card">
-                        <img src='<%= ResolveUrl("~/Images/Goto.jpg") %>' alt="Sisig" class="food-image" />
-                        <h3 class="food-name">Sisig</h3>
-                        <p class="food-description">
-                            Our signature sizzling dish seasoned with calamansi and chili. The perfect balance of crunch, spice, and savory goodness.
-                        </p>
+                <div class="content-box">
+                    <div class="content-text">
+                        <p>Caballeros is a local food business dedicated to serving quality homemade meals made with care and passion. From humble beginnings, it has grown through hard work and the trust of loyal customers who value comfort food and genuine service.</p>
+                        <p>By embracing modern solutions while keeping its home-style touch, Caballeros continues to bring delicious meals closer to the community—one order at a time.</p>
                     </div>
                 </div>
             </div>
@@ -1407,7 +1357,6 @@
         <section class="menu-display-section">
             <h2 class="menu-header">Discover Menu</h2>
             
-            <!-- First Menu Container: Silog Meals -->
             <div class="menu-container">
                 <img src='<%= ResolveUrl("~/Images/Hotsilog.jpg") %>' alt="Featured Silog Meal" class="menu-featured-img" />
                 <div class="menu-list-container">
@@ -1424,7 +1373,6 @@
                 </div>
             </div>
             
-            <!-- Second Menu Container: Sizzling Meals -->
             <div class="menu-container">
                 <img src='<%= ResolveUrl("~/Images/Sisig.jpg") %>' alt="Featured Sizzling Meal" class="menu-featured-img" />
                 <div class="menu-list-container">
@@ -1441,7 +1389,6 @@
                 </div>
             </div>
             
-            <!-- Third Menu Container: Special Meals -->
             <div class="menu-container">
                 <img src='<%= ResolveUrl("~/Images/Goto.jpg") %>' alt="Featured Special Meal" class="menu-featured-img" />
                 <div class="menu-list-container">
@@ -1459,7 +1406,6 @@
             </div>
         </section>
 
-        <!-- Order in 3 Easy Steps Section -->
         <section class="order-steps-section">
             <div class="steps-container">
                 <h2 class="steps-header">Order in 3 Easy Steps</h2>
@@ -1492,7 +1438,6 @@
                 
                 <div class="divider"></div>
                 
-                <!-- CTA Banner -->
                 <div class="cta-banner">
                     <h3 class="cta-title">Hungry? Order Now!</h3>
                     <p class="cta-subtitle">Free delivery on orders over ₱500</p>
@@ -1508,7 +1453,6 @@
             </div>
         </section>
 
-        <!-- Why Customers Love Us Section -->
         <section class="love-us-section">
             <div class="love-us-container">
                 <h2 class="love-us-title">Why Customers Love Us</h2>
@@ -1560,7 +1504,6 @@
             </div>
         </section>
 
-        <!-- NEW: Contact & Map Section at the BOTTOM -->
         <section class="contact-map-section">
             <div class="contact-map-container">
                 <div class="contact-map-header">
@@ -1569,7 +1512,6 @@
                 </div>
                 
                 <div class="contact-map-content">
-                    <!-- Large Map Container -->
                     <div class="map-container-large">
                         <div class="map-wrapper-large">
                             <iframe 
@@ -1585,7 +1527,6 @@
                         </div>
                     </div>
                     
-                    <!-- Contact Information Sidebar -->
                     <div class="contact-info-sidebar">
                         <div class="contact-info-group">
                             <h3><i class="fas fa-phone"></i> Contact Numbers</h3>
@@ -1608,10 +1549,8 @@
             </div>
         </section>
 
-        <!-- NEW: Main Footer with Logo and Quick Links -->
         <footer class="main-footer">
             <div class="footer-container">
-                <!-- Logo Section on Left -->
                 <div class="footer-logo-section">
                     <div class="footer-logo-container">
                         <img src='<%= ResolveUrl("~/Images/LOGO.png") %>' alt="TasteNet Logo" class="footer-logo" />
@@ -1620,7 +1559,6 @@
                     <p class="footer-tagline">Sizzling Good Food Delivered Hot to your Doorstep in Dasmariñas City</p>
                 </div>
 
-                <!-- Quick Links Section on Right -->
                 <div class="footer-quick-links">
                     <h3>Quick Links</h3>
                     <div class="quick-links-grid">
@@ -1634,7 +1572,6 @@
                 </div>
             </div>
 
-            <!-- Footer Bottom Bar -->
             <div class="footer-bottom">
                 <div class="footer-bottom-content">
                     <div class="copyright">

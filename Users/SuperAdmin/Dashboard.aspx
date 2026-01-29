@@ -445,6 +445,33 @@
             background: var(--primary-maroon);
             color: white;
         }
+
+        @media (max-width: 1200px) {
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-wrapper {
+                padding: 15px;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 
     <div class="dashboard-wrapper">
