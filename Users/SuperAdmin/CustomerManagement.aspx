@@ -408,9 +408,6 @@
                     <option>Blocked</option>
                 </select>
                 <select class="filter-select">
-                    <option>All Vehicles</option>
-                </select>
-                <select class="filter-select">
                     <option>Sort by: Name</option>
                     <option>Sort by: Date Registered</option>
                 </select>
