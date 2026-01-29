@@ -118,6 +118,10 @@
     <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Images\Goto.jpg" />
+    <Content Include="Images\Sisig.jpg" />
+    <Content Include="Images\Hotsilog.jpg" />
+    <Content Include="Images\landingpage.jpg" />
     <Content Include="Images\LOGO.png" />
     <Content Include="Users\Customer\LandingPage.aspx" />
     <Content Include="Login.aspx" />

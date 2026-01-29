@@ -11,16 +11,12 @@ namespace TasteNet
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            lblError.Visible = false;
-            lblSuccess.Visible = false;
+            ClearAllMessages();
         }
 
         protected void btnRegister_Click(object sender, EventArgs e)
         {
-            lblError.Visible = false;
-            lblError.Text = "";
-            lblSuccess.Visible = false;
-            lblSuccess.Text = "";
+            ClearAllMessages();
 
             string fullName = txtFullName.Text.Trim();
             string username = txtUsername.Text.Trim();
@@ -30,39 +26,82 @@ namespace TasteNet
             string confirmPassword = txtConfirmPassword.Text.Trim();
             string gender = rblGender.SelectedValue;
 
-            if (string.IsNullOrEmpty(fullName) ||
-                string.IsNullOrEmpty(username) ||
-                string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(mobile) ||
-                string.IsNullOrEmpty(password) ||
-                string.IsNullOrEmpty(gender))
+            bool isValid = true;
+
+            if (string.IsNullOrEmpty(fullName))
             {
-                lblError.Text = "All fields are required!";
-                lblError.Visible = true;
-                return;
+                lblFullNameError.Text = "Full name is required";
+                lblFullNameError.Visible = true;
+                isValid = false;
             }
 
-            if (password != confirmPassword)
+            if (string.IsNullOrEmpty(username))
             {
-                lblError.Text = "Passwords do not match!";
-                lblError.Visible = true;
+                lblUsernameError.Text = "Username is required";
+                lblUsernameError.Visible = true;
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(email))
+            {
+                lblEmailError.Text = "Email is required";
+                lblEmailError.Visible = true;
+                isValid = false;
+            }
+            else if (!IsValidEmail(email))
+            {
+                lblEmailError.Text = "Please enter a valid email";
+                lblEmailError.Visible = true;
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(mobile))
+            {
+                lblMobileError.Text = "Mobile number is required";
+                lblMobileError.Visible = true;
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                lblPasswordError.Text = "Password is required";
+                lblPasswordError.Visible = true;
+                isValid = false;
+            }
+            else if (password.Length < 6)
+            {
+                lblPasswordError.Text = "Password must be at least 6 characters";
+                lblPasswordError.Visible = true;
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(confirmPassword))
+            {
+                lblConfirmPasswordError.Text = "Please confirm your password";
+                lblConfirmPasswordError.Visible = true;
+                isValid = false;
+            }
+            else if (password != confirmPassword)
+            {
+                lblConfirmPasswordError.Text = "Passwords do not match";
+                lblConfirmPasswordError.Visible = true;
                 txtPassword.Text = "";
                 txtConfirmPassword.Text = "";
                 txtPassword.Focus();
-                return;
+                isValid = false;
             }
 
-            if (password.Length < 6)
+            if (string.IsNullOrEmpty(gender))
             {
-                lblError.Text = "Password must be at least 6 characters long!";
-                lblError.Visible = true;
-                return;
+                lblGenderError.Text = "Please select a gender";
+                lblGenderError.Visible = true;
+                isValid = false;
             }
 
-            if (!IsValidEmail(email))
+            if (!isValid)
             {
-                lblError.Text = "Please enter a valid email address!";
-                lblError.Visible = true;
+                lblGeneralError.Text = "All Data Fields Required";
+                lblGeneralError.Visible = true;
                 return;
             }
 
@@ -76,15 +115,46 @@ namespace TasteNet
             }
             else
             {
-                lblError.Text = "Registration failed. Username or email might already exist.";
-                lblError.Visible = true;
+                lblGeneralError.Text = "Registration failed. Username or email might already exist.";
+                lblGeneralError.Visible = true;
             }
+        }
+
+        private void ClearAllMessages()
+        {
+            lblGeneralError.Visible = false;
+            lblGeneralError.Text = "";
+
+            lblFullNameError.Visible = false;
+            lblFullNameError.Text = "";
+
+            lblUsernameError.Visible = false;
+            lblUsernameError.Text = "";
+
+            lblEmailError.Visible = false;
+            lblEmailError.Text = "";
+
+            lblMobileError.Visible = false;
+            lblMobileError.Text = "";
+
+            lblPasswordError.Visible = false;
+            lblPasswordError.Text = "";
+
+            lblConfirmPasswordError.Visible = false;
+            lblConfirmPasswordError.Text = "";
+
+            lblGenderError.Visible = false;
+            lblGenderError.Text = "";
+
+            lblSuccess.Visible = false;
+            lblSuccess.Text = "";
         }
 
         private bool RegisterUserInDatabase(string name, string user, string mail, string phone, string pass, string gen)
         {
             try
             {
+                // database logic na dito pag meron ng db
                 return true;
             }
             catch (Exception ex)

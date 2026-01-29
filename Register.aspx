@@ -9,16 +9,29 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at top, #a00000, #000000);
+            background: url('Images/landingpage.jpg') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
 
         .register-card {
-            width: 420px;
+            width: 450px;
             background: #4b0000;
             padding: 40px 30px;
             border-radius: 25px;
@@ -49,7 +62,7 @@
         .input-row {
             display: flex;
             gap: 15px;
-            margin-bottom: 14px;
+            margin-bottom: 5px;
         }
 
         .input-box {
@@ -74,9 +87,13 @@
             border: 1px solid #ffc107;
         }
 
+        .password-box input {
+            padding-right: 50px !important; 
+        }
+
         .gender-container {
             text-align: left;
-            margin: 20px 0;
+            margin: 15px 0 5px 0;
         }
 
         .gender-label {
@@ -137,6 +154,13 @@
             cursor: pointer;
             color: #777;
             transition: transform 0.25s ease, opacity 0.25s ease;
+            z-index: 2; 
+            background: transparent;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .password-box i.active {
@@ -210,24 +234,54 @@
             transform: translateY(-50%) scale(1.1);
         }
 
-        .error-message {
+        .field-error {
+            color: #ffc107 !important;
+            font-size: 12px;
+            text-align: left;
+            padding-left: 15px;
+            margin-top: 2px;
+            margin-bottom: 8px;
             display: block;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #ffebee;
-            border: 1px solid #ffcdd2;
-            border-radius: 4px;
-            color: #c62828;
+            font-weight: 500;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+            min-height: 18px;
+        }
+
+        .general-error {
+            display: block;
+            margin: 10px 0 !important;
+            padding: 10px 0 !important;
+            background-color: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            color: #ffc107 !important;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
 
         .success-message {
             display: block;
             margin: 10px 0;
-            padding: 10px;
-            background-color: #e8f5e9;
-            border: 1px solid #c8e6c9;
-            border-radius: 4px;
-            color: #2e7d32;
+            padding: 10px 0;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            color: #4CAF50;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .gender-error {
+            color: #ffc107 !important;
+            font-size: 12px;
+            text-align: left;
+            padding-left: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 500;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+            min-height: 18px;
         }
     </style>
 </head>
@@ -235,11 +289,8 @@
 <body>
     <form id="form1" runat="server">
         <div class="register-card">
-            <asp:Label ID="lblError" runat="server" CssClass="error-message" 
-                       ForeColor="Red" Visible="false"></asp:Label>
-
-            <asp:Label ID="lblSuccess" runat="server" CssClass="success-message" 
-                       ForeColor="Green" Visible="false"></asp:Label>
+            <asp:Label ID="lblGeneralError" runat="server" CssClass="general-error" Visible="false"></asp:Label>
+            <asp:Label ID="lblSuccess" runat="server" CssClass="success-message" Visible="false"></asp:Label>
 
             <div class="logo">
                 <img src="Images/logo.png" alt="Logo" />
@@ -250,18 +301,22 @@
             <div class="input-row">
                 <div class="input-box">
                     <asp:TextBox ID="txtFullName" runat="server" placeholder="Full Name" />
+                    <asp:Label ID="lblFullNameError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
                 <div class="input-box">
                     <asp:TextBox ID="txtUsername" runat="server" placeholder="Username" />
+                    <asp:Label ID="lblUsernameError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
             </div>
 
             <div class="input-row">
                 <div class="input-box">
                     <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" placeholder="Email" />
+                    <asp:Label ID="lblEmailError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
                 <div class="input-box">
                     <asp:TextBox ID="txtMobile" runat="server" placeholder="Mobile Number (+63)" />
+                    <asp:Label ID="lblMobileError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
             </div>
 
@@ -269,29 +324,26 @@
                 <div class="input-box password-box">
                     <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" placeholder="Password" />
                     <i id="togglePwd" class="fa fa-eye-slash"></i>
+                    <asp:Label ID="lblPasswordError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
                 <div class="input-box password-box">
                     <asp:TextBox ID="txtConfirmPassword" runat="server" TextMode="Password" placeholder="Confirm Password" />
                     <i id="toggleConfirmPwd" class="fa fa-eye-slash"></i>
+                    <asp:Label ID="lblConfirmPasswordError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
             </div>
 
             <div class="gender-container">
                 <span class="gender-label">Gender</span>
-                <asp:RadioButtonList ID="rblGender" runat="server" 
-                    RepeatDirection="Horizontal" 
-                    RepeatLayout="Flow" 
-                    CssClass="gender-category-list">
+                <asp:RadioButtonList ID="rblGender" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" CssClass="gender-category-list">
                     <asp:ListItem Text="Male" Value="Male"></asp:ListItem>
                     <asp:ListItem Text="Female" Value="Female"></asp:ListItem>
                     <asp:ListItem Text="Rather not say" Value="Rather not say" Selected="True"></asp:ListItem>
                 </asp:RadioButtonList>
+                <asp:Label ID="lblGenderError" runat="server" CssClass="gender-error" Text="" Visible="false"></asp:Label>
             </div>
 
-            <asp:Button ID="btnRegister" runat="server"
-                Text="Register"
-                CssClass="btn-register"
-                OnClick="btnRegister_Click" />
+            <asp:Button ID="btnRegister" runat="server" Text="Register" CssClass="btn-register" OnClick="btnRegister_Click" />
 
             <div class="extra-text">
                 Already have an account?

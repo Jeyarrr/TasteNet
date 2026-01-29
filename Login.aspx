@@ -10,11 +10,24 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle at top, #a00000, #000000);
+            background: url('Images/landingpage.jpg') no-repeat center center fixed;
+            background-size: cover;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
 
         .login-card {
@@ -200,12 +213,15 @@
         }
         
         .error-message {
-            color: #d8000c;
-            background-color: #ffbaba;
-            padding: 10px;
-            border-radius: 3px;
-            margin: 10px 0;
+            color: #ffc107 !important; 
+            background-color: transparent !important; 
+            padding: 0px 0 !important;
+            border-radius: 0 !important;
+            margin: 0px 0 !important;
             display: block;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            border: none !important;
         }
 
         .extra-text {
@@ -265,7 +281,7 @@
             </div>
 
             <asp:Label ID="lblError" runat="server" CssClass="error-message" 
-               ForeColor="Red" Visible="false"></asp:Label>
+               Visible="false"></asp:Label>
 
             <div class="remember-forgot">
                 <div class="remember-me">
