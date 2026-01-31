@@ -3,17 +3,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TasteNet Rider Portal</title>
-
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-
     <style>
+        /* pang remove ng scrol sa */
+        html, body {
+           height: 100%;
+           margin: 0;
+           overflow-x: hidden; /* removes bottom scrollbar */
+}
         :root {
             --primary-color: #7b0000;
             --secondary-color: #3b0000;
@@ -24,10 +20,10 @@
         }
 
         body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #1e1e1e;
-            color: #fff;
+           margin: 0;
+           font-family: 'Poppins', sans-serif;
+           background: #f5f7fb;   /* same as your dashboard */
+           color: #333;
         }
 
         .rider-layout {
@@ -166,24 +162,30 @@
             border-left-color: var(--accent-color);
             font-weight: 500;
         }
-
+        /* eto binago ko*/
         .menu a:focus {
             outline: 2px solid var(--accent-color);
             outline-offset: -2px;
         }
 
-        /* Main Content */
+        /* pati to */
         .main-content {
-            flex: 1;
-            padding: 30px;
-            margin-left: var(--sidebar-width);
-            background: #1e1e1e;
-            min-height: 100vh;
-            transition: margin-left 0.3s ease;
-        }
+           flex: 1;
+           padding: 30px;
+           margin-left: var(--sidebar-width);
+           background: #f5f7fb;
+           min-height: 100vh;
+           width: calc(100% - var(--sidebar-width));
+}
+
+          /* force pages to use full width (fix for Bootstrap container) */
+          .main-content > * {
+           width: 100%;
+           max-width: 100% !important;
+           }
 
         /* Stats Cards for Dashboard */
-        .stats-cards {
+         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
@@ -191,7 +193,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            background: #fff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -314,20 +316,7 @@
         .loading {
             position: relative;
         }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(30, 30, 30, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
+    
     </style>
 
     <asp:ContentPlaceHolder ID="head" runat="server" />
