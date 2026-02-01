@@ -4,12 +4,22 @@
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TasteNet Rider Portal</title>
 
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
     <style>
+        /* pang remove ng scrol sa */
+        html, body {
+           height: 100%;
+           margin: 0;
+           overflow-x: hidden; /* removes bottom scrollbar */
+}
         :root {
             --primary-color: #7b0000;
             --secondary-color: #3b0000;
@@ -24,8 +34,6 @@
             font-family: 'Poppins', sans-serif;
             background: #1e1e1e;
             color: #fff;
-            height: 100vh;
-            overflow: hidden;
         }
 
         .sidebar {
@@ -138,24 +146,22 @@
             border-left-color: var(--accent-color);
         }
 
-        .notification-badge {
-            margin-left: auto;
-            font-size: 10px;
-            padding: 2px 8px;
-            background: rgba(255, 193, 7, 0.2);
-            color: var(--accent-color);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 193, 7, 0.3);
+        .menu a:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: -2px;
         }
 
+        /* Main Content */
         .main-content {
-            padding: 20px;
+            flex: 1;
+            padding: 30px;
             margin-left: var(--sidebar-width);
-            color: #fff;
-            height: 100vh;
-            overflow-y: auto;
+            background: #1e1e1e;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
         }
 
+        /* Stats Cards for Dashboard */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -164,7 +170,7 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            background: #fff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -325,19 +331,25 @@
                 justify-content: flex-start;
                 padding: 10px 20px;
             }
-            
-            .sidebar:hover .sidebar-header {
-                padding: 20px 15px;
-            }
-            
-            .sidebar:hover .sidebar-header img {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .stats-cards {
-                grid-template-columns: 1fr;
-            }
+        }
+
+        /* Loading State */
+        .loading {
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 30, 30, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
         }
     </style>
 

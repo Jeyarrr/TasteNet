@@ -545,16 +545,6 @@
         <!-- Top Bar -->
         <div class="top-bar">
             <h1>Delivery Dashboard</h1>
-            <div class="top-actions">
-                <div class="notification-icon">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge">3</span>
-                </div>
-                <button type="button" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </button>
-            </div>
         </div>
 
         <!-- Availability Status Card -->
@@ -646,8 +636,8 @@
                     </div>
                     <div class="delivery-info">
                         <div class="info-row">
-                            <span class="info-label">Pickup:</span>
-                            <span class="info-value">Jollibee Taft</span>
+                            <span class="info-label">Customer Name:</span>
+                            <span class="info-value">Jester Parker</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Delivery:</span>
@@ -676,8 +666,8 @@
                     </div>
                     <div class="delivery-info">
                         <div class="info-row">
-                            <span class="info-label">Pickup:</span>
-                            <span class="info-value">McDo Buendia</span>
+                            <span class="info-label">Customer Name:</span>
+                            <span class="info-value">Syren mukang kambing</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Delivery:</span>
@@ -693,9 +683,9 @@
                         </div>
                     </div>
                     <div class="delivery-actions">
-                        <button type="button" class="btn-action btn-view">View Details</button>
-                    </div>
-                </div>
+                         <button type="button" class="btn-action btn-accept">Accept</button>
+                          <button type="button" class="btn-action btn-decline">Decline</button>
+                        </div>
             </div>
         </div>
     </div>
