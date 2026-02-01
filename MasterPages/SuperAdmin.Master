@@ -7,7 +7,6 @@
     <title>TasteNet Admin</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
     <style>
@@ -15,10 +14,12 @@
             margin: 0;
             font-family: 'Poppins', sans-serif;
             background: #1e1e1e;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .sidebar {
-            width: 280px;
+            width: 260px;
             height: 100vh;
             background: linear-gradient(180deg, #7b0000, #3b0000);
             color: #fff;
@@ -27,19 +28,28 @@
             overflow-x: hidden;
         }
 
-        .sidebar::-webkit-scrollbar { width: 6px; }
-        .sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
-        .sidebar::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 10px; }
+        .sidebar::-webkit-scrollbar { 
+            width: 6px; 
+        }
+
+        .sidebar::-webkit-scrollbar-track { 
+            background: rgba(255,255,255,0.1); 
+        }
+
+        .sidebar::-webkit-scrollbar-thumb { 
+            background: #ffc107; 
+            border-radius: 10px; 
+        }
 
         .sidebar-header {
             text-align: center;
-            padding: 25px 15px;
+            padding: 20px 15px;
             border-bottom: 1px solid rgba(255,255,255,.2);
         }
 
         .sidebar-header img {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             margin-bottom: 10px;
             border-radius: 50%;
             object-fit: cover;
@@ -48,38 +58,47 @@
 
         .sidebar-header h2 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
             color: #ffc107;
+            line-height: 1.2;
         }
 
         .sidebar-header span {
-            font-size: 14px;
+            font-size: 13px;
             opacity: .9;
         }
 
-        .menu { padding: 15px 0; }
+        .menu { 
+            padding: 15px 0;
+        }
 
         .menu-title {
-            padding: 10px 25px;
+            padding: 8px 20px;
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: rgba(255,255,255,0.5);
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .menu a {
             display: flex;
             align-items: center;
-            padding: 12px 25px;
+            padding: 10px 20px;
             color: #fff;
             text-decoration: none;
             transition: .3s;
+            font-size: 14px;
         }
 
         .menu a i {
-            width: 30px;
-            font-size: 18px;
+            width: 25px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .menu a span {
+            margin-left: 10px;
         }
 
         .menu a:hover,
@@ -90,92 +109,167 @@
         }
 
         .content {
-            margin-left: 280px;
-            padding: 25px;
+            margin-left: 260px;
+            padding: 20px;
             color: #fff;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        @media screen and (max-height: 750px) {
+            .sidebar-header {
+                padding: 15px 15px;
+            }
+            
+            .sidebar-header img {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 8px;
+            }
+            
+            .sidebar-header h2 {
+                font-size: 16px;
+            }
+            
+            .menu-title {
+                padding: 6px 20px;
+                margin-top: 3px;
+                font-size: 10px;
+            }
+            
+            .menu a {
+                padding: 8px 20px;
+                font-size: 13px;
+            }
+            
+            .menu a i {
+                font-size: 15px;
+            }
+        }
+
+        @media screen and (max-height: 600px) {
+            .sidebar-header {
+                padding: 10px 15px;
+            }
+            
+            .sidebar-header img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 5px;
+            }
+            
+            .sidebar-header h2 {
+                font-size: 14px;
+            }
+            
+            .sidebar-header span {
+                font-size: 11px;
+            }
+            
+            .menu-title {
+                padding: 4px 20px;
+                font-size: 9px;
+            }
+            
+            .menu a {
+                padding: 6px 20px;
+                font-size: 12px;
+            }
+            
+            .menu a i {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
     <form runat="server">
-
         <div class="sidebar">
-    <div class="sidebar-header">
-        <img src="/Images/LOGO.png" alt="Logo" onerror="this.src='https://via.placeholder.com/80';" />
-        <h2>Caballeros TasteNet</h2>
-        <span>Admin</span>
-    </div>
+            <div class="sidebar-header">
+                <img src="/Images/LOGO.png" alt="Logo" onerror="this.src='https://via.placeholder.com/80';" />
+                <h2>Caballeros TasteNet</h2>
+                <span>Super Admin</span>
+            </div>
 
-    <div class="menu" id="nav-menu">
-        <div class="menu-title">Overview</div>
-        <a href="/Users/SuperAdmin/Dashboard.aspx">
-            <i class="fa-solid fa-house"></i> Dashboard
-        </a>
+            <div class="menu" id="nav-menu">
+                <div class="menu-title">Overview</div>
+                <a href="/Users/SuperAdmin/Dashboard.aspx">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
 
-        <div class="menu-title">Users</div>
-        <a href="/Users/SuperAdmin/CustomerManagement.aspx">
-            <i class="fa-solid fa-user"></i> Customer Management
-        </a>
-        <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
-            <i class="fa-solid fa-motorcycle"></i> Delivery Personnel
-        </a>
+                <div class="menu-title">Users</div>
+                <a href="/Users/SuperAdmin/CustomerManagement.aspx">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Customer Management</span>
+                </a>
+                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <span>Delivery Personnel</span>
+                </a>
 
-        <div class="menu-title">Menu & Stock</div>
-        <a href="/Users/SuperAdmin/StockManagement.aspx">
-            <i class="fa-solid fa-box"></i> Stock Management
-        </a>
-        <a href="/Users/SuperAdmin/Categories.aspx">
-            <i class="fa-solid fa-list"></i> Categories
-        </a>
+                <div class="menu-title">Menu & Stock</div>
+                <a href="/Users/SuperAdmin/StockManagement.aspx">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Stock Management</span>
+                </a>
+                <a href="/Users/SuperAdmin/Categories.aspx">
+                    <i class="fa-solid fa-list"></i>
+                    <span>Categories</span>
+                </a>
 
-        <div class="menu-title">Orders</div>
-        <a href="/Users/SuperAdmin/AllOrders.aspx">
-            <i class="fa-solid fa-receipt"></i> All Orders
-        </a>
+                <div class="menu-title">Orders</div>
+                <a href="/Users/SuperAdmin/AllOrders.aspx">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>All Orders</span>
+                </a>
 
-        <div class="menu-title">Payments</div>
-        <a href="/Users/SuperAdmin/Transactions.aspx">
-            <i class="fa-solid fa-dollar-sign"></i> Transaction
-        </a>
+                <div class="menu-title">Payments</div>
+                <a href="/Users/SuperAdmin/Transactions.aspx">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    <span>Transaction</span>
+                </a>
 
-        <div class="menu-title">Analytics</div>
-        <a href="/Users/SuperAdmin/Reports.aspx">
-            <i class="fa-solid fa-chart-column"></i> Reports
-        </a>
-        <a href="/Users/SuperAdmin/PromoCodes.aspx">
-            <i class="fa-solid fa-tag"></i> Promo Codes
-        </a>
+                <div class="menu-title">Analytics</div>
+                <a href="/Users/SuperAdmin/Reports.aspx">
+                    <i class="fa-solid fa-chart-column"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="/Users/SuperAdmin/PromoCodes.aspx">
+                    <i class="fa-solid fa-tag"></i>
+                    <span>Promo Codes</span>
+                </a>
 
-        <div class="menu-title">Account</div>
-        <a href="/Users/SuperAdmin/Settings.aspx">
-            <i class="fa-solid fa-gear"></i> Settings
-        </a>
-        <a href="/Login.aspx">
-            <i class="fa-solid fa-right-from-bracket"></i> Log Out
-        </a>
-    </div>
-</div>
+                <div class="menu-title">Account</div>
+                <a href="/Users/SuperAdmin/Settings.aspx">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="/Login.aspx">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </div>
 
         <div class="content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
         </div>
-
     </form>
 
-   <script>
-       document.addEventListener("DOMContentLoaded", function () {
-           var currentPath = window.location.pathname.toLowerCase();
-           var menuLinks = document.querySelectorAll('#nav-menu a');
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var currentPath = window.location.pathname.toLowerCase();
+            var menuLinks = document.querySelectorAll('#nav-menu a');
 
-           menuLinks.forEach(function (link) {
-               var linkPath = link.getAttribute('href').toLowerCase();
+            menuLinks.forEach(function (link) {
+                var linkPath = link.getAttribute('href').toLowerCase();
 
-               // Pathing ng url modules to
-               if (currentPath === linkPath || (currentPath === "/" && linkPath.includes("dashboard"))) {
-                   link.classList.add('active');
-               }
-           });
-       });
-   </script>
+                if (currentPath === linkPath || (currentPath === "/" && linkPath.includes("dashboard"))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

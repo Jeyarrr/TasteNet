@@ -4,13 +4,9 @@
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TasteNet Rider Portal</title>
 
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 
     <style>
@@ -20,7 +16,7 @@
             --accent-color: #ffc107;
             --text-light: #fff;
             --bg-dark: #1e1e1e;
-            --sidebar-width: 280px;
+            --sidebar-width: 260px;
         }
 
         body {
@@ -28,14 +24,10 @@
             font-family: 'Poppins', sans-serif;
             background: #1e1e1e;
             color: #fff;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .rider-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar - Updated with SuperAdmin style */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -43,54 +35,49 @@
             position: fixed;
             overflow-y: auto;
             overflow-x: hidden;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
         }
 
         .sidebar::-webkit-scrollbar { 
             width: 6px; 
         }
+
         .sidebar::-webkit-scrollbar-track { 
             background: rgba(255,255,255,0.1); 
         }
+
         .sidebar::-webkit-scrollbar-thumb { 
             background: var(--accent-color); 
             border-radius: 10px; 
         }
-        .sidebar {
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-color) rgba(255,255,255,0.1);
-        }
 
         .sidebar-header {
             text-align: center;
-            padding: 25px 15px;
+            padding: 20px 15px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
         }
 
         .sidebar-header img {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 15px;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent-color);
-            background: #fff;
-            padding: 3px;
         }
 
         .sidebar-header h2 {
             margin: 0 0 5px 0;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--accent-color);
             font-weight: 600;
+            line-height: 1.2;
         }
 
         .sidebar-header span {
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.9;
             display: block;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .status-badge {
@@ -104,21 +91,6 @@
             border: 1px solid rgba(255, 193, 7, 0.3);
         }
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            transition: color 0.3s;
-            display: none;
-        }
-
-        .close-btn:hover {
-            color: var(--accent-color);
-        }
-
         .menu {
             list-style: none;
             padding: 15px 0;
@@ -126,12 +98,12 @@
         }
 
         .menu-title {
-            padding: 10px 25px;
+            padding: 8px 20px;
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: rgba(255, 255, 255, 0.5);
-            margin-top: 15px;
+            margin-top: 5px;
         }
 
         .menu li {
@@ -141,48 +113,49 @@
         .menu a {
             display: flex;
             align-items: center;
-            padding: 12px 25px;
+            padding: 10px 20px;
             color: #fff;
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 4px solid transparent;
+            font-size: 14px;
         }
 
         .menu a i {
-            width: 30px;
-            font-size: 18px;
+            width: 25px;
+            font-size: 16px;
             text-align: center;
         }
 
-        .menu a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--accent-color) !important;
-            border-left-color: var(--accent-color);
+        .menu a span {
+            margin-left: 10px;
         }
 
+        .menu a:hover,
         .menu a.active {
             background: rgba(255, 255, 255, 0.15);
             color: var(--accent-color) !important;
             border-left-color: var(--accent-color);
-            font-weight: 500;
         }
 
-        .menu a:focus {
-            outline: 2px solid var(--accent-color);
-            outline-offset: -2px;
+        .notification-badge {
+            margin-left: auto;
+            font-size: 10px;
+            padding: 2px 8px;
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--accent-color);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
         }
 
-        /* Main Content */
         .main-content {
-            flex: 1;
-            padding: 30px;
+            padding: 20px;
             margin-left: var(--sidebar-width);
-            background: #1e1e1e;
-            min-height: 100vh;
-            transition: margin-left 0.3s ease;
+            color: #fff;
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        /* Stats Cards for Dashboard */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -222,111 +195,149 @@
             color: #fff;
         }
 
-        .stat-card .change {
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .positive {
-            color: #4CAF50;
-        }
-
-        .negative {
-            color: #f44336;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .sidebar {
-                width: 80px;
-                transition: width 0.3s ease;
-                z-index: 1000;
+        @media screen and (max-height: 750px) {
+            .sidebar-header {
+                padding: 15px 15px;
             }
             
-            .sidebar:hover,
-            .sidebar.expanded {
-                width: var(--sidebar-width);
+            .sidebar-header img {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 8px;
             }
             
-            .sidebar-header h2,
-            .sidebar-header span,
-            .menu-title,
-            .menu a span:not(.status-badge) {
-                display: none;
+            .sidebar-header h2 {
+                font-size: 16px;
             }
             
-            .sidebar:hover .sidebar-header h2,
-            .sidebar:hover .sidebar-header span,
-            .sidebar:hover .menu-title,
-            .sidebar:hover .menu a span:not(.status-badge),
-            .sidebar.expanded .sidebar-header h2,
-            .sidebar.expanded .sidebar-header span,
-            .sidebar.expanded .menu-title,
-            .sidebar.expanded .menu a span:not(.status-badge) {
-                display: block;
+            .sidebar-header span {
+                font-size: 12px;
+            }
+            
+            .menu-title {
+                padding: 6px 20px;
+                margin-top: 3px;
+                font-size: 10px;
             }
             
             .menu a {
-                justify-content: center;
+                padding: 8px 20px;
+                font-size: 13px;
             }
             
             .menu a i {
-                width: auto;
-                font-size: 20px;
+                font-size: 15px;
             }
             
-            .sidebar:hover .menu a,
-            .sidebar.expanded .menu a {
-                justify-content: flex-start;
-            }
-            
-            .sidebar:hover .menu a i,
-            .sidebar.expanded .menu a i {
-                width: 30px;
-                font-size: 18px;
-            }
-            
-            .main-content {
-                margin-left: 80px;
-            }
-            
-            .sidebar:hover + .main-content,
-            .sidebar.expanded + .main-content {
-                margin-left: var(--sidebar-width);
-            }
-            
-            .close-btn {
-                display: block;
+            .status-badge {
+                font-size: 11px;
+                padding: 3px 10px;
             }
         }
 
-        @media (max-width: 768px) {
+        @media screen and (max-height: 600px) {
+            .sidebar-header {
+                padding: 10px 15px;
+            }
+            
+            .sidebar-header img {
+                width: 40px;
+                height: 40px;
+                margin-bottom: 5px;
+            }
+            
+            .sidebar-header h2 {
+                font-size: 14px;
+            }
+            
+            .sidebar-header span {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+            
+            .menu-title {
+                padding: 4px 20px;
+                font-size: 9px;
+            }
+            
+            .menu a {
+                padding: 6px 20px;
+                font-size: 12px;
+            }
+            
+            .menu a i {
+                font-size: 14px;
+            }
+            
+            .status-badge {
+                font-size: 10px;
+                padding: 2px 8px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar:hover {
+                width: 260px;
+            }
+            
             .main-content {
+                margin-left: 70px;
+                padding: 15px;
+            }
+            
+            .sidebar:not(:hover) .sidebar-header h2,
+            .sidebar:not(:hover) .sidebar-header span,
+            .sidebar:not(:hover) .menu a span:not(.notification-badge),
+            .sidebar:not(:hover) .menu-title {
+                display: none;
+            }
+            
+            .sidebar:not(:hover) .status-badge {
+                display: none;
+            }
+            
+            .sidebar:not(:hover) .menu a {
+                justify-content: center;
+                padding: 15px 10px;
+            }
+            
+            .sidebar:not(:hover) .sidebar-header {
+                padding: 15px 5px;
+            }
+            
+            .sidebar:not(:hover) .sidebar-header img {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .sidebar:not(:hover) .notification-badge {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                margin: 0;
+            }
+            
+            .sidebar:hover .menu a {
+                justify-content: flex-start;
+                padding: 10px 20px;
+            }
+            
+            .sidebar:hover .sidebar-header {
                 padding: 20px 15px;
+            }
+            
+            .sidebar:hover .sidebar-header img {
+                width: 60px;
+                height: 60px;
             }
             
             .stats-cards {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Loading State */
-        .loading {
-            position: relative;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(30, 30, 30, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
         }
     </style>
 
@@ -335,94 +346,86 @@
 
 <body>
     <form id="form1" runat="server">
-        <div class="rider-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="/Images/RiderAvatar.png" alt="Rider" onerror="this.src='https://ui-avatars.com/api/?name=Rider&background=7b0000&color=fff&size=80';" />
+                <h2>Caballeros TasteNet</h2>
+                <span style="color: var(--text-light);">Rider Portal</span>
+                <div class="status-badge">Online</div>
+            </div>
 
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <img src="/Images/RiderAvatar.png" alt="Rider" onerror="this.src='https://ui-avatars.com/api/?name=Rider&background=7b0000&color=fff&size=80';" />
-                    <h2>Caballeros TasteNet</h2>
-                    <span style="color: var(--text-light);">Rider Portal</span>
-                    <div class="status-badge">Online</div>
-                </div>
+            <ul class="menu" id="nav-menu">
+                <div class="menu-title">Overview</div>
+                <li>
+                    <a href="/Users/Rider/Dashboard.aspx">
+                        <i class="fa-solid fa-cube"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
 
-                <ul class="menu" id="nav-menu">
-                    <div class="menu-title">Overview</div>
-                    <li>
-                        <a href="/Users/Rider/Dashboard.aspx">
-                            <i class="fa-solid fa-cube"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
+                <div class="menu-title">Delivery</div>
+                <li>
+                    <a href="/Users/Rider/CurrentDeliveries.aspx">
+                        <i class="fa-solid fa-motorcycle"></i>
+                        <span>Current Deliveries</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Users/Rider/DeliveryHistory.aspx">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Delivery History</span>
+                    </a>
+                </li>
 
-                    <div class="menu-title">Delivery</div>
-                    <li>
-                        <a href="/Users/Rider/CurrentDeliveries.aspx">
-                            <i class="fa-solid fa-motorcycle"></i>
-                            <span>Current Deliveries</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/Users/Rider/DeliveryHistory.aspx">
-                            <i class="fa-solid fa-clock-rotate-left"></i>
-                            <span>Delivery History</span>
-                        </a>
-                    </li>
+                <div class="menu-title">Earnings</div>
+                <li>
+                    <a href="/Users/Rider/Earnings.aspx">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <span>Earnings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Users/Rider/Transactions.aspx">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>Transactions</span>
+                    </a>
+                </li>
 
-                    <div class="menu-title">Earnings</div>
-                    <li>
-                        <a href="/Users/Rider/Earnings.aspx">
-                            <i class="fa-solid fa-dollar-sign"></i>
-                            <span>Earnings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/Users/Rider/Transactions.aspx">
-                            <i class="fa-solid fa-receipt"></i>
-                            <span>Transactions</span>
-                        </a>
-                    </li>
+                <div class="menu-title">Account</div>
+                <li>
+                    <a href="/Users/Rider/Profile.aspx">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Users/Rider/Settings.aspx">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Users/Rider/Notifications.aspx">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Login.aspx">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-                    <div class="menu-title">Account</div>
-                    <li>
-                        <a href="/Users/Rider/Profile.aspx">
-                            <i class="fa-solid fa-user"></i>
-                            <span>Profile</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/Users/Rider/Settings.aspx">
-                            <i class="fa-solid fa-gear"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/Users/Rider/Notifications.aspx">
-                            <i class="fa-solid fa-bell"></i>
-                            <span>Notifications</span>
-                            <span class="status-badge" style="margin-left: auto; font-size: 10px; padding: 2px 8px;">3</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/Login.aspx">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            <span>Log Out</span>
-                        </a>
-                    </li>
-                </ul>
-            </aside>
-
-            <!-- Page Content -->
-            <main class="main-content" id="mainContent">
-                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
-            </main>
-
-        </div>
+        <main class="main-content" id="mainContent">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
+        </main>
     </form>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Active link highlighting
             var currentPath = window.location.pathname.toLowerCase();
             var menuLinks = document.querySelectorAll('#nav-menu a');
 
@@ -432,34 +435,13 @@
 
                 var linkPath = linkHref.toLowerCase();
 
-                // Match exact path or parent paths
                 if (currentPath === linkPath ||
-                    currentPath.includes(linkPath) && linkPath !== '/') {
+                    (currentPath.includes(linkPath) && linkPath !== '/')) {
                     link.classList.add('active');
                 }
             });
 
-            // Mobile sidebar toggle
-            var sidebar = document.querySelector('.sidebar');
-            var mainContent = document.getElementById('mainContent');
-
-            if (window.innerWidth <= 992) {
-                // Collapse sidebar on mobile by default
-                sidebar.classList.remove('expanded');
-            }
-
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function (event) {
-                if (window.innerWidth <= 992 &&
-                    !sidebar.contains(event.target) &&
-                    !event.target.classList.contains('menu-toggle')) {
-                    sidebar.classList.remove('expanded');
-                }
-            });
-
-            // Update rider status badge
             function updateRiderStatus() {
-                // Simulate status update (in real app, this would come from server)
                 var statusBadge = document.querySelector('.status-badge');
                 var isOnline = Math.random() > 0.5;
 
@@ -476,7 +458,6 @@
                 }
             }
 
-            // Update status every 30 seconds
             setInterval(updateRiderStatus, 30000);
         });
     </script>

@@ -123,6 +123,7 @@
     <Content Include="Images\Hotsilog.jpg" />
     <Content Include="Images\landingpage.jpg" />
     <Content Include="Images\LOGO.png" />
+    <Content Include="Images\TasteNet.png" />
     <Content Include="Users\Customer\LandingPage.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
