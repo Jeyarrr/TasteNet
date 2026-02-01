@@ -93,7 +93,7 @@
             border-radius: 20px;
             border: none;
             outline: none;
-            font-size: 12.5px;
+            font-size: 11.5px;
             box-sizing: border-box;
             line-height: 38px;
         }
