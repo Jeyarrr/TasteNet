@@ -31,17 +31,17 @@
         }
 
         .login-card {
-            width: 420px;
+            width: 360px;
             background: #4b0000;
-            padding: 40px 30px;
-            border-radius: 25px;
+            padding: 25px 20px;
+            border-radius: 18px;
             text-align: center;
             color: #fff;
             border: 2px solid #ffc107;
-            box-shadow: 0 0 10px #ffc107, 
-                        0 0 20px #ffc107, 
-                        0 0 40px rgba(255, 193, 7, 0.3),
-                        inset 0 0 10px rgba(255, 193, 7, 0.2);
+            box-shadow: 0 0 6px #ffc107, 
+                        0 0 12px #ffc107, 
+                        0 0 24px rgba(255, 193, 7, 0.3),
+                        inset 0 0 6px rgba(255, 193, 7, 0.2);
             transition: all 0.3s ease;
             animation: glowPulse 1.5s infinite alternate;
         }
@@ -54,16 +54,17 @@
         }
 
         .logo img {
-            width: 110px;
-            margin-bottom: 15px;
+            width: 80px;
+            margin-bottom: 8px;
             border-radius: 50%;
             border: solid #FFD41D;
         }
 
         h2 {
-            margin-top: 2px;
-            margin-bottom: 25px;
+            margin-top: 0;
+            margin-bottom: 18px;
             font-weight: 600;
+            font-size: 1.4em;
         }
 
         .input-group {
@@ -71,7 +72,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .input-box-wrapper {
@@ -81,20 +82,20 @@
 
         .input-box {
             width: 85%;
-            margin: 0 auto 15px auto;
+            margin: 0 auto 10px auto;
             position: relative;
         }
 
         .input-box input {
             width: 100%;
-            height: 48px;
-            padding: 0 45px 0 20px;
-            border-radius: 30px;
+            height: 38px;
+            padding: 0 35px 0 12px;
+            border-radius: 20px;
             border: none;
             outline: none;
-            font-size: 14px;
+            font-size: 12.5px;
             box-sizing: border-box;
-            line-height: 48px;
+            line-height: 38px;
         }
 
         .password-box {
@@ -103,16 +104,17 @@
 
         .password-box i {
             position: absolute;
-            right: 18px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%) scale(1);
             color: #777;
             cursor: pointer;
             transition: transform 0.25s ease, opacity 0.25s ease;
+            font-size: 0.85em;
         }
 
         .password-box i.active {
-            transform: translateY(-50%) scale(1.2);
+            transform: translateY(-50%) scale(1.05);
             opacity: 0.85;
         }
 
@@ -121,27 +123,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 10px auto 20px auto;
-            font-size: 14px;
+            margin: 6px auto 12px auto;
+            font-size: 12.5px;
         }
 
         .remember-me {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
 
         .remember-me input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 14px;
+            height: 14px;
             cursor: pointer;
             accent-color: #ffc107;
-            transform: scale(1.1);
+            transform: scale(1);
             transition: all 0.2s ease;
         }
 
         .remember-me input[type="checkbox"]:hover {
-            transform: scale(1.2);
+            transform: scale(1.05);
             filter: brightness(1.2);
         }
 
@@ -161,11 +163,12 @@
             color: #ffc107;
             text-decoration: none;
             font-weight: 600;
-            padding: 5px 12px;
-            border-radius: 20px;
+            padding: 3px 8px;
+            border-radius: 16px;
             background: rgba(255, 193, 7, 0.1);
             transition: all 0.3s ease;
             display: inline-block;
+            font-size: 0.85em;
         }
 
         .forgot-password:hover,
@@ -173,19 +176,19 @@
             background: rgba(255, 193, 7, 0.2);
             text-decoration: none;
             color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
         }
 
         .btn-login {
-            margin-top: 15px;
+            margin-top: 10px;
             background: linear-gradient(to right, #4b0000, #a10000);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            padding: 14px;
-            width: 60%;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            padding: 10px;
+            width: 45%;
             color: #fff;
-            font-size: 15px;
-            border-radius: 30px;
+            font-size: 13px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
@@ -195,20 +198,20 @@
         .btn-login:hover {
             background: linear-gradient(to right, #6a0000, #c20000);
             box-shadow:
-                0 0 8px #ffc107,
-                0 0 16px #ffc107,
-                0 0 32px rgba(255, 193, 7, 0.7);
+                0 0 5px #ffc107,
+                0 0 10px #ffc107,
+                0 0 20px rgba(255, 193, 7, 0.7);
             border-color: #ffc107;
-            transform: translateY(-3px) scale(1.02);
+            transform: translateY(-1px) scale(1.02);
             animation: glowPulse 1.5s infinite alternate;
         }
 
         @keyframes glowPulse{
             from{
-                box-shadow: 0 0 8px #ffc107;
+                box-shadow: 0 0 5px #ffc107;
             }
             to{
-                box-shadow: 0 0 20px #ffc107, 0 0 40px rgba(255, 193, 7, 0.8);
+                box-shadow: 0 0 12px #ffc107, 0 0 24px rgba(255, 193, 7, 0.8);
             }
         }
         
@@ -217,39 +220,40 @@
             background-color: transparent !important; 
             padding: 0px 0 !important;
             border-radius: 0 !important;
-            margin: 0px 0 !important;
+            margin: 4px 0 !important;
             display: block;
             font-weight: 600;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             border: none !important;
+            font-size: 0.85em;
         }
 
         .extra-text {
-            margin-top: 18px;
-            font-size: 13px;
+            margin-top: 12px;
+            font-size: 11.5px;
             color: #fff;
         }
 
         .social-login {
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .social-login i {
-            width: 45px;
-            height: 45px;
-            line-height: 45px;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
             border-radius: 50%;
             background: #fff;
             color: #000;
-            font-size: 20px;
-            margin: 0 6px;
+            font-size: 16px;
+            margin: 0 4px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .social-login i:hover {
-            transform: scale(1.1) translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+            transform: scale(1.05) translateY(-1px);
+            box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
         }
 
         .social-login .fa-facebook-f {
