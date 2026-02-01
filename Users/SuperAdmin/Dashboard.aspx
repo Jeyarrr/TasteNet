@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Dashboard | TasteNet" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Dashboard" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -48,90 +49,100 @@
 
         .header-actions { 
             display: flex; 
-            gap: 20px; 
+            gap: 10px;
             align-items: center; 
         }
 
         .filter-dropdown {
-            padding: 14px 20px;
-            border-radius: 16px;
-            border: 2px solid #e2d1d1;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #e2d1d1;
             background: white;
             color: #555;
             outline: none;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 500;
-            min-width: 150px;
+            min-width: 100px;
             cursor: pointer;
             transition: all 0.3s ease;
+            height: 36px;
         }
 
         .filter-dropdown:focus {
             border-color: var(--primary-maroon);
-            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.05);
+            box-shadow: 0 0 0 2px rgba(107, 13, 30, 0.05);
         }
 
         .btn-export {
             background: var(--primary-maroon);
             color: white;
             border: none;
-            padding: 16px 32px;
-            border-radius: 16px;
+            padding: 8px 16px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 16px;
-            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
+            font-size: 13px;
+            box-shadow: 0 3px 8px rgba(107, 13, 30, 0.2);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
         .btn-export:hover {
             background: #5a0b19;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(107, 13, 30, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.3);
+        }
+
+        .btn-export i {
+            font-size: 12px;
         }
 
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            margin-bottom: 35px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
             background: white;
-            padding: 30px 25px;
-            border-radius: var(--radius-2xl);
+            padding: 20px;
+            border-radius: 18px;
             box-shadow: var(--card-shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .stat-card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 15px 40px rgba(107, 13, 30, 0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(107, 13, 30, 0.12);
         }
 
         .stat-label {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--muted-text);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .stat-value { 
-            font-size: 40px; 
+            font-size: 32px;
             font-weight: 700; 
             color: var(--primary-maroon); 
-            margin: 10px 0; 
+            margin: 8px 0;
             line-height: 1;
         }
         
         .stat-trend { 
-            font-size: 14px; 
+            font-size: 13px;
             font-weight: 600; 
-            margin-top: 12px;
+            margin-top: 10px;
         }
         
         .trend-up { 
@@ -139,13 +150,13 @@
         }
 
         .icon-box {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .main-grid {
@@ -157,50 +168,58 @@
         .chart-box, .side-box {
             background: white;
             border-radius: var(--radius-2xl);
-            padding: 30px;
+            padding: 25px;
             box-shadow: var(--card-shadow);
         }
 
         .box-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: var(--primary-maroon);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .meal-rank {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-maroon) !important;
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .meal-rank.gray {
+            background: #e2d1d1 !important;
+        }
+
+        .side-box {
+            padding: 20px;
+        }
+
         .meal-item {
             display: flex;
             align-items: center;
-            padding: 18px;
-            border-radius: 18px;
+            padding: 12px 15px;
+            border-radius: 14px;
             background: #fffcf8;
-            margin-bottom: 15px;
-            border: 2px solid #f3ebe0;
+            margin-bottom: 10px;
+            border: 1.5px solid #f3ebe0;
             transition: all 0.3s ease;
         }
 
         .meal-item:hover {
             background: #fefaf5;
             border-color: #e2d1d1;
-            transform: translateX(5px);
-        }
-
-        .meal-rank {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-maroon);
-            color: white;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            margin-right: 20px;
-            flex-shrink: 0;
+            transform: translateX(3px);
         }
 
         .meal-info { 
@@ -209,13 +228,13 @@
         
         .meal-name { 
             font-weight: 600; 
-            font-size: 16px; 
-            margin: 0 0 5px 0; 
+            font-size: 14px;
+            margin: 0 0 4px 0;
             color: var(--text-dark); 
         }
         
         .meal-sales { 
-            font-size: 14px; 
+            font-size: 12px;
             color: var(--muted-text); 
             margin: 0; 
         }
@@ -223,14 +242,14 @@
         .meal-price { 
             font-weight: 700; 
             color: var(--primary-maroon); 
-            font-size: 16px;
-            margin-left: 15px;
+            font-size: 14px;
+            margin-left: 10px;
         }
 
         .badge-stock {
-            padding: 10px 18px;
-            border-radius: 14px;
-            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 10px;
             font-weight: bold;
             text-transform: uppercase;
             display: inline-block;
@@ -249,27 +268,28 @@
         .chart-controls {
             display: flex;
             background: #f3ebe0;
-            padding: 6px;
-            border-radius: 16px;
-            gap: 5px;
+            padding: 5px;
+            border-radius: 12px;
+            gap: 4px;
         }
 
         .chart-btn {
-            padding: 10px 20px;
-            border-radius: 14px;
+            padding: 8px 16px;
+            border-radius: 10px;
             border: none;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             background: transparent;
             color: var(--muted-text);
             transition: all 0.3s ease;
+            min-width: 60px;
         }
 
         .chart-btn.active { 
             background: var(--primary-maroon); 
             color: white; 
-            box-shadow: 0 2px 8px rgba(107, 13, 30, 0.2);
+            box-shadow: 0 2px 6px rgba(107, 13, 30, 0.2);
         }
 
         .chart-btn:hover:not(.active) {
@@ -278,8 +298,15 @@
 
         .chart-container {
             position: relative;
-            height: 320px;
+            height: 280px;
             width: 100%;
+            margin-top: 0; 
+            padding: 0 5px; 
+        }
+
+        #revenueChart {
+            width: 100% !important;
+            height: 100% !important;
         }
 
         .table-container {
@@ -446,11 +473,70 @@
             color: white;
         }
 
+        .recent-orders-full {
+            grid-column: 1 / -1;
+            margin-top: 30px;
+        }
+
+        .recent-orders-full .table-container {
+            margin-top: 0;
+        }
+
+        .recent-orders-full .custom-table th {
+            font-size: 13px;
+            padding: 16px 12px;
+        }
+
+        .recent-orders-full .custom-table td {
+            font-size: 13px;
+            padding: 18px 12px;
+        }
+
+        .recent-orders-full .order-id {
+            font-size: 13px;
+        }
+
+        .recent-orders-full .customer-name {
+            font-size: 13px;
+        }
+
+        .recent-orders-full .status-badge {
+            font-size: 11px;
+            padding: 6px 12px;
+        }
+
+        .recent-orders-full .action-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .stock-quick-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .compact-actions .btn-quick {
+            padding: 12px 16px; 
+            margin-bottom: 10px;
+            font-size: 14px; 
+            border-radius: 12px; 
+        }
+
+        .compact-actions .btn-quick i {
+            font-size: 13px; 
+        }
+
         @media (max-width: 1200px) {
             .stat-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
             .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .stock-quick-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -576,7 +662,7 @@
                 </div>
 
                 <div class="meal-item">
-                    <div class="meal-rank" style="background:#e2d1d1;">4</div>
+                    <div class="meal-rank">4</div>
                     <div class="meal-info">
                         <p class="meal-name">Bangsilog</p>
                         <p class="meal-sales">76 orders</p>
@@ -587,7 +673,7 @@
             </div>
         </div>
         
-        <div class="main-grid" style="margin-top: 30px;">
+        <div class="recent-orders-full">
             <div class="chart-box">
                 <div class="box-title">
                     Recent Orders
@@ -613,9 +699,9 @@
                                 <td class="customer-name">Jay-r Casano</td>
                                 <td>Cash On Delivery</td>
                                 <td>Tapsilog x2</td>
-                                <td style="font-weight:700; color:var(--primary-maroon);">₱350</td>
+                                <td style="font-weight:700; color:var(--primary-maroon); font-size: 13px;">₱350</td>
                                 <td><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td style="font-weight:600; color:var(--text-dark); font-size: 13px;">10:00 AM</td>
                                 <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
                             <tr>
@@ -623,9 +709,9 @@
                                 <td class="customer-name">George Gonzaga</td>
                                 <td>GCash</td>
                                 <td>Tofu Sisig x2</td>
-                                <td style="font-weight:700; color:var(--primary-maroon);">₱65</td>
+                                <td style="font-weight:700; color:var(--primary-maroon); font-size: 13px;">₱65</td>
                                 <td><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td style="font-weight:600; color:var(--text-dark); font-size: 13px;">10:00 AM</td>
                                 <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
                             <tr>
@@ -633,9 +719,9 @@
                                 <td class="customer-name">Zea Mae Sulit</td>
                                 <td>Paypal</td>
                                 <td>Arrozcaldo x1</td>
-                                <td style="font-weight:700; color:var(--primary-maroon);">₱50</td>
+                                <td style="font-weight:700; color:var(--primary-maroon); font-size: 13px;">₱50</td>
                                 <td><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td style="font-weight:600; color:var(--text-dark); font-size: 13px;">10:00 AM</td>
                                 <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
                             <tr>
@@ -643,9 +729,9 @@
                                 <td class="customer-name">Lalaine Reyes</td>
                                 <td>Cash On Delivery</td>
                                 <td>Goto Special x2</td>
-                                <td style="font-weight:700; color:var(--primary-maroon);">₱120</td>
+                                <td style="font-weight:700; color:var(--primary-maroon); font-size: 13px;">₱120</td>
                                 <td><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td style="font-weight:600; color:var(--text-dark); font-size: 13px;">10:00 AM</td>
                                 <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
                             <tr>
@@ -653,29 +739,31 @@
                                 <td class="customer-name">Bryle Andre Magallano</td>
                                 <td>GoTyme</td>
                                 <td>Tapsilog x2</td>
-                                <td style="font-weight:700; color:var(--primary-maroon);">₱350</td>
+                                <td style="font-weight:700; color:var(--primary-maroon); font-size: 13px;">₱350</td>
                                 <td><span class="badge-stock in-stock">COMPLETED</span></td>
-                                <td style="font-weight:600; color:var(--text-dark);">10:00 AM</td>
+                                <td style="font-weight:600; color:var(--text-dark); font-size: 13px;">10:00 AM</td>
                                 <td><div class="action-icon"><i class="fas fa-eye"></i></div></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+        </div>
 
+        <div class="stock-quick-grid">
             <div class="side-box">
                 <div class="box-title">
                     Stock Alerts <span class="alert-badge">2</span>
                 </div>
                 
-                <div class="meal-item" style="background: #fff4e6; border-color: #fed7aa;">
+                <div class="meal-item" style="background: #fff4e6; border-color: #fed7aa; margin-bottom: 12px;">
                     <div class="meal-info">
                         <p class="meal-name">Pork Sisig</p>
                         <p class="meal-sales" style="color: #c2410c; font-weight: 600;">Low stock (3 left)</p>
                     </div>
                 </div>
 
-                <div class="meal-item" style="background: #fee2e2; border-color: #fecaca;">
+                <div class="meal-item" style="background: #fee2e2; border-color: #fecaca; margin-bottom: 20px;">
                     <div class="meal-info">
                         <p class="meal-name">Goto Overload</p>
                         <p class="meal-sales" style="color: #b91c1c; font-weight: 600;">Out of stock</p>
@@ -683,8 +771,11 @@
                 </div>
 
                 <button type="button" class="btn-quick yellow"><i class="fas fa-boxes me-2"></i>Manage Stock</button>
-
-                <div class="box-title" style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #f3ebe0;">Quick Actions</div>
+            </div>
+            
+            <!-- Quick Actions on the right -->
+            <div class="side-box compact-actions">
+                <div class="box-title">Quick Actions</div>
                 <button type="button" class="btn-quick"><i class="fas fa-plus me-2"></i>Add New Menu Item</button>
                 <button type="button" class="btn-quick outline"><i class="fas fa-sync-alt me-2"></i>Update Stock Levels</button>
                 <button type="button" class="btn-quick outline"><i class="fas fa-exclamation-triangle me-2"></i>View Low Stock Items</button>
@@ -724,21 +815,29 @@
                         pointBackgroundColor: '#6b0d1e',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 5,
+                            bottom: 5,
+                            left: 10,
+                            right: 10
+                        }
+                    },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
                             backgroundColor: 'rgba(74, 14, 14, 0.9)',
-                            titleFont: { size: 14, family: "'Poppins', sans-serif" },
-                            bodyFont: { size: 13, family: "'Poppins', sans-serif" },
-                            padding: 12,
-                            cornerRadius: 10,
+                            titleFont: { size: 13, family: "'Poppins', sans-serif" },
+                            bodyFont: { size: 12, family: "'Poppins', sans-serif" },
+                            padding: 10,
+                            cornerRadius: 8,
                             displayColors: false,
                             callbacks: {
                                 label: function (context) {
@@ -753,13 +852,19 @@
                             grid: {
                                 color: '#f3ebe0',
                                 drawBorder: false,
-                                lineWidth: 2
+                                lineWidth: 1.5
                             },
                             ticks: {
                                 color: '#8a6d6d',
-                                font: { size: 12, family: "'Poppins', sans-serif" },
-                                padding: 10,
-                                callback: function (value) { return '₱' + value.toLocaleString(); }
+                                font: { size: 11, family: "'Poppins', sans-serif" },
+                                padding: 5,
+                                maxTicksLimit: 6,
+                                callback: function (value) {
+                                    if (value >= 1000) {
+                                        return '₱' + (value / 1000).toFixed(0) + 'k';
+                                    }
+                                    return '₱' + value;
+                                }
                             }
                         },
                         x: {
@@ -768,8 +873,9 @@
                             },
                             ticks: {
                                 color: '#8a6d6d',
-                                font: { size: 12, family: "'Poppins', sans-serif" },
-                                padding: 10
+                                font: { size: 11, family: "'Poppins', sans-serif" },
+                                padding: 5,
+                                maxTicksLimit: 8
                             }
                         }
                     }
