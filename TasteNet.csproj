@@ -185,6 +185,7 @@
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
     <Content Include="Users\Rider\Dashboard.aspx" />
     <Content Include="Users\Rider\DeliveryHistory.aspx" />
+    <Content Include="Users\Rider\Earnings.aspx" />
     <Content Include="Users\SuperAdmin\AllOrders.aspx" />
     <Content Include="Users\SuperAdmin\Categories.aspx" />
     <Content Include="Users\SuperAdmin\CustomerManagement.aspx" />
@@ -254,6 +255,13 @@
     </Compile>
     <Compile Include="Users\Rider\DeliveryHistory.aspx.designer.cs">
       <DependentUpon>DeliveryHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Rider\Earnings.aspx.cs">
+      <DependentUpon>Earnings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Rider\Earnings.aspx.designer.cs">
+      <DependentUpon>Earnings.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\AllOrders.aspx.cs">
       <DependentUpon>AllOrders.aspx</DependentUpon>

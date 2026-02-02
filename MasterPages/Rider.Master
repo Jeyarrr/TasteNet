@@ -149,7 +149,7 @@
         }
 
         .main-content {
-            padding: 20px;
+            padding: 0px;
             margin-left: var(--sidebar-width);
             color: #fff;
             height: 100vh;
@@ -365,18 +365,12 @@
 
                 <div class="menu-title">Delivery</div>
                 <li>
-                    <a href="/Users/Rider/CurrentDeliveries.aspx">
-                        <i class="fa-solid fa-motorcycle"></i>
-                        <span>Current Deliveries</span>
-                    </a>
-                </li>
-                <li>
                     <a href="/Users/Rider/DeliveryHistory.aspx">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <i class="fa-solid fa-motorcycle"></i>
                         <span>Delivery History</span>
                     </a>
                 </li>
-
+              
                 <div class="menu-title">Earnings</div>
                 <li>
                     <a href="/Users/Rider/Earnings.aspx">

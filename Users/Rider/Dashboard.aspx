@@ -4,7 +4,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Based on your screenshot color palette */
+        
+        html, body, form {
+         margin: 0;
+         padding: 0;
+         background: #f5f6f8;
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+/* ===== CENTERED PAGE WRAPPER ===== */
+        .history-container {
+          max-width: 1200px;        /* 🔥 controls UI size */
+         margin: 0 auto;           /* 🔥 center horizontally */
+         padding: 24px 20px;
+       }
+
+/* ===== HEADER ===== */
+         .page-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 18px;
+          color :#ffffff;
+         }
+
+        .page-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
         :root {
             --primary-dark: #1a1a1a;         /* Sidebar color */
             --primary-maroon: #8b0000;       /* Main brand color (from TasteNet) */
@@ -35,9 +63,9 @@
         /* Main Container */
         .dashboard-container {
             padding: 20px 30px;
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
-            background: #fffaf3;
+            background: #ffffff;
         }
 
         /* Top Bar - Simpler, cleaner version */
