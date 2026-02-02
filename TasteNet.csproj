@@ -183,6 +183,7 @@
     <Content Include="Scripts\WebForms\WebForms.js" />
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
+    <Content Include="Users\Customer\Menu.aspx" />
     <Content Include="Users\Rider\Dashboard.aspx" />
     <Content Include="Users\Rider\DeliveryHistory.aspx" />
     <Content Include="Users\SuperAdmin\AllOrders.aspx" />
@@ -240,6 +241,13 @@
     </Compile>
     <Compile Include="MasterPages\SuperAdmin.Master.designer.cs">
       <DependentUpon>SuperAdmin.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Customer\Menu.aspx.cs">
+      <DependentUpon>Menu.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Customer\Menu.aspx.designer.cs">
+      <DependentUpon>Menu.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\Rider\Dashboard.aspx.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
