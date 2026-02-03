@@ -1,256 +1,287 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/Rider.Master" AutoEventWireup="true" CodeBehind="DeliveryHistory.aspx.cs" Inherits="TasteNet.Users.Rider.DeliveryHistory" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 
-    <style>
-        .history-container {
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
+   <style>
+/* ===== RESET ===== */
+html, body, form {
+    margin: 0;
+    padding: 0;
+    background: #f5f6f8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-        /* Page Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+/* ===== CENTERED PAGE WRAPPER ===== */
+.history-container {
+    max-width: 1200px;        /* 🔥 controls UI size */
+    margin: 0 auto;           /* 🔥 center horizontally */
+    padding: 24px 20px;
+}
 
-        .page-header h2 {
-            font-size: 18px;
-            color: #333;
-            font-weight: 500;
-        }
+/* ===== HEADER ===== */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    color :#000000;
+}
 
-        .filter-dropdown {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            font-size: 13px;
-            background: white;
-            color: #555;
-        }
+.page-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
 
-        /* Summary Row */
-        .summary-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+/* ===== SUMMARY ===== */
+.summary-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 18px;
+}
 
-        .summary-card {
-            background: #fff;
-            padding: 15px 20px;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.summary-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid #e6e6e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color :#000000;
+}
 
-        .summary-card small {
-            color: #888;
-            font-size: 11px;
-            display: block;
-        }
+.summary-card small {
+    color: #888;
+    font-size: 11px;
+}
 
-        .summary-card h3 {
-            margin: 5px 0 0;
-            font-size: 20px;
-        }
+.summary-card h3 {
+    margin: 4px 0 0;
+    font-size: 20px;
+}
 
-        /* Order Cards List */
-        .order-card {
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            padding: 15px 20px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            transition: transform 0.2s;
-        }
+/* ===== ORDER CARD ===== */
+.order-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
 
-        .order-card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+/* LEFT */
+.order-details {
+    font-size: 12px;
 
-        /* Left Side: Order Info */
-        .order-details {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+}
 
-        .order-id {
-            font-weight: 600;
-            font-size: 14px;
-            margin: 0;
-        }
+.order-id {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color :#000000;
 
-        .order-time {
-            font-size: 11px;
-            color: #999;
-        }
+}
 
-        .address-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 12px;
-            margin-top: 5px;
-        }
+.order-time {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 8px;
+}
 
-        .address-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-top: 4px;
-        }
+.address-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+    color: #000000;
+}
 
-        /* Right Side: Status & Metrics */
-        .order-metrics {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+.address-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-top: 4px;
+}
 
-        .status-badge {
-            font-size: 10px;
-            padding: 3px 10px;
-            border-radius: 12px;
-            display: inline-block;
-            font-weight: 500;
-        }
+/* RIGHT */
+.order-metrics {
+    text-align: right;
+    font-size: 12px;
+    color: #000000;
+}
 
-        .status-completed { background: #e8f5e9; color: #2e7d32; }
-        .status-cancelled { background: #ffebee; color: #c62828; }
+.status-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 6px;
+}
 
-        .metric-info {
-            font-size: 12px;
-            color: #666;
-            margin-top: 10px;
-        }
+.status-completed {
+    background: #e6f7ec;
+    color: #1b8a4b;
+}
 
-        .metric-info strong {
-            display: block;
-            font-size: 14px;
-            color: #2e7d32; /* Green for earnings */
-        }
-        
-        .metric-info .cancelled-amt { color: #333; }
+.status-cancelled {
+    background: #fdecea;
+    color: #c62828;
+}
 
-        /* Icons placeholder */
-        .icon-sm { width: 18px; text-align: center; }
+.metric-info small {
+    display: block;
+    color: #888;
+}
 
-    </style>
+.metric-info strong {
+    color: #000000;
+}
+
+</style>
+
+
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div class="history-container">
-        
-        <div class="page-header">
-            <h2>Delivery History</h2>
-            <select class="filter-dropdown">
-                <option>All Status</option>
-                <option>Completed</option>
-                <option>Cancelled</option>
-            </select>
+    
+    
+        <div class="history-container">
+
+    
+        <h1>Delivery History</h1>
+        <select>
+            <option>All Status</option>
+            <option>Completed</option>
+            <option>Cancelled</option>
+        </select>
+    
+
+    <div class="summary-row">
+        <div class="summary-card">
+            <div>
+                <small>Total Deliveries</small>
+                <h3>156</h3>
+            </div>
+            📦
         </div>
 
-        <div class="summary-row">
-            <div class="summary-card">
-                <div>
-                    <small>Total Deliveries</small>
-                    <h3 style="color: #333;">156</h3>
-                </div>
-                <div style="color: #b00000;">📦</div>
+        <div class="summary-card">
+            <div>
+                <small>Completed</small>
+                <h3 style="color:#28a745;">152</h3>
             </div>
-            <div class="summary-card">
-                <div>
-                    <small>Completed</small>
-                    <h3 style="color: #28a745;">152</h3>
-                </div>
-                <div style="color: #28a745;">✔️</div>
-            </div>
-            <div class="summary-card">
-                <div>
-                    <small>Cancelled</small>
-                    <h3 style="color: #dc3545;">4</h3>
-                </div>
-                <div style="color: #dc3545;">⭕</div>
-            </div>
+            ✔️
         </div>
 
-        <div class="order-card">
-            <div class="order-details">
-                <p class="order-id">Order #ORD-12345</p>
-                <span class="order-time">2026-01-29 at 14:30</span>
-                <div class="address-row">
-                    <span class="address-dot" style="background: #dc3545;"></span>
-                    <div><strong>Pickup</strong><br /><small>123 Restaurant St</small></div>
-                </div>
-                <div class="address-row">
-                    <span class="address-dot" style="background: #28a745;"></span>
-                    <div><strong>Drop-off</strong><br /><small>456 Customer Ave</small></div>
-                </div>
+        <div class="summary-card">
+            <div>
+                <small>Cancelled</small>
+                <h3 style="color:#dc3545;">4</h3>
             </div>
-            <div class="order-metrics">
-                <div><span class="status-badge status-completed">Completed</span></div>
-                <div class="metric-info">
-                    <small>Distance</small> 3.2 km<br />
-                    <small>Earnings</small> <strong>$8.50</strong>
-                </div>
-            </div>
+            ⭕
         </div>
-
-        <div class="order-card">
-            <div class="order-details">
-                <p class="order-id">Order #ORD-12342</p>
-                <span class="order-time">2026-01-29 at 11:20</span>
-                <div class="address-row">
-                    <span class="address-dot" style="background: #dc3545;"></span>
-                    <div><strong>Pickup</strong><br /><small>999 Diner Road</small></div>
-                </div>
-                <div class="address-row">
-                    <span class="address-dot" style="background: #28a745;"></span>
-                    <div><strong>Drop-off</strong><br /><small>111 Park Lane</small></div>
-                </div>
-            </div>
-            <div class="order-metrics">
-                <div><span class="status-badge status-cancelled">Cancelled</span></div>
-                <div class="metric-info">
-                    <small>Distance</small> 4.5 km<br />
-                    <small>Earnings</small> <strong class="cancelled-amt">$0.00</strong>
-                </div>
-            </div>
-        </div>
-
-        <div class="order-card">
-            <div class="order-details">
-                <p class="order-id">Order #ORD-12341</p>
-                <span class="order-time">2026-01-28 at 18:45</span>
-                <div class="address-row">
-                    <span class="address-dot" style="background: #dc3545;"></span>
-                    <div><strong>Pickup</strong><br /><small>222 Pizza Place</small></div>
-                </div>
-                <div class="address-row">
-                    <span class="address-dot" style="background: #28a745;"></span>
-                    <div><strong>Drop-off</strong><br /><small>333 Main Blvd</small></div>
-                </div>
-            </div>
-            <div class="order-metrics">
-                <div><span class="status-badge status-completed">Completed</span></div>
-                <div class="metric-info">
-                    <small>Distance</small> 3.9 km<br />
-                    <small>Earnings</small> <strong>$9.50</strong>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <!-- ORDER CARD -->
+    <div class="order-card">
+        <div class="order-details">
+            <div class="order-id">Order #ORD-12345</div>
+            <div class="order-time">2026-01-29 at 14:30</div>
+
+            <div class="address-row">
+                <span class="address-dot" style="background:#dc3545"></span>
+                <div><strong>Pickup</strong><br />123 Restaurant St</div>
+            </div>
+
+            <div class="address-row">
+                <span class="address-dot" style="background:#28a745"></span>
+                <div><strong>Drop-off</strong><br />456 Customer Ave</div>
+            </div>
+        </div>
+
+        <div class="order-metrics">
+            <span class="status-badge status-completed">Completed</span>
+            <div class="metric-info">
+                <small>Distance</small>3.2 km
+                <small>Earnings</small><strong>$8.50</strong>
+            </div>
+        </div>
+    </div>
+            <div class="order-card">
+    <div class="order-details">
+        <div class="order-id">Order #ORD-12345</div>
+        <div class="order-time">2026-01-29 at 14:30</div>
+
+        <div class="address-row">
+            <span class="address-dot" style="background:#dc3545"></span>
+            <div><strong>Pickup</strong><br />123 Restaurant St</div>
+        </div>
+
+        <div class="address-row">
+            <span class="address-dot" style="background:#28a745"></span>
+            <div><strong>Drop-off</strong><br />456 Customer Ave</div>
+        </div>
+    </div>
+
+    <div class="order-metrics">
+        <span class="status-badge status-completed">Completed</span>
+        <div class="metric-info">
+            <small>Distance</small>3.2 km
+            <small>Earnings</small><strong>$8.50</strong>
+        </div>
+    </div>
+</div>
+            <div class="order-card">
+    <div class="order-details">
+        <div class="order-id">Order #ORD-12345</div>
+        <div class="order-time">2026-01-29 at 14:30</div>
+
+        <div class="address-row">
+            <span class="address-dot" style="background:#dc3545"></span>
+            <div><strong>Pickup</strong><br />123 Restaurant St</div>
+        </div>
+
+        <div class="address-row">
+            <span class="address-dot" style="background:#28a745"></span>
+            <div><strong>Drop-off</strong><br />456 Customer Ave</div>
+        </div>
+    </div>
+
+    <div class="order-metrics">
+        <span class="status-badge status-completed">Completed</span>
+        <div class="metric-info">
+            <small>Distance</small>3.2 km
+            <small>Earnings</small><strong>$8.50</strong>
+        </div>
+    </div>
+</div>
+            <div class="order-card">
+    <div class="order-details">
+        <div class="order-id">Order #ORD-12345</div>
+        <div class="order-time">2026-01-29 at 14:30</div>
+
+        <div class="address-row">
+            <span class="address-dot" style="background:#dc3545"></span>
+            <div><strong>Pickup</strong><br />123 Restaurant St</div>
+        </div>
+
+        <div class="address-row">
+            <span class="address-dot" style="background:#28a745"></span>
+            <div><strong>Drop-off</strong><br />456 Customer Ave</div>
+        </div>
+    </div>
+
+    <div class="order-metrics">
+        <span class="status-badge status-completed">Completed</span>
+        <div class="metric-info">
+            <small>Distance</small>3.2 km
+            <small>Earnings</small><strong>$8.50</strong>
+        </div>
+    </div>
+</div>
+</div>
 </asp:Content>
 
 
