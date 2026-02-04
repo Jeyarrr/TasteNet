@@ -1,7 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LandingPage.aspx.cs" Inherits="TasteNet.LandingPage" %>
 
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta charset="utf-8" />
@@ -46,7 +45,7 @@
         a, button, .logo-container, .nav-link, 
         .btn-order, .btn-search, .btn-cta-large, 
         .footer-link, .feature-card, .step-card, 
-        .menu-container, .content-box, .view-all-menu-btn {
+        .menu-container, .content-box {
             cursor: pointer !important;
         }
 
@@ -623,7 +622,7 @@
 
         .menu-item-row {
             display: grid;
-            grid-template-columns: 2fr 1fr 0.8fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr;
             align-items: center;
             gap: 10px;
             margin-bottom: 12px;
@@ -657,27 +656,33 @@
             min-width: 70px;
         }
 
+        .menu-item-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
         .view-modal-btn {
             background: transparent;
             color: var(--primary-maroon);
             border: 2px solid var(--primary-maroon);
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-weight: 600;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.8rem;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            min-width: 80px;
+            font-size: 1rem;
+            padding: 0;
         }
 
         .view-modal-btn:hover {
             background: var(--primary-maroon);
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.1);
             box-shadow: 0 5px 15px rgba(125, 10, 34, 0.2);
         }
 
@@ -685,24 +690,60 @@
             background: var(--accent-yellow);
             color: var(--primary-maroon);
             border: none;
-            padding: 6px 12px;
-            border-radius: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.8rem;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            min-width: 80px;
+            font-size: 1rem;
+            padding: 0;
         }
 
         .add-to-cart-btn:hover {
             background: var(--primary-maroon);
             color: var(--accent-yellow);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.1);
             box-shadow: 0 5px 15px rgba(125, 10, 34, 0.2);
+        }
+
+        .meal-additional-request {
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .meal-additional-request h4 {
+            color: var(--primary-maroon);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meal-additional-request h4 i {
+            color: var(--accent-yellow);
+            font-size: 0.9rem;
+        }
+
+        .additional-request-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .additional-request-textarea:focus {
+            outline: none;
+            border-color: var(--accent-yellow);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
         }
 
         .meal-detail-modal {
@@ -732,12 +773,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
+            max-width: 550px;
+            max-height: 85vh;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            border: 3px solid var(--accent-yellow);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            border: 2px solid var(--accent-yellow);
             animation: slideInUp 0.3s ease;
             overflow: hidden;
             display: flex;
@@ -746,7 +787,7 @@
 
         @keyframes slideInUp {
             from {
-                transform: translate(-50%, -40%);
+                transform: translate(-50%, -45%);
                 opacity: 0;
             }
             to {
@@ -758,19 +799,19 @@
         .meal-modal-header {
             background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
             color: white;
-            padding: 20px 30px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--accent-yellow);
+            border-bottom: 1px solid var(--accent-yellow);
         }
 
         .meal-modal-header h2 {
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             color: var(--accent-yellow);
         }
 
@@ -778,10 +819,10 @@
             background: none;
             border: none;
             color: white;
-            font-size: 2rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -797,133 +838,132 @@
         .meal-modal-body {
             flex: 1;
             overflow-y: auto;
-            padding: 30px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 15px;
         }
 
         .meal-image-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .meal-featured-img {
             width: 100%;
-            max-width: 400px;
-            height: 250px;
-            border-radius: 10px;
-            border: 3px solid var(--primary-maroon);
-            box-shadow: 0 10px 20px rgba(125, 10, 34, 0.15);
-            margin-bottom: 10px;
+            max-width: 300px;
+            height: 180px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-maroon);
+            box-shadow: 0 5px 15px rgba(125, 10, 34, 0.1);
+            margin-bottom: 8px;
             object-fit: cover;
-        }
-
-        .meal-image-label {
-            color: var(--text-muted);
-            font-style: italic;
-            font-size: 0.9rem;
-            margin-top: 5px;
         }
 
         .meal-details {
             background: linear-gradient(135deg, #fdfaf5 0%, #fff9f0 100%);
-            border-radius: 10px;
-            padding: 25px;
-            border-left: 4px solid var(--accent-yellow);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 3px solid var(--accent-yellow);
         }
 
         .meal-item-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(125, 10, 34, 0.1);
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(125, 10, 34, 0.1);
+            flex-wrap: wrap;
         }
 
         .meal-item-name {
-            font-size: 2.2rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--primary-maroon);
             margin: 0;
+            flex: 1;
+            min-width: 200px;
         }
 
         .meal-item-price {
-            font-size: 2rem;
+            font-size: 1.4rem;
             font-weight: 800;
             color: var(--accent-yellow);
             background: var(--primary-maroon);
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(125, 10, 34, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(125, 10, 34, 0.15);
+            margin-left: 10px;
+            white-space: nowrap;
         }
 
         .meal-description,
         .meal-ingredients,
         .meal-texture,
         .meal-extras {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .meal-description p,
         .meal-ingredients p,
         .meal-texture p {
-            font-size: 1.1rem;
-            line-height: 1.6;
+            font-size: 0.95rem;
+            line-height: 1.5;
             color: var(--text-dark);
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .meal-ingredients h4,
         .meal-texture h4,
         .meal-extras h4 {
             color: var(--primary-maroon);
-            font-size: 1.3rem;
-            margin-bottom: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .meal-ingredients h4 i,
         .meal-texture h4 i,
         .meal-extras h4 i {
             color: var(--accent-yellow);
+            font-size: 0.9rem;
         }
 
         .meal-extra-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .meal-extra-option {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 15px;
+            gap: 8px;
+            padding: 10px 12px;
             background: white;
-            border-radius: 8px;
-            border: 2px solid #eee;
+            border-radius: 6px;
+            border: 1px solid #eee;
             transition: all 0.3s ease;
         }
 
         .meal-extra-option:hover {
             border-color: var(--accent-yellow);
-            transform: translateX(5px);
+            transform: translateX(3px);
         }
 
         .meal-extra-option input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             accent-color: var(--primary-maroon);
             cursor: pointer;
         }
 
         .meal-extra-option label {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-dark);
             cursor: pointer;
             flex: 1;
@@ -931,40 +971,42 @@
 
         .meal-modal-footer {
             background: white;
-            border-top: 2px solid #eee;
-            padding: 25px 30px;
+            border-top: 1px solid #eee;
+            padding: 15px 20px;
         }
 
         .meal-quantity-selector {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 25px;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
             background: #f8f8f8;
-            border-radius: 10px;
+            border-radius: 8px;
+            flex-wrap: wrap;
         }
 
         .meal-quantity-label {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--primary-maroon);
+            margin-right: 10px;
         }
 
         .meal-quantity-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .meal-qty-btn {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            border: 2px solid var(--primary-maroon);
+            border: 1.5px solid var(--primary-maroon);
             background: white;
             color: var(--primary-maroon);
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -976,16 +1018,16 @@
         .meal-qty-btn:hover {
             background: var(--primary-maroon);
             color: white;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .meal-quantity-input {
-            width: 60px;
-            height: 40px;
+            width: 50px;
+            height: 32px;
             text-align: center;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--primary-maroon);
         }
@@ -998,56 +1040,58 @@
 
         .meal-modal-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .btn-close-meal-modal {
             background: #f8f8f8;
             color: var(--text-muted);
-            border: 2px solid #ddd;
-            padding: 15px 35px;
-            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 140px;
+            gap: 6px;
+            min-width: 100px;
             justify-content: center;
+            font-size: 0.9rem;
         }
 
         .btn-close-meal-modal:hover {
             background: #e0e0e0;
             color: var(--primary-maroon);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn-add-to-cart-meal {
             background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
             color: white;
-            border: 2px solid var(--primary-maroon);
-            padding: 15px 35px;
-            border-radius: 8px;
+            border: 1.5px solid var(--primary-maroon);
+            padding: 10px 20px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 200px;
+            gap: 6px;
+            min-width: 150px;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
 
         .btn-add-to-cart-meal:hover {
             background: var(--accent-yellow);
             color: var(--primary-maroon);
             border-color: var(--accent-yellow);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(125, 10, 34, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(125, 10, 34, 0.15);
         }
 
         .section-fade-in {
@@ -1792,63 +1836,6 @@
             animation: floatMenu 4s ease-in-out infinite;
         }
 
-        .view-all-menu-container {
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .view-all-menu-btn {
-            display: inline-block;
-            background: var(--primary-maroon);
-            color: var(--accent-yellow);
-            padding: 18px 50px;
-            border-radius: 50px;
-            font-size: 1.3rem;
-            font-weight: 800;
-            text-decoration: none;
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 2px solid var(--primary-maroon);
-            margin: 0;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            box-shadow: 0 10px 25px rgba(125, 10, 34, 0.2);
-        }
-
-        .view-all-menu-btn:hover {
-            background: var(--accent-yellow);
-            color: var(--primary-maroon);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(125, 10, 34, 0.25);
-            border-color: var(--accent-yellow);
-            animation: pulseGlow 1.2s infinite;
-        }
-
-        .view-all-menu-btn:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: all 0.8s ease;
-            z-index: -1;
-        }
-
-        .view-all-menu-btn:hover:before {
-            left: 100%;
-        }
-
-        .menu-display-section:after {
-            content: '';
-            display: block;
-            height: 0;
-            clear: both;
-        }
-
         .compact-order-steps {
             background: #FFFFFF;
             padding: 50px 5% 30px;
@@ -2379,41 +2366,32 @@
             color: #ffed4e;
         }
 
-        @keyframes pulseGlow {
-            0%, 100% {
-                box-shadow: 0 15px 30px rgba(125, 10, 34, 0.25), 0 0 0 0 rgba(255, 215, 0, 0.4);
-            }
-            50% {
-                box-shadow: 0 15px 30px rgba(125, 10, 34, 0.25), 0 0 10px 3px rgba(255, 215, 0, 0.2);
-            }
-        }
-        
         @media (max-width: 768px) {
             .meal-modal-content {
                 width: 95%;
-                max-height: 95vh;
+                max-height: 85vh;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
             }
             
             .meal-modal-body {
-                padding: 20px;
+                padding: 15px;
                 flex-direction: column;
             }
             
             .meal-item-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
+                gap: 10px;
             }
             
             .meal-item-name {
-                font-size: 1.8rem;
+                font-size: 1.3rem;
             }
             
             .meal-item-price {
-                font-size: 1.6rem;
+                font-size: 1.2rem;
                 align-self: flex-start;
             }
             
@@ -2429,48 +2407,53 @@
             
             .meal-featured-img {
                 max-width: 100%;
-                height: 200px;
+                height: 160px;
+            }
+            
+            .meal-quantity-selector {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .meal-quantity-controls {
+                align-self: stretch;
+                justify-content: center;
             }
         }
 
         @media (max-width: 480px) {
             .meal-modal-header {
-                padding: 15px 20px;
+                padding: 12px 15px;
             }
             
             .meal-modal-header h2 {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
             }
             
             .meal-modal-body {
-                padding: 15px;
+                padding: 12px;
             }
             
             .meal-details {
-                padding: 15px;
+                padding: 12px;
             }
             
             .meal-modal-footer {
-                padding: 20px;
+                padding: 12px;
             }
             
             .meal-item-name {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
             }
             
             .meal-item-price {
-                font-size: 1.3rem;
-                padding: 8px 15px;
+                font-size: 1.1rem;
+                padding: 5px 10px;
             }
             
-            .meal-quantity-selector {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .meal-quantity-controls {
-                align-self: center;
+            .meal-featured-img {
+                height: 140px;
             }
         }
 
@@ -2687,11 +2670,6 @@
                 padding: 25px;
             }
             
-            .view-all-menu-btn {
-                padding: 15px 35px;
-                font-size: 1.1rem;
-            }
-            
             .menu-grid-container {
                 grid-template-columns: 1fr;
                 max-width: 100%;
@@ -2709,14 +2687,14 @@
             }
             
             .menu-item-row {
-                grid-template-columns: 1.5fr 1fr 0.8fr 1.2fr;
+                grid-template-columns: 1.5fr 1fr 1fr;
                 gap: 8px;
             }
             
             .view-modal-btn, .add-to-cart-btn {
-                padding: 5px 8px;
-                font-size: 0.75rem;
-                min-width: 70px;
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
             }
             
             .cart-modal-content {
@@ -2727,11 +2705,6 @@
             
             .cart-actions {
                 flex-direction: column;
-            }
-            
-            .add-to-cart-btn {
-                padding: 6px 12px;
-                font-size: 0.8rem;
             }
         }
         
@@ -2757,7 +2730,7 @@
             }
             
             .menu-item-row {
-                grid-template-columns: 1.2fr 0.8fr 0.7fr 1fr;
+                grid-template-columns: 1.2fr 0.8fr 1fr;
                 gap: 5px;
             }
             
@@ -2770,19 +2743,9 @@
             }
             
             .view-modal-btn, .add-to-cart-btn {
-                padding: 5px 8px;
-                border-radius: 15px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 0.75rem;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 4px;
-                min-width: 60px;
-                height: 28px;
-                white-space: nowrap;
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
             }
             
             .cart-modal-content {
@@ -2906,7 +2869,7 @@
                             <i class="fas fa-times"></i> Close
                         </button>
                         <button class="btn-add-to-cart-meal" id="addToCartMealBtn">
-                            <i class="fas fa-shopping-cart"></i> Add to Cart - ₱0.00
+                            <i class="fas fa-cart-plus"></i> ₱0.00
                         </button>
                     </div>
                 </div>
@@ -2999,12 +2962,6 @@
                         <div class="menu-item-row"><span class="item-name">Special Bicol Express</span><span class="item-price">₱170.00</span></div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="view-all-menu-container">
-                <a href="<%= ResolveUrl("~/Users/Customer/Menu.aspx") %>" class="view-all-menu-btn">
-                    <span>View All Menu</span>
-                </a>
             </div>
         </section>
 
@@ -3577,7 +3534,7 @@
                     });
 
                     document.addEventListener('input', (e) => {
-                        if (e.target.classList.contains('meal-quantity-input')) {
+                        if (e.target.classList.contains('.meal-quantity-input')) {
                             let value = parseInt(e.target.value);
                             if (isNaN(value) || value < 1) value = 1;
                             if (value > 10) value = 10;
@@ -3610,16 +3567,38 @@
                     document.querySelectorAll('.menu-item-row').forEach((row, index) => {
                         const itemName = row.querySelector('.item-name').textContent;
 
+                        const priceCell = row.querySelector('.item-price');
+                        const itemPriceText = priceCell.textContent;
+                        const itemPrice = parseFloat(itemPriceText.replace('₱', '').replace(',', ''));
+
                         if (!row.querySelector('.view-modal-btn')) {
                             const viewButton = document.createElement('button');
                             viewButton.className = 'view-modal-btn';
                             viewButton.type = 'button';
-                            viewButton.innerHTML = '<i class="fas fa-eye"></i> View';
+                            viewButton.title = 'View Details';
+                            viewButton.innerHTML = '<i class="fas fa-eye"></i>';
                             viewButton.dataset.name = itemName;
 
-                            const priceCell = row.querySelector('.item-price');
+                            const addButton = document.createElement('button');
+                            addButton.className = 'add-to-cart-btn';
+                            addButton.type = 'button';
+                            addButton.title = 'Add to Cart';
+                            addButton.innerHTML = '<i class="fas fa-cart-plus"></i>';
+                            addButton.dataset.name = itemName;
+                            addButton.dataset.price = itemPrice;
+
+                            const buttonContainer = document.createElement('div');
+                            buttonContainer.className = 'menu-item-buttons';
+                            buttonContainer.style.display = 'flex';
+                            buttonContainer.style.gap = '8px';
+                            buttonContainer.style.justifyContent = 'center';
+                            buttonContainer.style.alignItems = 'center';
+
+                            buttonContainer.appendChild(viewButton);
+                            buttonContainer.appendChild(addButton);
+
                             if (priceCell) {
-                                priceCell.insertAdjacentElement('afterend', viewButton);
+                                priceCell.insertAdjacentElement('afterend', buttonContainer);
                             }
                         }
 
@@ -3632,23 +3611,6 @@
                                 const mealName = e.target.closest('.view-modal-btn').dataset.name;
                                 this.openModal(mealName);
                             });
-                        }
-
-                        if (!row.querySelector('.add-to-cart-btn')) {
-                            const itemPriceText = row.querySelector('.item-price').textContent;
-                            const itemPrice = parseFloat(itemPriceText.replace('₱', '').replace(',', ''));
-
-                            const addButton = document.createElement('button');
-                            addButton.className = 'add-to-cart-btn';
-                            addButton.type = 'button';
-                            addButton.innerHTML = '<i class="fas fa-plus"></i> Add';
-                            addButton.dataset.name = itemName;
-                            addButton.dataset.price = itemPrice;
-
-                            const viewBtn = row.querySelector('.view-modal-btn');
-                            if (viewBtn) {
-                                viewBtn.insertAdjacentElement('afterend', addButton);
-                            }
                         }
 
                         const addButton = row.querySelector('.add-to-cart-btn');
@@ -3710,7 +3672,6 @@
                     body.innerHTML = `
                         <div class="meal-image-container">
                             <img src="${this.currentMeal.image}" alt="${mealName}" class="meal-featured-img" />
-                            <div class="meal-image-label">Image of the Meal</div>
                         </div>
                         
                         <div class="meal-details">
@@ -3734,6 +3695,15 @@
                             </div>
                             
                             ${extrasHTML}
+                            
+                            <div class="meal-additional-request">
+                                <h4><i class="fas fa-comment-alt"></i> Additional Requests:</h4>
+                                <textarea 
+                                    class="additional-request-textarea" 
+                                    placeholder="Any special requests or instructions for your order (e.g., less spicy, extra sauce, etc.)"
+                                    rows="3"
+                                ></textarea>
+                            </div>
                         </div>
                     `;
 
@@ -3741,6 +3711,7 @@
                     document.querySelectorAll('.meal-extra-option input[type="checkbox"]').forEach(checkbox => {
                         checkbox.checked = false;
                     });
+                    document.querySelector('.additional-request-textarea').value = '';
 
                     this.updatePrice();
 
@@ -3775,7 +3746,7 @@
                     const addToCartBtn = document.getElementById('addToCartMealBtn');
 
                     if (addToCartBtn) {
-                        addToCartBtn.innerHTML = `<i class="fas fa-shopping-cart"></i> Add to Cart - ₱${totalPrice.toFixed(2)}`;
+                        addToCartBtn.innerHTML = `<i class="fas fa-cart-plus"></i> ₱${totalPrice.toFixed(2)}`;
                     }
                 },
 
@@ -3794,9 +3765,19 @@
                         extrasDescription.push(checkbox.dataset.name);
                     });
 
+                    const additionalRequest = document.querySelector('.additional-request-textarea').value.trim();
+
+                    let itemName = mealName;
+                    if (extrasDescription.length > 0) {
+                        itemName += ' (' + extrasDescription.join(', ') + ')';
+                    }
+                    if (additionalRequest) {
+                        itemName += ' - Note: ' + additionalRequest;
+                    }
+
                     const item = {
                         id: `item-${mealName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
-                        name: mealName + (extrasDescription.length > 0 ? ' (' + extrasDescription.join(', ') + ')' : ''),
+                        name: itemName,
                         price: basePrice + extras,
                         quantity: quantity
                     };
@@ -4267,7 +4248,7 @@
             });
 
             const interactiveElements = document.querySelectorAll(
-                'a, button, .logo-container, .nav-link, .btn-order, .btn-search, .btn-cta-large, .footer-link, .feature-card, .step-card, .menu-container, .content-box, .view-all-menu-btn'
+                'a, button, .logo-container, .nav-link, .btn-order, .btn-search, .btn-cta-large, .footer-link, .feature-card, .step-card, .menu-container, .content-box'
             );
 
             interactiveElements.forEach(el => {
@@ -4305,17 +4286,6 @@
                     }, 600);
                 });
             });
-
-            const viewAllBtn = document.querySelector('.view-all-menu-btn');
-            if (viewAllBtn) {
-                viewAllBtn.addEventListener('mouseenter', function () {
-                    this.style.animation = 'pulseGlow 1.2s infinite';
-                });
-
-                viewAllBtn.addEventListener('mouseleave', function () {
-                    this.style.animation = 'pulseGlow 2s infinite';
-                });
-            }
 
             const style = document.createElement('style');
             style.textContent = `

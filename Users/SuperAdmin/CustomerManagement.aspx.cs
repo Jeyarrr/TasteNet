@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -15,8 +14,10 @@ namespace TasteNet.Users.SuperAdmin
             if (!IsPostBack)
             {
                 BindCustomerData();
+                UpdateStatistics();
             }
         }
+
         private void BindCustomerData()
         {
             List<CustomerRow> customers = new List<CustomerRow>
@@ -31,7 +32,21 @@ namespace TasteNet.Users.SuperAdmin
             rptCustomers.DataSource = customers;
             rptCustomers.DataBind();
         }
+
+        private void UpdateStatistics()
+        {
+            int totalCustomers = 5;
+            int activeCustomers = 4;
+            int blockedCustomers = 1;
+            decimal totalRevenue = 8750 + 6240 + 5460 + 1980 + 11250;
+
+            ViewState["TotalCustomers"] = totalCustomers;
+            ViewState["ActiveCustomers"] = activeCustomers;
+            ViewState["BlockedCustomers"] = blockedCustomers;
+            ViewState["TotalRevenue"] = totalRevenue;
+        }
     }
+
     public class CustomerRow
     {
         public string CustomerID { get; set; }
