@@ -2,6 +2,26 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     
     <style>
+         :root {
+    --primary-dark: #1a1a1a;         /* Sidebar color */
+    --primary-maroon: #8b0000;       /* Main brand color (from TasteNet) */
+    --primary-maroon-dark: #660000;  /* Darker maroon */
+    --background-light: #f5f5f5;     /* Page background */
+    --card-white: #ffffff;           /* Card background */
+    --text-dark: #333333;            /* Main text */
+    --text-muted: #666666;           /* Secondary text */
+    --text-light: #888888;           /* Tertiary text */
+    --success-green: #28a745;        /* Success/positive */
+    --warning-orange: #ff9800;       /* Warning/alert */
+    --danger-red: #dc3545;           /* Danger/error */
+    --border-color: #e0e0e0;         /* Borders */
+    --sidebar-hover: #2a2a2a;        /* Sidebar hover */
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+}
     * {
     margin: 0;
     padding: 0;
@@ -61,7 +81,7 @@ body {
 .stat-card h3 {
     margin-top: 10px;
     font-size: 28px;
-    color: #fff;
+    color: #000000;
 }
 
 .stat-card .danger {
@@ -78,11 +98,13 @@ body {
     margin-bottom: 15px;
     border: 1px solid #eee;
     position: relative;
+    box-shadow:var(--card-shadow);
 }
 
 .notification.unread {
     border: 1px solid #c00000;
     background: #fff6f6;
+    box-shadow: #fff
 }
 
 /* Icon */
@@ -105,7 +127,7 @@ body {
 .content h4 {
     font-size: 15px;
     margin-bottom: 4px;
-    color: #;
+    color: #000000;
 }
 
 .content p {

@@ -5,7 +5,7 @@
  .wallet-container {
   font-family: 'Segoe UI', sans-serif;
   padding: 25px;
-  background: #f5f6fa;
+  background: #fffaf3;
 }
 
 .wallet-header {
@@ -52,6 +52,7 @@
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
+    box-shadow: var(--card-shadow);
 }
 
 .card {
@@ -78,7 +79,7 @@
     padding: 18px;
     border-radius: 10px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: var(--card-shadow);
 }
 
 .section h4 {
@@ -97,6 +98,7 @@
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid #eee;
+    box-shadow: var(--card-shadow);
 }
 
 .bonus-row:last-child,

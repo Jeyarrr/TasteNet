@@ -17,6 +17,7 @@ body {
     max-width: 1100px;
     margin: 40px auto;
     padding: 0 20px;
+
 }
 
 /* Header */
