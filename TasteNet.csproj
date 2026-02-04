@@ -187,6 +187,8 @@
     <Content Include="Users\Rider\Dashboard.aspx" />
     <Content Include="Users\Rider\DeliveryHistory.aspx" />
     <Content Include="Users\Rider\Earnings.aspx" />
+    <Content Include="Users\Rider\Notifications.aspx" />
+    <Content Include="Users\Rider\Profile.aspx" />
     <Content Include="Users\SuperAdmin\AllOrders.aspx" />
     <Content Include="Users\SuperAdmin\Categories.aspx" />
     <Content Include="Users\SuperAdmin\CustomerManagement.aspx" />
@@ -270,6 +272,20 @@
     </Compile>
     <Compile Include="Users\Rider\Earnings.aspx.designer.cs">
       <DependentUpon>Earnings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Rider\Notifications.aspx.cs">
+      <DependentUpon>Notifications.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Rider\Notifications.aspx.designer.cs">
+      <DependentUpon>Notifications.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Rider\Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Rider\Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\AllOrders.aspx.cs">
       <DependentUpon>AllOrders.aspx</DependentUpon>

@@ -378,13 +378,7 @@
                         <span>Earnings</span>
                     </a>
                 </li>
-                <li>
-                    <a href="/Users/Rider/Transactions.aspx">
-                        <i class="fa-solid fa-receipt"></i>
-                        <span>Transactions</span>
-                    </a>
-                </li>
-
+                
                 <div class="menu-title">Account</div>
                 <li>
                     <a href="/Users/Rider/Profile.aspx">

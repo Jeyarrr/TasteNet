@@ -123,31 +123,10 @@
             border: 2px solid var(--card-white);
         }
 
-        .logout-btn {
-            background: var(--card-white);
-            border: 1px solid var(--border-color);
-            color: var(--text-dark);
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-        }
-
-        .logout-btn:hover {
-            background: var(--primary-maroon);
-            color: white;
-            border-color: var(--primary-maroon);
-        }
-
         /* Status Card - Cleaner design */
         .status-card {
             background: var(--card-white);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             padding: 20px;
             display: flex;
             justify-content: space-between;

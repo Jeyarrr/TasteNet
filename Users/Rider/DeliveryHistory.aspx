@@ -6,17 +6,43 @@
 html, body, form {
     margin: 0;
     padding: 0;
-    background: #f5f6f8;
+    background: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
+:root {
+    --primary-dark: #1a1a1a;         /* Sidebar color */
+    --primary-maroon: #8b0000;       /* Main brand color (from TasteNet) */
+    --primary-maroon-dark: #660000;  /* Darker maroon */
+    --background-light: #f5f5f5;     /* Page background */
+    --card-white: #ffffff;           /* Card background */
+    --text-dark: #333333;            /* Main text */
+    --text-muted: #666666;           /* Secondary text */
+    --text-light: #888888;           /* Tertiary text */
+    --success-green: #28a745;        /* Success/positive */
+    --warning-orange: #ff9800;       /* Warning/alert */
+    --danger-red: #dc3545;           /* Danger/error */
+    --border-color: #e0e0e0;         /* Borders */
+    --sidebar-hover: #2a2a2a;        /* Sidebar hover */
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+}
 /* ===== CENTERED PAGE WRAPPER ===== */
 .history-container {
     max-width: 1200px;        /* 🔥 controls UI size */
-    margin: 0 auto;           /* 🔥 center horizontally */
-    padding: 24px 20px;
+    margin: 12px;           /* 🔥 center horizontally */
+    padding: 25px;
+    color: #000000 ;
+    border-radius: 12px;
 }
-
+.top-bar h1 {
+    font-size: 24px;
+    color: var(--primary-maroon);
+    font-weight: 600;
+    margin: 0;
+}
 /* ===== HEADER ===== */
 .page-header {
     display: flex;
@@ -42,12 +68,13 @@ html, body, form {
 
 .summary-card {
     background: #fff;
-    border-radius: 8px;
-    padding: 14px 18px;
+    border-radius: 12px;
+    padding: 14px 19px;
     border: 1px solid #e6e6e6;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow:var(--card-shadow);
     color :#000000;
 }
 
@@ -57,7 +84,7 @@ html, body, form {
 }
 
 .summary-card h3 {
-    margin: 4px 0 0;
+    margin: 4px 2px;
     font-size: 20px;
 }
 
@@ -65,7 +92,7 @@ html, body, form {
 .order-card {
     background: #fff;
     border: 1px solid #e5e5e5;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 14px 18px;
     margin-bottom: 10px;
     display: flex;
@@ -150,7 +177,7 @@ html, body, form {
         <div class="history-container">
 
     
-        <h1>Delivery History</h1>
+        <h1 class="h1">Delivery History</h1>
         <select>
             <option>All Status</option>
             <option>Completed</option>
@@ -166,7 +193,6 @@ html, body, form {
             </div>
             📦
         </div>
-
         <div class="summary-card">
             <div>
                 <small>Completed</small>
