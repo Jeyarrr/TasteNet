@@ -292,7 +292,7 @@
             font-size: 13px;
             font-family: 'Poppins', sans-serif;
             cursor: pointer;
-            min-width: 180px;
+            min-width: 80px;
             outline: none;
             font-weight: 500;
             transition: all var(--transition-base);
@@ -929,6 +929,16 @@
 
         .modal-body {
             padding: 30px;
+        }
+
+        .content-blurred {
+            filter: blur(4px);
+            transition: filter 0.3s ease;
+            pointer-events: none;
+        }
+
+        .modal-overlay {
+            backdrop-filter: blur(8px);
         }
 
         .customer-info-grid {
