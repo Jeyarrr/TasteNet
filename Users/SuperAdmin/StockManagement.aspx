@@ -1440,7 +1440,7 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="edit-modal-header">
-                <h3>Edit Ingredient</h3>
+                <h3 id="editModalTitle">Edit Ingredient</h3>
                 <button class="edit-modal-close" id="closeEditModal">&times;</button>
             </div>
             <div class="edit-modal-body">
@@ -1652,7 +1652,6 @@
         };
 
         let currentEditIngredientId = null;
-        let currentDeleteIngredientId = null;
 
         function initializeIngredientsTable() {
             const tbody = document.getElementById('ingredientsTableBody');
@@ -1880,22 +1879,40 @@
             document.getElementById('outOfStockCount').textContent = outOfStockCount;
         }
 
-        function openEditModal(ingredientId) {
-            const ingredient = ingredientsData.find(i => i.id === ingredientId);
-            if (!ingredient) return;
+        function openEditModal(ingredientId, isNew = false) {
+            const modal = document.getElementById('editModal');
+            const modalTitle = document.getElementById('editModalTitle');
 
-            currentEditIngredientId = ingredientId;
+            if (isNew) {
+                modalTitle.textContent = 'Add New Ingredient';
+                currentEditIngredientId = null;
 
-            document.getElementById('editName').value = ingredient.name;
-            document.getElementById('editDescription').value = ingredient.description;
-            document.getElementById('editCategory').value = ingredient.category;
-            document.getElementById('editQuantity').value = ingredient.quantity;
-            document.getElementById('editLowStockThreshold').value = ingredient.lowStockThreshold;
-            document.getElementById('editAvailable').value = ingredient.available ? 'true' : 'false';
-            document.getElementById('editSupplierName').value = ingredient.supplier.name;
-            document.getElementById('editSupplierContact').value = ingredient.supplier.contact;
+                document.getElementById('editName').value = '';
+                document.getElementById('editDescription').value = '';
+                document.getElementById('editCategory').value = 'protein';
+                document.getElementById('editQuantity').value = '';
+                document.getElementById('editLowStockThreshold').value = '10';
+                document.getElementById('editAvailable').value = 'true';
+                document.getElementById('editSupplierName').value = '';
+                document.getElementById('editSupplierContact').value = '';
+            } else {
+                modalTitle.textContent = 'Edit Ingredient';
+                currentEditIngredientId = ingredientId;
 
-            document.getElementById('editModal').style.display = 'flex';
+                const ingredient = ingredientsData.find(i => i.id === ingredientId);
+                if (!ingredient) return;
+
+                document.getElementById('editName').value = ingredient.name;
+                document.getElementById('editDescription').value = ingredient.description;
+                document.getElementById('editCategory').value = ingredient.category;
+                document.getElementById('editQuantity').value = ingredient.quantity;
+                document.getElementById('editLowStockThreshold').value = ingredient.lowStockThreshold;
+                document.getElementById('editAvailable').value = ingredient.available ? 'true' : 'false';
+                document.getElementById('editSupplierName').value = ingredient.supplier.name;
+                document.getElementById('editSupplierContact').value = ingredient.supplier.contact;
+            }
+
+            modal.style.display = 'flex';
         }
 
         function closeEditModal() {
@@ -1904,28 +1921,58 @@
         }
 
         function saveEditChanges() {
-            if (!currentEditIngredientId) return;
+            const name = document.getElementById('editName').value;
+            const description = document.getElementById('editDescription').value;
+            const category = document.getElementById('editCategory').value;
+            const quantity = parseInt(document.getElementById('editQuantity').value);
+            const lowStockThreshold = parseInt(document.getElementById('editLowStockThreshold').value);
+            const available = document.getElementById('editAvailable').value === 'true';
+            const supplierName = document.getElementById('editSupplierName').value;
+            const supplierContact = document.getElementById('editSupplierContact').value;
 
-            const ingredient = ingredientsData.find(i => i.id === currentEditIngredientId);
-            if (!ingredient) return;
+            if (!name || !description || !supplierName || !supplierContact || isNaN(quantity) || isNaN(lowStockThreshold)) {
+                showNotification('Please fill in all required fields correctly!', 'error');
+                return;
+            }
 
-            ingredient.name = document.getElementById('editName').value;
-            ingredient.description = document.getElementById('editDescription').value;
-            ingredient.category = document.getElementById('editCategory').value;
-            ingredient.quantity = parseInt(document.getElementById('editQuantity').value);
-            ingredient.lowStockThreshold = parseInt(document.getElementById('editLowStockThreshold').value);
-            ingredient.available = document.getElementById('editAvailable').value === 'true';
-            ingredient.supplier.name = document.getElementById('editSupplierName').value;
-            ingredient.supplier.contact = document.getElementById('editSupplierContact').value;
+            if (currentEditIngredientId) {
+                const ingredient = ingredientsData.find(i => i.id === currentEditIngredientId);
+                if (!ingredient) return;
 
-            ingredient.categoryDisplay = getCategoryDisplayText(ingredient.category);
+                ingredient.name = name;
+                ingredient.description = description;
+                ingredient.category = category;
+                ingredient.quantity = quantity;
+                ingredient.lowStockThreshold = lowStockThreshold;
+                ingredient.available = available;
+                ingredient.supplier.name = supplierName;
+                ingredient.supplier.contact = supplierContact;
+                ingredient.categoryDisplay = getCategoryDisplayText(category);
 
-            updateIngredientStatus(ingredient);
+                updateIngredientStatus(ingredient);
+                showNotification(`${ingredient.name} updated successfully!`, 'success');
+            } else {
+                const newIngredient = {
+                    id: ingredientsData.length > 0 ? Math.max(...ingredientsData.map(i => i.id)) + 1 : 1,
+                    name: name,
+                    description: description,
+                    category: category,
+                    categoryDisplay: getCategoryDisplayText(category),
+                    status: quantity > 0 ? (quantity <= lowStockThreshold ? 'low-stock' : 'in-stock') : 'out-of-stock',
+                    quantity: quantity,
+                    supplier: {
+                        name: supplierName,
+                        contact: supplierContact
+                    },
+                    available: available,
+                    lowStockThreshold: lowStockThreshold
+                };
+
+                ingredientsData.push(newIngredient);
+                showNotification(`${newIngredient.name} added successfully!`, 'success');
+            }
 
             initializeIngredientsTable();
-
-            showNotification(`${ingredient.name} updated successfully!`, 'success');
-
             closeEditModal();
         }
 
@@ -1933,30 +1980,19 @@
             const ingredient = ingredientsData.find(i => i.id === ingredientId);
             if (!ingredient) return;
 
-            currentDeleteIngredientId = ingredientId;
-
             document.getElementById('deleteIngredientName').textContent = ingredient.name;
-
-            const modalTitle = document.querySelector('#deleteModal .delete-modal-header h3');
-            if (modalTitle) {
-                modalTitle.innerHTML = `<span>Delete Ingredient</span>`;
-            }
-
             document.getElementById('deleteModal').style.display = 'flex';
         }
 
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
-            currentDeleteIngredientId = null;
         }
 
         function confirmDelete() {
-            if (!currentDeleteIngredientId) return;
-
-            const ingredient = ingredientsData.find(i => i.id === currentDeleteIngredientId);
+            const ingredient = ingredientsData.find(i => i.id === currentEditIngredientId);
             if (!ingredient) return;
 
-            const index = ingredientsData.findIndex(i => i.id === currentDeleteIngredientId);
+            const index = ingredientsData.findIndex(i => i.id === currentEditIngredientId);
             ingredientsData.splice(index, 1);
 
             initializeIngredientsTable();
@@ -1989,7 +2025,7 @@
                     const row = editBtn.closest('tr');
                     const ingredientId = parseInt(row.dataset.ingredientId);
 
-                    openEditModal(ingredientId);
+                    openEditModal(ingredientId, false);
                     return false;
                 }
 
@@ -2074,28 +2110,7 @@
 
         function setupAddIngredientButton() {
             document.getElementById('addIngredientBtn').addEventListener('click', function () {
-                const newIngredient = {
-                    id: ingredientsData.length > 0 ? Math.max(...ingredientsData.map(i => i.id)) + 1 : 1,
-                    name: "New Ingredient",
-                    description: "Ingredient description",
-                    category: "protein",
-                    categoryDisplay: "Protein",
-                    status: "in-stock",
-                    quantity: 10,
-                    supplier: {
-                        name: "New Supplier",
-                        contact: "0912-345-6789"
-                    },
-                    available: true,
-                    lowStockThreshold: 10
-                };
-
-                ingredientsData.push(newIngredient);
-                initializeIngredientsTable();
-
-                openEditModal(newIngredient.id);
-
-                showNotification("New ingredient added! Please edit the details.", 'info');
+                openEditModal(null, true);
             });
         }
 
