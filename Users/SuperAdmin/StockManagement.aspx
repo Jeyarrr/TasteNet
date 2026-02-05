@@ -259,22 +259,6 @@
             border-color: var(--border-light);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-maroon), transparent);
-            opacity: 0;
-            transition: opacity var(--transition-base);
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
         .stat-card__header {
             display: flex;
             justify-content: space-between;

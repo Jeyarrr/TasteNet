@@ -99,68 +99,21 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
             background: white;
-            padding: 18px;
-            border-radius: var(--radius-lg);
+            padding: 20px;
+            border-radius: 18px;
             box-shadow: var(--card-shadow);
-            transition: all var(--transition-base) cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transform-origin: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 
-                0 20px 40px rgba(107, 13, 30, 0.15),
-                0 0 0 1px rgba(107, 13, 30, 0.05);
-            z-index: 2;
-            border-color: var(--border-light);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-maroon), transparent);
-            opacity: 0;
-            transition: opacity var(--transition-base);
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(
-                135deg,
-                rgba(107, 13, 30, 0.05) 0%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            opacity: 0;
-            transition: opacity var(--transition-base);
-            pointer-events: none;
-        }
-
-        .stat-card:hover::after {
-            opacity: 1;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(107, 13, 30, 0.12);
         }
 
         .stat-card__header {
@@ -794,7 +747,7 @@
         .inner-search.loading i {
             animation: spin 1s linear infinite;
         }
-
+        
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -2213,7 +2166,9 @@
                     const row = deleteBtn.closest('tr');
                     const riderId = row.getAttribute('data-rider-id');
 
-                    showDeleteConfirmation(riderId);
+                    if (riderId) {
+                        showDeleteConfirmation(riderId);
+                    }
                     return false;
                 }
 
@@ -2223,7 +2178,10 @@
 
                     const row = viewBtn.closest('tr');
                     const riderId = row.getAttribute('data-rider-id');
-                    viewRider(riderId);
+
+                    if (riderId) {
+                        viewRider(riderId);
+                    }
                     return false;
                 }
             });
@@ -2350,11 +2308,9 @@
 
             const statusElement = document.getElementById('modalStatus');
             statusElement.textContent = getStatusText(rider.status);
-            statusElement.className = rider.status === 'available'
-                ? 'info-value status status-available'
-                : rider.status === 'delivery'
-                    ? 'info-value status status-delivery'
-                    : 'info-value status status-offline';
+            statusElement.className = 'info-value status ' +
+                (rider.status === 'available' ? 'status-available' :
+                    rider.status === 'delivery' ? 'status-delivery' : 'status-offline');
 
             const actionButton = document.getElementById('modalActionButton');
             if (rider.status === 'available') {
@@ -2437,7 +2393,6 @@
             }
 
             initializeRiderData();
-
             updateStats();
         }
 

@@ -68,6 +68,13 @@
             margin: 0 auto;
             background-color: var(--soft-cream) !important;
             min-height: 100vh;
+            transition: filter 0.3s ease;
+        }
+
+        .dashboard-wrapper.blur-background {
+            filter: blur(4px);
+            pointer-events: none;
+            user-select: none;
         }
 
         .dashboard-header {
@@ -104,68 +111,21 @@
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
             background: white;
-            padding: 18px;
-            border-radius: var(--radius-lg);
+            padding: 20px;
+            border-radius: 18px;
             box-shadow: var(--card-shadow);
-            transition: all var(--transition-base) cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transform-origin: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 
-                0 20px 40px rgba(107, 13, 30, 0.15),
-                0 0 0 1px rgba(107, 13, 30, 0.05);
-            z-index: 2;
-            border-color: var(--border-light);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-maroon), transparent);
-            opacity: 0;
-            transition: opacity var(--transition-base);
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: var(--radius-lg);
-            background: linear-gradient(
-                135deg,
-                rgba(107, 13, 30, 0.05) 0%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            opacity: 0;
-            transition: opacity var(--transition-base);
-            pointer-events: none;
-        }
-
-        .stat-card:hover::after {
-            opacity: 1;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(107, 13, 30, 0.12);
         }
 
         .stat-card__header {
@@ -864,7 +824,15 @@
             justify-content: center;
             z-index: 10000;
             animation: fadeIn 0.3s ease;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px) saturate(180%);
+            -webkit-backdrop-filter: blur(8px) saturate(180%);
+            display: none;
+        }
+
+        @supports not (backdrop-filter: blur(8px)) {
+            .modal-overlay {
+                background: rgba(0, 0, 0, 0.85);
+            }
         }
 
         .customer-modal {
@@ -929,16 +897,6 @@
 
         .modal-body {
             padding: 30px;
-        }
-
-        .content-blurred {
-            filter: blur(4px);
-            transition: filter 0.3s ease;
-            pointer-events: none;
-        }
-
-        .modal-overlay {
-            backdrop-filter: blur(8px);
         }
 
         .customer-info-grid {
@@ -1086,6 +1044,44 @@
 
         .search-box.loading .search-box__icon {
             animation: spin 1s linear infinite;
+        }
+
+        .delete-confirm-modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            max-width: 400px;
+            width: 90%;
+            padding: 30px;
+            text-align: center;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .delete-confirm-modal i {
+            font-size: 48px;
+            color: var(--danger-red);
+            margin-bottom: 20px;
+        }
+
+        .delete-confirm-modal h3 {
+            color: var(--text-dark);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .delete-confirm-modal p {
+            color: var(--muted-text);
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .delete-confirm-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .delete-confirm-actions .btn {
+            min-width: 100px;
         }
 
         @keyframes fadeIn {
@@ -1279,6 +1275,18 @@
             .activity-grid {
                 grid-template-columns: 1fr;
             }
+
+            .delete-confirm-modal {
+                padding: 20px;
+            }
+
+            .delete-confirm-actions {
+                flex-direction: column;
+            }
+
+            .delete-confirm-actions .btn {
+                width: 100%;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1468,7 +1476,7 @@
                                             <button type="button" class="action-button action-button--block" title="Block/Unblock" onclick='toggleBlockCustomer("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
                                                 <i class="fas fa-ban"></i>
                                             </button>
-                                            <button type="button" class="action-button action-button--delete" title="Delete Customer" onclick='deleteCustomer("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
+                                            <button type="button" class="action-button action-button--delete" title="Delete Customer" onclick='showDeleteConfirmation("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -1596,9 +1604,27 @@
         </div>
     </div>
 
+    <div id="deleteConfirmModal" class="modal-overlay" style="display: none;">
+        <div class="delete-confirm-modal">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Delete Customer</h3>
+            <p id="deleteConfirmationText">Are you sure you want to delete this customer?</p>
+            <p style="color: var(--muted-text); font-size: 12px; margin-top: -10px;">This action cannot be undone.</p>
+            <div class="delete-confirm-actions">
+                <button id="confirmDelete" class="btn btn--primary" style="background: var(--danger-red);">
+                    Delete
+                </button>
+                <button id="cancelDelete" class="btn btn--outline">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript">
         let allCustomers = [];
         let currentCustomerId = null;
+        let customerToDelete = null;
 
         function initializeCustomerData() {
             const rows = document.querySelectorAll('#customersTableBody tr');
@@ -1810,6 +1836,8 @@
 
             const modal = document.getElementById('customerModal');
             modal.style.display = 'flex';
+            const wrapper = document.querySelector('.dashboard-wrapper');
+            wrapper.classList.add('blur-background');
             document.body.style.overflow = 'hidden';
 
             document.addEventListener('keydown', handleModalKeydown);
@@ -1817,12 +1845,26 @@
 
         function closeModal() {
             const modal = document.getElementById('customerModal');
+            const deleteModal = document.getElementById('deleteConfirmModal');
             modal.style.display = 'none';
+            deleteModal.style.display = 'none';
+
+            const wrapper = document.querySelector('.dashboard-wrapper');
+            wrapper.classList.remove('blur-background');
+
             document.body.style.overflow = 'auto';
             document.removeEventListener('keydown', handleModalKeydown);
+            document.removeEventListener('keydown', handleDeleteModalKeydown);
+            customerToDelete = null;
         }
 
         function handleModalKeydown(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        }
+
+        function handleDeleteModalKeydown(e) {
             if (e.key === 'Escape') {
                 closeModal();
             }
@@ -1864,6 +1906,59 @@
             recentOrdersDiv.innerHTML = html;
         }
 
+        function showDeleteConfirmation(customerId) {
+            customerToDelete = customerId;
+            const customer = allCustomers.find(c => c.id === customerId);
+
+            if (!customer) return;
+
+            document.getElementById('deleteConfirmationText').textContent =
+                `Are you sure you want to delete customer ${customer.fullName} (CUST-${customer.id.padStart(3, '0')})?`;
+
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.style.display = 'flex';
+
+            const wrapper = document.querySelector('.dashboard-wrapper');
+            wrapper.classList.add('blur-background');
+
+            document.body.style.overflow = 'hidden';
+
+            document.getElementById('confirmDelete').onclick = confirmDelete;
+            document.getElementById('cancelDelete').onclick = closeModal;
+
+            document.addEventListener('keydown', handleDeleteModalKeydown);
+        }
+
+        function confirmDelete() {
+            if (!customerToDelete) return;
+
+            const customerIndex = allCustomers.findIndex(c => c.id === customerToDelete);
+            if (customerIndex === -1) return;
+
+            const customer = allCustomers[customerIndex];
+            const row = customer.element;
+
+            row.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            row.style.opacity = '0';
+            row.style.transform = 'translateX(100px) rotate(5deg)';
+            row.style.height = '0';
+            row.style.padding = '0';
+            row.style.margin = '0';
+            row.style.border = 'none';
+
+            setTimeout(() => {
+                row.remove();
+                allCustomers.splice(customerIndex, 1);
+
+                updateStats();
+                handleFilter();
+
+                closeModal();
+
+                showNotification('Customer deleted successfully!', 'success');
+            }, 500);
+        }
+
         function toggleBlockCustomer(customerId) {
             const customer = allCustomers.find(c => c.id === customerId);
             if (!customer) return;
@@ -1897,118 +1992,11 @@
                     row.style.animation = '';
                     updateStats();
                     handleFilter();
+
+                    const action = customer.status === 'active' ? 'unblocked' : 'blocked';
+                    showNotification(`Customer ${action} successfully!`, 'success');
                 }, 500);
             }, 500);
-
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-                    20%, 40%, 60%, 80% { transform: translateX(2px); }
-                }
-                @keyframes pulseRed {
-                    0%, 100% { background-color: transparent; }
-                    50% { background-color: rgba(185, 28, 28, 0.1); }
-                }
-                @keyframes pulseGreen {
-                    0%, 100% { background-color: transparent; }
-                    50% { background-color: rgba(45, 157, 120, 0.1); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        function deleteCustomer(customerId) {
-            const customer = allCustomers.find(c => c.id === customerId);
-            if (!customer) return;
-
-            const row = customer.element;
-
-            row.style.animation = 'warningPulse 0.5s ease 3';
-
-            const confirmModal = document.createElement('div');
-            confirmModal.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(0,0,0,0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                ">
-                    <div style="
-                        background: white;
-                        padding: 30px;
-                        border-radius: var(--radius-lg);
-                        max-width: 400px;
-                        width: 90%;
-                        text-align: center;
-                    ">
-                        <div style="font-size: 48px; color: var(--danger-red); margin-bottom: 20px;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <h3 style="color: var(--text-dark); margin-top: 0;">Delete Customer</h3>
-                        <p>Are you sure you want to delete customer <strong>CUST-${customerId.padStart(3, '0')}</strong>?</p>
-                        <p style="color: var(--muted-text); font-size: 12px;">This action cannot be undone.</p>
-                        <div style="display: flex; gap: 10px; margin-top: 30px; justify-content: center;">
-                            <button id="confirmDelete" style="
-                                background: var(--danger-red);
-                                color: white;
-                                border: none;
-                                padding: 10px 20px;
-                                border-radius: var(--radius-md);
-                                cursor: pointer;
-                                font-weight: 600;
-                            ">
-                                Delete
-                            </button>
-                            <button id="cancelDelete" style="
-                                background: var(--bg-lighter);
-                                color: var(--text-dark);
-                                border: none;
-                                padding: 10px 20px;
-                                border-radius: var(--radius-md);
-                                cursor: pointer;
-                                font-weight: 600;
-                            ">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(confirmModal);
-
-            document.getElementById('confirmDelete').addEventListener('click', () => {
-                confirmModal.remove();
-                row.style.animation = '';
-
-                row.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(100px) rotate(5deg)';
-                row.style.height = '0';
-                row.style.padding = '0';
-                row.style.margin = '0';
-                row.style.border = 'none';
-
-                setTimeout(() => {
-                    row.remove();
-                    allCustomers = allCustomers.filter(c => c.id !== customerId);
-                    updateStats();
-                    handleFilter();
-                }, 500);
-            });
-
-            document.getElementById('cancelDelete').addEventListener('click', () => {
-                confirmModal.remove();
-                row.style.animation = '';
-            });
         }
 
         function updateStats() {
@@ -2020,6 +2008,82 @@
             document.getElementById('activeCustomers').textContent = activeCustomers;
             document.getElementById('blockedCustomers').textContent = blockedCustomers;
         }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : 'var(--danger-red)'};
+                color: white;
+                border-radius: var(--radius-md);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10001;
+                animation: slideInRight 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                max-width: 300px;
+            `;
+
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+                20%, 40%, 60%, 80% { transform: translateX(2px); }
+            }
+            
+            @keyframes pulseRed {
+                0%, 100% { background-color: transparent; }
+                50% { background-color: rgba(185, 28, 28, 0.1); }
+            }
+            
+            @keyframes pulseGreen {
+                0%, 100% { background-color: transparent; }
+                50% { background-color: rgba(45, 157, 120, 0.1); }
+            }
+        `;
+        document.head.appendChild(style);
 
         document.addEventListener('DOMContentLoaded', function () {
             initializeCustomerData();
@@ -2036,6 +2100,13 @@
             const modal = document.getElementById('customerModal');
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const deleteModal = document.getElementById('deleteConfirmModal');
+            deleteModal.addEventListener('click', (e) => {
+                if (e.target === deleteModal) {
                     closeModal();
                 }
             });
