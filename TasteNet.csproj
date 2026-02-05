@@ -124,6 +124,12 @@
     <Content Include="Images\landingpage.jpg" />
     <Content Include="Images\LOGO.png" />
     <Content Include="Images\TasteNet.png" />
+    <Content Include="Users\Admin\AcceptOrder.aspx" />
+    <Content Include="Users\Admin\FoodPreparation.aspx" />
+    <Content Include="Users\Admin\ManageInventory.aspx" />
+    <Content Include="Users\Admin\OrderHistory.aspx" />
+    <Content Include="Users\Admin\Ticketing.aspx" />
+    <Content Include="Users\Admin\UpdateMenu.aspx" />
     <Content Include="Users\Customer\LandingPage.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
@@ -224,6 +230,48 @@
     </Compile>
     <Compile Include="MasterPages\Rider.Master.designer.cs">
       <DependentUpon>Rider.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\AcceptOrder.aspx.cs">
+      <DependentUpon>AcceptOrder.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\AcceptOrder.aspx.designer.cs">
+      <DependentUpon>AcceptOrder.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\FoodPreparation.aspx.cs">
+      <DependentUpon>FoodPreparation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\FoodPreparation.aspx.designer.cs">
+      <DependentUpon>FoodPreparation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\ManageInventory.aspx.cs">
+      <DependentUpon>ManageInventory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\ManageInventory.aspx.designer.cs">
+      <DependentUpon>ManageInventory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\OrderHistory.aspx.cs">
+      <DependentUpon>OrderHistory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\OrderHistory.aspx.designer.cs">
+      <DependentUpon>OrderHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\Ticketing.aspx.cs">
+      <DependentUpon>Ticketing.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\Ticketing.aspx.designer.cs">
+      <DependentUpon>Ticketing.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\UpdateMenu.aspx.cs">
+      <DependentUpon>UpdateMenu.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\UpdateMenu.aspx.designer.cs">
+      <DependentUpon>UpdateMenu.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\Customer\LandingPage.aspx.cs">
       <DependentUpon>LandingPage.aspx</DependentUpon>
@@ -383,7 +431,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Users\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
