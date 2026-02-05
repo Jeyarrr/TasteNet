@@ -242,21 +242,16 @@
             padding: 18px;
             border-radius: var(--radius-lg); 
             box-shadow: var(--card-shadow);
-            transition: all var(--transition-base) cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform var(--transition-base) ease, box-shadow var(--transition-base) ease;
             border: 2px solid transparent;
-            cursor: pointer;
             position: relative;
             overflow: hidden;
             transform-origin: center;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 
-                0 20px 40px rgba(107, 13, 30, 0.15),
-                0 0 0 1px rgba(107, 13, 30, 0.05);
-            z-index: 2;
-            border-color: var(--border-light);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(107, 13, 30, 0.12);
         }
 
         .stat-card__header {
@@ -283,13 +278,12 @@
             justify-content: center; 
             font-size: 16px; 
             flex-shrink: 0;
-            transition: all var(--transition-base);
+            transition: transform var(--transition-base) ease;
             transform-origin: center;
         }
 
         .stat-card:hover .stat-icon {
             transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .icon-items { 
