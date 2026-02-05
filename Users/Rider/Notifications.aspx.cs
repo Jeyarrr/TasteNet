@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace TasteNet.Users.Rider
 {
-    public partial class Transactions : System.Web.UI.Page
+    public partial class Notifications : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

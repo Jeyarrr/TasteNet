@@ -80,17 +80,6 @@
             margin-bottom: 10px;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(255, 193, 7, 0.2);
-            color: var(--accent-color);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-
         .menu {
             list-style: none;
             padding: 15px 0;
@@ -351,7 +340,6 @@
                 <img src="/Images/RiderAvatar.png" alt="Rider" onerror="this.src='https://ui-avatars.com/api/?name=Rider&background=7b0000&color=fff&size=80';" />
                 <h2>Caballeros TasteNet</h2>
                 <span style="color: var(--text-light);">Rider Portal</span>
-                <div class="status-badge">Online</div>
             </div>
 
             <ul class="menu" id="nav-menu">
@@ -429,25 +417,6 @@
                 }
             });
 
-            function updateRiderStatus() {
-                var statusBadge = document.querySelector('.status-badge');
-                var isOnline = Math.random() > 0.5;
-
-                if (isOnline) {
-                    statusBadge.textContent = 'Online';
-                    statusBadge.style.background = 'rgba(76, 175, 80, 0.2)';
-                    statusBadge.style.borderColor = 'rgba(76, 175, 80, 0.3)';
-                    statusBadge.style.color = '#4CAF50';
-                } else {
-                    statusBadge.textContent = 'Offline';
-                    statusBadge.style.background = 'rgba(158, 158, 158, 0.2)';
-                    statusBadge.style.borderColor = 'rgba(158, 158, 158, 0.3)';
-                    statusBadge.style.color = '#9E9E9E';
-                }
-            }
-
-            setInterval(updateRiderStatus, 30000);
-        });
     </script>
 </body>
 </html>
