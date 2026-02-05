@@ -105,12 +105,20 @@
             }
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
         .stat-card {
             background: white;
             padding: 20px;
             border-radius: 18px;
             box-shadow: var(--card-shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 125px;
         }
 
         .stat-card:hover {

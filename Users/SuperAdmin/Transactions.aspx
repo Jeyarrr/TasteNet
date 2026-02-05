@@ -403,6 +403,7 @@
             padding: 16px 10px;
             border-bottom: 1px solid var(--bg-lighter);
             font-size: 13px;
+            color: maroon;  
             vertical-align: middle;
             text-align: center;
             white-space: nowrap;
