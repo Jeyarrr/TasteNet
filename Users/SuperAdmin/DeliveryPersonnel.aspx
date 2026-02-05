@@ -1730,7 +1730,7 @@
                 </button>
             </div>
             <div class="add-rider-modal__body">
-                <form id="addRiderForm">
+                <class id="addRiderForm">
                     <div class="form-section">
                         <h4><i class="fas fa-user-circle"></i> Personal Information</h4>
                         <div class="form-row">
@@ -1751,7 +1751,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="newRiderMobile">Mobile Number (+63) *</label>
-                                <input type="tel" id="newRiderMobile" class="form-control" placeholder="9123456789" pattern="[0-9]{10}" required>
+                                <input type="tel" id="newRiderMobile" class="form-control" placeholder="9123456789" pattern="[0-9]{10}" title="Please enter a 11-digit phone number" required>
                                 <small class="form-text">Format: 9123456789 (10 digits)</small>
                             </div>
                         </div>
@@ -1922,7 +1922,7 @@
                             <i class="fas fa-save"></i> Save Rider
                         </button>
                     </div>
-                </form>
+                </class>
             </div>
         </div>
     </div>

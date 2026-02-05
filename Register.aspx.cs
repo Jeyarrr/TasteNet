@@ -214,6 +214,7 @@ namespace TasteNet
             string confirmPassword = txtRiderConfirmPassword.Text.Trim();
             string gender = rblRiderGender.SelectedValue;
             string userType = "rider";
+            System.Diagnostics.Debug.WriteLine("Current user type: " + userType);
 
             string vehicleType = ddlVehicleType.SelectedValue;
             string makeModel = txtMakeModel.Text.Trim();
