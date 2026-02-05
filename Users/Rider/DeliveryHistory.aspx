@@ -6,7 +6,7 @@
 html, body, form {
     margin: 0;
     padding: 0;
-    background: #ffffff;
+    background: #fffaf3;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 :root {
@@ -32,13 +32,29 @@ html, body, form {
 /* ===== CENTERED PAGE WRAPPER ===== */
 .history-container {
     max-width: 1200px;        /* 🔥 controls UI size */
-    margin: 12px;           /* 🔥 center horizontally */
+    margin: 0px;           /* 🔥 center horizontally */
     padding: 25px;
     color: #000000 ;
     border-radius: 12px;
 }
+.history-header {
+    display: flex;
+    justify-content: space-between; /* title left, dropdown right */
+    align-items: center;            /* vertical alignment */
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 21px;
+    font-weight: normal;
+}
+
+.status-filter {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
 .top-bar h1 {
-    font-size: 24px;
+    font-size: 20px;
     color: var(--primary-maroon);
     font-weight: 600;
     margin: 0;
@@ -79,7 +95,7 @@ html, body, form {
 }
 
 .summary-card small {
-    color: #888;
+    color: #000000;
     font-size: 11px;
 }
 
@@ -97,6 +113,7 @@ html, body, form {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
+    box-shadow: var(--card-shadow);
 }
 
 /* LEFT */
@@ -176,13 +193,16 @@ html, body, form {
     
         <div class="history-container">
 
-    
-        <h1 class="h1">Delivery History</h1>
-        <select>
+    <div class="history-header">
+        <h3 class="h1">Delivery History</h3>
+
+        <select class="status-filter">
             <option>All Status</option>
             <option>Completed</option>
             <option>Cancelled</option>
         </select>
+    </div>
+        
     
 
     <div class="summary-row">

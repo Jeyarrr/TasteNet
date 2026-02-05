@@ -190,6 +190,7 @@
     <Content Include="Users\Rider\Earnings.aspx" />
     <Content Include="Users\Rider\Notifications.aspx" />
     <Content Include="Users\Rider\Profile.aspx" />
+    <Content Include="Users\Rider\Settings.aspx" />
     <Content Include="Users\SuperAdmin\AllOrders.aspx" />
     <Content Include="Users\SuperAdmin\Categories.aspx" />
     <Content Include="Users\SuperAdmin\CustomerManagement.aspx" />
@@ -293,6 +294,13 @@
     </Compile>
     <Compile Include="Users\Rider\Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Rider\Settings.aspx.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Rider\Settings.aspx.designer.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\AllOrders.aspx.cs">
       <DependentUpon>AllOrders.aspx</DependentUpon>

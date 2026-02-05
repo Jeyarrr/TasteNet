@@ -8,13 +8,13 @@
         html, body, form {
          margin: 0;
          padding: 0;
-         background: #f5f6f8;
+         background: #fffaf3;
          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
 /* ===== CENTERED PAGE WRAPPER ===== */
         .history-container {
-          max-width: 1200px;        /* 🔥 controls UI size */
+         max-width: 1200px;        /* 🔥 controls UI size */
          margin: 0 auto;           /* 🔥 center horizontally */
          padding: 24px 20px;
        }
@@ -65,7 +65,7 @@
             padding: 20px 30px;
             max-width: 100%;
             margin: 0 auto;
-            background: #ffffff;
+            background: #fffaf3;
         }
 
         /* Top Bar - Simpler, cleaner version */
