@@ -1583,7 +1583,7 @@
                 icon: "fa-fire",
                 status: "active",
                 itemCount: 5,
-                image: "Image/Sisig.jpg",
+                image: "Images/Sisig.jpg",
                 createdAt: "2024-01-15"
             },
             {
@@ -1595,7 +1595,7 @@
                 icon: "fa-utensils",
                 status: "active",
                 itemCount: 6,
-                image: "Image/Hotsilog.jpg",
+                image: "Images/Hotsilog.jpg",
                 createdAt: "2024-01-20"
             },
             {
@@ -1607,7 +1607,7 @@
                 icon: "fa-mug-hot",
                 status: "active",
                 itemCount: 4,
-                image: "Image/Goto.jpg",
+                image: "Images/Goto.jpg",
                 createdAt: "2024-02-01"
             },
             {
@@ -1619,7 +1619,7 @@
                 icon: "fa-cookie",
                 status: "hidden",
                 itemCount: 3,
-                image: "Image/Appetizers.jpg",
+                image: "Images/Appetizers.jpg",
                 createdAt: "2024-02-10"
             },
             {
@@ -1631,7 +1631,7 @@
                 icon: "fa-seedling",
                 status: "hidden",
                 itemCount: 2,
-                image: "Image/Desserts.jpg",
+                image: "Images/Desserts.jpg",
                 createdAt: "2024-02-15"
             }
         ];

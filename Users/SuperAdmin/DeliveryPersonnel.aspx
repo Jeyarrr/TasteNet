@@ -273,11 +273,12 @@
             overflow: hidden;
             margin-bottom: 20px;
             animation: fadeIn 0.5s ease-out;
+            margin-top: 0 !important;
         }
 
         .table-wrapper {
             overflow-x: auto;
-            padding: 0;
+            padding: 0 !important;
         }
 
         .custom-table {
@@ -285,14 +286,21 @@
             border-collapse: collapse;
             min-width: 100%;
             font-size: 13px;
+            border-spacing: 0 !important;
+            border-collapse: separate !important;
         }
 
         .custom-table thead {
             background: white;
+            border-bottom: 2px solid var(--bg-light) !important;
+        }
+
+        .custom-table thead tr {
+            height: 40px !important;
         }
 
         .custom-table th {
-            padding: 16px 10px;
+            padding: 8px 10px !important;
             text-align: center;
             font-size: 11px;
             color: var(--muted-text);
@@ -304,6 +312,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             background: white;
+            vertical-align: middle !important;
         }
 
         .custom-table td {
@@ -576,6 +585,19 @@
             text-decoration: none;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Fix for View button color - Maroon */
+        .action-icon.view {
+            color: var(--primary-maroon) !important;
+        }
+
+        .action-icon.view i {
+            color: inherit;
+        }
+
+        .action-icon.view:hover {
+            color: white !important;
         }
 
         .action-icon::before {

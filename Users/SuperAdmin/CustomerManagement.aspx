@@ -573,7 +573,6 @@
             align-items: center;
             justify-content: center;
             background: var(--bg-lighter);
-            color: var(--muted-text);
             border: none;
             cursor: pointer;
             transition: all var(--transition-base);
@@ -582,6 +581,42 @@
             text-decoration: none;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-button--view {
+            color: var(--primary-maroon);
+        }
+
+        .action-button--view:hover {
+            background: var(--primary-maroon);
+            color: white;
+        }
+
+        .action-button--edit {
+            color: var(--muted-text);
+        }
+
+        .action-button--edit:hover {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .action-button--block {
+            color: var(--muted-text);
+        }
+
+        .action-button--block:hover {
+            background: var(--warning-orange);
+            color: white;
+        }
+
+        .action-button--delete {
+            color: var(--muted-text);
+        }
+
+        .action-button--delete:hover {
+            background: var(--danger-red);
+            color: white;
         }
 
         .action-button::before {
@@ -605,26 +640,6 @@
         .action-button:hover {
             transform: translateY(-2px) scale(1.1);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .action-button--view:hover {
-            background: var(--primary-maroon);
-            color: white;
-        }
-
-        .action-button--edit:hover {
-            background: var(--success-green);
-            color: white;
-        }
-
-        .action-button--block:hover {
-            background: var(--warning-orange);
-            color: white;
-        }
-
-        .action-button--delete:hover {
-            background: var(--danger-red);
-            color: white;
         }
 
         .action-button[title]:hover::after {
@@ -1011,6 +1026,44 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        /* Style for recent orders table - Fix for Order ID spacing */
+        .recent-orders-container {
+            margin-top: 8px;
+            overflow-x: auto;
+        }
+
+        .recent-orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .recent-orders-table th {
+            padding: 6px 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-light);
+            color: var(--muted-text);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .recent-orders-table td {
+            padding: 6px 12px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .recent-orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .recent-orders-table strong {
+            color: var(--text-dark);
+            font-weight: 600;
         }
 
         .modal-footer {
@@ -1882,23 +1935,23 @@
                 { id: `ORD#${customerId}-2024-003`, date: '2 days ago', amount: '₱2,150', status: 'Delivered' }
             ];
 
-            let html = '<div style="overflow-x: auto;">';
-            html += '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
+            let html = '<div class="recent-orders-container">';
+            html += '<table class="recent-orders-table">';
             html += '<thead><tr>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Order ID</th>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Date</th>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Amount</th>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Status</th>';
+            html += '<th>Order ID</th>';
+            html += '<th>Date</th>';
+            html += '<th>Amount</th>';
+            html += '<th>Status</th>';
             html += '</tr></thead>';
             html += '<tbody>';
 
             recentOrders.forEach(order => {
                 const statusClass = order.status === 'Delivered' ? 'status-active' : 'status-blocked';
-                html += `<tr style="border-bottom: 1px solid var(--border-light);">`;
-                html += `<td style="padding: 12px;"><strong>${order.id}</strong></td>`;
-                html += `<td style="padding: 12px;">${order.date}</td>`;
-                html += `<td style="padding: 12px; font-weight: 600;">${order.amount}</td>`;
-                html += `<td style="padding: 12px;"><span class="info-value status ${statusClass}" style="display: inline-block;">${order.status}</span></td>`;
+                html += `<tr>`;
+                html += `<td><strong>${order.id}</strong></td>`;
+                html += `<td>${order.date}</td>`;
+                html += `<td style="font-weight: 600;">${order.amount}</td>`;
+                html += `<td><span class="info-value status ${statusClass}">${order.status}</span></td>`;
                 html += `</tr>`;
             });
 
