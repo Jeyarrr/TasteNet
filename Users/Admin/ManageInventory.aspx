@@ -1487,7 +1487,7 @@
             </div>
             <div class="edit-modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelEdit">Cancel</button>
-                <button type="button" class="btn btn--primary" id="saveEdit">Save Changes</button>
+                <button type="button" class="btn btn--primary" id="saveEdit">Save</button>
             </div>
         </div>
     </div>

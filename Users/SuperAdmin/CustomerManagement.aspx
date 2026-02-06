@@ -101,13 +101,6 @@
             line-height: 1.5;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -1391,12 +1384,6 @@
             <div class="header-content">
                 <h1>Customer Management</h1>
                 <p>Monitor and manage all registered customers and their activities</p>
-            </div>
-            <div class="header-actions">
-                <button type="button" class="btn btn--primary" onclick="return false;">
-                    <i class="fas fa-download"></i>
-                    Export Data
-                </button>
             </div>
         </div>
 

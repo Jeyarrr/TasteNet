@@ -125,7 +125,6 @@
     <Content Include="Images\LOGO.png" />
     <Content Include="Images\TasteNet.png" />
     <Content Include="Users\Admin\AcceptOrder.aspx" />
-    <Content Include="Users\Admin\FoodPreparation.aspx" />
     <Content Include="Users\Admin\ManageInventory.aspx" />
     <Content Include="Users\Admin\OrderHistory.aspx" />
     <Content Include="Users\Admin\Ticketing.aspx" />
@@ -237,13 +236,6 @@
     </Compile>
     <Compile Include="Users\Admin\AcceptOrder.aspx.designer.cs">
       <DependentUpon>AcceptOrder.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Users\Admin\FoodPreparation.aspx.cs">
-      <DependentUpon>FoodPreparation.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Users\Admin\FoodPreparation.aspx.designer.cs">
-      <DependentUpon>FoodPreparation.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\Admin\ManageInventory.aspx.cs">
       <DependentUpon>ManageInventory.aspx</DependentUpon>

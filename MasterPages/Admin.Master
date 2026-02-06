@@ -358,7 +358,7 @@
                 <div class="menu-title">Manage</div>
                 <li>
                     <a href="/Users/Admin/ManageInventory.aspx">
-                        <i class="fa-solid fa-cube"></i>
+                        <i class="fa-solid fa-boxes-stacked"></i>
                         <span>Inventory Management</span>
                     </a>
                 </li>
@@ -366,7 +366,7 @@
                 <div class="menu-title">Update</div>
                 <li>
                     <a href="/Users/Admin/UpdateMenu.aspx">
-                        <i class="fa-solid fa-motorcycle"></i>
+                        <i class="fa-solid fa-utensils"></i>
                         <span>Update Menu</span>
                     </a>
                 </li>
@@ -374,19 +374,19 @@
                 <div class="menu-title">Orders</div>
                 <li>
                     <a href="/Users/Admin/AcceptOrder.aspx">
-                        <i class="fa-solid fa-dollar-sign"></i>
+                        <i class="fa-solid fa-cart-plus"></i>
                         <span>Accept Orders</span>
                     </a>
                 </li>
                 <li>
                      <a href="/Users/Admin/Ticketing.aspx">
-                       <i class="fa-solid fa-dollar-sign"></i>
+                       <i class="fa-solid fa-ticket"></i>
                        <span>Ticketing</span>
                   </a>
               </li>
                   <li>
                      <a href="/Users/Admin/OrderHistory.aspx">
-                        <i class="fa-solid fa-dollar-sign"></i>
+                        <i class="fa-solid fa-clock-rotate-left"></i>
                         <span>Order History</span>
                        </a>
                     </li>
@@ -421,7 +421,7 @@
                     link.classList.add('active');
                 }
             });
-
+        });
     </script>
 </body>
 </html>

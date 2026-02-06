@@ -214,8 +214,8 @@
                     <span>Inventory Management</span>
                 </a>
                 <a href="/Users/SuperAdmin/Categories.aspx">
-                    <i class="fa-solid fa-list"></i>
-                    <span>Categories</span>
+                    <i class="fa-solid fa-utensils"></i>
+                    <span>Update Menu</span>
                 </a>
 
                 <div class="menu-title">Orders</div>

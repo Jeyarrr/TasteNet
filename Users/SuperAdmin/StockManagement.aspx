@@ -1876,9 +1876,11 @@
         function openEditModal(ingredientId, isNew = false) {
             const modal = document.getElementById('editModal');
             const modalTitle = document.getElementById('editModalTitle');
+            const saveButton = document.getElementById('saveEdit');
 
             if (isNew) {
                 modalTitle.textContent = 'Add New Ingredient';
+                saveButton.textContent = 'Save';
                 currentEditIngredientId = null;
 
                 document.getElementById('editName').value = '';
@@ -1891,6 +1893,7 @@
                 document.getElementById('editSupplierContact').value = '';
             } else {
                 modalTitle.textContent = 'Edit Ingredient';
+                saveButton.textContent = 'Save Changes';
                 currentEditIngredientId = ingredientId;
 
                 const ingredient = ingredientsData.find(i => i.id === ingredientId);

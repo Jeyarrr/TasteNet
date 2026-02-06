@@ -359,6 +359,7 @@
             overflow: hidden;
             animation: slideInUp 0.4s ease-out;
             animation-fill-mode: both;
+            height: 300px;
         }
 
         .order-card:nth-child(1) { animation-delay: 0.1s; }
@@ -743,10 +744,6 @@
                     <i class="fas fa-sync-alt"></i>
                     Refresh
                 </button>
-                <button type="button" class="admin-btn" id="kitchenViewBtn">
-                    <i class="fas fa-utensils"></i>
-                    Kitchen View
-                </button>
             </div>
         </div>
 
@@ -822,7 +819,7 @@
                         <div class="order-header">
                             <div class="order-info">
                                 <span class="order-id">#001</span>
-                                <span class="order-customer">Jay-r Reyes</span>
+                                <span class="order-customer">Jay-r Casano</span>
                                 <span class="time-indicator">
                                     <i class="fas fa-clock"></i>
                                     Waiting 5min
@@ -860,54 +857,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-info">
-                                <span class="order-id">#002</span>
-                                <span class="order-customer">Raymond Santos</span>
-                                <span class="priority-badge">RUSH</span>
-                                <span class="time-indicator">
-                                    <i class="fas fa-clock"></i>
-                                    Waiting 3min
-                                </span>
-                            </div>
-                            <span class="order-time">1:00 PM</span>
-                        </div>
-                        
-                        <div class="order-items">
-                            <div class="item-row">
-                                <span class="item-name">Tofu Sisig</span>
-                                <span class="item-quantity">1</span>
-                            </div>
-                            <div class="item-row">
-                                <span class="item-name">Pork Sisig</span>
-                                <span class="item-quantity">1</span>
-                            </div>
-                            <div class="item-row">
-                                <span class="item-name">Mountain Dew</span>
-                                <span class="item-quantity">1</span>
-                            </div>
-                            <div class="item-row">
-                                <span class="item-name">Extra Rice</span>
-                                <span class="item-quantity">2</span>
-                            </div>
-                        </div>
-                        
-                        <div class="order-footer">
-                            <div class="order-total">400</div>
-                            <div class="action-buttons">
-                                <button type="button" class="action-btn btn-details">
-                                    <i class="fas fa-info-circle"></i>
-                                    Details
-                                </button>
-                                <button type="button" class="action-btn btn-accept">
-                                    <i class="fas fa-check"></i>
-                                    Accept Order
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -926,7 +875,7 @@
                         <div class="order-header">
                             <div class="order-info">
                                 <span class="order-id">#003</span>
-                                <span class="order-customer">Maria Santos</span>
+                                <span class="order-customer">Zea Sulit</span>
                                 <span class="time-indicator" style="color: var(--accent-teal);">
                                     <i class="fas fa-fire"></i>
                                     Started 8min ago
@@ -965,11 +914,6 @@
                         </div>
                     </div>
 
-                    <div class="empty-state">
-                        <i class="fas fa-blender"></i>
-                        <p>No other orders in preparation</p>
-                        <small>Accepted orders will appear here</small>
-                    </div>
                 </div>
             </div>
         </div>

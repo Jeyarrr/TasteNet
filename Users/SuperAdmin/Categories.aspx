@@ -85,6 +85,10 @@
             line-height: 1.5;
         }
 
+        /* ==================== */
+        /* BUTTON SYSTEM ENHANCEMENTS */
+        /* ==================== */
+        
         .btn {
             padding: 12px 24px;
             border-radius: var(--radius-md);
@@ -105,6 +109,18 @@
             position: relative;
             overflow: hidden;
             z-index: 1;
+        }
+
+        /* Accessibility: Focus states */
+        .btn:focus-visible {
+            outline: 3px solid var(--primary-maroon);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn:focus:not(:focus-visible) {
+            outline: none;
         }
 
         .btn::before {
@@ -128,6 +144,13 @@
             left: 100%;
         }
 
+        /* Active state */
+        .btn:active {
+            transform: translateY(-1px);
+            transition-duration: 0.1s;
+        }
+
+        /* Button variants */
         .btn--secondary {
             background: var(--accent-yellow);
             color: var(--text-dark);
@@ -180,6 +203,132 @@
             box-shadow: 0 4px 12px rgba(107, 13, 30, 0.1);
         }
 
+        /* Button sizes */
+        .btn--sm {
+            padding: 8px 16px;
+            font-size: 12px;
+            min-height: 36px;
+            gap: 6px;
+        }
+
+        .btn--lg {
+            padding: 14px 28px;
+            font-size: 15px;
+            min-height: 48px;
+            gap: 10px;
+        }
+
+        .btn--icon {
+            padding: 8px;
+            min-height: 36px;
+            min-width: 36px;
+            justify-content: center;
+        }
+
+        .btn--icon i {
+            margin: 0;
+        }
+
+        /* Loading states */
+        .btn--loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+        }
+
+        .btn--loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn--outline.btn--loading::after {
+            border-color: var(--primary-maroon);
+            border-top-color: transparent;
+        }
+
+        /* Disabled states */
+        .btn:disabled,
+        .btn--disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled:hover,
+        .btn--disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            background: inherit !important;
+            border-color: inherit !important;
+            color: inherit !important;
+        }
+
+        .btn:disabled::before,
+        .btn--disabled::before {
+            display: none;
+        }
+
+        /* Success/Error state animations */
+        .btn--success {
+            background: var(--success-green);
+            color: white;
+            animation: successPulse 2s ease;
+        }
+
+        .btn--error {
+            background: var(--danger-red);
+            color: white;
+            animation: errorShake 0.5s ease;
+        }
+
+        /* Button groups */
+        .btn-group {
+            display: inline-flex;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--button-shadow);
+            background: white;
+        }
+
+        .btn-group .btn {
+            border-radius: 0;
+            margin: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-group .btn:first-child {
+            border-radius: var(--radius-md) 0 0 var(--radius-md);
+        }
+
+        .btn-group .btn:last-child {
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            border-right: none;
+        }
+
+        .btn-group .btn--outline {
+            border: 2px solid var(--border-light);
+            margin: -2px 0;
+        }
+
+        .btn-group .btn--outline:hover {
+            z-index: 1;
+        }
+
+        /* Modal footer button consistency */
+        .modal-footer .btn {
+            min-width: 120px;
+        }
+
         .stats-grid { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr);
@@ -207,6 +356,19 @@
             backface-visibility: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Accessibility for interactive cards */
+        .stat-card:focus-visible {
+            outline: 3px solid var(--primary-maroon);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .stat-card:active {
+            transform: translateY(-2px) scale(0.98);
+            transition-duration: 0.1s;
         }
 
         .stat-card::before {
@@ -394,6 +556,22 @@
             animation: subtlePulse 2s infinite ease-in-out;
         }
 
+        /* New animations for buttons */
+        @keyframes successPulse {
+            0%, 100% { 
+                box-shadow: 0 4px 12px rgba(45, 157, 120, 0.2); 
+            }
+            50% { 
+                box-shadow: 0 4px 20px rgba(45, 157, 120, 0.4); 
+            }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         .filter-container { 
             display: flex; 
             gap: 8px; 
@@ -435,6 +613,16 @@
             box-sizing: border-box;
         }
 
+        /* Accessibility for form controls */
+        .search-wrapper input:focus-visible,
+        .form-control:focus-visible,
+        .filter-dropdown:focus-visible {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+            border-color: transparent;
+            transform: translateY(-1px);
+        }
+
         .search-wrapper input:hover {
             border-color: var(--border-hover);
             box-shadow: 0 4px 12px rgba(107, 13, 30, 0.08);
@@ -472,7 +660,7 @@
             font-weight: 500;
             transition: all var(--transition-base);
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org2000/svg' width='14' height='14' fill='%238a6d6d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%238a6d6d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 10px;
@@ -496,6 +684,19 @@
             box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.15);
         }
 
+        /* COLOR BACKGROUND CLASSES - ADDED THESE */
+        .bg-maroon {
+            background-color: var(--primary-maroon);
+        }
+        
+        .bg-maroon-light {
+            background-color: var(--primary-maroon-light);
+        }
+        
+        .bg-maroon-pale {
+            background-color: var(--primary-maroon-pale);
+        }
+
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -515,6 +716,14 @@
             border: 2px solid transparent;
         }
 
+        /* Accessibility for category cards */
+        .category-card:focus-visible {
+            outline: 3px solid var(--primary-maroon);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
+            transform: translateY(-4px);
+        }
+
         .category-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--card-shadow-hover);
@@ -532,6 +741,18 @@
             padding: 20px;
             position: relative;
             overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Using direct image URLs that will work */
+        .category-header[data-menu-id="1"] {
+            background-image: url('background-image: url('Images/Hotsilog.jpg');');
+        }
+        
+        .category-header[data-menu-id="2"] {
+            background-image: url('https://media.istockphoto.com/id/1253850022/photo/filipino-breakfast-food.jpg?s=1024x1024&w=is&k=20&c=YbJ7Q8ZQ9Q8XqyQ6QjzJXq9q9q8=');
         }
 
         .category-image {
@@ -543,6 +764,7 @@
             object-fit: cover;
             z-index: 0;
             transition: transform var(--transition-base);
+            opacity: 1;
         }
 
         .category-card:hover .category-image {
@@ -556,7 +778,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+            background: linear-gradient(135deg, rgba(107, 13, 30, 0.7) 0%, rgba(90, 11, 25, 0.5) 100%);
             z-index: 1;
         }
 
@@ -603,8 +825,13 @@
             border-radius: var(--radius-sm);
         }
 
+        /* Status dropdown styles */
+        .status-dropdown-container {
+            position: relative;
+        }
+
         .category-status {
-            padding: 6px 16px;
+            padding: 6px 32px 6px 16px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 700;
@@ -612,30 +839,98 @@
             letter-spacing: 0.5px;
             transition: all var(--transition-fast);
             cursor: pointer;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            min-width: 120px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%23fff' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px;
+        }
+
+        .category-status:focus-visible {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+            transform: translateY(-1px);
         }
 
         .status-active {
-            background: var(--success-green-light);
-            color: var(--success-green);
+            background: var(--success-green);
+            color: white;
             border: 1px solid var(--success-green);
         }
 
-        .status-active:hover {
+        .status-active:hover,
+        .status-active:focus {
             background: var(--success-green);
+            filter: brightness(0.9);
             color: white;
             transform: translateY(-1px);
         }
 
         .status-hidden {
-            background: var(--warning-orange-light);
-            color: var(--warning-orange);
+            background: var(--warning-orange);
+            color: white;
             border: 1px solid var(--warning-orange);
         }
 
-        .status-hidden:hover {
+        .status-hidden:hover,
+        .status-hidden:focus {
             background: var(--warning-orange);
+            filter: brightness(0.9);
             color: white;
             transform: translateY(-1px);
+        }
+
+        /* Status dropdown options */
+        .status-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+            min-width: 150px;
+        }
+
+        .status-option {
+            padding: 10px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            width: 100%;
+            background: none;
+            text-align: left;
+            color: var(--text-dark);
+        }
+
+        .status-option:hover {
+            background: var(--bg-lighter);
+        }
+
+        .status-option.active {
+            background: var(--success-green-light);
+            color: var(--success-green);
+        }
+
+        .status-option.hidden {
+            background: var(--warning-orange-light);
+            color: var(--warning-orange);
+        }
+
+        .status-dropdown-container.active .status-options {
+            display: block;
         }
 
         .category-description {
@@ -690,6 +985,19 @@
             text-decoration: none;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+            outline: none;
+        }
+
+        /* Accessibility for action icons */
+        .action-icon:focus-visible {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+            transform: scale(1.1);
+        }
+
+        .action-icon:active {
+            transform: translateY(0) scale(0.95);
         }
 
         .action-icon::before {
@@ -824,12 +1132,16 @@
             height: 200px;
             overflow: hidden;
             border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .view-modal-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: none; /* We'll use background-image instead */
         }
 
         .view-modal-overlay {
@@ -933,6 +1245,7 @@
             font-weight: 700;
             text-transform: uppercase;
             width: fit-content;
+            border: 1px solid transparent;
         }
 
         .detail-value.status-active {
@@ -977,6 +1290,11 @@
             transition: all var(--transition-fast);
             padding: 0;
             line-height: 1;
+        }
+
+        .modal-close:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 2px;
         }
 
         .modal-close:hover {
@@ -1087,6 +1405,12 @@
             transform: translateX(26px);
         }
 
+        /* Switch focus state */
+        .switch input:focus-visible + .slider {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -1116,21 +1440,6 @@
             to {
                 opacity: 1;
                 transform: translateX(-50%) translateY(0);
-            }
-        }
-
-        @keyframes subtlePulse {
-            0%, 100% { 
-                box-shadow: 
-                    0 20px 40px rgba(107, 13, 30, 0.15),
-                    0 8px 16px rgba(107, 13, 30, 0.1),
-                    0 0 0 1px rgba(107, 13, 30, 0.05);
-            }
-            50% { 
-                box-shadow: 
-                    0 25px 45px rgba(107, 13, 30, 0.18),
-                    0 10px 20px rgba(107, 13, 30, 0.12),
-                    0 0 0 1px rgba(107, 13, 30, 0.07);
             }
         }
 
@@ -1177,6 +1486,10 @@
             box-shadow: 0 0 0 2px var(--warning-orange-light);
         }
 
+        /* ==================== */
+        /* RESPONSIVE ENHANCEMENTS */
+        /* ==================== */
+        
         @media (max-width: 1400px) {
             .categories-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1233,6 +1546,23 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
+            
+            .btn-group {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+                border-radius: var(--radius-md);
+                margin: 5px 0;
+                border-right: none;
+            }
+            
+            .btn-group .btn:first-child,
+            .btn-group .btn:last-child {
+                border-radius: var(--radius-md);
+            }
         }
 
         @media (max-width: 768px) {
@@ -1267,9 +1597,15 @@
             .modal-footer {
                 padding: 15px 20px;
                 flex-direction: column;
+                gap: 10px;
             }
             
             .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .modal-footer .btn {
                 width: 100%;
             }
 
@@ -1309,6 +1645,18 @@
                 font-size: 13px;
                 min-height: 40px;
             }
+            
+            .btn--sm {
+                padding: 6px 12px;
+                font-size: 12px;
+                min-height: 32px;
+            }
+            
+            .btn--lg {
+                padding: 12px 24px;
+                font-size: 14px;
+                min-height: 44px;
+            }
 
             .category-header {
                 height: 160px;
@@ -1326,6 +1674,12 @@
             .category-actions {
                 flex-wrap: wrap;
                 justify-content: center;
+            }
+            
+            .action-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
             }
 
             .modal-content {
@@ -1351,61 +1705,77 @@
             .view-modal-icon {
                 font-size: 36px;
             }
+            
+            .switch {
+                width: 40px;
+                height: 20px;
+            }
+
+            .slider:before {
+                height: 12px;
+                width: 12px;
+                left: 4px;
+                bottom: 2px;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
         }
     </style>
 
     <div id="full-page-wrapper">
         <div class="page-header">
             <div class="header-title">
-                <h1>Category Management</h1>
-                <p>Organize and manage menu categories</p>
+                <h1>Update Menu</h1>
+                <p>Organize and manage menu</p>
             </div>
             <div class="header-actions">
-                <button type="button" class="btn btn--secondary" id="addCategoryBtn">
-                    <i class="fas fa-plus"></i>Add Category
+                <button type="button" class="btn btn--secondary" id="addMenuBtn">
+                    <i class="fas fa-plus"></i>Add Menu
                 </button>
             </div>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card" tabindex="0" role="button" aria-label="View total menus">
                 <div class="stat-card__header">
-                    <span class="stat-card__label">Total Categories</span>
+                    <span class="stat-card__label">Total Menus</span>
                     <div class="stat-icon icon-total"><i class="fas fa-layer-group"></i></div>
                 </div>
-                <div class="stat-card__value" id="totalCategories">5</div>
-                <div class="stat-card__subtitle">All categories</div>
+                <div class="stat-card__value" id="totalMenus">2</div>
+                <div class="stat-card__subtitle">All menus</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" tabindex="0" role="button" aria-label="View active menus">
                 <div class="stat-card__header">
-                    <span class="stat-card__label">Active Categories</span>
+                    <span class="stat-card__label">Active Menus</span>
                     <div class="stat-icon icon-active"><i class="fas fa-eye"></i></div>
                 </div>
-                <div class="stat-card__value" id="activeCategories">3</div>
+                <div class="stat-card__value" id="activeMenus">2</div>
                 <div class="stat-card__subtitle">Visible to customers</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" tabindex="0" role="button" aria-label="View hidden menus">
                 <div class="stat-card__header">
-                    <span class="stat-card__label">Hidden Categories</span>
+                    <span class="stat-card__label">Hidden Menus</span>
                     <div class="stat-icon icon-hidden"><i class="fas fa-eye-slash"></i></div>
                 </div>
-                <div class="stat-card__value" id="hiddenCategories">2</div>
+                <div class="stat-card__value" id="hiddenMenus">0</div>
                 <div class="stat-card__subtitle">Not visible to customers</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" tabindex="0" role="button" aria-label="View total items">
                 <div class="stat-card__header">
                     <span class="stat-card__label">Total Items</span>
                     <div class="stat-icon icon-items"><i class="fas fa-utensils"></i></div>
                 </div>
-                <div class="stat-card__value" id="totalItems">20</div>
-                <div class="stat-card__subtitle">Across all categories</div>
+                <div class="stat-card__value" id="totalItems">11</div>
+                <div class="stat-card__subtitle">Across all menus</div>
             </div>
         </div>
 
         <div class="filter-container">
             <div class="search-wrapper" id="searchBox">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search by category name or description...">
+                <input type="text" id="searchInput" placeholder="Search by menu name or description...">
             </div>
             <select class="filter-dropdown" id="statusFilter">
                 <option value="all">All Status</option>
@@ -1419,29 +1789,30 @@
                 <option value="name-desc">Sort by: Name (Z-A)</option>
                 <option value="items-high">Sort by: Items (High-Low)</option>
                 <option value="items-low">Sort by: Items (Low-High)</option>
+                <option value="created-asc">Sort by: Created (Oldest)</option>
+                <option value="created-desc">Sort by: Created (Newest)</option>
             </select>
         </div>
 
-        <div class="categories-grid" id="categoriesGrid">
+        <div class="categories-grid" id="menusGrid">
         </div>
         
         <div class="no-results" id="noResultsMessage">
             <i class="fas fa-search"></i>
-            <h3>No categories found</h3>
+            <h3>No menus found</h3>
             <p>Try adjusting your search or filters</p>
         </div>
     </div>
 
     <div class="modal-overlay" id="viewModal">
         <div class="modal-content view-modal-content">
-            <div class="view-modal-header">
-                <img src="" alt="" class="view-modal-image" id="viewModalImage">
+            <div class="view-modal-header" id="viewModalHeader">
                 <div class="view-modal-overlay">
                     <i class="fas" id="viewModalIcon"></i>
-                    <h3 class="view-modal-title" id="viewModalTitle">Category Name</h3>
-                    <div class="view-modal-code" id="viewModalCode">CAT-000</div>
+                    <h3 class="view-modal-title" id="viewModalTitle">Menu Name</h3>
+                    <div class="view-modal-code" id="viewModalCode">MEN-000</div>
                 </div>
-                <button class="modal-close" id="closeViewModal">&times;</button>
+                <button class="modal-close" id="closeViewModal" aria-label="Close view modal">&times;</button>
             </div>
             <div class="view-modal-body">
                 <div class="view-modal-section">
@@ -1479,21 +1850,21 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="editModalTitle">Add New Category</h3>
-                <button class="modal-close" id="closeEditModal">&times;</button>
+                <h3 id="editModalTitle">Add New Menu</h3>
+                <button class="modal-close" id="closeEditModal" aria-label="Close edit modal">&times;</button>
             </div>
             <div class="edit-modal-body">
                 <div class="form-group">
-                    <label for="editName">Category Name</label>
-                    <input type="text" id="editName" class="form-control" placeholder="Enter category name">
+                    <label for="editName">Menu Name</label>
+                    <input type="text" id="editName" class="form-control" placeholder="Enter menu name">
                 </div>
                 <div class="form-group">
                     <label for="editDescription">Description</label>
-                    <textarea id="editDescription" class="form-control" placeholder="Enter category description" rows="3"></textarea>
+                    <textarea id="editDescription" class="form-control" placeholder="Enter menu description" rows="3"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editColor">Category Color</label>
+                        <label for="editColor">Menu Color</label>
                         <select id="editColor" class="form-control">
                             <option value="maroon">Maroon</option>
                             <option value="maroon-light">Light Maroon</option>
@@ -1516,8 +1887,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editCode">Category Code</label>
-                        <input type="text" id="editCode" class="form-control" placeholder="e.g., CAT-001">
+                        <label for="editCode">Menu Code</label>
+                        <input type="text" id="editCode" class="form-control" placeholder="e.g., MEN-001">
                     </div>
                     <div class="form-group">
                         <label for="editItemCount">Number of Items</label>
@@ -1525,8 +1896,8 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editImage">Category Image URL</label>
-                    <input type="text" id="editImage" class="form-control" placeholder="e.g., Image/Sisig.jpg">
+                    <label for="editImage">Menu Image URL</label>
+                    <input type="text" id="editImage" class="form-control" placeholder="e.g., https://media.istockphoto.com/...">
                 </div>
                 <div class="form-group">
                     <label for="editStatus">Status</label>
@@ -1541,7 +1912,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelEdit">Cancel</button>
-                <button type="button" class="btn btn--primary" id="saveEdit">Save Category</button>
+                <button type="button" class="btn btn--primary" id="saveEdit">Save Menu</button>
             </div>
         </div>
     </div>
@@ -1549,8 +1920,8 @@
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Delete Category</h3>
-                <button class="modal-close" id="closeDeleteModal">&times;</button>
+                <h3>Delete Menu</h3>
+                <button class="modal-close" id="closeDeleteModal" aria-label="Close delete modal">&times;</button>
             </div>
             <div class="edit-modal-body">
                 <div class="text-center mb-6">
@@ -1558,38 +1929,38 @@
                         <i class="fas fa-trash" style="color: var(--danger-red); font-size: 48px;"></i>
                     </div>
                     <p class="text-lg font-semibold mb-2" id="deleteMessage">
-                        Are you sure you want to delete this category?
+                        Are you sure you want to delete this menu?
                     </p>
                     <p class="text-gray-600 text-sm" id="deleteWarning">
-                        This will also remove all items in this category. This action cannot be undone.
+                        This will also remove all items in this menu. This action cannot be undone.
                     </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelDelete">Cancel</button>
-                <button type="button" class="btn btn--danger" id="confirmDelete">Delete Category</button>
+                <button type="button" class="btn btn--danger" id="confirmDelete">Delete Menu</button>
             </div>
         </div>
     </div>
 
     <script>
-        let categoriesData = [
+        let menusData = [
             {
                 id: 1,
-                name: "Sizzling Specials",
-                code: "CAT-001",
+                name: "Sizzling Sisig",
+                code: "MEN-001",
                 description: "Premium sizzling plate meals featuring authentic flavors and high-quality ingredients. Our sizzling specials are served hot on cast-iron plates to preserve the aroma and taste.",
                 color: "maroon",
                 icon: "fa-fire",
                 status: "active",
                 itemCount: 5,
-                image: "Images/Sisig.jpg",
+                image: "https://media.istockphoto.com/id/623516426/photo/sizzling-pork-sisig-filipino-cuisine.jpg?s=1024x1024&w=is&k=20&c=G9mG8xf9QO8c9yWpFgQ7iZl8vZ7XqyQ6QjzJXq9q9q8=",
                 createdAt: "2024-01-15"
             },
             {
                 id: 2,
-                name: "Silog Meals",
-                code: "CAT-002",
+                name: "Tapsilog",
+                code: "MEN-002",
                 description: "Classic Filipino breakfast combinations with rice, egg, and your choice of protein. Perfect for any time of the day, these comforting meals are a customer favorite.",
                 color: "maroon-light",
                 icon: "fa-utensils",
@@ -1598,54 +1969,137 @@
                 image: "Images/Hotsilog.jpg",
                 createdAt: "2024-01-20"
             },
-            {
-                id: 3,
-                name: "Special Meals",
-                code: "CAT-003",
-                description: "Comfort food and traditional Filipino favorites prepared with a special twist. Each dish is carefully crafted to deliver exceptional taste and presentation.",
-                color: "maroon-pale",
-                icon: "fa-mug-hot",
-                status: "active",
-                itemCount: 4,
-                image: "Images/Goto.jpg",
-                createdAt: "2024-02-01"
-            },
-            {
-                id: 4,
-                name: "Appetizers",
-                code: "CAT-004",
-                description: "Perfect starters to begin your meal experience. Our appetizers are designed to awaken your taste buds and prepare you for the main course.",
-                color: "maroon",
-                icon: "fa-cookie",
-                status: "hidden",
-                itemCount: 3,
-                image: "Images/Appetizers.jpg",
-                createdAt: "2024-02-10"
-            },
-            {
-                id: 5,
-                name: "Desserts",
-                code: "CAT-005",
-                description: "Sweet treats and delicious desserts to complete your meal. From classic Filipino favorites to modern creations, we have something for every sweet tooth.",
-                color: "maroon-light",
-                icon: "fa-seedling",
-                status: "hidden",
-                itemCount: 2,
-                image: "Images/Desserts.jpg",
-                createdAt: "2024-02-15"
-            }
         ];
-
+            
         let currentFilters = {
             search: '',
             status: 'all',
             sort: 'newest'
         };
 
-        let currentEditCategoryId = null;
-        let currentViewCategoryId = null;
+        let currentEditMenuId = null;
+        let currentViewMenuId = null;
 
         let hoverTimers = {};
+        let activeStatusDropdown = null;
+
+        // ==================== //
+        // ENHANCED FUNCTIONALITY //
+        // ==================== //
+
+        function simulateLoading(button, duration = 1000) {
+            const originalText = button.innerHTML;
+            const originalWidth = button.offsetWidth;
+
+            button.classList.add('btn--loading');
+            button.disabled = true;
+            button.style.minWidth = `${originalWidth}px`;
+
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    button.classList.remove('btn--loading');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    button.style.minWidth = '';
+                    resolve();
+                }, duration);
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : type === 'error' ? 'var(--danger-red)' : 'var(--warning-orange)'};
+                color: white;
+                border-radius: var(--radius-md);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10001;
+                animation: slideInRight 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                max-width: 300px;
+            `;
+
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    const activeElement = document.activeElement;
+
+                    if (activeElement.classList.contains('stat-card')) {
+                        activeElement.click();
+                        e.preventDefault();
+                    }
+
+                    if (activeElement.classList.contains('action-icon')) {
+                        activeElement.click();
+                        e.preventDefault();
+                    }
+
+                    if (activeElement.classList.contains('category-status')) {
+                        activeElement.click();
+                        e.preventDefault();
+                    }
+                }
+
+                // Arrow key navigation for menu cards
+                if (e.key.startsWith('Arrow') && !e.target.matches('input, textarea, select')) {
+                    const cards = document.querySelectorAll('.category-card');
+                    const currentIndex = Array.from(cards).findIndex(card => card === document.activeElement);
+
+                    if (currentIndex !== -1) {
+                        let nextIndex;
+                        if (e.key === 'ArrowRight') nextIndex = currentIndex + 1;
+                        if (e.key === 'ArrowLeft') nextIndex = currentIndex - 1;
+                        if (e.key === 'ArrowDown') nextIndex = currentIndex + 3;
+                        if (e.key === 'ArrowUp') nextIndex = currentIndex - 3;
+
+                        if (nextIndex >= 0 && nextIndex < cards.length) {
+                            cards[nextIndex].focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+
+                // Escape key closes modals and dropdowns
+                if (e.key === 'Escape') {
+                    // Close active status dropdown
+                    if (activeStatusDropdown) {
+                        activeStatusDropdown.classList.remove('active');
+                        activeStatusDropdown = null;
+                    }
+
+                    // Close modals
+                    const openModals = document.querySelectorAll('.modal-overlay[style*="flex"]');
+                    if (openModals.length > 0) {
+                        openModals.forEach(modal => {
+                            if (modal.id === 'viewModal') closeViewModal();
+                            if (modal.id === 'editModal') closeEditModal();
+                            if (modal.id === 'deleteModal') closeDeleteModal();
+                        });
+                    }
+                }
+            });
+        }
 
         function initializeHoverIntent() {
             document.querySelectorAll('.stat-card').forEach((card, index) => {
@@ -1692,47 +2146,46 @@
         }
 
         function updateStats() {
-            const totalCategories = categoriesData.length;
-            const activeCategories = categoriesData.filter(c => c.status === 'active').length;
-            const hiddenCategories = categoriesData.filter(c => c.status === 'hidden').length;
-            const totalItems = categoriesData.reduce((sum, cat) => sum + cat.itemCount, 0);
+            const totalMenus = menusData.length;
+            const activeMenus = menusData.filter(m => m.status === 'active').length;
+            const hiddenMenus = menusData.filter(m => m.status === 'hidden').length;
+            const totalItems = menusData.reduce((sum, menu) => sum + menu.itemCount, 0);
 
-            document.getElementById('totalCategories').textContent = totalCategories;
-            document.getElementById('activeCategories').textContent = activeCategories;
-            document.getElementById('hiddenCategories').textContent = hiddenCategories;
+            document.getElementById('totalMenus').textContent = totalMenus;
+            document.getElementById('activeMenus').textContent = activeMenus;
+            document.getElementById('hiddenMenus').textContent = hiddenMenus;
             document.getElementById('totalItems').textContent = totalItems;
         }
 
-        function renderCategories() {
-            const grid = document.getElementById('categoriesGrid');
+        function renderMenus() {
+            const grid = document.getElementById('menusGrid');
             grid.innerHTML = '';
 
-            let filteredCategories = [...categoriesData];
+            let filteredMenus = [...menusData];
 
             if (currentFilters.search) {
                 const searchTerm = currentFilters.search.toLowerCase();
-                filteredCategories = filteredCategories.filter(category =>
-                    category.name.toLowerCase().includes(searchTerm) ||
-                    category.description.toLowerCase().includes(searchTerm) ||
-                    category.code.toLowerCase().includes(searchTerm)
+                filteredMenus = filteredMenus.filter(menu =>
+                    menu.name.toLowerCase().includes(searchTerm) ||
+                    menu.description.toLowerCase().includes(searchTerm) ||
+                    menu.code.toLowerCase().includes(searchTerm)
                 );
             }
 
             if (currentFilters.status !== 'all') {
-                filteredCategories = filteredCategories.filter(category =>
-                    category.status === currentFilters.status
+                filteredMenus = filteredMenus.filter(menu =>
+                    menu.status === currentFilters.status
                 );
             }
 
-            filteredCategories.sort((a, b) => {
-                if (a.status !== b.status) {
-                    return a.status === 'active' ? -1 : 1;
-                }
-
+            // Apply sorting
+            filteredMenus.sort((a, b) => {
                 switch (currentFilters.sort) {
                     case 'newest':
+                    case 'created-desc':
                         return new Date(b.createdAt) - new Date(a.createdAt);
                     case 'oldest':
+                    case 'created-asc':
                         return new Date(a.createdAt) - new Date(b.createdAt);
                     case 'name-asc':
                         return a.name.localeCompare(b.name);
@@ -1747,58 +2200,127 @@
                 }
             });
 
-            if (filteredCategories.length === 0) {
+            if (filteredMenus.length === 0) {
                 document.getElementById('noResultsMessage').style.display = 'block';
             } else {
                 document.getElementById('noResultsMessage').style.display = 'none';
 
-                filteredCategories.forEach(category => {
-                    const categoryElement = document.createElement('div');
-                    categoryElement.className = 'category-card';
-                    categoryElement.setAttribute('data-category-id', category.id);
-                    categoryElement.setAttribute('data-status', category.status);
+                filteredMenus.forEach(menu => {
+                    const menuElement = document.createElement('div');
+                    menuElement.className = 'category-card';
+                    menuElement.setAttribute('data-menu-id', menu.id);
+                    menuElement.setAttribute('data-status', menu.status);
+                    menuElement.setAttribute('tabindex', '0');
+                    menuElement.setAttribute('role', 'article');
+                    menuElement.setAttribute('aria-label', `${menu.name} menu with ${menu.itemCount} items`);
 
-                    categoryElement.innerHTML = `
-                        <div class="category-header ${getColorClass(category.color)}">
-                            ${category.image ? `<img src="${category.image}" alt="${category.name}" class="category-image">` : ''}
-                            <div class="status-indicator ${category.status === 'active' ? 'active' : 'hidden'}"></div>
-                            <i class="fas ${category.icon} category-icon"></i>
-                            <h3 class="category-title">${category.name}</h3>
+                    menuElement.innerHTML = `
+                        <div class="category-header ${getColorClass(menu.color)}" data-menu-id="${menu.id}">
+                            <div class="status-indicator ${menu.status === 'active' ? 'active' : 'hidden'}" aria-label="Status: ${menu.status}"></div>
+                            <i class="fas ${menu.icon} category-icon" aria-hidden="true"></i>
+                            <h3 class="category-title">${menu.name}</h3>
                         </div>
                         <div class="category-body">
                             <div class="category-meta">
-                                <span class="category-code">${category.code}</span>
-                                <span class="category-status ${getStatusClass(category.status)}">
-                                    ${getStatusText(category.status)}
-                                </span>
+                                <span class="category-code">${menu.code}</span>
+                                <div class="status-dropdown-container">
+                                    <button type="button" class="category-status ${getStatusClass(menu.status)}" 
+                                            tabindex="0" 
+                                            aria-label="Current status: ${menu.status}, click to change">
+                                        ${getStatusText(menu.status)}
+                                    </button>
+                                    <div class="status-options">
+                                        <button type="button" class="status-option ${menu.status === 'active' ? 'active' : ''}" 
+                                                data-status="active" 
+                                                aria-label="Set to active">
+                                            <i class="fas fa-eye"></i> Active
+                                        </button>
+                                        <button type="button" class="status-option ${menu.status === 'hidden' ? 'hidden' : ''}" 
+                                                data-status="hidden" 
+                                                aria-label="Set to hidden">
+                                            <i class="fas fa-eye-slash"></i> Hidden
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="category-description">${category.description}</p>
+                            <p class="category-description">${menu.description}</p>
                             <div class="category-footer">
                                 <div class="item-count">
-                                    <i class="fas fa-utensils"></i>
-                                    <span>${category.itemCount} items</span>
+                                    <i class="fas fa-utensils" aria-hidden="true"></i>
+                                    <span>${menu.itemCount} items</span>
                                 </div>
                                 <div class="category-actions">
-                                    <div class="action-icon view" title="View Details">
+                                    <button type="button" class="action-icon view" tabindex="0" title="View Details" aria-label="View details for ${menu.name}">
                                         <i class="fas fa-eye"></i>
-                                    </div>
-                                    <div class="action-icon edit" title="Edit Category">
+                                    </button>
+                                    <button type="button" class="action-icon edit" tabindex="0" title="Edit Menu" aria-label="Edit ${menu.name} menu">
                                         <i class="fas fa-edit"></i>
-                                    </div>
-                                    <div class="action-icon delete" title="Delete Category">
+                                    </button>
+                                    <button type="button" class="action-icon delete" tabindex="0" title="Delete Menu" aria-label="Delete ${menu.name} menu">
                                         <i class="fas fa-trash"></i>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     `;
 
-                    grid.appendChild(categoryElement);
+                    grid.appendChild(menuElement);
                 });
+
+                // Add event listeners for status dropdowns
+                setupStatusDropdowns();
             }
         }
 
-        function handleSearch() {
+        function setupStatusDropdowns() {
+            document.querySelectorAll('.status-dropdown-container').forEach(container => {
+                const statusBtn = container.querySelector('.category-status');
+                const statusOptions = container.querySelector('.status-options');
+
+                statusBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    // Close other open dropdowns
+                    if (activeStatusDropdown && activeStatusDropdown !== container) {
+                        activeStatusDropdown.classList.remove('active');
+                    }
+
+                    // Toggle current dropdown
+                    container.classList.toggle('active');
+                    activeStatusDropdown = container.classList.contains('active') ? container : null;
+                });
+
+                // Handle option clicks
+                container.querySelectorAll('.status-option').forEach(option => {
+                    option.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const newStatus = this.dataset.status;
+                        const menuId = parseInt(container.closest('.category-card').dataset.menuId);
+                        const menu = menusData.find(m => m.id === menuId);
+
+                        if (menu && menu.status !== newStatus) {
+                            menu.status = newStatus;
+                            updateStats();
+                            renderMenus();
+                            showNotification(`${menu.name} status updated to ${newStatus === 'active' ? 'active' : 'hidden'}!`, 'success');
+                        }
+
+                        container.classList.remove('active');
+                        activeStatusDropdown = null;
+                    });
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function (e) {
+                if (activeStatusDropdown && !activeStatusDropdown.contains(e.target)) {
+                    activeStatusDropdown.classList.remove('active');
+                    activeStatusDropdown = null;
+                }
+            });
+        }
+
+        async function handleSearch() {
             const searchInput = document.getElementById('searchInput');
             const searchBox = document.getElementById('searchBox');
 
@@ -1806,7 +2328,7 @@
             searchBox.classList.add('loading');
 
             setTimeout(() => {
-                renderCategories();
+                renderMenus();
                 searchBox.classList.remove('loading');
             }, 300);
         }
@@ -1814,89 +2336,104 @@
         function handleStatusFilter() {
             const statusFilter = document.getElementById('statusFilter');
             currentFilters.status = statusFilter.value;
-            renderCategories();
+            renderMenus();
         }
 
         function handleSortFilter() {
             const sortFilter = document.getElementById('sortFilter');
             currentFilters.sort = sortFilter.value;
-            renderCategories();
+            renderMenus();
         }
 
-        function openViewModal(categoryId) {
-            currentViewCategoryId = categoryId;
-            const category = categoriesData.find(c => c.id === categoryId);
+        function openViewModal(menuId) {
+            currentViewMenuId = menuId;
+            const menu = menusData.find(m => m.id === menuId);
 
-            if (!category) return;
+            if (!menu) return;
 
-            document.getElementById('viewModalImage').src = category.image || '';
-            document.getElementById('viewModalImage').alt = category.name;
-            document.getElementById('viewModalIcon').className = `fas ${category.icon} view-modal-icon`;
-            document.getElementById('viewModalTitle').textContent = category.name;
-            document.getElementById('viewModalCode').textContent = category.code;
-            document.getElementById('viewModalDescription').textContent = category.description;
-            document.getElementById('viewModalItems').textContent = `${category.itemCount} items`;
-            document.getElementById('viewModalCreated').textContent = formatDate(category.createdAt);
-            document.getElementById('viewModalColor').textContent = getColorText(category.color);
+            const viewModalHeader = document.getElementById('viewModalHeader');
+            viewModalHeader.style.backgroundImage = `url('${menu.image}')`;
+            document.getElementById('viewModalIcon').className = `fas ${menu.icon} view-modal-icon`;
+            document.getElementById('viewModalTitle').textContent = menu.name;
+            document.getElementById('viewModalCode').textContent = menu.code;
+            document.getElementById('viewModalDescription').textContent = menu.description;
+            document.getElementById('viewModalItems').textContent = `${menu.itemCount} items`;
+            document.getElementById('viewModalCreated').textContent = formatDate(menu.createdAt);
+            document.getElementById('viewModalColor').textContent = getColorText(menu.color);
 
             const statusElement = document.getElementById('viewModalStatus');
-            statusElement.textContent = getStatusText(category.status);
-            statusElement.className = `detail-value status ${category.status === 'active' ? 'status-active' : 'status-hidden'}`;
+            statusElement.textContent = getStatusText(menu.status);
+            statusElement.className = `detail-value status ${menu.status === 'active' ? 'status-active' : 'status-hidden'}`;
 
             document.getElementById('viewModal').style.display = 'flex';
+
+            // Focus first interactive element
+            setTimeout(() => {
+                document.getElementById('closeViewModal').focus();
+            }, 100);
         }
 
         function closeViewModal() {
             document.getElementById('viewModal').style.display = 'none';
-            currentViewCategoryId = null;
+            currentViewMenuId = null;
         }
 
-        function openEditModal(categoryId = null, isNew = false) {
+        function openEditModal(menuId = null, isNew = false) {
             const modal = document.getElementById('editModal');
             const modalTitle = document.getElementById('editModalTitle');
             const statusToggle = document.getElementById('editStatus');
             const statusText = document.getElementById('statusText');
 
             if (isNew) {
-                modalTitle.textContent = 'Add New Category';
-                currentEditCategoryId = null;
+                modalTitle.textContent = 'Add New Menu';
+                currentEditMenuId = null;
 
                 document.getElementById('editName').value = '';
                 document.getElementById('editDescription').value = '';
                 document.getElementById('editColor').value = 'maroon';
                 document.getElementById('editIcon').value = 'fa-layer-group';
-                document.getElementById('editCode').value = 'CAT-001';
+                document.getElementById('editCode').value = 'MEN-001';
                 document.getElementById('editItemCount').value = '0';
                 document.getElementById('editImage').value = '';
                 statusToggle.checked = true;
                 statusText.textContent = 'Active';
             } else {
-                modalTitle.textContent = 'Edit Category';
-                currentEditCategoryId = categoryId;
+                modalTitle.textContent = 'Edit Menu';
+                currentEditMenuId = menuId;
 
-                const category = categoriesData.find(c => c.id === categoryId);
-                if (!category) return;
+                const menu = menusData.find(m => m.id === menuId);
+                if (!menu) return;
 
-                document.getElementById('editName').value = category.name;
-                document.getElementById('editDescription').value = category.description;
-                document.getElementById('editColor').value = category.color;
-                document.getElementById('editIcon').value = category.icon;
-                document.getElementById('editCode').value = category.code;
-                document.getElementById('editItemCount').value = category.itemCount;
-                document.getElementById('editImage').value = category.image || '';
-                statusToggle.checked = category.status === 'active';
-                statusText.textContent = category.status === 'active' ? 'Active' : 'Hidden';
+                document.getElementById('editName').value = menu.name;
+                document.getElementById('editDescription').value = menu.description;
+                document.getElementById('editColor').value = menu.color;
+                document.getElementById('editIcon').value = menu.icon;
+                document.getElementById('editCode').value = menu.code;
+                document.getElementById('editItemCount').value = menu.itemCount;
+                document.getElementById('editImage').value = menu.image;
+                statusToggle.checked = menu.status === 'active';
+                statusText.textContent = menu.status === 'active' ? 'Active' : 'Hidden';
             }
 
             modal.style.display = 'flex';
+
+            // Focus first input
+            setTimeout(() => {
+                document.getElementById('editName').focus();
+            }, 100);
         }
 
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
-            currentEditCategoryId = null;
+            currentEditMenuId = null;
         }
 
-        function saveEditChanges() {
+        async function saveEditChanges() {
+            const saveBtn = document.getElementById('saveEdit');
+
+            // Show loading state
+            await simulateLoading(saveBtn, 800);
+
             const name = document.getElementById('editName').value.trim();
             const description = document.getElementById('editDescription').value.trim();
             const color = document.getElementById('editColor').value;
@@ -1908,31 +2445,48 @@
 
             if (!name || !description || !code) {
                 showNotification('Please fill in all required fields!', 'error');
+
+                // Add error animation
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
                 return;
             }
 
             if (isNaN(itemCount) || itemCount < 0) {
                 showNotification('Please enter a valid item count!', 'error');
+
+                // Add error animation
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
                 return;
             }
 
-            if (currentEditCategoryId) {
-                const category = categoriesData.find(c => c.id === currentEditCategoryId);
-                if (category) {
-                    category.name = name;
-                    category.description = description;
-                    category.color = color;
-                    category.icon = icon;
-                    category.code = code;
-                    category.itemCount = itemCount;
-                    category.image = image;
-                    category.status = status;
+            if (!image) {
+                showNotification('Please enter a valid image URL!', 'error');
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
+                return;
+            }
 
-                    showNotification(`${category.name} updated successfully!`, 'success');
+            if (currentEditMenuId) {
+                // Update existing menu
+                const menu = menusData.find(m => m.id === currentEditMenuId);
+                if (menu) {
+                    menu.name = name;
+                    menu.description = description;
+                    menu.color = color;
+                    menu.icon = icon;
+                    menu.code = code;
+                    menu.itemCount = itemCount;
+                    menu.image = image;
+                    menu.status = status;
+
+                    showNotification(`${menu.name} updated successfully!`, 'success');
                 }
             } else {
-                const newCategory = {
-                    id: categoriesData.length > 0 ? Math.max(...categoriesData.map(c => c.id)) + 1 : 1,
+                // Create new menu
+                const newMenu = {
+                    id: menusData.length > 0 ? Math.max(...menusData.map(m => m.id)) + 1 : 1,
                     name: name,
                     description: description,
                     color: color,
@@ -1944,44 +2498,65 @@
                     createdAt: new Date().toISOString().split('T')[0]
                 };
 
-                categoriesData.push(newCategory);
-                showNotification(`${newCategory.name} added successfully!`, 'success');
+                menusData.push(newMenu);
+                showNotification(`${newMenu.name} added successfully!`, 'success');
             }
 
             updateStats();
-            renderCategories();
-            closeEditModal();
+            renderMenus();
+
+            // Add success animation
+            saveBtn.classList.add('btn--success');
+            setTimeout(() => {
+                saveBtn.classList.remove('btn--success');
+                closeEditModal();
+            }, 1000);
         }
 
-        function openDeleteModal(categoryId) {
-            const category = categoriesData.find(c => c.id === categoryId);
-            if (!category) return;
+        function openDeleteModal(menuId) {
+            const menu = menusData.find(m => m.id === menuId);
+            if (!menu) return;
 
             document.getElementById('deleteMessage').innerHTML =
-                `Are you sure you want to delete <strong>"${category.name}"</strong>?`;
+                `Are you sure you want to delete <strong>"${menu.name}"</strong>?`;
             document.getElementById('deleteWarning').textContent =
-                `This will remove ${category.itemCount} items from this category. This action cannot be undone.`;
+                `This will remove ${menu.itemCount} items from this menu. This action cannot be undone.`;
 
-            currentEditCategoryId = categoryId;
+            currentEditMenuId = menuId;
             document.getElementById('deleteModal').style.display = 'flex';
+
+            // Focus cancel button by default (safety)
+            setTimeout(() => {
+                document.getElementById('cancelDelete').focus();
+            }, 100);
         }
 
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
-            currentEditCategoryId = null;
+            currentEditMenuId = null;
         }
 
-        function confirmDelete() {
-            const category = categoriesData.find(c => c.id === currentEditCategoryId);
-            if (!category) return;
+        async function confirmDelete() {
+            const deleteBtn = document.getElementById('confirmDelete');
 
-            const index = categoriesData.findIndex(c => c.id === currentEditCategoryId);
-            categoriesData.splice(index, 1);
+            await simulateLoading(deleteBtn, 1500);
+
+            const menu = menusData.find(m => m.id === currentEditMenuId);
+            if (!menu) return;
+
+            const index = menusData.findIndex(m => m.id === currentEditMenuId);
+            menusData.splice(index, 1);
 
             updateStats();
-            renderCategories();
-            showNotification(`${category.name} deleted successfully!`, 'success');
-            closeDeleteModal();
+            renderMenus();
+
+            // Add success animation
+            deleteBtn.classList.add('btn--success');
+            setTimeout(() => {
+                deleteBtn.classList.remove('btn--success');
+                showNotification(`${menu.name} deleted successfully!`, 'success');
+                closeDeleteModal();
+            }, 1000);
         }
 
         function setupActionButtons() {
@@ -1989,14 +2564,15 @@
                 const editBtn = e.target.closest('.action-icon.edit');
                 const deleteBtn = e.target.closest('.action-icon.delete');
                 const viewBtn = e.target.closest('.action-icon.view');
+                const statCard = e.target.closest('.stat-card');
 
                 if (editBtn) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     const card = editBtn.closest('.category-card');
-                    const categoryId = parseInt(card.dataset.categoryId);
-                    openEditModal(categoryId, false);
+                    const menuId = parseInt(card.dataset.menuId);
+                    openEditModal(menuId, false);
                     return false;
                 }
 
@@ -2005,8 +2581,8 @@
                     e.stopPropagation();
 
                     const card = deleteBtn.closest('.category-card');
-                    const categoryId = parseInt(card.dataset.categoryId);
-                    openDeleteModal(categoryId);
+                    const menuId = parseInt(card.dataset.menuId);
+                    openDeleteModal(menuId);
                     return false;
                 }
 
@@ -2015,8 +2591,34 @@
                     e.stopPropagation();
 
                     const card = viewBtn.closest('.category-card');
-                    const categoryId = parseInt(card.dataset.categoryId);
-                    openViewModal(categoryId);
+                    const menuId = parseInt(card.dataset.menuId);
+                    openViewModal(menuId);
+                    return false;
+                }
+
+                if (statCard) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const statType = statCard.querySelector('.stat-card__label').textContent.toLowerCase();
+                    switch (statType) {
+                        case 'total menus':
+                            document.getElementById('statusFilter').value = 'all';
+                            handleStatusFilter();
+                            break;
+                        case 'active menus':
+                            document.getElementById('statusFilter').value = 'active';
+                            handleStatusFilter();
+                            break;
+                        case 'hidden menus':
+                            document.getElementById('statusFilter').value = 'hidden';
+                            handleStatusFilter();
+                            break;
+                        case 'total items':
+                            document.getElementById('sortFilter').value = 'items-high';
+                            handleSortFilter();
+                            break;
+                    }
                     return false;
                 }
             });
@@ -2034,7 +2636,7 @@
             document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
             document.getElementById('confirmDelete').addEventListener('click', confirmDelete);
 
-            document.getElementById('addCategoryBtn').addEventListener('click', () => openEditModal(null, true));
+            document.getElementById('addMenuBtn').addEventListener('click', () => openEditModal(null, true));
 
             document.getElementById('viewModal').addEventListener('click', function (e) {
                 if (e.target === this) closeViewModal();
@@ -2052,47 +2654,28 @@
                 document.getElementById('statusText').textContent = this.checked ? 'Active' : 'Hidden';
             });
 
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    if (document.getElementById('viewModal').style.display === 'flex') closeViewModal();
-                    if (document.getElementById('editModal').style.display === 'flex') closeEditModal();
-                    if (document.getElementById('deleteModal').style.display === 'flex') closeDeleteModal();
-                }
+            // Modal focus trap
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('keydown', function (e) {
+                    if (e.key === 'Tab') {
+                        const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                        const firstElement = focusableElements[0];
+                        const lastElement = focusableElements[focusableElements.length - 1];
+
+                        if (e.shiftKey) {
+                            if (document.activeElement === firstElement) {
+                                lastElement.focus();
+                                e.preventDefault();
+                            }
+                        } else {
+                            if (document.activeElement === lastElement) {
+                                firstElement.focus();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                });
             });
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                background: ${type === 'success' ? 'var(--success-green)' : type === 'error' ? 'var(--danger-red)' : 'var(--warning-orange)'};
-                color: white;
-                border-radius: var(--radius-md);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 10001;
-                animation: slideInRight 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                max-width: 300px;
-            `;
-
-            notification.innerHTML = `
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                <span>${message}</span>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
         }
 
         function formatDate(dateString) {
@@ -2100,12 +2683,12 @@
             return new Date(dateString).toLocaleDateString('en-US', options);
         }
 
-        function generateCategoryCode() {
-            const existingCodes = categoriesData.map(c => c.code);
+        function generateMenuCode() {
+            const existingCodes = menusData.map(m => m.code);
             let codeNumber = 1;
 
             while (true) {
-                const newCode = `CAT-${codeNumber.toString().padStart(3, '0')}`;
+                const newCode = `MEN-${codeNumber.toString().padStart(3, '0')}`;
                 if (!existingCodes.includes(newCode)) {
                     document.getElementById('editCode').value = newCode;
                     break;
@@ -2114,10 +2697,35 @@
             }
         }
 
+        function initializeAccessibility() {
+            // Add ARIA labels and roles
+            document.querySelectorAll('.btn, .action-icon, .stat-card, .category-card').forEach(el => {
+                if (!el.hasAttribute('tabindex')) {
+                    el.setAttribute('tabindex', '0');
+                }
+            });
+
+            // Add live region for dynamic content
+            const liveRegion = document.createElement('div');
+            liveRegion.setAttribute('aria-live', 'polite');
+            liveRegion.setAttribute('aria-atomic', 'true');
+            liveRegion.style.position = 'absolute';
+            liveRegion.style.width = '1px';
+            liveRegion.style.height = '1px';
+            liveRegion.style.padding = '0';
+            liveRegion.style.margin = '-1px';
+            liveRegion.style.overflow = 'hidden';
+            liveRegion.style.clip = 'rect(0, 0, 0, 0)';
+            liveRegion.style.whiteSpace = 'nowrap';
+            liveRegion.style.border = '0';
+            document.body.appendChild(liveRegion);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             updateStats();
-            renderCategories();
+            renderMenus();
             initializeHoverIntent();
+            initializeAccessibility();
 
             document.getElementById('searchInput').addEventListener('input', handleSearch);
             document.getElementById('statusFilter').addEventListener('change', handleStatusFilter);
@@ -2125,8 +2733,9 @@
 
             setupActionButtons();
             setupModalHandlers();
+            setupKeyboardNavigation();
 
-            document.getElementById('addCategoryBtn').addEventListener('click', generateCategoryCode);
+            document.getElementById('addMenuBtn').addEventListener('click', generateMenuCode);
         });
     </script>
 </asp:Content>

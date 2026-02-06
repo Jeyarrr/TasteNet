@@ -1420,7 +1420,7 @@
 
     <script>
         let menuData = [
-            { id: 1, name: "Tapsilog", price: 100.00, category: "silog", description: "Traditional Filipino breakfast with beef tapa, garlic rice, and sunny-side-up egg.", prepTime: 20, calories: 520, status: "available", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
+            { id: 1, name: "Tapsilog", price: 100.00, category: "silog", description: "Traditional Filipino breakfast with beef tapa, garlic rice, and sunny-side-up egg.", prepTime: 20, calories: 520, status: "available", image: "Images/Hotsilog.jpg" },
             { id: 2, name: "Baconsilog", price: 75.00, category: "silog", description: "Crispy bacon strips with garlic rice and fried egg.", prepTime: 15, calories: 480, status: "available", image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
             { id: 3, name: "Bangsilog", price: 85.00, category: "silog", description: "Fried milkfish with garlic rice and fried egg.", prepTime: 25, calories: 450, status: "available", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
             { id: 4, name: "Hamsilog", price: 55.00, category: "silog", description: "Ham slices with garlic rice and fried egg.", prepTime: 10, calories: 380, status: "available", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
