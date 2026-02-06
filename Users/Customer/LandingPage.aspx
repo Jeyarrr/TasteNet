@@ -3074,14 +3074,14 @@
                     <div class="map-container-large">
                         <div class="map-wrapper-large">
                             <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3863.2589348285697!2d120.9394618!3d14.4652547!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397cd96b0e4a3cb%3A0x43cbd8b1bd78e1f5!2sBlk%2084%2C%20lot%2010%20Bautista%20St%2C%20zone%209%2C%20Dasmari%C3%B1as%2C%204114%20Cavite!5e0!3m2!1sen!2sph!4v1648123456789!5m2!1sen!2sph" 
+                                src="https://www.google.com/maps/embed?pb=!4v1770383773979!6m8!1m7!1s2PuvajbO79-J0wNyBbZLUg!2m2!1d14.32649854666237!2d120.9372845304983!3f91.56107397260273!4f3.452054794520592!5f0.4000000000000002" 
                                 width="100%" 
                                 height="100%" 
                                 style="border:0;" 
                                 allowfullscreen="" 
                                 loading="lazy" 
                                 referrerpolicy="no-referrer-when-downgrade"
-                                title="TasteNet Location - Blk 84, Lot 10 Bautista St, Zone 9, Dasmariñas, Cavite">
+                                title="Your Location Name">
                             </iframe>
                         </div>
                     </div>

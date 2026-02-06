@@ -107,6 +107,19 @@
             font-size: 12px;
         }
 
+        .btn-export:disabled {
+            background: #8a6d6d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-export:disabled:hover {
+            background: #8a6d6d;
+            transform: none;
+            box-shadow: none;
+        }
+
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -345,7 +358,6 @@
             border-bottom: 1px solid #f9f4ee;
             font-size: 16px;
             vertical-align: middle;
-            color: var(--text-dark);
             text-align: center;
         }
 
@@ -577,7 +589,9 @@
                     <asp:ListItem Text="Last 7 days" Value="7" />
                     <asp:ListItem Text="Last 30 days" Value="30" />
                 </asp:DropDownList>
-                <button type="button" class="btn-export"><i class="fas fa-download me-2"></i>Export Report</button>
+                <button type="button" class="btn-export" id="exportReportBtn">
+                    <i class="fas fa-download me-2"></i>Export Report
+                </button>
             </div>
         </div>
 
@@ -764,14 +778,14 @@
                 
                 <div class="meal-item" style="background: #fff4e6; border-color: #fed7aa; margin-bottom: 12px;">
                     <div class="meal-info">
-                        <p class="meal-name">Pork Sisig</p>
+                        <p class="meal-name">Bangus (MilkFish)</p>
                         <p class="meal-sales" style="color: #c2410c; font-weight: 600;">Low stock (3 left)</p>
                     </div>
                 </div>
 
                 <div class="meal-item" style="background: #fee2e2; border-color: #fecaca; margin-bottom: 20px;">
                     <div class="meal-info">
-                        <p class="meal-name">Goto Overload</p>
+                        <p class="meal-name">Garlic (Minced)</p>
                         <p class="meal-sales" style="color: #b91c1c; font-weight: 600;">Out of stock</p>
                     </div>
                 </div>
@@ -888,13 +902,142 @@
             });
         }
 
-        document.addEventListener("DOMContentLoaded", initDashboardChart);
+        function setupExportButton() {
+            const exportBtn = document.getElementById('exportReportBtn');
+            if (!exportBtn) return;
 
-        // eto yung sa chart yung nag cocontrol
-        document.querySelectorAll('.chart-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+            exportBtn.addEventListener('click', function (e) {
+                const isConfirmed = confirm("Export dashboard report?");
+
+                if (!isConfirmed) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Exporting...';
+                exportBtn.disabled = true;
+
+                setTimeout(() => {
+                    exportBtn.innerHTML = originalText;
+                    exportBtn.disabled = false;
+
+                    showNotification('Report exported successfully!', 'success');
+
+
+                }, 2000);
+
+                return true;
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `dashboard-notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                ${message}
+            `;
+
+            const style = document.createElement('style');
+            style.textContent = `
+                .dashboard-notification {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 12px;
+                    font-family: 'Poppins', sans-serif;
+                    font-weight: 500;
+                    font-size: 14px;
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    animation: slideIn 0.3s ease-out;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    max-width: 350px;
+                }
+                
+                .dashboard-notification.success {
+                    background: #e6f4ea;
+                    color: #0d6832;
+                    border-left: 4px solid #2d9d78;
+                }
+                
+                .dashboard-notification.info {
+                    background: #e6f2ff;
+                    color: #0066cc;
+                    border-left: 4px solid #0066cc;
+                }
+                
+                .dashboard-notification i {
+                    font-size: 16px;
+                }
+                
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes slideOut {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+
+            document.head.appendChild(style);
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                    if (document.head.contains(style)) {
+                        document.head.removeChild(style);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            initDashboardChart();
+            setupExportButton();
+
+            document.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const timeframe = this.textContent.toLowerCase();
+                    showNotification(`Switched to ${timeframe} view`, 'info');
+                });
+            });
+
+            document.querySelectorAll('.btn-quick').forEach(btn => {
+                if (!btn.classList.contains('yellow') && !btn.classList.contains('outline')) {
+                    btn.addEventListener('click', function () {
+                        const actionText = this.textContent.replace('Add New Menu Item', 'Add Menu Item')
+                            .replace('Update Stock Levels', 'Update Stock')
+                            .replace('View Low Stock Items', 'View Low Stock');
+                        showNotification(`${actionText} action triggered`, 'info');
+                    });
+                }
             });
         });
 
@@ -902,6 +1045,7 @@
             var prm = Sys.WebForms.PageRequestManager.getInstance();
             prm.add_endRequest(function () {
                 initDashboardChart();
+                setupExportButton();
             });
         }
     </script>
