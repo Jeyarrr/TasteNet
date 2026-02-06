@@ -11,7 +11,7 @@ namespace TasteNet.Users.Rider
 {
 
 
-    public partial class Transactions
+    public partial class Notifications
     {
     }
 }
