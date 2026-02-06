@@ -211,7 +211,7 @@
                 <div class="menu-title">Menu & Stock</div>
                 <a href="/Users/SuperAdmin/StockManagement.aspx">
                     <i class="fa-solid fa-box"></i>
-                    <span>Stock Management</span>
+                    <span>Inventory Management</span>
                 </a>
                 <a href="/Users/SuperAdmin/Categories.aspx">
                     <i class="fa-solid fa-list"></i>

@@ -964,7 +964,7 @@
                         <span class="notification-time">2 minutes ago</span>
                     </div>
                     <p class="notification-message">
-                        Order <strong>#ORD-12345</strong> from <strong>Starbucks - Paseo Center</strong> is waiting for acceptance. 
+                        Order <strong>#ORD-12345</strong> from <strong>Caballeros</strong> is waiting for acceptance. 
                         Estimated delivery distance: 2.3km. Estimated earnings: ₱85.50
                     </p>
                     <div class="notification-meta">
@@ -1030,7 +1030,7 @@
                         <span class="notification-time">2 hours ago</span>
                     </div>
                     <p class="notification-message">
-                        High delivery demand detected in <strong>Makati CBD area</strong>. 
+                        High delivery demand detected in <strong>Dasma Pala Pala  area</strong>. 
                         Surge pricing active: +25% bonus on all orders. Estimated waiting time: 15-20 minutes.
                     </p>
                     <div class="notification-meta">
