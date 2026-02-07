@@ -1727,7 +1727,7 @@
     <div id="full-page-wrapper">
         <div class="page-header">
             <div class="header-title">
-                <h1>Update Menu</h1>
+                <h1>Menu</h1>
                 <p>Organize and manage menu</p>
             </div>
             <div class="header-actions">
@@ -1970,7 +1970,7 @@
                 createdAt: "2024-01-20"
             },
         ];
-            
+
         let currentFilters = {
             search: '',
             status: 'all',

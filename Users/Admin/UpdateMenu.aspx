@@ -17,11 +17,11 @@
             --warning-orange-light: #fff3e6;
             --danger-red: #b91c1c;
             --danger-red-light: #fee2e2;
-            --accent-yellow: #e6b08c;
-            --accent-yellow-dark: #d39c73;
-            --accent-yellow-light: #f3e0d0;
-            --accent-brown: #6b2c2c;
-            --accent-brown-light: #f9ecee;
+            --accent-yellow: #ffd43b;
+            --accent-yellow-dark: #e6b800;
+            --accent-yellow-light: #fff9e6;
+            --accent-pink: #f9ecee;
+            --accent-blue: #eff6ff;
             --border-light: #e2d1d1;
             --border-hover: #d4b8b8;
             --bg-hover: #fefaf5;
@@ -40,10 +40,6 @@
             --transition-fast: 0.2s ease;
             --transition-base: 0.3s ease;
             --transition-slow: 0.4s ease;
-        }
-
-        * {
-            box-sizing: border-box;
         }
 
         html, body, form {
@@ -89,6 +85,10 @@
             line-height: 1.5;
         }
 
+        /* ==================== */
+        /* BUTTON SYSTEM ENHANCEMENTS */
+        /* ==================== */
+        
         .btn {
             padding: 12px 24px;
             border-radius: var(--radius-md);
@@ -109,6 +109,18 @@
             position: relative;
             overflow: hidden;
             z-index: 1;
+        }
+
+        /* Accessibility: Focus states */
+        .btn:focus-visible {
+            outline: 3px solid var(--primary-maroon);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn:focus:not(:focus-visible) {
+            outline: none;
         }
 
         .btn::before {
@@ -132,6 +144,13 @@
             left: 100%;
         }
 
+        /* Active state */
+        .btn:active {
+            transform: translateY(-1px);
+            transition-duration: 0.1s;
+        }
+
+        /* Button variants */
         .btn--secondary {
             background: var(--accent-yellow);
             color: var(--text-dark);
@@ -156,39 +175,6 @@
             box-shadow: 
                 0 8px 20px rgba(107, 13, 30, 0.25),
                 0 0 0 1px rgba(107, 13, 30, 0.1);
-        }
-
-        .add-menu-item-btn {
-            background: var(--primary-maroon);
-            color: white;
-            box-shadow: var(--button-shadow);
-            padding: 12px 24px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: 2px solid transparent;
-            font-family: 'Poppins', sans-serif;
-            text-decoration: none;
-            white-space: nowrap;
-            min-height: 44px;
-            line-height: 1.2;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .add-menu-item-btn:hover {
-            background: var(--primary-maroon-dark);
-            transform: translateY(-3px);
-            box-shadow: 
-                0 8px 20px rgba(107, 13, 30, 0.25),
-                0 0 0 1px rgba(107, 13, 30, 0.1);
-            color: white;
         }
 
         .btn--danger {
@@ -217,9 +203,135 @@
             box-shadow: 0 4px 12px rgba(107, 13, 30, 0.1);
         }
 
+        /* Button sizes */
+        .btn--sm {
+            padding: 8px 16px;
+            font-size: 12px;
+            min-height: 36px;
+            gap: 6px;
+        }
+
+        .btn--lg {
+            padding: 14px 28px;
+            font-size: 15px;
+            min-height: 48px;
+            gap: 10px;
+        }
+
+        .btn--icon {
+            padding: 8px;
+            min-height: 36px;
+            min-width: 36px;
+            justify-content: center;
+        }
+
+        .btn--icon i {
+            margin: 0;
+        }
+
+        /* Loading states */
+        .btn--loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+        }
+
+        .btn--loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn--outline.btn--loading::after {
+            border-color: var(--primary-maroon);
+            border-top-color: transparent;
+        }
+
+        /* Disabled states */
+        .btn:disabled,
+        .btn--disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled:hover,
+        .btn--disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+            background: inherit !important;
+            border-color: inherit !important;
+            color: inherit !important;
+        }
+
+        .btn:disabled::before,
+        .btn--disabled::before {
+            display: none;
+        }
+
+        /* Success/Error state animations */
+        .btn--success {
+            background: var(--success-green);
+            color: white;
+            animation: successPulse 2s ease;
+        }
+
+        .btn--error {
+            background: var(--danger-red);
+            color: white;
+            animation: errorShake 0.5s ease;
+        }
+
+        /* Button groups */
+        .btn-group {
+            display: inline-flex;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--button-shadow);
+            background: white;
+        }
+
+        .btn-group .btn {
+            border-radius: 0;
+            margin: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-group .btn:first-child {
+            border-radius: var(--radius-md) 0 0 var(--radius-md);
+        }
+
+        .btn-group .btn:last-child {
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            border-right: none;
+        }
+
+        .btn-group .btn--outline {
+            border: 2px solid var(--border-light);
+            margin: -2px 0;
+        }
+
+        .btn-group .btn--outline:hover {
+            z-index: 1;
+        }
+
+        /* Modal footer button consistency */
+        .modal-footer .btn {
+            min-width: 120px;
+        }
+
         .stats-grid { 
             display: grid; 
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px; 
             margin-bottom: 25px; 
             width: 100%; 
@@ -246,6 +358,37 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Accessibility for interactive cards */
+        .stat-card:focus-visible {
+            outline: 3px solid var(--primary-maroon);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .stat-card:active {
+            transform: translateY(-2px) scale(0.98);
+            transition-duration: 0.1s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: linear-gradient(
+                to bottom, 
+                rgba(255, 250, 243, 0.9) 0%, 
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 0;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
         .stat-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 
@@ -254,6 +397,84 @@
                 0 0 0 1px rgba(107, 13, 30, 0.05);
             z-index: 2;
             border-color: var(--border-light);
+        }
+
+        .stat-card:hover::before {
+            height: 100%;
+        }
+
+        .stat-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card__label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .stat-card:hover .stat-card__label {
+            color: var(--text-dark);
+        }
+
+        .stat-icon { 
+            width: 32px; 
+            height: 32px; 
+            border-radius: var(--radius-sm); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 14px; 
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+            transform-origin: center;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.15) rotate(8deg);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-total { 
+            background: var(--primary-maroon); 
+            color: white; 
+        }
+        .icon-active { 
+            background: var(--success-green); 
+            color: white; 
+        }
+        .icon-hidden { 
+            background: var(--warning-orange); 
+            color: white; 
+        }
+        .icon-items { 
+            background: var(--accent-blue); 
+            color: #3b82f6; 
+        }
+
+        .stat-card:hover .icon-total {
+            background: var(--primary-maroon-dark);
+        }
+
+        .stat-card:hover .icon-active {
+            background: #248765;
+        }
+
+        .stat-card:hover .icon-hidden {
+            background: #c26806;
         }
 
         .stat-card__value {
@@ -266,10 +487,6 @@
             z-index: 1;
             transition: all 0.3s ease;
             transform-origin: left center;
-        }
-
-        .stat-value-green {
-            color: var(--success-green) !important;
         }
 
         .stat-card:hover .stat-card__value {
@@ -285,6 +502,74 @@
             position: relative;
             z-index: 1;
             transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-card__subtitle {
+            opacity: 1;
+            color: var(--text-dark);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(107, 13, 30, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 0;
+        }
+
+        .stat-card:active::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .stat-card {
+            transition-delay: 0.05s;
+        }
+
+        .stat-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 20px 40px rgba(107, 13, 30, 0.15),
+                    0 8px 16px rgba(107, 13, 30, 0.1),
+                    0 0 0 1px rgba(107, 13, 30, 0.05);
+            }
+            50% { 
+                box-shadow: 
+                    0 25px 45px rgba(107, 13, 30, 0.18),
+                    0 10px 20px rgba(107, 13, 30, 0.12),
+                    0 0 0 1px rgba(107, 13, 30, 0.07);
+            }
+        }
+
+        .stat-card:hover {
+            animation: subtlePulse 2s infinite ease-in-out;
+        }
+
+        /* New animations for buttons */
+        @keyframes successPulse {
+            0%, 100% { 
+                box-shadow: 0 4px 12px rgba(45, 157, 120, 0.2); 
+            }
+            50% { 
+                box-shadow: 0 4px 20px rgba(45, 157, 120, 0.4); 
+            }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .filter-container { 
@@ -326,6 +611,16 @@
             height: 42px;
             box-shadow: 0 2px 6px rgba(107, 13, 30, 0.05);
             box-sizing: border-box;
+        }
+
+        /* Accessibility for form controls */
+        .search-wrapper input:focus-visible,
+        .form-control:focus-visible,
+        .filter-dropdown:focus-visible {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+            border-color: transparent;
+            transform: translateY(-1px);
         }
 
         .search-wrapper input:hover {
@@ -383,218 +678,302 @@
             transform: translateY(-1px);
         }
 
-        .categories-nav {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            padding: 4px;
-            background: var(--bg-lighter);
-            border-radius: var(--radius-lg);
+        .filter-dropdown:focus {
+            transform: translateY(0);
+            border-color: var(--primary-maroon);
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.15);
         }
 
-        .category-tab {
-            padding: 12px 24px;
-            border-radius: var(--radius-md);
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            color: var(--muted-text);
-            transition: all var(--transition-base);
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* COLOR BACKGROUND CLASSES - ADDED THESE */
+        .bg-maroon {
+            background-color: var(--primary-maroon);
+        }
+        
+        .bg-maroon-light {
+            background-color: var(--primary-maroon-light);
+        }
+        
+        .bg-maroon-pale {
+            background-color: var(--primary-maroon-pale);
         }
 
-        .category-tab:hover {
-            color: var(--primary-maroon);
-            background: var(--bg-light);
-        }
-
-        .category-tab.active {
-            background: white;
-            color: var(--primary-maroon);
-            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.1);
-        }
-
-        .category-tab.active::before {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 3px;
-            background: var(--primary-maroon);
-            border-radius: 2px;
-        }
-
-        .category-tab i {
-            font-size: 14px;
-        }
-
-        .menu-grid {
+        .categories-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
+            margin-top: 30px;
             width: 100%;
         }
 
-        .menu-card {
+        .category-card {
             background: white;
-            border-radius: var(--radius-xl);
+            border-radius: var(--radius-2xl);
             box-shadow: var(--card-shadow);
             overflow: hidden;
             transition: all var(--transition-base);
             position: relative;
+            animation: fadeIn 0.5s ease-out;
             border: 2px solid transparent;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
         }
 
-        .menu-card:hover {
+        /* Accessibility for category cards */
+        .category-card:focus-visible {
+            outline: 3px solid var(--primary-maroon);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .category-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--card-shadow-hover);
             border-color: var(--border-light);
             z-index: 2;
         }
 
-        .menu-card__header {
+        .category-header {
             height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
             position: relative;
             overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        .menu-card__image {
+        /* Using direct image URLs that will work */
+        .category-header[data-menu-id="1"] {
+            background-image: url('background-image: url('Images/Hotsilog.jpg');');
+        }
+        
+        .category-header[data-menu-id="2"] {
+            background-image: url('https://media.istockphoto.com/id/1253850022/photo/filipino-breakfast-food.jpg?s=1024x1024&w=is&k=20&c=YbJ7Q8ZQ9Q8XqyQ6QjzJXq9q9q8=');
+        }
+
+        .category-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
+            z-index: 0;
             transition: transform var(--transition-base);
+            opacity: 1;
         }
 
-        .menu-card:hover .menu-card__image {
+        .category-card:hover .category-image {
             transform: scale(1.05);
         }
 
-        .menu-card__status {
+        .category-header::before {
+            content: '';
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(107, 13, 30, 0.7) 0%, rgba(90, 11, 25, 0.5) 100%);
+            z-index: 1;
+        }
+
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            z-index: 2;
+            position: relative;
+            transition: transform var(--transition-base);
+            color: white;
+        }
+
+        .category-card:hover .category-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .category-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            z-index: 2;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .category-body {
+            padding: 24px;
+        }
+
+        .category-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .category-code {
+            color: var(--primary-maroon);
+            font-weight: 700;
+            font-size: 13px;
+            background: var(--bg-lighter);
             padding: 6px 12px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Status dropdown styles */
+        .status-dropdown-container {
+            position: relative;
+        }
+
+        .category-status {
+            padding: 6px 32px 6px 16px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            min-width: 120px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%23fff' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 10px;
         }
 
-        .status-available {
-            background: var(--success-green-light);
-            color: var(--success-green);
+        .category-status:focus-visible {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+            transform: translateY(-1px);
+        }
+
+        .status-active {
+            background: var(--success-green);
+            color: white;
             border: 1px solid var(--success-green);
         }
 
-        .status-unavailable {
-            background: var(--danger-red-light);
-            color: var(--danger-red);
-            border: 1px solid var(--danger-red);
+        .status-active:hover,
+        .status-active:focus {
+            background: var(--success-green);
+            filter: brightness(0.9);
+            color: white;
+            transform: translateY(-1px);
         }
 
-        .menu-card__category {
+        .status-hidden {
+            background: var(--warning-orange);
+            color: white;
+            border: 1px solid var(--warning-orange);
+        }
+
+        .status-hidden:hover,
+        .status-hidden:focus {
+            background: var(--warning-orange);
+            filter: brightness(0.9);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Status dropdown options */
+        .status-options {
             position: absolute;
-            bottom: 15px;
-            left: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--primary-maroon);
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+            min-width: 150px;
+        }
+
+        .status-option {
+            padding: 10px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
             display: flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .menu-card__body {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .menu-card__title {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .menu-card__name {
-            font-size: 18px;
-            font-weight: 700;
+            gap: 8px;
+            border: none;
+            width: 100%;
+            background: none;
+            text-align: left;
             color: var(--text-dark);
-            line-height: 1.3;
         }
 
-        .menu-card__price {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-maroon);
-            white-space: nowrap;
+        .status-option:hover {
+            background: var(--bg-lighter);
         }
 
-        .menu-card__description {
-            font-size: 13px;
+        .status-option.active {
+            background: var(--success-green-light);
+            color: var(--success-green);
+        }
+
+        .status-option.hidden {
+            background: var(--warning-orange-light);
+            color: var(--warning-orange);
+        }
+
+        .status-dropdown-container.active .status-options {
+            display: block;
+        }
+
+        .category-description {
             color: var(--muted-text);
+            font-size: 14px;
             line-height: 1.6;
             margin-bottom: 20px;
-            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .menu-card__meta {
+        .category-footer {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-top: auto;
-            padding-top: 15px;
-            border-top: 1px solid var(--bg-light);
+            padding-top: 20px;
+            border-top: 2px solid var(--bg-light);
         }
 
-        .menu-card__meta-item {
+        .item-count {
+            font-size: 14px;
+            color: var(--muted-text);
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
-            color: var(--muted-text);
         }
 
-        .menu-card__meta-item i {
-            font-size: 12px;
+        .item-count i {
             color: var(--primary-maroon);
         }
 
-        .menu-card__footer {
-            padding: 15px 20px;
-            border-top: 2px solid var(--bg-lighter);
+        .category-actions {
             display: flex;
-            justify-content: flex-end;
             gap: 8px;
         }
 
-        .menu-card__btn-icon {
+        .action-icon {
             width: 36px;
             height: 36px;
-            background: var(--soft-cream);
-            border-radius: var(--radius-md);
+            background: var(--bg-lighter);
+            border-radius: var(--radius-sm);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -602,13 +981,26 @@
             transition: all var(--transition-base);
             color: var(--muted-text);
             font-size: 14px;
-            border: none;
             position: relative;
+            text-decoration: none;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+            outline: none;
         }
 
-        .menu-card__btn-icon::before {
+        /* Accessibility for action icons */
+        .action-icon:focus-visible {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+            transform: scale(1.1);
+        }
+
+        .action-icon:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .action-icon::before {
             content: '';
             position: absolute;
             top: 50%;
@@ -621,32 +1013,32 @@
             transition: width 0.6s, height 0.6s;
         }
 
-        .menu-card__btn-icon:active::before {
+        .action-icon:active::before {
             width: 200px;
             height: 200px;
         }
 
-        .menu-card__btn-icon:hover {
+        .action-icon:hover {
             transform: translateY(-2px) scale(1.1);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .menu-card__btn-icon--view:hover {
-            background: var(--primary-maroon);
+        .action-icon.edit:hover {
+            background: var(--success-green);
             color: white;
         }
 
-        .menu-card__btn-icon--edit:hover {
-            background: var(--accent-yellow);
-            color: var(--text-dark);
-        }
-
-        .menu-card__btn-icon--delete:hover {
+        .action-icon.delete:hover {
             background: var(--danger-red);
             color: white;
         }
 
-        .menu-card__btn-icon[title]:hover::after {
+        .action-icon.view:hover {
+            background: var(--primary-maroon);
+            color: white;
+        }
+
+        .action-icon[title]:hover::after {
             content: attr(title);
             position: absolute;
             bottom: -30px;
@@ -665,7 +1057,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .menu-card__btn-icon[title]:hover::before {
+        .action-icon[title]:hover::before {
             content: '';
             position: absolute;
             bottom: -20px;
@@ -740,12 +1132,16 @@
             height: 200px;
             overflow: hidden;
             border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .view-modal-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: none; /* We'll use background-image instead */
         }
 
         .view-modal-overlay {
@@ -776,12 +1172,12 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        .view-modal-price {
+        .view-modal-code {
             background: rgba(255, 255, 255, 0.2);
             padding: 6px 16px;
             border-radius: 20px;
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .view-modal-body {
@@ -849,14 +1245,15 @@
             font-weight: 700;
             text-transform: uppercase;
             width: fit-content;
+            border: 1px solid transparent;
         }
 
-        .detail-value.status-available {
+        .detail-value.status-active {
             background: var(--success-green-light);
             color: var(--success-green);
         }
 
-        .detail-value.status-unavailable {
+        .detail-value.status-hidden {
             background: var(--warning-orange-light);
             color: var(--warning-orange);
         }
@@ -893,6 +1290,11 @@
             transition: all var(--transition-fast);
             padding: 0;
             line-height: 1;
+        }
+
+        .modal-close:focus-visible {
+            outline: 2px solid white;
+            outline-offset: 2px;
         }
 
         .modal-close:hover {
@@ -1003,6 +1405,12 @@
             transform: translateX(26px);
         }
 
+        /* Switch focus state */
+        .switch input:focus-visible + .slider {
+            outline: 2px solid var(--primary-maroon);
+            outline-offset: 2px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -1019,6 +1427,11 @@
             }
         }
 
+        @keyframes spin {
+            from { transform: translateY(-50%) rotate(0deg); }
+            to { transform: translateY(-50%) rotate(360deg); }
+        }
+
         @keyframes tooltipFadeIn {
             from {
                 opacity: 0;
@@ -1030,8 +1443,55 @@
             }
         }
 
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            z-index: 3;
+            border: 2px solid white;
+        }
+
+        .status-indicator.active {
+            background: var(--success-green);
+            box-shadow: 0 0 0 2px var(--success-green-light);
+        }
+
+        .status-indicator.hidden {
+            background: var(--warning-orange);
+            box-shadow: 0 0 0 2px var(--warning-orange-light);
+        }
+
+        /* ==================== */
+        /* RESPONSIVE ENHANCEMENTS */
+        /* ==================== */
+        
         @media (max-width: 1400px) {
-            .menu-grid {
+            .categories-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -1058,6 +1518,10 @@
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .view-modal-details {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 992px) {
@@ -1072,7 +1536,7 @@
                 font-size: 28px;
             }
             
-            .menu-grid {
+            .categories-grid {
                 grid-template-columns: 1fr;
                 max-width: 600px;
                 margin-left: auto;
@@ -1083,8 +1547,21 @@
                 grid-template-columns: 1fr;
             }
             
-            .view-modal-details {
-                grid-template-columns: 1fr;
+            .btn-group {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+                border-radius: var(--radius-md);
+                margin: 5px 0;
+                border-right: none;
+            }
+            
+            .btn-group .btn:first-child,
+            .btn-group .btn:last-child {
+                border-radius: var(--radius-md);
             }
         }
 
@@ -1108,13 +1585,8 @@
                 min-width: auto;
             }
             
-            .categories-nav {
-                overflow-x: auto;
-                padding-bottom: 10px;
-            }
-            
-            .category-tab {
-                white-space: nowrap;
+            .category-card {
+                max-width: 100%;
             }
 
             .edit-modal-body,
@@ -1125,21 +1597,18 @@
             .modal-footer {
                 padding: 15px 20px;
                 flex-direction: column;
+                gap: 10px;
             }
             
-            .btn, .add-menu-item-btn {
+            .btn {
                 width: 100%;
-            }
-
-            .menu-card__footer {
                 justify-content: center;
             }
             
-            .menu-card__btn-icon {
-                width: 32px;
-                height: 32px;
+            .modal-footer .btn {
+                width: 100%;
             }
-            
+
             .view-modal-header {
                 height: 160px;
             }
@@ -1171,22 +1640,46 @@
                 font-size: 26px;
             }
             
-            .btn, .add-menu-item-btn {
+            .btn {
                 padding: 10px 20px;
                 font-size: 13px;
                 min-height: 40px;
             }
+            
+            .btn--sm {
+                padding: 6px 12px;
+                font-size: 12px;
+                min-height: 32px;
+            }
+            
+            .btn--lg {
+                padding: 12px 24px;
+                font-size: 14px;
+                min-height: 44px;
+            }
 
-            .menu-card__body {
+            .category-header {
+                height: 160px;
                 padding: 15px;
             }
 
-            .menu-card__name {
-                font-size: 16px;
+            .category-title {
+                font-size: 20px;
             }
 
-            .menu-card__price {
-                font-size: 16px;
+            .category-body {
+                padding: 20px;
+            }
+
+            .category-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .action-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
             }
 
             .modal-content {
@@ -1200,7 +1693,7 @@
             .modal-footer {
                 padding: 15px;
             }
-            
+
             .view-modal-header {
                 height: 140px;
             }
@@ -1212,6 +1705,22 @@
             .view-modal-icon {
                 font-size: 36px;
             }
+            
+            .switch {
+                width: 40px;
+                height: 20px;
+            }
+
+            .slider:before {
+                height: 12px;
+                width: 12px;
+                left: 4px;
+                bottom: 2px;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
         }
     </style>
 </asp:Content>
@@ -1219,84 +1728,92 @@
     <div id="full-page-wrapper">
         <div class="page-header">
             <div class="header-title">
-                <h1>Menu Editor</h1>
-                <p>Manage your restaurant menu items</p>
+                <h1>Menu Categories</h1>
+                <p>Organize and manage menu categories</p>
             </div>
             <div class="header-actions">
-                <button type="button" class="add-menu-item-btn" id="addMenuItemBtn">
-                    <i class="fas fa-plus"></i>Add Menu Item
+                <button type="button" class="btn btn--primary" id="addMenuBtn">
+                    <i class="fas fa-plus"></i>Add Menu Category
                 </button>
             </div>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-card__value" id="totalItems">24</div>
-                <div class="stat-card__subtitle">Total Items</div>
+            <div class="stat-card" tabindex="0" role="button" aria-label="View total menus">
+                <div class="stat-card__header">
+                    <span class="stat-card__label">Total Menus</span>
+                    <div class="stat-icon icon-total"><i class="fas fa-layer-group"></i></div>
+                </div>
+                <div class="stat-card__value" id="totalMenus">2</div>
+                <div class="stat-card__subtitle">All menu categories</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-card__value stat-value-green" id="availableItems">23</div>
-                <div class="stat-card__subtitle">Available Items</div>
+            <div class="stat-card" tabindex="0" role="button" aria-label="View active menus">
+                <div class="stat-card__header">
+                    <span class="stat-card__label">Active Menus</span>
+                    <div class="stat-icon icon-active"><i class="fas fa-eye"></i></div>
+                </div>
+                <div class="stat-card__value" id="activeMenus">2</div>
+                <div class="stat-card__subtitle">Visible to customers</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-card__value" id="totalCategories">3</div>
-                <div class="stat-card__subtitle">Categories</div>
+            <div class="stat-card" tabindex="0" role="button" aria-label="View hidden menus">
+                <div class="stat-card__header">
+                    <span class="stat-card__label">Hidden Menus</span>
+                    <div class="stat-icon icon-hidden"><i class="fas fa-eye-slash"></i></div>
+                </div>
+                <div class="stat-card__value" id="hiddenMenus">0</div>
+                <div class="stat-card__subtitle">Not visible to customers</div>
+            </div>
+            <div class="stat-card" tabindex="0" role="button" aria-label="View total items">
+                <div class="stat-card__header">
+                    <span class="stat-card__label">Total Items</span>
+                    <div class="stat-icon icon-items"><i class="fas fa-utensils"></i></div>
+                </div>
+                <div class="stat-card__value" id="totalItems">11</div>
+                <div class="stat-card__subtitle">Across all categories</div>
             </div>
         </div>
 
         <div class="filter-container">
             <div class="search-wrapper" id="searchBox">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search menu items...">
+                <input type="text" id="searchInput" placeholder="Search by category name or description...">
             </div>
             <select class="filter-dropdown" id="statusFilter">
                 <option value="all">All Status</option>
-                <option value="available">Available</option>
-                <option value="unavailable">Unavailable</option>
+                <option value="active">Active</option>
+                <option value="hidden">Hidden</option>
             </select>
             <select class="filter-dropdown" id="sortFilter">
-                <option value="price-high">Price: High to Low</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="name-asc">Name: A to Z</option>
-                <option value="name-desc">Name: Z to A</option>
+                <option value="newest">Sort by: Newest</option>
+                <option value="oldest">Sort by: Oldest</option>
+                <option value="name-asc">Sort by: Name (A-Z)</option>
+                <option value="name-desc">Sort by: Name (Z-A)</option>
+                <option value="items-high">Sort by: Items (High-Low)</option>
+                <option value="items-low">Sort by: Items (Low-High)</option>
+                <option value="created-asc">Sort by: Created (Oldest)</option>
+                <option value="created-desc">Sort by: Created (Newest)</option>
             </select>
         </div>
 
-        <div class="categories-nav">
-            <button class="category-tab active" data-category="all">
-                <i class="fas fa-layer-group"></i> All Items
-            </button>
-            <button class="category-tab" data-category="silog">
-                <i class="fas fa-utensils"></i> Silog Meals
-            </button>
-            <button class="category-tab" data-category="sizzling">
-                <i class="fas fa-fire"></i> Sizzling Meals
-            </button>
-            <button class="category-tab" data-category="special">
-                <i class="fas fa-star"></i> Special Meals
-            </button>
-        </div>
-
-        <div class="menu-grid" id="menuGrid">
+        <div class="categories-grid" id="menusGrid">
         </div>
         
         <div class="no-results" id="noResultsMessage">
             <i class="fas fa-search"></i>
-            <h3>No menu items found</h3>
+            <h3>No menu categories found</h3>
             <p>Try adjusting your search or filters</p>
         </div>
     </div>
 
     <div class="modal-overlay" id="viewModal">
         <div class="modal-content view-modal-content">
-            <div class="view-modal-header">
-                <img src="" alt="" class="view-modal-image" id="viewModalImage">
+            <div class="view-modal-header" id="viewModalHeader">
                 <div class="view-modal-overlay">
                     <i class="fas" id="viewModalIcon"></i>
-                    <h3 class="view-modal-title" id="viewModalTitle">Menu Item Name</h3>
-                    <div class="view-modal-price" id="viewModalPrice">₱0.00</div>
+                    <h3 class="view-modal-title" id="viewModalTitle">Category Name</h3>
+                    <div class="view-modal-code" id="viewModalCode">MEN-000</div>
                 </div>
-                <button class="modal-close" id="closeViewModal">&times;</button>
+                <button class="modal-close" id="closeViewModal" aria-label="Close view modal">&times;</button>
             </div>
             <div class="view-modal-body">
                 <div class="view-modal-section">
@@ -1308,19 +1825,19 @@
                     <div class="view-modal-details">
                         <div class="detail-item">
                             <span class="detail-label">Status</span>
-                            <span class="detail-value status" id="viewModalStatus">AVAILABLE</span>
+                            <span class="detail-value status" id="viewModalStatus">ACTIVE</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Category</span>
-                            <span class="detail-value" id="viewModalCategory">Silog Meals</span>
+                            <span class="detail-label">Items</span>
+                            <span class="detail-value" id="viewModalItems">0 items</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Preparation Time</span>
-                            <span class="detail-value" id="viewModalPrepTime">15 mins</span>
+                            <span class="detail-label">Created</span>
+                            <span class="detail-value" id="viewModalCreated">Jan 1, 2024</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Calories</span>
-                            <span class="detail-value" id="viewModalCalories">500 cal</span>
+                            <span class="detail-label">Color Theme</span>
+                            <span class="detail-value" id="viewModalColor">Maroon</span>
                         </div>
                     </div>
                 </div>
@@ -1334,45 +1851,54 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="editModalTitle">Add New Menu Item</h3>
-                <button class="modal-close" id="closeEditModal">&times;</button>
+                <h3 id="editModalTitle">Add New Menu Category</h3>
+                <button class="modal-close" id="closeEditModal" aria-label="Close edit modal">&times;</button>
             </div>
             <div class="edit-modal-body">
                 <div class="form-group">
-                    <label for="editName">Menu Item Name</label>
-                    <input type="text" id="editName" class="form-control" placeholder="Enter menu item name">
+                    <label for="editName">Category Name</label>
+                    <input type="text" id="editName" class="form-control" placeholder="Enter category name">
                 </div>
                 <div class="form-group">
                     <label for="editDescription">Description</label>
-                    <textarea id="editDescription" class="form-control" placeholder="Enter item description" rows="3"></textarea>
+                    <textarea id="editDescription" class="form-control" placeholder="Enter category description" rows="3"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editCategory">Category</label>
-                        <select id="editCategory" class="form-control">
-                            <option value="sizzling">Sizzling Meals</option>
-                            <option value="silog">Silog Meals</option>
-                            <option value="special">Special Meals</option>
+                        <label for="editColor">Category Color</label>
+                        <select id="editColor" class="form-control">
+                            <option value="maroon">Maroon</option>
+                            <option value="maroon-light">Light Maroon</option>
+                            <option value="maroon-pale">Pale Maroon</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="editPrice">Price (₱)</label>
-                        <input type="number" id="editPrice" class="form-control" placeholder="0.00" min="0" step="0.01">
+                        <label for="editIcon">Icon</label>
+                        <select id="editIcon" class="form-control">
+                            <option value="fa-layer-group">Stack</option>
+                            <option value="fa-utensils">Utensils</option>
+                            <option value="fa-fire">Fire</option>
+                            <option value="fa-mug-hot">Coffee</option>
+                            <option value="fa-pizza-slice">Pizza</option>
+                            <option value="fa-hamburger">Burger</option>
+                            <option value="fa-seedling">Vegetarian</option>
+                            <option value="fa-cookie">Dessert</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editPrepTime">Prep Time (minutes)</label>
-                        <input type="number" id="editPrepTime" class="form-control" placeholder="15" min="1">
+                        <label for="editCode">Category Code</label>
+                        <input type="text" id="editCode" class="form-control" placeholder="e.g., MEN-001">
                     </div>
                     <div class="form-group">
-                        <label for="editCalories">Calories</label>
-                        <input type="number" id="editCalories" class="form-control" placeholder="500" min="0">
+                        <label for="editItemCount">Number of Items</label>
+                        <input type="number" id="editItemCount" class="form-control" min="0" placeholder="Enter item count">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editImage">Image URL</label>
-                    <input type="text" id="editImage" class="form-control" placeholder="https://example.com/image.jpg">
+                    <label for="editImage">Category Image URL</label>
+                    <input type="text" id="editImage" class="form-control" placeholder="e.g., https://media.istockphoto.com/...">
                 </div>
                 <div class="form-group">
                     <label for="editStatus">Status</label>
@@ -1381,13 +1907,13 @@
                             <input type="checkbox" id="editStatus" checked>
                             <span class="slider"></span>
                         </label>
-                        <span id="statusText" class="text-sm font-medium">Available</span>
+                        <span id="statusText" class="text-sm font-medium">Active</span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelEdit">Cancel</button>
-                <button type="button" class="btn btn--primary" id="saveEdit">Save Item</button>
+                <button type="button" class="btn btn--primary" id="saveEdit">Save Category</button>
             </div>
         </div>
     </div>
@@ -1395,8 +1921,8 @@
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Delete Menu Item</h3>
-                <button class="modal-close" id="closeDeleteModal">&times;</button>
+                <h3>Delete Menu Category</h3>
+                <button class="modal-close" id="closeDeleteModal" aria-label="Close delete modal">&times;</button>
             </div>
             <div class="edit-modal-body">
                 <div class="text-center mb-6">
@@ -1404,338 +1930,81 @@
                         <i class="fas fa-trash" style="color: var(--danger-red); font-size: 48px;"></i>
                     </div>
                     <p class="text-lg font-semibold mb-2" id="deleteMessage">
-                        Are you sure you want to delete this menu item?
+                        Are you sure you want to delete this menu category?
                     </p>
                     <p class="text-gray-600 text-sm" id="deleteWarning">
-                        This action cannot be undone. Customers will no longer see this item.
+                        This will also remove all items in this category. This action cannot be undone.
                     </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelDelete">Cancel</button>
-                <button type="button" class="btn btn--danger" id="confirmDelete">Delete Item</button>
+                <button type="button" class="btn btn--danger" id="confirmDelete">Delete Category</button>
             </div>
         </div>
     </div>
 
     <script>
-        let menuData = [
-            { id: 1, name: "Tapsilog", price: 100.00, category: "silog", description: "Traditional Filipino breakfast with beef tapa, garlic rice, and sunny-side-up egg.", prepTime: 20, calories: 520, status: "available", image: "Images/Hotsilog.jpg" },
-            { id: 2, name: "Baconsilog", price: 75.00, category: "silog", description: "Crispy bacon strips with garlic rice and fried egg.", prepTime: 15, calories: 480, status: "available", image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 3, name: "Bangsilog", price: 85.00, category: "silog", description: "Fried milkfish with garlic rice and fried egg.", prepTime: 25, calories: 450, status: "available", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 4, name: "Hamsilog", price: 55.00, category: "silog", description: "Ham slices with garlic rice and fried egg.", prepTime: 10, calories: 380, status: "available", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 5, name: "Hotsilog (Purefoods)", price: 55.00, category: "silog", description: "Purefoods hotdog with garlic rice and fried egg.", prepTime: 12, calories: 420, status: "available", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 6, name: "Longsilog", price: 85.00, category: "silog", description: "Filipino longganisa with garlic rice and fried egg.", prepTime: 18, calories: 510, status: "available", image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 7, name: "Malingsilog", price: 60.00, category: "silog", description: "Filipino-style corned beef with garlic rice and fried egg.", prepTime: 15, calories: 450, status: "available", image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 8, name: "Porksilog", price: 85.00, category: "silog", description: "Grilled pork chop with garlic rice and fried egg.", prepTime: 20, calories: 580, status: "available", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 9, name: "Tocilog", price: 80.00, category: "silog", description: "Sweet cured pork tocino with garlic rice and fried egg.", prepTime: 18, calories: 510, status: "available", image: "https://images.unsplash.com/photo-1598866594230-a7c12756260f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 10, name: "Sizzling Sisig", price: 150.00, category: "sizzling", description: "Authentic Filipino pork sisig served sizzling hot.", prepTime: 20, calories: 550, status: "available", image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 11, name: "Sizzling Pork Steak (Boneless)", price: 140.00, category: "sizzling", description: "Tender boneless pork steak served on a sizzling plate.", prepTime: 25, calories: 480, status: "available", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 12, name: "Sizzling Chicken", price: 130.00, category: "sizzling", description: "Grilled chicken served sizzling with special sauce.", prepTime: 22, calories: 420, status: "available", image: "https://images.unsplash.com/photo-1598866594230-a7c12756260f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 13, name: "Sizzling Tofu", price: 120.00, category: "sizzling", description: "Tofu and vegetables served on a sizzling plate.", prepTime: 15, calories: 320, status: "available", image: "https://images.unsplash.com/photo-1552539618-7eec9f4e1556?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 14, name: "Sizzling Bangus", price: 145.00, category: "sizzling", description: "Boneless milkfish served sizzling with onions and tomatoes.", prepTime: 20, calories: 380, status: "available", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 15, name: "Sizzling Liempo", price: 155.00, category: "sizzling", description: "Grilled pork belly served sizzling with special sauce.", prepTime: 25, calories: 620, status: "available", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 16, name: "Sizzling Mix Platter", price: 180.00, category: "sizzling", description: "Mixed seafood and meat served on a sizzling plate.", prepTime: 30, calories: 720, status: "available", image: "https://images.unsplash.com/photo-1552539618-7eec9f4e1556?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 17, name: "Sizzling Gambas", price: 160.00, category: "sizzling", description: "Prawns in garlic butter sauce served sizzling.", prepTime: 20, calories: 380, status: "available", image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 18, name: "Sizzling Kangkong", price: 110.00, category: "sizzling", description: "Water spinach in oyster sauce served sizzling.", prepTime: 15, calories: 180, status: "available", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 19, name: "Special Goto", price: 120.00, category: "special", description: "Rich and savory Filipino rice porridge with tripe.", prepTime: 30, calories: 380, status: "available", image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 20, name: "Special Lugaw", price: 100.00, category: "special", description: "Filipino rice porridge with chicken and egg.", prepTime: 25, calories: 320, status: "available", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 21, name: "Special Arroz Caldo", price: 110.00, category: "special", description: "Filipino chicken rice porridge with ginger and garlic.", prepTime: 30, calories: 350, status: "available", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 22, name: "Special Bulalo", price: 250.00, category: "special", description: "Beef marrow soup with corn and vegetables.", prepTime: 45, calories: 550, status: "available", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 23, name: "Special Kare-Kare", price: 220.00, category: "special", description: "Filipino oxtail stew in peanut sauce.", prepTime: 60, calories: 620, status: "available", image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 24, name: "Special Sinigang", price: 180.00, category: "special", description: "Filipino sour soup with pork and vegetables.", prepTime: 40, calories: 420, status: "available", image: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 25, name: "Special Adobo", price: 160.00, category: "special", description: "Classic Filipino chicken and pork adobo.", prepTime: 50, calories: 480, status: "available", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 26, name: "Special Caldereta", price: 190.00, category: "special", description: "Filipino goat stew with potatoes and bell peppers.", prepTime: 60, calories: 550, status: "available", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" },
-            { id: 27, name: "Special Bicol Express", price: 170.00, category: "special", description: "Spicy Filipino pork dish with coconut milk and chili.", prepTime: 45, calories: 520, status: "available", image: "https://images.unsplash.com/photo-1603360946369-dc9bb6258143?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" }
+        let menusData = [
+            {
+                id: 1,
+                name: "Sizzling Sisig",
+                code: "MEN-001",
+                description: "Premium sizzling plate meals featuring authentic flavors and high-quality ingredients. Our sizzling specials are served hot on cast-iron plates to preserve the aroma and taste.",
+                color: "maroon",
+                icon: "fa-fire",
+                status: "active",
+                itemCount: 5,
+                image: "https://media.istockphoto.com/id/623516426/photo/sizzling-pork-sisig-filipino-cuisine.jpg?s=1024x1024&w=is&k=20&c=G9mG8xf9QO8c9yWpFgQ7iZl8vZ7XqyQ6QjzJXq9q9q8=",
+                createdAt: "2024-01-15"
+            },
+            {
+                id: 2,
+                name: "Tapsilog",
+                code: "MEN-002",
+                description: "Classic Filipino breakfast combinations with rice, egg, and your choice of protein. Perfect for any time of the day, these comforting meals are a customer favorite.",
+                color: "maroon-light",
+                icon: "fa-utensils",
+                status: "active",
+                itemCount: 6,
+                image: "Images/Hotsilog.jpg",
+                createdAt: "2024-01-20"
+            },
         ];
 
         let currentFilters = {
             search: '',
             status: 'all',
-            sort: 'name-asc',
-            category: 'all'
+            sort: 'newest'
         };
 
-        let currentEditItemId = null;
-        let currentViewItemId = null;
+        let currentEditMenuId = null;
+        let currentViewMenuId = null;
 
-        function getCategoryIcon(category) {
-            switch (category) {
-                case 'silog': return 'fa-utensils';
-                case 'sizzling': return 'fa-fire';
-                case 'special': return 'fa-star';
-                default: return 'fa-utensils';
-            }
-        }
+        let hoverTimers = {};
+        let activeStatusDropdown = null;
 
-        function getCategoryName(category) {
-            switch (category) {
-                case 'silog': return 'Silog Meals';
-                case 'sizzling': return 'Sizzling Meals';
-                case 'special': return 'Special Meals';
-                default: return 'Unknown';
-            }
-        }
+        // ==================== //
+        // ENHANCED FUNCTIONALITY //
+        // ==================== //
 
-        function getStatusClass(status) {
-            return status === 'available' ? 'status-available' : 'status-unavailable';
-        }
+        function simulateLoading(button, duration = 1000) {
+            const originalText = button.innerHTML;
+            const originalWidth = button.offsetWidth;
 
-        function getStatusText(status) {
-            return status === 'available' ? 'AVAILABLE' : 'UNAVAILABLE';
-        }
+            button.classList.add('btn--loading');
+            button.disabled = true;
+            button.style.minWidth = `${originalWidth}px`;
 
-        function updateStats() {
-            const totalItems = menuData.length;
-            const availableItems = menuData.filter(item => item.status === 'available').length;
-
-            document.getElementById('totalItems').textContent = totalItems;
-            document.getElementById('availableItems').textContent = availableItems;
-        }
-
-        function renderMenuItems() {
-            const grid = document.getElementById('menuGrid');
-            grid.innerHTML = '';
-
-            let filteredItems = [...menuData];
-
-            if (currentFilters.category !== 'all') {
-                filteredItems = filteredItems.filter(item => item.category === currentFilters.category);
-            }
-
-            if (currentFilters.search) {
-                const searchTerm = currentFilters.search.toLowerCase();
-                filteredItems = filteredItems.filter(item =>
-                    item.name.toLowerCase().includes(searchTerm) ||
-                    item.description.toLowerCase().includes(searchTerm)
-                );
-            }
-
-            if (currentFilters.status !== 'all') {
-                filteredItems = filteredItems.filter(item => item.status === currentFilters.status);
-            }
-
-            filteredItems.sort((a, b) => {
-                switch (currentFilters.sort) {
-                    case 'price-high':
-                        return b.price - a.price;
-                    case 'price-low':
-                        return a.price - b.price;
-                    case 'name-asc':
-                        return a.name.localeCompare(b.name);
-                    case 'name-desc':
-                        return b.name.localeCompare(a.name);
-                    default:
-                        return 0;
-                }
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    button.classList.remove('btn--loading');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    button.style.minWidth = '';
+                    resolve();
+                }, duration);
             });
-
-            if (filteredItems.length === 0) {
-                document.getElementById('noResultsMessage').style.display = 'block';
-            } else {
-                document.getElementById('noResultsMessage').style.display = 'none';
-
-                filteredItems.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'menu-card';
-                    card.setAttribute('data-item-id', item.id);
-                    card.setAttribute('data-category', item.category);
-                    card.setAttribute('data-status', item.status);
-
-                    card.innerHTML = `
-                        <div class="menu-card__header">
-                            <img src="${item.image}" alt="${item.name}" class="menu-card__image">
-                            <div class="menu-card__status ${getStatusClass(item.status)}">
-                                ${getStatusText(item.status)}
-                            </div>
-                            <div class="menu-card__category">
-                                <i class="fas ${getCategoryIcon(item.category)}"></i> ${getCategoryName(item.category)}
-                            </div>
-                        </div>
-                        <div class="menu-card__body">
-                            <div class="menu-card__title">
-                                <h3 class="menu-card__name">${item.name}</h3>
-                                <div class="menu-card__price">₱${item.price.toFixed(2)}</div>
-                            </div>
-                            <p class="menu-card__description">${item.description}</p>
-                            <div class="menu-card__meta">
-                                <div class="menu-card__meta-item">
-                                    <i class="fas fa-clock"></i> ${item.prepTime} mins
-                                </div>
-                                <div class="menu-card__meta-item">
-                                    <i class="fas fa-fire"></i> ${item.calories} cal
-                                </div>
-                            </div>
-                        </div>
-                        <div class="menu-card__footer">
-                            <button class="menu-card__btn-icon menu-card__btn-icon--view" title="View Details">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="menu-card__btn-icon menu-card__btn-icon--edit" title="Edit Item">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="menu-card__btn-icon menu-card__btn-icon--delete" title="Delete Item">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-
-                    grid.appendChild(card);
-                });
-            }
-
-            updateStats();
-        }
-
-        function openViewModal(itemId) {
-            currentViewItemId = itemId;
-            const item = menuData.find(i => i.id === itemId);
-
-            if (!item) return;
-
-            document.getElementById('viewModalImage').src = item.image || '';
-            document.getElementById('viewModalImage').alt = item.name;
-            document.getElementById('viewModalIcon').className = `fas ${getCategoryIcon(item.category)} view-modal-icon`;
-            document.getElementById('viewModalTitle').textContent = item.name;
-            document.getElementById('viewModalPrice').textContent = `₱${item.price.toFixed(2)}`;
-            document.getElementById('viewModalDescription').textContent = item.description;
-            document.getElementById('viewModalCategory').textContent = getCategoryName(item.category);
-            document.getElementById('viewModalPrepTime').textContent = `${item.prepTime} mins`;
-            document.getElementById('viewModalCalories').textContent = `${item.calories} cal`;
-
-            const statusElement = document.getElementById('viewModalStatus');
-            statusElement.textContent = getStatusText(item.status);
-            statusElement.className = `detail-value status ${getStatusClass(item.status)}`;
-
-            document.getElementById('viewModal').style.display = 'flex';
-        }
-
-        function closeViewModal() {
-            document.getElementById('viewModal').style.display = 'none';
-            currentViewItemId = null;
-        }
-
-        function openEditModal(itemId = null, isNew = false) {
-            const modal = document.getElementById('editModal');
-            const modalTitle = document.getElementById('editModalTitle');
-            const statusToggle = document.getElementById('editStatus');
-            const statusText = document.getElementById('statusText');
-
-            if (isNew) {
-                modalTitle.textContent = 'Add New Menu Item';
-                currentEditItemId = null;
-
-                document.getElementById('editName').value = '';
-                document.getElementById('editDescription').value = '';
-                document.getElementById('editCategory').value = 'silog';
-                document.getElementById('editPrice').value = '';
-                document.getElementById('editPrepTime').value = '15';
-                document.getElementById('editCalories').value = '500';
-                document.getElementById('editImage').value = '';
-                statusToggle.checked = true;
-                statusText.textContent = 'Available';
-            } else {
-                modalTitle.textContent = 'Edit Menu Item';
-                currentEditItemId = itemId;
-
-                const item = menuData.find(i => i.id === itemId);
-                if (!item) return;
-
-                document.getElementById('editName').value = item.name;
-                document.getElementById('editDescription').value = item.description;
-                document.getElementById('editCategory').value = item.category;
-                document.getElementById('editPrice').value = item.price;
-                document.getElementById('editPrepTime').value = item.prepTime;
-                document.getElementById('editCalories').value = item.calories;
-                document.getElementById('editImage').value = item.image || '';
-                statusToggle.checked = item.status === 'available';
-                statusText.textContent = item.status === 'available' ? 'Available' : 'Unavailable';
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-            currentEditItemId = null;
-        }
-
-        function saveEditChanges() {
-            const name = document.getElementById('editName').value.trim();
-            const description = document.getElementById('editDescription').value.trim();
-            const category = document.getElementById('editCategory').value;
-            const price = parseFloat(document.getElementById('editPrice').value);
-            const prepTime = parseInt(document.getElementById('editPrepTime').value);
-            const calories = parseInt(document.getElementById('editCalories').value);
-            const image = document.getElementById('editImage').value.trim();
-            const status = document.getElementById('editStatus').checked ? 'available' : 'unavailable';
-
-            if (!name || !description || isNaN(price) || price < 0 || isNaN(prepTime) || prepTime < 1 || isNaN(calories) || calories < 0) {
-                showNotification('Please fill in all required fields with valid values!', 'error');
-                return;
-            }
-
-            if (currentEditItemId) {
-                const item = menuData.find(i => i.id === currentEditItemId);
-                if (item) {
-                    item.name = name;
-                    item.description = description;
-                    item.category = category;
-                    item.price = price;
-                    item.prepTime = prepTime;
-                    item.calories = calories;
-                    item.image = image;
-                    item.status = status;
-
-                    showNotification(`${item.name} updated successfully!`, 'success');
-                }
-            } else {
-                const newItem = {
-                    id: menuData.length > 0 ? Math.max(...menuData.map(i => i.id)) + 1 : 1,
-                    name: name,
-                    description: description,
-                    category: category,
-                    price: price,
-                    prepTime: prepTime,
-                    calories: calories,
-                    image: image,
-                    status: status
-                };
-
-                menuData.push(newItem);
-                showNotification(`${newItem.name} added successfully!`, 'success');
-            }
-
-            renderMenuItems();
-            closeEditModal();
-        }
-
-        function openDeleteModal(itemId) {
-            const item = menuData.find(i => i.id === itemId);
-            if (!item) return;
-
-            document.getElementById('deleteMessage').innerHTML =
-                `Are you sure you want to delete <strong>"${item.name}"</strong>?`;
-
-            currentEditItemId = itemId;
-            document.getElementById('deleteModal').style.display = 'flex';
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-            currentEditItemId = null;
-        }
-
-        function confirmDelete() {
-            const item = menuData.find(i => i.id === currentEditItemId);
-            if (!item) return;
-
-            const index = menuData.findIndex(i => i.id === currentEditItemId);
-            menuData.splice(index, 1);
-
-            renderMenuItems();
-            showNotification(`${item.name} deleted successfully!`, 'success');
-            closeDeleteModal();
         }
 
         function showNotification(message, type) {
@@ -1772,92 +2041,702 @@
             }, 3000);
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const categoryTabs = document.querySelectorAll('.category-tab');
-            categoryTabs.forEach(tab => {
-                tab.addEventListener('click', function () {
-                    categoryTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilters.category = this.dataset.category;
-                    renderMenuItems();
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    const activeElement = document.activeElement;
+
+                    if (activeElement.classList.contains('stat-card')) {
+                        activeElement.click();
+                        e.preventDefault();
+                    }
+
+                    if (activeElement.classList.contains('action-icon')) {
+                        activeElement.click();
+                        e.preventDefault();
+                    }
+
+                    if (activeElement.classList.contains('category-status')) {
+                        activeElement.click();
+                        e.preventDefault();
+                    }
+                }
+
+                // Arrow key navigation for menu cards
+                if (e.key.startsWith('Arrow') && !e.target.matches('input, textarea, select')) {
+                    const cards = document.querySelectorAll('.category-card');
+                    const currentIndex = Array.from(cards).findIndex(card => card === document.activeElement);
+
+                    if (currentIndex !== -1) {
+                        let nextIndex;
+                        if (e.key === 'ArrowRight') nextIndex = currentIndex + 1;
+                        if (e.key === 'ArrowLeft') nextIndex = currentIndex - 1;
+                        if (e.key === 'ArrowDown') nextIndex = currentIndex + 3;
+                        if (e.key === 'ArrowUp') nextIndex = currentIndex - 3;
+
+                        if (nextIndex >= 0 && nextIndex < cards.length) {
+                            cards[nextIndex].focus();
+                            e.preventDefault();
+                        }
+                    }
+                }
+
+                // Escape key closes modals and dropdowns
+                if (e.key === 'Escape') {
+                    // Close active status dropdown
+                    if (activeStatusDropdown) {
+                        activeStatusDropdown.classList.remove('active');
+                        activeStatusDropdown = null;
+                    }
+
+                    // Close modals
+                    const openModals = document.querySelectorAll('.modal-overlay[style*="flex"]');
+                    if (openModals.length > 0) {
+                        openModals.forEach(modal => {
+                            if (modal.id === 'viewModal') closeViewModal();
+                            if (modal.id === 'editModal') closeEditModal();
+                            if (modal.id === 'deleteModal') closeDeleteModal();
+                        });
+                    }
+                }
+            });
+        }
+
+        function initializeHoverIntent() {
+            document.querySelectorAll('.stat-card').forEach((card, index) => {
+                const cardId = `stat-card-${index}`;
+
+                card.addEventListener('mouseenter', () => {
+                    clearTimeout(hoverTimers[cardId]);
+                    hoverTimers[cardId] = setTimeout(() => {
+                        card.classList.add('hover-active');
+                    }, 100);
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimers[cardId]);
+                    card.classList.remove('hover-active');
+                });
+            });
+        }
+
+        function getColorClass(color) {
+            switch (color) {
+                case 'maroon': return 'bg-maroon';
+                case 'maroon-light': return 'bg-maroon-light';
+                case 'maroon-pale': return 'bg-maroon-pale';
+                default: return 'bg-maroon';
+            }
+        }
+
+        function getStatusText(status) {
+            return status === 'active' ? 'ACTIVE' : 'HIDDEN';
+        }
+
+        function getStatusClass(status) {
+            return status === 'active' ? 'status-active' : 'status-hidden';
+        }
+
+        function getColorText(color) {
+            switch (color) {
+                case 'maroon': return 'Maroon';
+                case 'maroon-light': return 'Light Maroon';
+                case 'maroon-pale': return 'Pale Maroon';
+                default: return 'Maroon';
+            }
+        }
+
+        function updateStats() {
+            const totalMenus = menusData.length;
+            const activeMenus = menusData.filter(m => m.status === 'active').length;
+            const hiddenMenus = menusData.filter(m => m.status === 'hidden').length;
+            const totalItems = menusData.reduce((sum, menu) => sum + menu.itemCount, 0);
+
+            document.getElementById('totalMenus').textContent = totalMenus;
+            document.getElementById('activeMenus').textContent = activeMenus;
+            document.getElementById('hiddenMenus').textContent = hiddenMenus;
+            document.getElementById('totalItems').textContent = totalItems;
+        }
+
+        function renderMenus() {
+            const grid = document.getElementById('menusGrid');
+            grid.innerHTML = '';
+
+            let filteredMenus = [...menusData];
+
+            if (currentFilters.search) {
+                const searchTerm = currentFilters.search.toLowerCase();
+                filteredMenus = filteredMenus.filter(menu =>
+                    menu.name.toLowerCase().includes(searchTerm) ||
+                    menu.description.toLowerCase().includes(searchTerm) ||
+                    menu.code.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (currentFilters.status !== 'all') {
+                filteredMenus = filteredMenus.filter(menu =>
+                    menu.status === currentFilters.status
+                );
+            }
+
+            // Apply sorting
+            filteredMenus.sort((a, b) => {
+                switch (currentFilters.sort) {
+                    case 'newest':
+                    case 'created-desc':
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    case 'oldest':
+                    case 'created-asc':
+                        return new Date(a.createdAt) - new Date(b.createdAt);
+                    case 'name-asc':
+                        return a.name.localeCompare(b.name);
+                    case 'name-desc':
+                        return b.name.localeCompare(a.name);
+                    case 'items-high':
+                        return b.itemCount - a.itemCount;
+                    case 'items-low':
+                        return a.itemCount - b.itemCount;
+                    default:
+                        return 0;
+                }
+            });
+
+            if (filteredMenus.length === 0) {
+                document.getElementById('noResultsMessage').style.display = 'block';
+            } else {
+                document.getElementById('noResultsMessage').style.display = 'none';
+
+                filteredMenus.forEach(menu => {
+                    const menuElement = document.createElement('div');
+                    menuElement.className = 'category-card';
+                    menuElement.setAttribute('data-menu-id', menu.id);
+                    menuElement.setAttribute('data-status', menu.status);
+                    menuElement.setAttribute('tabindex', '0');
+                    menuElement.setAttribute('role', 'article');
+                    menuElement.setAttribute('aria-label', `${menu.name} category with ${menu.itemCount} items`);
+
+                    menuElement.innerHTML = `
+                        <div class="category-header ${getColorClass(menu.color)}" data-menu-id="${menu.id}">
+                            <div class="status-indicator ${menu.status === 'active' ? 'active' : 'hidden'}" aria-label="Status: ${menu.status}"></div>
+                            <i class="fas ${menu.icon} category-icon" aria-hidden="true"></i>
+                            <h3 class="category-title">${menu.name}</h3>
+                        </div>
+                        <div class="category-body">
+                            <div class="category-meta">
+                                <span class="category-code">${menu.code}</span>
+                                <div class="status-dropdown-container">
+                                    <button type="button" class="category-status ${getStatusClass(menu.status)}" 
+                                            tabindex="0" 
+                                            aria-label="Current status: ${menu.status}, click to change">
+                                        ${getStatusText(menu.status)}
+                                    </button>
+                                    <div class="status-options">
+                                        <button type="button" class="status-option ${menu.status === 'active' ? 'active' : ''}" 
+                                                data-status="active" 
+                                                aria-label="Set to active">
+                                            <i class="fas fa-eye"></i> Active
+                                        </button>
+                                        <button type="button" class="status-option ${menu.status === 'hidden' ? 'hidden' : ''}" 
+                                                data-status="hidden" 
+                                                aria-label="Set to hidden">
+                                            <i class="fas fa-eye-slash"></i> Hidden
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="category-description">${menu.description}</p>
+                            <div class="category-footer">
+                                <div class="item-count">
+                                    <i class="fas fa-utensils" aria-hidden="true"></i>
+                                    <span>${menu.itemCount} items</span>
+                                </div>
+                                <div class="category-actions">
+                                    <button type="button" class="action-icon view" tabindex="0" title="View Details" aria-label="View details for ${menu.name}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="action-icon edit" tabindex="0" title="Edit Category" aria-label="Edit ${menu.name} category">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="action-icon delete" tabindex="0" title="Delete Category" aria-label="Delete ${menu.name} category">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    grid.appendChild(menuElement);
+                });
+
+                // Add event listeners for status dropdowns
+                setupStatusDropdowns();
+            }
+        }
+
+        function setupStatusDropdowns() {
+            document.querySelectorAll('.status-dropdown-container').forEach(container => {
+                const statusBtn = container.querySelector('.category-status');
+                const statusOptions = container.querySelector('.status-options');
+
+                statusBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+
+                    // Close other open dropdowns
+                    if (activeStatusDropdown && activeStatusDropdown !== container) {
+                        activeStatusDropdown.classList.remove('active');
+                    }
+
+                    // Toggle current dropdown
+                    container.classList.toggle('active');
+                    activeStatusDropdown = container.classList.contains('active') ? container : null;
+                });
+
+                // Handle option clicks
+                container.querySelectorAll('.status-option').forEach(option => {
+                    option.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const newStatus = this.dataset.status;
+                        const menuId = parseInt(container.closest('.category-card').dataset.menuId);
+                        const menu = menusData.find(m => m.id === menuId);
+
+                        if (menu && menu.status !== newStatus) {
+                            menu.status = newStatus;
+                            updateStats();
+                            renderMenus();
+                            showNotification(`${menu.name} status updated to ${newStatus === 'active' ? 'active' : 'hidden'}!`, 'success');
+                        }
+
+                        container.classList.remove('active');
+                        activeStatusDropdown = null;
+                    });
                 });
             });
 
-            document.getElementById('searchInput').addEventListener('input', function () {
-                currentFilters.search = this.value.toLowerCase().trim();
-                renderMenuItems();
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function (e) {
+                if (activeStatusDropdown && !activeStatusDropdown.contains(e.target)) {
+                    activeStatusDropdown.classList.remove('active');
+                    activeStatusDropdown = null;
+                }
             });
+        }
 
-            document.getElementById('statusFilter').addEventListener('change', function () {
-                currentFilters.status = this.value;
-                renderMenuItems();
+        async function handleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchBox = document.getElementById('searchBox');
+
+            currentFilters.search = searchInput.value.toLowerCase().trim();
+            searchBox.classList.add('loading');
+
+            setTimeout(() => {
+                renderMenus();
+                searchBox.classList.remove('loading');
+            }, 300);
+        }
+
+        function handleStatusFilter() {
+            const statusFilter = document.getElementById('statusFilter');
+            currentFilters.status = statusFilter.value;
+            renderMenus();
+        }
+
+        function handleSortFilter() {
+            const sortFilter = document.getElementById('sortFilter');
+            currentFilters.sort = sortFilter.value;
+            renderMenus();
+        }
+
+        function openViewModal(menuId) {
+            currentViewMenuId = menuId;
+            const menu = menusData.find(m => m.id === menuId);
+
+            if (!menu) return;
+
+            const viewModalHeader = document.getElementById('viewModalHeader');
+            viewModalHeader.style.backgroundImage = `url('${menu.image}')`;
+            document.getElementById('viewModalIcon').className = `fas ${menu.icon} view-modal-icon`;
+            document.getElementById('viewModalTitle').textContent = menu.name;
+            document.getElementById('viewModalCode').textContent = menu.code;
+            document.getElementById('viewModalDescription').textContent = menu.description;
+            document.getElementById('viewModalItems').textContent = `${menu.itemCount} items`;
+            document.getElementById('viewModalCreated').textContent = formatDate(menu.createdAt);
+            document.getElementById('viewModalColor').textContent = getColorText(menu.color);
+
+            const statusElement = document.getElementById('viewModalStatus');
+            statusElement.textContent = getStatusText(menu.status);
+            statusElement.className = `detail-value status ${menu.status === 'active' ? 'status-active' : 'status-hidden'}`;
+
+            document.getElementById('viewModal').style.display = 'flex';
+
+            // Focus first interactive element
+            setTimeout(() => {
+                document.getElementById('closeViewModal').focus();
+            }, 100);
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').style.display = 'none';
+            currentViewMenuId = null;
+        }
+
+        function openEditModal(menuId = null, isNew = false) {
+            const modal = document.getElementById('editModal');
+            const modalTitle = document.getElementById('editModalTitle');
+            const statusToggle = document.getElementById('editStatus');
+            const statusText = document.getElementById('statusText');
+
+            if (isNew) {
+                modalTitle.textContent = 'Add New Menu Category';
+                currentEditMenuId = null;
+
+                document.getElementById('editName').value = '';
+                document.getElementById('editDescription').value = '';
+                document.getElementById('editColor').value = 'maroon';
+                document.getElementById('editIcon').value = 'fa-layer-group';
+                document.getElementById('editCode').value = 'MEN-001';
+                document.getElementById('editItemCount').value = '0';
+                document.getElementById('editImage').value = '';
+                statusToggle.checked = true;
+                statusText.textContent = 'Active';
+            } else {
+                modalTitle.textContent = 'Edit Menu Category';
+                currentEditMenuId = menuId;
+
+                const menu = menusData.find(m => m.id === menuId);
+                if (!menu) return;
+
+                document.getElementById('editName').value = menu.name;
+                document.getElementById('editDescription').value = menu.description;
+                document.getElementById('editColor').value = menu.color;
+                document.getElementById('editIcon').value = menu.icon;
+                document.getElementById('editCode').value = menu.code;
+                document.getElementById('editItemCount').value = menu.itemCount;
+                document.getElementById('editImage').value = menu.image;
+                statusToggle.checked = menu.status === 'active';
+                statusText.textContent = menu.status === 'active' ? 'Active' : 'Hidden';
+            }
+
+            modal.style.display = 'flex';
+
+            // Focus first input
+            setTimeout(() => {
+                document.getElementById('editName').focus();
+            }, 100);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            currentEditMenuId = null;
+        }
+
+        async function saveEditChanges() {
+            const saveBtn = document.getElementById('saveEdit');
+
+            // Show loading state
+            await simulateLoading(saveBtn, 800);
+
+            const name = document.getElementById('editName').value.trim();
+            const description = document.getElementById('editDescription').value.trim();
+            const color = document.getElementById('editColor').value;
+            const icon = document.getElementById('editIcon').value;
+            const code = document.getElementById('editCode').value.trim();
+            const itemCount = parseInt(document.getElementById('editItemCount').value);
+            const image = document.getElementById('editImage').value.trim();
+            const status = document.getElementById('editStatus').checked ? 'active' : 'hidden';
+
+            if (!name || !description || !code) {
+                showNotification('Please fill in all required fields!', 'error');
+
+                // Add error animation
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
+                return;
+            }
+
+            if (isNaN(itemCount) || itemCount < 0) {
+                showNotification('Please enter a valid item count!', 'error');
+
+                // Add error animation
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
+                return;
+            }
+
+            if (!image) {
+                showNotification('Please enter a valid image URL!', 'error');
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
+                return;
+            }
+
+            if (currentEditMenuId) {
+                // Update existing menu
+                const menu = menusData.find(m => m.id === currentEditMenuId);
+                if (menu) {
+                    menu.name = name;
+                    menu.description = description;
+                    menu.color = color;
+                    menu.icon = icon;
+                    menu.code = code;
+                    menu.itemCount = itemCount;
+                    menu.image = image;
+                    menu.status = status;
+
+                    showNotification(`${menu.name} updated successfully!`, 'success');
+                }
+            } else {
+                // Create new menu
+                const newMenu = {
+                    id: menusData.length > 0 ? Math.max(...menusData.map(m => m.id)) + 1 : 1,
+                    name: name,
+                    description: description,
+                    color: color,
+                    icon: icon,
+                    code: code,
+                    itemCount: itemCount,
+                    image: image,
+                    status: status,
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+
+                menusData.push(newMenu);
+                showNotification(`${newMenu.name} added successfully!`, 'success');
+            }
+
+            updateStats();
+            renderMenus();
+
+            // Add success animation
+            saveBtn.classList.add('btn--success');
+            setTimeout(() => {
+                saveBtn.classList.remove('btn--success');
+                closeEditModal();
+            }, 1000);
+        }
+
+        function openDeleteModal(menuId) {
+            const menu = menusData.find(m => m.id === menuId);
+            if (!menu) return;
+
+            document.getElementById('deleteMessage').innerHTML =
+                `Are you sure you want to delete <strong>"${menu.name}"</strong>?`;
+            document.getElementById('deleteWarning').textContent =
+                `This will remove ${menu.itemCount} items from this category. This action cannot be undone.`;
+
+            currentEditMenuId = menuId;
+            document.getElementById('deleteModal').style.display = 'flex';
+
+            // Focus cancel button by default (safety)
+            setTimeout(() => {
+                document.getElementById('cancelDelete').focus();
+            }, 100);
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            currentEditMenuId = null;
+        }
+
+        async function confirmDelete() {
+            const deleteBtn = document.getElementById('confirmDelete');
+
+            await simulateLoading(deleteBtn, 1500);
+
+            const menu = menusData.find(m => m.id === currentEditMenuId);
+            if (!menu) return;
+
+            const index = menusData.findIndex(m => m.id === currentEditMenuId);
+            menusData.splice(index, 1);
+
+            updateStats();
+            renderMenus();
+
+            // Add success animation
+            deleteBtn.classList.add('btn--success');
+            setTimeout(() => {
+                deleteBtn.classList.remove('btn--success');
+                showNotification(`${menu.name} deleted successfully!`, 'success');
+                closeDeleteModal();
+            }, 1000);
+        }
+
+        function setupActionButtons() {
+            document.addEventListener('click', function (e) {
+                const editBtn = e.target.closest('.action-icon.edit');
+                const deleteBtn = e.target.closest('.action-icon.delete');
+                const viewBtn = e.target.closest('.action-icon.view');
+                const statCard = e.target.closest('.stat-card');
+
+                if (editBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const card = editBtn.closest('.category-card');
+                    const menuId = parseInt(card.dataset.menuId);
+                    openEditModal(menuId, false);
+                    return false;
+                }
+
+                if (deleteBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const card = deleteBtn.closest('.category-card');
+                    const menuId = parseInt(card.dataset.menuId);
+                    openDeleteModal(menuId);
+                    return false;
+                }
+
+                if (viewBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const card = viewBtn.closest('.category-card');
+                    const menuId = parseInt(card.dataset.menuId);
+                    openViewModal(menuId);
+                    return false;
+                }
+
+                if (statCard) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const statType = statCard.querySelector('.stat-card__label').textContent.toLowerCase();
+                    switch (statType) {
+                        case 'total menus':
+                            document.getElementById('statusFilter').value = 'all';
+                            handleStatusFilter();
+                            break;
+                        case 'active menus':
+                            document.getElementById('statusFilter').value = 'active';
+                            handleStatusFilter();
+                            break;
+                        case 'hidden menus':
+                            document.getElementById('statusFilter').value = 'hidden';
+                            handleStatusFilter();
+                            break;
+                        case 'total items':
+                            document.getElementById('sortFilter').value = 'items-high';
+                            handleSortFilter();
+                            break;
+                    }
+                    return false;
+                }
             });
+        }
 
-            document.getElementById('sortFilter').addEventListener('change', function () {
-                currentFilters.sort = this.value;
-                renderMenuItems();
-            });
-
-            document.getElementById('addMenuItemBtn').addEventListener('click', () => {
-                openEditModal(null, true);
-            });
-
+        function setupModalHandlers() {
             document.getElementById('closeViewModal').addEventListener('click', closeViewModal);
             document.getElementById('closeViewBtn').addEventListener('click', closeViewModal);
+
             document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
             document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
             document.getElementById('saveEdit').addEventListener('click', saveEditChanges);
+
             document.getElementById('closeDeleteModal').addEventListener('click', closeDeleteModal);
             document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
             document.getElementById('confirmDelete').addEventListener('click', confirmDelete);
 
+            document.getElementById('addMenuBtn').addEventListener('click', () => openEditModal(null, true));
+
             document.getElementById('viewModal').addEventListener('click', function (e) {
                 if (e.target === this) closeViewModal();
             });
+
             document.getElementById('editModal').addEventListener('click', function (e) {
                 if (e.target === this) closeEditModal();
             });
+
             document.getElementById('deleteModal').addEventListener('click', function (e) {
                 if (e.target === this) closeDeleteModal();
             });
 
             document.getElementById('editStatus').addEventListener('change', function () {
-                document.getElementById('statusText').textContent = this.checked ? 'Available' : 'Unavailable';
+                document.getElementById('statusText').textContent = this.checked ? 'Active' : 'Hidden';
             });
 
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    if (document.getElementById('viewModal').style.display === 'flex') closeViewModal();
-                    if (document.getElementById('editModal').style.display === 'flex') closeEditModal();
-                    if (document.getElementById('deleteModal').style.display === 'flex') closeDeleteModal();
+            // Modal focus trap
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('keydown', function (e) {
+                    if (e.key === 'Tab') {
+                        const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                        const firstElement = focusableElements[0];
+                        const lastElement = focusableElements[focusableElements.length - 1];
+
+                        if (e.shiftKey) {
+                            if (document.activeElement === firstElement) {
+                                lastElement.focus();
+                                e.preventDefault();
+                            }
+                        } else {
+                            if (document.activeElement === lastElement) {
+                                firstElement.focus();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        function generateMenuCode() {
+            const existingCodes = menusData.map(m => m.code);
+            let codeNumber = 1;
+
+            while (true) {
+                const newCode = `MEN-${codeNumber.toString().padStart(3, '0')}`;
+                if (!existingCodes.includes(newCode)) {
+                    document.getElementById('editCode').value = newCode;
+                    break;
+                }
+                codeNumber++;
+            }
+        }
+
+        function initializeAccessibility() {
+            // Add ARIA labels and roles
+            document.querySelectorAll('.btn, .action-icon, .stat-card, .category-card').forEach(el => {
+                if (!el.hasAttribute('tabindex')) {
+                    el.setAttribute('tabindex', '0');
                 }
             });
 
-            document.addEventListener('click', function (e) {
-                const viewBtn = e.target.closest('.menu-card__btn-icon--view');
-                const editBtn = e.target.closest('.menu-card__btn-icon--edit');
-                const deleteBtn = e.target.closest('.menu-card__btn-icon--delete');
+            // Add live region for dynamic content
+            const liveRegion = document.createElement('div');
+            liveRegion.setAttribute('aria-live', 'polite');
+            liveRegion.setAttribute('aria-atomic', 'true');
+            liveRegion.style.position = 'absolute';
+            liveRegion.style.width = '1px';
+            liveRegion.style.height = '1px';
+            liveRegion.style.padding = '0';
+            liveRegion.style.margin = '-1px';
+            liveRegion.style.overflow = 'hidden';
+            liveRegion.style.clip = 'rect(0, 0, 0, 0)';
+            liveRegion.style.whiteSpace = 'nowrap';
+            liveRegion.style.border = '0';
+            document.body.appendChild(liveRegion);
+        }
 
-                if (viewBtn) {
-                    const card = viewBtn.closest('.menu-card');
-                    const itemId = parseInt(card.dataset.itemId);
-                    openViewModal(itemId);
-                }
+        document.addEventListener('DOMContentLoaded', function () {
+            updateStats();
+            renderMenus();
+            initializeHoverIntent();
+            initializeAccessibility();
 
-                if (editBtn) {
-                    const card = editBtn.closest('.menu-card');
-                    const itemId = parseInt(card.dataset.itemId);
-                    openEditModal(itemId, false);
-                }
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            document.getElementById('statusFilter').addEventListener('change', handleStatusFilter);
+            document.getElementById('sortFilter').addEventListener('change', handleSortFilter);
 
-                if (deleteBtn) {
-                    const card = deleteBtn.closest('.menu-card');
-                    const itemId = parseInt(card.dataset.itemId);
-                    openDeleteModal(itemId);
-                }
-            });
+            setupActionButtons();
+            setupModalHandlers();
+            setupKeyboardNavigation();
 
-            renderMenuItems();
+            document.getElementById('addMenuBtn').addEventListener('click', generateMenuCode);
         });
     </script>
 </asp:Content>
