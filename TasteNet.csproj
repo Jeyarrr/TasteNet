@@ -205,6 +205,7 @@
     <Content Include="Users\SuperAdmin\Reports.aspx" />
     <Content Include="Users\SuperAdmin\Settings.aspx" />
     <Content Include="Users\SuperAdmin\StockManagement.aspx" />
+    <Content Include="Users\SuperAdmin\Ticketing.aspx" />
     <Content Include="Users\SuperAdmin\Transactions.aspx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
@@ -405,6 +406,13 @@
     </Compile>
     <Compile Include="Users\SuperAdmin\StockManagement.aspx.designer.cs">
       <DependentUpon>StockManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Ticketing.aspx.cs">
+      <DependentUpon>Ticketing.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Ticketing.aspx.designer.cs">
+      <DependentUpon>Ticketing.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\Transactions.aspx.cs">
       <DependentUpon>Transactions.aspx</DependentUpon>
