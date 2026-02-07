@@ -1733,7 +1733,7 @@
             </div>
             <div class="header-actions">
                 <button type="button" class="btn btn--primary" id="addMenuBtn">
-                    <i class="fas fa-plus"></i>Add Menu Category
+                    <i class="fas fa-plus"></i>Add Menu
                 </button>
             </div>
         </div>
@@ -1745,7 +1745,7 @@
                     <div class="stat-icon icon-total"><i class="fas fa-layer-group"></i></div>
                 </div>
                 <div class="stat-card__value" id="totalMenus">2</div>
-                <div class="stat-card__subtitle">All menu categories</div>
+                <div class="stat-card__subtitle">All menu </div>
             </div>
             <div class="stat-card" tabindex="0" role="button" aria-label="View active menus">
                 <div class="stat-card__header">
@@ -1769,14 +1769,14 @@
                     <div class="stat-icon icon-items"><i class="fas fa-utensils"></i></div>
                 </div>
                 <div class="stat-card__value" id="totalItems">11</div>
-                <div class="stat-card__subtitle">Across all categories</div>
+                <div class="stat-card__subtitle">Across all </div>
             </div>
         </div>
 
         <div class="filter-container">
             <div class="search-wrapper" id="searchBox">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search by category name or description...">
+                <input type="text" id="searchInput" placeholder="Search by menu name or description...">
             </div>
             <select class="filter-dropdown" id="statusFilter">
                 <option value="all">All Status</option>
@@ -1810,7 +1810,7 @@
             <div class="view-modal-header" id="viewModalHeader">
                 <div class="view-modal-overlay">
                     <i class="fas" id="viewModalIcon"></i>
-                    <h3 class="view-modal-title" id="viewModalTitle">Category Name</h3>
+                    <h3 class="view-modal-title" id="viewModalTitle">Menu Name</h3>
                     <div class="view-modal-code" id="viewModalCode">MEN-000</div>
                 </div>
                 <button class="modal-close" id="closeViewModal" aria-label="Close view modal">&times;</button>
@@ -2386,7 +2386,7 @@
             const statusText = document.getElementById('statusText');
 
             if (isNew) {
-                modalTitle.textContent = 'Add New Menu Category';
+                modalTitle.textContent = 'Add New Menu ';
                 currentEditMenuId = null;
 
                 document.getElementById('editName').value = '';
