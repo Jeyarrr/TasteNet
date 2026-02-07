@@ -2776,7 +2776,7 @@
         <nav class="navbar">
             <div class="logo-container" onclick="scrollToSection('home')">
                 <img src='<%= ResolveUrl("~/Images/LOGO.png") %>' alt="TasteNet Logo" class="logo-img" />
-                <span class="brand-name">TasteNet</span>
+                <span class="brand-name">Caballeros</span>
             </div>
             <ul class="nav-links">
                 <li><a href="#home" class="nav-link active">Home</a></li>
@@ -3003,7 +3003,7 @@
                     <a href="<%= ResolveUrl("~/Users/Customer/Menu.aspx") %>" class="btn-cta-large">Order Now</a>
                     
                     <div class="contact-info">
-                        <p><i class="fas fa-phone"></i> Call us for orders or inquiries:</p>
+                        <p><i class="fas fa-phone"></i> Call us for inquiries:</p>
                         <div class="phone-numbers">
                             046-473-9753 / 0912-368-7369
                         </div>
@@ -3090,7 +3090,7 @@
                         <div class="contact-info-group">
                             <h3><i class="fas fa-phone"></i> Contact Numbers</h3>
                             <div class="contact-details-large">
-                                <p>For inquiries and orders:</p>
+                                <p>For inquiries</p>
                                 <div class="phone-large">046-473-9753</div>
                                 <div class="phone-large">0912-368-7369</div>
                             </div>
