@@ -1379,7 +1379,7 @@
                     <div class="delivery-info">
                         <div class="info-row">
                             <span class="info-label">Customer:</span>
-                            <span class="info-value">Jester Parker</span>
+                            <span class="info-value">Jester Sion</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Pickup:</span>
@@ -1418,7 +1418,7 @@
                     <div class="delivery-info">
                         <div class="info-row">
                             <span class="info-label">Customer:</span>
-                            <span class="info-value">Syren mukang kambing</span>
+                            <span class="info-value">Syren Tortal</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">Pickup:</span>
@@ -1489,7 +1489,7 @@
             let availableDeliveries = [
                 {
                     id: 'DL-4567',
-                    customer: 'Jester Parker',
+                    customer: 'Jester Sion',
                     pickup: 'Caballeros, Dasma',
                     dropoff: 'Pala-Pala, Dasma',
                     distance: '2.5 km',
@@ -1500,7 +1500,7 @@
                 },
                 {
                     id: 'DL-4568',
-                    customer: 'Syren mukang kambing',
+                    customer: 'Syren Tortal',
                     pickup: 'Caballeros, Dasma',
                     dropoff: 'Salitran, Dasma',
                     distance: '1.8 km',

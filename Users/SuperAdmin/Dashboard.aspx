@@ -74,52 +74,6 @@
             box-shadow: 0 0 0 2px rgba(107, 13, 30, 0.05);
         }
 
-        .btn-export {
-            background: var(--primary-maroon);
-            color: white;
-            border: 2px solid transparent;
-            padding: 10px 20px;
-            border-radius: var(--radius-lg);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 3px 8px rgba(107, 13, 30, 0.2);
-            height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-            white-space: nowrap;
-            min-height: 40px;   
-            line-height: 1.2;
-        }
-
-        .btn-export:hover {
-            background: #5a0b19;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.3);
-        }
-
-        .btn-export i {
-            font-size: 12px;
-        }
-
-        .btn-export:disabled {
-            background: #8a6d6d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .btn-export:disabled:hover {
-            background: #8a6d6d;
-            transform: none;
-            box-shadow: none;
-        }
-
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -589,9 +543,6 @@
                     <asp:ListItem Text="Last 7 days" Value="7" />
                     <asp:ListItem Text="Last 30 days" Value="30" />
                 </asp:DropDownList>
-                <button type="button" class="btn-export" id="exportReportBtn">
-                    <i class="fas fa-download me-2"></i>Export Report
-                </button>
             </div>
         </div>
 

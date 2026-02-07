@@ -1728,7 +1728,7 @@
     <div id="full-page-wrapper">
         <div class="page-header">
             <div class="header-title">
-                <h1>Menu Categories</h1>
+                <h1>Menu</h1>
                 <p>Organize and manage menu categories</p>
             </div>
             <div class="header-actions">
@@ -1800,7 +1800,7 @@
         
         <div class="no-results" id="noResultsMessage">
             <i class="fas fa-search"></i>
-            <h3>No menu categories found</h3>
+            <h3>No menu found</h3>
             <p>Try adjusting your search or filters</p>
         </div>
     </div>
@@ -1851,21 +1851,21 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="editModalTitle">Add New Menu Category</h3>
+                <h3 id="editModalTitle">Add Menu </h3>
                 <button class="modal-close" id="closeEditModal" aria-label="Close edit modal">&times;</button>
             </div>
             <div class="edit-modal-body">
                 <div class="form-group">
-                    <label for="editName">Category Name</label>
-                    <input type="text" id="editName" class="form-control" placeholder="Enter category name">
+                    <label for="editName">Menu Name</label>
+                    <input type="text" id="editName" class="form-control" placeholder="Enter menu name">
                 </div>
                 <div class="form-group">
                     <label for="editDescription">Description</label>
-                    <textarea id="editDescription" class="form-control" placeholder="Enter category description" rows="3"></textarea>
+                    <textarea id="editDescription" class="form-control" placeholder="Enter menu description" rows="3"></textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editColor">Category Color</label>
+                        <label for="editColor">Menu Color</label>
                         <select id="editColor" class="form-control">
                             <option value="maroon">Maroon</option>
                             <option value="maroon-light">Light Maroon</option>
@@ -1888,7 +1888,7 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editCode">Category Code</label>
+                        <label for="editCode">Menu Code</label>
                         <input type="text" id="editCode" class="form-control" placeholder="e.g., MEN-001">
                     </div>
                     <div class="form-group">
@@ -1897,7 +1897,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editImage">Category Image URL</label>
+                    <label for="editImage">Menu Image URL</label>
                     <input type="text" id="editImage" class="form-control" placeholder="e.g., https://media.istockphoto.com/...">
                 </div>
                 <div class="form-group">
@@ -1913,7 +1913,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelEdit">Cancel</button>
-                <button type="button" class="btn btn--primary" id="saveEdit">Save Category</button>
+                <button type="button" class="btn btn--primary" id="saveEdit">Save</button>
             </div>
         </div>
     </div>
@@ -1921,7 +1921,7 @@
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Delete Menu Category</h3>
+                <h3>Delete Menu</h3>
                 <button class="modal-close" id="closeDeleteModal" aria-label="Close delete modal">&times;</button>
             </div>
             <div class="edit-modal-body">
@@ -1930,16 +1930,16 @@
                         <i class="fas fa-trash" style="color: var(--danger-red); font-size: 48px;"></i>
                     </div>
                     <p class="text-lg font-semibold mb-2" id="deleteMessage">
-                        Are you sure you want to delete this menu category?
+                        Are you sure you want to delete this menu?
                     </p>
                     <p class="text-gray-600 text-sm" id="deleteWarning">
-                        This will also remove all items in this category. This action cannot be undone.
+                        This will also remove all items in this. This action cannot be undone.
                     </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelDelete">Cancel</button>
-                <button type="button" class="btn btn--danger" id="confirmDelete">Delete Category</button>
+                <button type="button" class="btn btn--danger" id="confirmDelete">Delete </button>
             </div>
         </div>
     </div>

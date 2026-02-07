@@ -198,31 +198,20 @@
                     <span>Dashboard</span>
                 </a>
 
-                <div class="menu-title">Users</div>
-                <a href="/Users/SuperAdmin/CustomerManagement.aspx">
-                    <i class="fa-solid fa-user"></i>
-                    <span>Customer Management</span>
-                </a>
-                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
-                    <i class="fa-solid fa-motorcycle"></i>
-                    <span>Delivery Personnel</span>
-                </a>
-
                 <div class="menu-title">Menu & Stock</div>
                 <a href="/Users/SuperAdmin/StockManagement.aspx">
                     <i class="fa-solid fa-box"></i>
-                    <span>Inventory Management</span>
+                    <span>Inventory</span>
                 </a>
                 <a href="/Users/SuperAdmin/Categories.aspx">
                     <i class="fa-solid fa-utensils"></i>
-                    <span>Update Menu</span>
+                    <span>Menu</span>
                 </a>
-
-                <div class="menu-title">Orders</div>
-                <a href="/Users/SuperAdmin/AllOrders.aspx">
-                    <i class="fa-solid fa-receipt"></i>
-                    <span>All Orders</span>
+                <a href="/Users/SuperAdmin/Ticketing.aspx">
+                    <i class="fa-solid fa-utensils"></i>
+                    <span>Ticketing</span>
                 </a>
+                   
 
                 <div class="menu-title">Payments</div>
                 <a href="/Users/SuperAdmin/Transactions.aspx">
@@ -239,7 +228,15 @@
                     <i class="fa-solid fa-tag"></i>
                     <span>Promo Codes</span>
                 </a>
-
+                <div class="menu-title">Users</div>
+                <a href="/Users/SuperAdmin/CustomerManagement.aspx">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Customer</span>
+                </a>
+                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <span>Delivery Personnel</span>
+                </a>
                 <div class="menu-title">Account</div>
                 <a href="/Users/SuperAdmin/Settings.aspx">
                     <i class="fa-solid fa-gear"></i>

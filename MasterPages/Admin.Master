@@ -359,7 +359,7 @@
                 <li>
                     <a href="/Users/Admin/ManageInventory.aspx">
                         <i class="fa-solid fa-boxes-stacked"></i>
-                        <span>Inventory Management</span>
+                        <span>Inventory</span>
                     </a>
                 </li>
 
@@ -367,7 +367,7 @@
                 <li>
                     <a href="/Users/Admin/UpdateMenu.aspx">
                         <i class="fa-solid fa-utensils"></i>
-                        <span>Update Menu</span>
+                        <span>Menu</span>
                     </a>
                 </li>
               
