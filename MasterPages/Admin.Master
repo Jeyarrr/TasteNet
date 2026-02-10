@@ -387,17 +387,17 @@
             </div>
 
             <ul class="menu" id="nav-menu">
-                <div class="menu-title">Manage</div>
+                <div class="menu-title">Inventory</div>
                 <li>
-                    <a href="/Users/Admin/ManageInventory.aspx" id="link-inventory">
+                    <a href="/Users/Admin/Inventory.aspx" id="link-inventory">
                         <i class="fa-solid fa-boxes-stacked"></i>
                         <span>Inventory</span>
                     </a>
                 </li>
 
-                <div class="menu-title">Update</div>
+                <div class="menu-title">Menu</div>
                 <li>
-                    <a href="/Users/Admin/UpdateMenu.aspx" id="link-menu">
+                    <a href="/Users/Admin/Menu.aspx" id="link-menu">
                         <i class="fa-solid fa-utensils"></i>
                         <span>Menu</span>
                     </a>

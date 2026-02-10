@@ -1,6 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Categories.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Categories" %>
-<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Menu.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Menu" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -697,7 +697,7 @@
             background-color: var(--primary-maroon-pale);
         }
 
-        .categories-grid {
+        .menus-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 25px;
@@ -705,7 +705,7 @@
             width: 100%;
         }
 
-        .category-card {
+        .menu-card {
             background: white;
             border-radius: var(--radius-2xl);
             box-shadow: var(--card-shadow);
@@ -716,22 +716,22 @@
             border: 2px solid transparent;
         }
 
-        /* Accessibility for category cards */
-        .category-card:focus-visible {
+        /* Accessibility for menu cards */
+        .menu-card:focus-visible {
             outline: 3px solid var(--primary-maroon);
             outline-offset: 2px;
             box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
             transform: translateY(-4px);
         }
 
-        .category-card:hover {
+        .menu-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--card-shadow-hover);
             border-color: var(--border-light);
             z-index: 2;
         }
 
-        .category-header {
+        .menu-header {
             height: 180px;
             display: flex;
             flex-direction: column;
@@ -747,15 +747,15 @@
         }
 
         /* Using direct image URLs that will work */
-        .category-header[data-menu-id="1"] {
+        .menu-header[data-menu-id="1"] {
             background-image: url('background-image: url('Images/Hotsilog.jpg');');
         }
         
-        .category-header[data-menu-id="2"] {
+        .menu-header[data-menu-id="2"] {
             background-image: url('https://media.istockphoto.com/id/1253850022/photo/filipino-breakfast-food.jpg?s=1024x1024&w=is&k=20&c=YbJ7Q8ZQ9Q8XqyQ6QjzJXq9q9q8=');
         }
 
-        .category-image {
+        .menu-image {
             position: absolute;
             top: 0;
             left: 0;
@@ -767,11 +767,11 @@
             opacity: 1;
         }
 
-        .category-card:hover .category-image {
+        .menu-card:hover .menu-image {
             transform: scale(1.05);
         }
 
-        .category-header::before {
+        .menu-header::before {
             content: '';
             position: absolute;
             top: 0;
@@ -782,7 +782,7 @@
             z-index: 1;
         }
 
-        .category-icon {
+        .menu-icon {
             font-size: 32px;
             margin-bottom: 12px;
             z-index: 2;
@@ -791,11 +791,11 @@
             color: white;
         }
 
-        .category-card:hover .category-icon {
+        .menu-card:hover .menu-icon {
             transform: scale(1.2) rotate(5deg);
         }
 
-        .category-title {
+        .menu-title {
             font-size: 24px;
             font-weight: 700;
             color: white;
@@ -805,18 +805,18 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        .category-body {
+        .menu-body {
             padding: 24px;
         }
 
-        .category-meta {
+        .menu-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
 
-        .category-code {
+        .menu-code {
             color: var(--primary-maroon);
             font-weight: 700;
             font-size: 13px;
@@ -830,7 +830,7 @@
             position: relative;
         }
 
-        .category-status {
+        .menu-status {
             padding: 6px 32px 6px 16px;
             border-radius: 20px;
             font-size: 11px;
@@ -851,7 +851,7 @@
             background-size: 10px;
         }
 
-        .category-status:focus-visible {
+        .menu-status:focus-visible {
             outline: 2px solid var(--primary-maroon);
             outline-offset: 2px;
             transform: translateY(-1px);
@@ -933,7 +933,7 @@
             display: block;
         }
 
-        .category-description {
+        .menu-description {
             color: var(--muted-text);
             font-size: 14px;
             line-height: 1.6;
@@ -944,7 +944,7 @@
             overflow: hidden;
         }
 
-        .category-footer {
+        .menu-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -964,7 +964,7 @@
             color: var(--primary-maroon);
         }
 
-        .category-actions {
+        .menu-actions {
             display: flex;
             gap: 8px;
         }
@@ -1491,7 +1491,7 @@
         /* ==================== */
         
         @media (max-width: 1400px) {
-            .categories-grid {
+            .menus-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -1536,7 +1536,7 @@
                 font-size: 28px;
             }
             
-            .categories-grid {
+            .menus-grid {
                 grid-template-columns: 1fr;
                 max-width: 600px;
                 margin-left: auto;
@@ -1585,7 +1585,7 @@
                 min-width: auto;
             }
             
-            .category-card {
+            .menu-card {
                 max-width: 100%;
             }
 
@@ -1658,20 +1658,20 @@
                 min-height: 44px;
             }
 
-            .category-header {
+            .menu-header {
                 height: 160px;
                 padding: 15px;
             }
 
-            .category-title {
+            .menu-title {
                 font-size: 20px;
             }
 
-            .category-body {
+            .menu-body {
                 padding: 20px;
             }
 
-            .category-actions {
+            .menu-actions {
                 flex-wrap: wrap;
                 justify-content: center;
             }
@@ -1728,7 +1728,7 @@
         <div class="page-header">
             <div class="header-title">
                 <h1>Menu</h1>
-                <p>Organize and manage menu</p>
+                <p>Organize and manage menus</p>
             </div>
             <div class="header-actions">
                 <button type="button" class="btn btn--secondary" id="addMenuBtn">
@@ -1794,7 +1794,7 @@
             </select>
         </div>
 
-        <div class="categories-grid" id="menusGrid">
+        <div class="menus-grid" id="menusGrid">
         </div>
         
         <div class="no-results" id="noResultsMessage">
@@ -2055,7 +2055,7 @@
                         e.preventDefault();
                     }
 
-                    if (activeElement.classList.contains('category-status')) {
+                    if (activeElement.classList.contains('menu-status')) {
                         activeElement.click();
                         e.preventDefault();
                     }
@@ -2063,7 +2063,7 @@
 
                 // Arrow key navigation for menu cards
                 if (e.key.startsWith('Arrow') && !e.target.matches('input, textarea, select')) {
-                    const cards = document.querySelectorAll('.category-card');
+                    const cards = document.querySelectorAll('.menu-card');
                     const currentIndex = Array.from(cards).findIndex(card => card === document.activeElement);
 
                     if (currentIndex !== -1) {
@@ -2207,7 +2207,7 @@
 
                 filteredMenus.forEach(menu => {
                     const menuElement = document.createElement('div');
-                    menuElement.className = 'category-card';
+                    menuElement.className = 'menu-card';
                     menuElement.setAttribute('data-menu-id', menu.id);
                     menuElement.setAttribute('data-status', menu.status);
                     menuElement.setAttribute('tabindex', '0');
@@ -2215,16 +2215,16 @@
                     menuElement.setAttribute('aria-label', `${menu.name} menu with ${menu.itemCount} items`);
 
                     menuElement.innerHTML = `
-                        <div class="category-header ${getColorClass(menu.color)}" data-menu-id="${menu.id}">
+                        <div class="menu-header ${getColorClass(menu.color)}" data-menu-id="${menu.id}">
                             <div class="status-indicator ${menu.status === 'active' ? 'active' : 'hidden'}" aria-label="Status: ${menu.status}"></div>
-                            <i class="fas ${menu.icon} category-icon" aria-hidden="true"></i>
-                            <h3 class="category-title">${menu.name}</h3>
+                            <i class="fas ${menu.icon} menu-icon" aria-hidden="true"></i>
+                            <h3 class="menu-title">${menu.name}</h3>
                         </div>
-                        <div class="category-body">
-                            <div class="category-meta">
-                                <span class="category-code">${menu.code}</span>
+                        <div class="menu-body">
+                            <div class="menu-meta">
+                                <span class="menu-code">${menu.code}</span>
                                 <div class="status-dropdown-container">
-                                    <button type="button" class="category-status ${getStatusClass(menu.status)}" 
+                                    <button type="button" class="menu-status ${getStatusClass(menu.status)}" 
                                             tabindex="0" 
                                             aria-label="Current status: ${menu.status}, click to change">
                                         ${getStatusText(menu.status)}
@@ -2243,13 +2243,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <p class="category-description">${menu.description}</p>
-                            <div class="category-footer">
+                            <p class="menu-description">${menu.description}</p>
+                            <div class="menu-footer">
                                 <div class="item-count">
                                     <i class="fas fa-utensils" aria-hidden="true"></i>
                                     <span>${menu.itemCount} items</span>
                                 </div>
-                                <div class="category-actions">
+                                <div class="menu-actions">
                                     <button type="button" class="action-icon view" tabindex="0" title="View Details" aria-label="View details for ${menu.name}">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -2274,7 +2274,7 @@
 
         function setupStatusDropdowns() {
             document.querySelectorAll('.status-dropdown-container').forEach(container => {
-                const statusBtn = container.querySelector('.category-status');
+                const statusBtn = container.querySelector('.menu-status');
                 const statusOptions = container.querySelector('.status-options');
 
                 statusBtn.addEventListener('click', function (e) {
@@ -2295,7 +2295,7 @@
                     option.addEventListener('click', function (e) {
                         e.stopPropagation();
                         const newStatus = this.dataset.status;
-                        const menuId = parseInt(container.closest('.category-card').dataset.menuId);
+                        const menuId = parseInt(container.closest('.menu-card').dataset.menuId);
                         const menu = menusData.find(m => m.id === menuId);
 
                         if (menu && menu.status !== newStatus) {
@@ -2570,7 +2570,7 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const card = editBtn.closest('.category-card');
+                    const card = editBtn.closest('.menu-card');
                     const menuId = parseInt(card.dataset.menuId);
                     openEditModal(menuId, false);
                     return false;
@@ -2580,7 +2580,7 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const card = deleteBtn.closest('.category-card');
+                    const card = deleteBtn.closest('.menu-card');
                     const menuId = parseInt(card.dataset.menuId);
                     openDeleteModal(menuId);
                     return false;
@@ -2590,7 +2590,7 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const card = viewBtn.closest('.category-card');
+                    const card = viewBtn.closest('.menu-card');
                     const menuId = parseInt(card.dataset.menuId);
                     openViewModal(menuId);
                     return false;
@@ -2699,7 +2699,7 @@
 
         function initializeAccessibility() {
             // Add ARIA labels and roles
-            document.querySelectorAll('.btn, .action-icon, .stat-card, .category-card').forEach(el => {
+            document.querySelectorAll('.btn, .action-icon, .stat-card, .menu-card').forEach(el => {
                 if (!el.hasAttribute('tabindex')) {
                     el.setAttribute('tabindex', '0');
                 }

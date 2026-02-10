@@ -141,10 +141,10 @@
     <Content Include="Images\tofu.jpg" />
     <Content Include="Images\tokwa.jpg" />
     <Content Include="Users\Admin\AcceptOrder.aspx" />
-    <Content Include="Users\Admin\ManageInventory.aspx" />
+    <Content Include="Users\Admin\Inventory.aspx" />
+    <Content Include="Users\Admin\Menu.aspx" />
     <Content Include="Users\Admin\OrderHistory.aspx" />
     <Content Include="Users\Admin\Ticketing.aspx" />
-    <Content Include="Users\Admin\UpdateMenu.aspx" />
     <Content Include="Users\Customer\LandingPage.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
@@ -213,14 +213,14 @@
     <Content Include="Users\Rider\Profile.aspx" />
     <Content Include="Users\Rider\Settings.aspx" />
     <Content Include="Users\SuperAdmin\AllOrders.aspx" />
-    <Content Include="Users\SuperAdmin\Categories.aspx" />
     <Content Include="Users\SuperAdmin\CustomerManagement.aspx" />
     <Content Include="Users\SuperAdmin\Dashboard.aspx" />
     <Content Include="Users\SuperAdmin\DeliveryPersonnel.aspx" />
+    <Content Include="Users\SuperAdmin\Inventory.aspx" />
+    <Content Include="Users\SuperAdmin\Menu.aspx" />
     <Content Include="Users\SuperAdmin\PromoCodes.aspx" />
     <Content Include="Users\SuperAdmin\Reports.aspx" />
     <Content Include="Users\SuperAdmin\Settings.aspx" />
-    <Content Include="Users\SuperAdmin\StockManagement.aspx" />
     <Content Include="Users\SuperAdmin\Ticketing.aspx" />
     <Content Include="Users\SuperAdmin\Transactions.aspx" />
     <Content Include="ViewSwitcher.ascx" />
@@ -254,12 +254,19 @@
     <Compile Include="Users\Admin\AcceptOrder.aspx.designer.cs">
       <DependentUpon>AcceptOrder.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Users\Admin\ManageInventory.aspx.cs">
-      <DependentUpon>ManageInventory.aspx</DependentUpon>
+    <Compile Include="Users\Admin\Inventory.aspx.cs">
+      <DependentUpon>Inventory.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Users\Admin\ManageInventory.aspx.designer.cs">
-      <DependentUpon>ManageInventory.aspx</DependentUpon>
+    <Compile Include="Users\Admin\Inventory.aspx.designer.cs">
+      <DependentUpon>Inventory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\Menu.aspx.cs">
+      <DependentUpon>Menu.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\Menu.aspx.designer.cs">
+      <DependentUpon>Menu.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\Admin\OrderHistory.aspx.cs">
       <DependentUpon>OrderHistory.aspx</DependentUpon>
@@ -274,13 +281,6 @@
     </Compile>
     <Compile Include="Users\Admin\Ticketing.aspx.designer.cs">
       <DependentUpon>Ticketing.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Users\Admin\UpdateMenu.aspx.cs">
-      <DependentUpon>UpdateMenu.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Users\Admin\UpdateMenu.aspx.designer.cs">
-      <DependentUpon>UpdateMenu.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\Customer\LandingPage.aspx.cs">
       <DependentUpon>LandingPage.aspx</DependentUpon>
@@ -367,13 +367,6 @@
     <Compile Include="Users\SuperAdmin\AllOrders.aspx.designer.cs">
       <DependentUpon>AllOrders.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Users\SuperAdmin\Categories.aspx.cs">
-      <DependentUpon>Categories.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Users\SuperAdmin\Categories.aspx.designer.cs">
-      <DependentUpon>Categories.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Users\SuperAdmin\CustomerManagement.aspx.cs">
       <DependentUpon>CustomerManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -395,6 +388,20 @@
     <Compile Include="Users\SuperAdmin\DeliveryPersonnel.aspx.designer.cs">
       <DependentUpon>DeliveryPersonnel.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Users\SuperAdmin\Inventory.aspx.cs">
+      <DependentUpon>Inventory.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Inventory.aspx.designer.cs">
+      <DependentUpon>Inventory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Menu.aspx.cs">
+      <DependentUpon>Menu.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\Menu.aspx.designer.cs">
+      <DependentUpon>Menu.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Users\SuperAdmin\PromoCodes.aspx.cs">
       <DependentUpon>PromoCodes.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -415,13 +422,6 @@
     </Compile>
     <Compile Include="Users\SuperAdmin\Settings.aspx.designer.cs">
       <DependentUpon>Settings.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Users\SuperAdmin\StockManagement.aspx.cs">
-      <DependentUpon>StockManagement.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Users\SuperAdmin\StockManagement.aspx.designer.cs">
-      <DependentUpon>StockManagement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\Ticketing.aspx.cs">
       <DependentUpon>Ticketing.aspx</DependentUpon>

@@ -232,11 +232,11 @@
                 </a>
                 
                 <div class="menu-title">Menu & Stock</div>
-                <a href="/Users/SuperAdmin/StockManagement.aspx" id="link-inventory">
+                <a href="/Users/SuperAdmin/Inventory.aspx" id="link-inventory">
                     <i class="fa-solid fa-box"></i>
                     <span>Inventory</span>
                 </a>
-                <a href="/Users/SuperAdmin/Categories.aspx" id="link-menu">
+                <a href="/Users/SuperAdmin/Menu.aspx" id="link-menu">
                     <i class="fa-solid fa-utensils"></i>
                     <span>Menu</span>
                 </a>

@@ -11,7 +11,7 @@ namespace TasteNet.Users.SuperAdmin
 {
 
 
-    public partial class Categories
+    public partial class Menu
     {
     }
 }
