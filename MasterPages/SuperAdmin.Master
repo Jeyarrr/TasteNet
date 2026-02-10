@@ -5,10 +5,10 @@
 <head runat="server">
     <meta charset="utf-8" />
     <title>TasteNet Admin</title>
-
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
-
+    
     <style>
         body {
             margin: 0;
@@ -17,7 +17,7 @@
             height: 100vh;
             overflow: hidden;
         }
-
+        
         .sidebar {
             width: 260px;
             height: 100vh;
@@ -27,26 +27,26 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
-
+        
         .sidebar::-webkit-scrollbar { 
             width: 6px; 
         }
-
+        
         .sidebar::-webkit-scrollbar-track { 
             background: rgba(255,255,255,0.1); 
         }
-
+        
         .sidebar::-webkit-scrollbar-thumb { 
             background: #ffc107; 
             border-radius: 10px; 
         }
-
+        
         .sidebar-header {
             text-align: center;
             padding: 20px 15px;
             border-bottom: 1px solid rgba(255,255,255,.2);
         }
-
+        
         .sidebar-header img {
             width: 60px;
             height: 60px;
@@ -55,23 +55,23 @@
             object-fit: cover;
             border: 2px solid #ffc107;
         }
-
+        
         .sidebar-header h2 {
             margin: 0;
             font-size: 18px;
             color: #ffc107;
             line-height: 1.2;
         }
-
+        
         .sidebar-header span {
             font-size: 13px;
             opacity: .9;
         }
-
+        
         .menu { 
             padding: 15px 0;
         }
-
+        
         .menu-title {
             padding: 8px 20px;
             font-size: 11px;
@@ -80,34 +80,59 @@
             color: rgba(255,255,255,0.5);
             margin-top: 5px;
         }
-
+        
         .menu a {
             display: flex;
             align-items: center;
-            padding: 10px 20px;
+            padding: 12px 20px;
             color: #fff;
             text-decoration: none;
-            transition: .3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 14px;
+            border-left: 4px solid transparent;
         }
-
+        
         .menu a i {
             width: 25px;
             font-size: 16px;
             text-align: center;
+            transition: all 0.3s ease;
         }
-
+        
         .menu a span {
             margin-left: 10px;
+            transition: all 0.3s ease;
         }
-
-        .menu a:hover,
-        .menu a.active {
-            background: rgba(255,255,255,.15);
+        
+        /* Hover Effects */
+        .menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: #ffc107 !important;
             border-left: 4px solid #ffc107;
+            padding-left: 25px;
         }
-
+        
+        .menu a:hover i {
+            transform: translateX(3px);
+            color: #ffc107;
+        }
+        
+        .menu a:hover span {
+            transform: translateX(3px);
+        }
+        
+        /* Active State - MUSTARD COLOR */
+        .menu a.active {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107 !important;
+            border-left: 4px solid #ffc107;
+            font-weight: 600;
+        }
+        
+        .menu a.active i {
+            color: #ffc107;
+        }
+        
         .content {
             margin-left: 260px;
             padding: 20px;
@@ -115,7 +140,7 @@
             height: 100vh;
             overflow-y: auto;
         }
-
+        
         @media screen and (max-height: 750px) {
             .sidebar-header {
                 padding: 15px 15px;
@@ -138,15 +163,19 @@
             }
             
             .menu a {
-                padding: 8px 20px;
+                padding: 10px 20px;
                 font-size: 13px;
+            }
+            
+            .menu a:hover {
+                padding-left: 22px;
             }
             
             .menu a i {
                 font-size: 15px;
             }
         }
-
+        
         @media screen and (max-height: 600px) {
             .sidebar-header {
                 padding: 10px 15px;
@@ -172,8 +201,12 @@
             }
             
             .menu a {
-                padding: 6px 20px;
+                padding: 8px 20px;
                 font-size: 12px;
+            }
+            
+            .menu a:hover {
+                padding-left: 20px;
             }
             
             .menu a i {
@@ -190,65 +223,66 @@
                 <h2>Caballeros TasteNet</h2>
                 <span>Super Admin</span>
             </div>
-
+            
             <div class="menu" id="nav-menu">
                 <div class="menu-title">Overview</div>
-                <a href="/Users/SuperAdmin/Dashboard.aspx">
+                <a href="/Users/SuperAdmin/Dashboard.aspx" id="link-dashboard">
                     <i class="fa-solid fa-house"></i>
                     <span>Dashboard</span>
                 </a>
-
+                
                 <div class="menu-title">Menu & Stock</div>
-                <a href="/Users/SuperAdmin/StockManagement.aspx">
+                <a href="/Users/SuperAdmin/StockManagement.aspx" id="link-inventory">
                     <i class="fa-solid fa-box"></i>
                     <span>Inventory</span>
                 </a>
-                <a href="/Users/SuperAdmin/Categories.aspx">
+                <a href="/Users/SuperAdmin/Categories.aspx" id="link-menu">
                     <i class="fa-solid fa-utensils"></i>
                     <span>Menu</span>
                 </a>
-                <a href="/Users/SuperAdmin/Ticketing.aspx">
+                <a href="/Users/SuperAdmin/Ticketing.aspx" id="link-ticketing">
                     <i class="fa-solid fa-ticket"></i>
                     <span>Ticketing</span>
                 </a>
-                   
-
+                
                 <div class="menu-title">Payments</div>
-                <a href="/Users/SuperAdmin/Transactions.aspx">
+                <a href="/Users/SuperAdmin/Transactions.aspx" id="link-transaction">
                     <i class="fa-solid fa-dollar-sign"></i>
                     <span>Transaction</span>
                 </a>
-
+                
                 <div class="menu-title">Analytics</div>
-                <a href="/Users/SuperAdmin/Reports.aspx">
+                <a href="/Users/SuperAdmin/Reports.aspx" id="link-reports">
                     <i class="fa-solid fa-chart-column"></i>
                     <span>Reports</span>
                 </a>
-                <a href="/Users/SuperAdmin/PromoCodes.aspx">
+                <a href="/Users/SuperAdmin/PromoCodes.aspx" id="link-promocodes">
                     <i class="fa-solid fa-tag"></i>
                     <span>Promo Codes</span>
                 </a>
+                
                 <div class="menu-title">Users</div>
-                <a href="/Users/SuperAdmin/CustomerManagement.aspx">
+                <a href="/Users/SuperAdmin/CustomerManagement.aspx" id="link-customer">
                     <i class="fa-solid fa-user"></i>
                     <span>Customer</span>
                 </a>
-                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx">
+                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx" id="link-delivery">
                     <i class="fa-solid fa-motorcycle"></i>
                     <span>Delivery Personnel</span>
                 </a>
+                
                 <div class="menu-title">Account</div>
-                <a href="/Users/SuperAdmin/Settings.aspx">
+                <a href="/Users/SuperAdmin/Settings.aspx" id="link-settings">
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
                 </a>
-                <a href="/Login.aspx">
+                <a href="/Login.aspx" id="link-logout">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Log Out</span>
                 </a>
             </div>
         </div>
-
+        
         <div class="content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
         </div>
@@ -256,14 +290,88 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var currentPath = window.location.pathname.toLowerCase();
-            var menuLinks = document.querySelectorAll('#nav-menu a');
+            // Get current page URL
+            var currentPath = window.location.pathname;
 
-            menuLinks.forEach(function (link) {
-                var linkPath = link.getAttribute('href').toLowerCase();
+            // Remove query strings and convert to lowercase for comparison
+            var currentPage = currentPath.split('?')[0].toLowerCase();
 
-                if (currentPath === linkPath || (currentPath === "/" && linkPath.includes("dashboard"))) {
-                    link.classList.add('active');
+            // Get all navigation links
+            var navLinks = document.querySelectorAll('.menu a');
+
+            // Remove active class from all links first
+            navLinks.forEach(function (link) {
+                link.classList.remove('active');
+            });
+
+            // Check each link to see if it matches current page
+            navLinks.forEach(function (link) {
+                var linkHref = link.getAttribute('href');
+
+                if (linkHref) {
+                    // Clean up link path
+                    var linkPath = linkHref.split('?')[0].toLowerCase();
+
+                    // Check for exact match first
+                    if (currentPage === linkPath) {
+                        link.classList.add('active');
+                        return;
+                    }
+
+                    // Check if current page contains the link path (for nested pages)
+                    // Example: /Users/SuperAdmin/TransactionDetails.aspx should highlight Transaction link
+                    if (currentPage.includes(linkPath) && linkPath !== '/') {
+                        link.classList.add('active');
+                        return;
+                    }
+
+                    // Check for dashboard as default homepage
+                    if ((currentPage === '/' || currentPage === '/users/superadmin/default.aspx') &&
+                        linkPath.includes('dashboard')) {
+                        link.classList.add('active');
+                        return;
+                    }
+                }
+            });
+
+            // If still no active link found, try to match by page name
+            if (!document.querySelector('.menu a.active')) {
+                var pageName = currentPage.split('/').pop(); // Get last part of URL
+
+                navLinks.forEach(function (link) {
+                    var linkHref = link.getAttribute('href');
+                    if (linkHref) {
+                        var linkPage = linkHref.split('/').pop().toLowerCase();
+
+                        // Remove .aspx extension for comparison
+                        pageName = pageName.replace('.aspx', '');
+                        linkPage = linkPage.replace('.aspx', '');
+
+                        // If page names match
+                        if (pageName === linkPage) {
+                            link.classList.add('active');
+                            return;
+                        }
+
+                        // Check for partial match (e.g., "transaction" in "transactiondetails")
+                        if (pageName.includes(linkPage) || linkPage.includes(pageName)) {
+                            link.classList.add('active');
+                            return;
+                        }
+                    }
+                });
+            }
+
+            // Add hover effects
+            navLinks.forEach(function (link) {
+                if (!link.classList.contains('active')) {
+                    link.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateX(3px)';
+                    });
+
+                    link.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateX(0)';
+                    });
                 }
             });
         });

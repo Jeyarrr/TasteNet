@@ -102,29 +102,54 @@
         .menu a {
             display: flex;
             align-items: center;
-            padding: 10px 20px;
+            padding: 12px 20px;
             color: #fff;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-left: 4px solid transparent;
             font-size: 14px;
+            position: relative;
         }
 
         .menu a i {
             width: 25px;
             font-size: 16px;
             text-align: center;
+            transition: all 0.3s ease;
         }
 
         .menu a span {
             margin-left: 10px;
+            transition: all 0.3s ease;
         }
 
-        .menu a:hover,
-        .menu a.active {
-            background: rgba(255, 255, 255, 0.15);
+        /* Hover Effects */
+        .menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: var(--accent-color) !important;
-            border-left-color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 25px;
+        }
+
+        .menu a:hover i {
+            transform: translateX(3px);
+            color: var(--accent-color);
+        }
+
+        .menu a:hover span {
+            transform: translateX(3px);
+        }
+
+        /* Active State - MUSTARD COLOR */
+        .menu a.active {
+            background: rgba(255, 193, 7, 0.15);
+            color: var(--accent-color) !important;
+            border-left: 4px solid var(--accent-color);
+            font-weight: 600;
+        }
+
+        .menu a.active i {
+            color: var(--accent-color);
         }
 
         .notification-badge {
@@ -210,17 +235,16 @@
             }
             
             .menu a {
-                padding: 8px 20px;
+                padding: 10px 20px;
                 font-size: 13px;
+            }
+            
+            .menu a:hover {
+                padding-left: 22px;
             }
             
             .menu a i {
                 font-size: 15px;
-            }
-            
-            .status-badge {
-                font-size: 11px;
-                padding: 3px 10px;
             }
         }
 
@@ -250,17 +274,16 @@
             }
             
             .menu a {
-                padding: 6px 20px;
+                padding: 8px 20px;
                 font-size: 12px;
+            }
+            
+            .menu a:hover {
+                padding-left: 20px;
             }
             
             .menu a i {
                 font-size: 14px;
-            }
-            
-            .status-badge {
-                font-size: 10px;
-                padding: 2px 8px;
             }
         }
 
@@ -282,10 +305,6 @@
             .sidebar:not(:hover) .sidebar-header span,
             .sidebar:not(:hover) .menu a span:not(.notification-badge),
             .sidebar:not(:hover) .menu-title {
-                display: none;
-            }
-            
-            .sidebar:not(:hover) .status-badge {
                 display: none;
             }
             
@@ -313,6 +332,10 @@
             .sidebar:hover .menu a {
                 justify-content: flex-start;
                 padding: 10px 20px;
+            }
+            
+            .sidebar:hover .menu a:hover {
+                padding-left: 25px;
             }
             
             .sidebar:hover .sidebar-header {
@@ -345,7 +368,7 @@
             <ul class="menu" id="nav-menu">
                 <div class="menu-title">Overview</div>
                 <li>
-                    <a href="/Users/Rider/Dashboard.aspx">
+                    <a href="/Users/Rider/Dashboard.aspx" id="link-dashboard">
                         <i class="fa-solid fa-cube"></i>
                         <span>Dashboard</span>
                     </a>
@@ -353,7 +376,7 @@
 
                 <div class="menu-title">Delivery</div>
                 <li>
-                    <a href="/Users/Rider/DeliveryHistory.aspx">
+                    <a href="/Users/Rider/DeliveryHistory.aspx" id="link-delivery-history">
                         <i class="fa-solid fa-motorcycle"></i>
                         <span>Delivery History</span>
                     </a>
@@ -361,7 +384,7 @@
               
                 <div class="menu-title">Earnings</div>
                 <li>
-                    <a href="/Users/Rider/Earnings.aspx">
+                    <a href="/Users/Rider/Earnings.aspx" id="link-earnings">
                         <i class="fa-solid fa-dollar-sign"></i>
                         <span>Earnings</span>
                     </a>
@@ -369,25 +392,25 @@
                 
                 <div class="menu-title">Account</div>
                 <li>
-                    <a href="/Users/Rider/Profile.aspx">
+                    <a href="/Users/Rider/Profile.aspx" id="link-profile">
                         <i class="fa-solid fa-user"></i>
                         <span>Profile</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/Users/Rider/Settings.aspx">
+                    <a href="/Users/Rider/Settings.aspx" id="link-settings">
                         <i class="fa-solid fa-gear"></i>
                         <span>Settings</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/Users/Rider/Notifications.aspx">
+                    <a href="/Users/Rider/Notifications.aspx" id="link-notifications">
                         <i class="fa-solid fa-bell"></i>
                         <span>Notifications</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/Login.aspx">
+                    <a href="/Login.aspx" id="link-logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>Log Out</span>
                     </a>
@@ -402,21 +425,139 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var currentPath = window.location.pathname.toLowerCase();
-            var menuLinks = document.querySelectorAll('#nav-menu a');
+            // Get current page URL
+            var currentPath = window.location.pathname;
 
-            menuLinks.forEach(function (link) {
+            // Remove query strings and convert to lowercase for comparison
+            var currentPage = currentPath.split('?')[0].toLowerCase();
+
+            // Get all navigation links
+            var navLinks = document.querySelectorAll('#nav-menu a');
+
+            // Remove active class from all links first
+            navLinks.forEach(function (link) {
+                link.classList.remove('active');
+            });
+
+            // Check each link to see if it matches current page
+            navLinks.forEach(function (link) {
                 var linkHref = link.getAttribute('href');
-                if (!linkHref) return;
 
-                var linkPath = linkHref.toLowerCase();
+                if (linkHref) {
+                    // Clean up link path
+                    var linkPath = linkHref.split('?')[0].toLowerCase();
 
-                if (currentPath === linkPath ||
-                    (currentPath.includes(linkPath) && linkPath !== '/')) {
-                    link.classList.add('active');
+                    // Check for exact match first
+                    if (currentPage === linkPath) {
+                        link.classList.add('active');
+                        return;
+                    }
+
+                    // Check if current page contains the link path (for nested pages)
+                    if (currentPage.includes(linkPath) && linkPath !== '/') {
+                        link.classList.add('active');
+                        return;
+                    }
+
+                    // Check for dashboard as default homepage
+                    if ((currentPage === '/' || currentPage === '/users/rider/default.aspx') &&
+                        linkPath.includes('dashboard')) {
+                        link.classList.add('active');
+                        return;
+                    }
                 }
             });
 
+            // If still no active link found, try to match by page name
+            if (!document.querySelector('#nav-menu a.active')) {
+                var pageName = currentPage.split('/').pop(); // Get last part of URL
+
+                navLinks.forEach(function (link) {
+                    var linkHref = link.getAttribute('href');
+                    if (linkHref) {
+                        var linkPage = linkHref.split('/').pop().toLowerCase();
+
+                        // Remove .aspx extension for comparison
+                        pageName = pageName.replace('.aspx', '');
+                        linkPage = linkPage.replace('.aspx', '');
+
+                        // If page names match
+                        if (pageName === linkPage) {
+                            link.classList.add('active');
+                            return;
+                        }
+
+                        // Check for partial match
+                        if (pageName.includes(linkPage) || linkPage.includes(pageName)) {
+                            link.classList.add('active');
+                            return;
+                        }
+                    }
+                });
+            }
+
+            // Add hover effects for non-active links
+            navLinks.forEach(function (link) {
+                if (!link.classList.contains('active')) {
+                    link.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateX(3px)';
+                    });
+
+                    link.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateX(0)';
+                    });
+                }
+
+                // Handle collapsed sidebar hover behavior
+                link.addEventListener('mouseenter', function () {
+                    if (window.innerWidth <= 768) {
+                        var sidebar = document.querySelector('.sidebar');
+                        if (sidebar && !sidebar.matches(':hover')) {
+                            sidebar.style.width = '260px';
+                        }
+                    }
+                });
+            });
+
+            // Handle sidebar collapse/expand on mobile
+            var sidebar = document.querySelector('.sidebar');
+            if (sidebar && window.innerWidth <= 768) {
+                sidebar.addEventListener('mouseleave', function () {
+                    this.style.width = '70px';
+                });
+
+                sidebar.addEventListener('mouseenter', function () {
+                    this.style.width = '260px';
+                });
+            }
+
+            // Store current page in sessionStorage for better navigation experience
+            var activeLink = document.querySelector('#nav-menu a.active');
+            if (activeLink && activeLink.id) {
+                sessionStorage.setItem('riderLastActiveNav', activeLink.id);
+            }
+
+            // Restore active state from sessionStorage if needed
+            var lastActiveId = sessionStorage.getItem('riderLastActiveNav');
+            if (lastActiveId && !activeLink) {
+                var lastActiveLink = document.getElementById(lastActiveId);
+                if (lastActiveLink) {
+                    lastActiveLink.classList.add('active');
+                }
+            }
+        });
+
+        // Adjust sidebar on window resize
+        window.addEventListener('resize', function () {
+            var sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                if (window.innerWidth > 768) {
+                    sidebar.style.width = '260px';
+                } else {
+                    sidebar.style.width = '70px';
+                }
+            }
+        });
     </script>
 </body>
 </html>
