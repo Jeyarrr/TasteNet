@@ -33,7 +33,7 @@ namespace TasteNet
 
                 case "admin" when password == "admin":
                     SetUserSession(username, "Admin");
-                    Response.Redirect(ResolveUrl("~/Users/Admin/ManageInventory.aspx"));
+                    Response.Redirect(ResolveUrl("~/Users/Admin/Inventory.aspx"));
                     return;
 
                 case "rider" when password == "rider":

@@ -140,6 +140,7 @@
     <Content Include="Images\tocilog.jpg" />
     <Content Include="Images\tofu.jpg" />
     <Content Include="Images\tokwa.jpg" />
+    <Content Include="LandingPage.aspx" />
     <Content Include="Users\Admin\AcceptOrder.aspx" />
     <Content Include="Users\Admin\Inventory.aspx" />
     <Content Include="Users\Admin\Menu.aspx" />
@@ -232,6 +233,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="LandingPage.aspx.cs">
+      <DependentUpon>LandingPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LandingPage.aspx.designer.cs">
+      <DependentUpon>LandingPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="MasterPages\Admin.Master.cs">
       <DependentUpon>Admin.Master</DependentUpon>

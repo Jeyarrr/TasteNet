@@ -5,10 +5,11 @@
 <head runat="server">
     <title>Register | TasteNet</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
         body {
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             background: url('Images/landingpage.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
@@ -47,9 +48,10 @@
         }
 
         .register-card {
-            width: 420px;
+            width: 500px;
+            max-width: 90vw;
             background: #4b0000;
-            padding: 25px 20px;
+            padding: 25px 25px;
             border-radius: 18px;
             text-align: center;
             color: #fff;
@@ -73,14 +75,17 @@
             margin-top: 2px;
             margin-bottom: 18px;
             font-weight: 600;
-            font-size: 1.4em;
+            font-size: 1.6em;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
         }
 
         h3 {
             margin: 15px 0 25px 0;
             font-weight: 500;
-            font-size: 1.1em;
+            font-size: 1.2em;
             color: #ffc107;
+            font-family: 'Poppins', sans-serif;
         }
 
         .user-type-buttons {
@@ -91,23 +96,24 @@
 
         .user-type-btn {
             flex: 1;
-            padding: 15px 10px;
+            padding: 18px 10px;
             border: 2px solid rgba(255, 212, 29, 0.3);
             border-radius: 18px;
             background: rgba(255, 255, 255, 0.05);
             color: white;
-            font-size: 14px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .user-type-btn i {
-            font-size: 24px;
+            font-size: 28px;
             color: #ffc107;
         }
 
@@ -131,28 +137,63 @@
             color: #4b0000;
         }
 
+        .btn-register {
+            margin-top: 15px;
+            background: transparent;
+            border: 2px solid #ffc107;
+            padding: 8px 25px;
+            width: auto;
+            min-width: 120px;
+            color: #ffc107;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: none;
+            display: inline-block;
+        }
+
+        .btn-register:hover {
+            background: #ffc107;
+            color: #4b0000;
+            border-color: #ffc107;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
+        }
+
         .back-btn {
             margin-top: 15px;
             background: transparent;
             border: 1.5px solid rgba(255, 255, 255, 0.25);
             padding: 8px 20px;
             color: #fff;
-            font-size: 12px;
-            border-radius: 20px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .back-btn:hover {
             background: rgba(255, 255, 255, 0.1);
             border-color: #ffc107;
+            transform: translateY(-1px);
         }
 
         .input-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 5px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
         .input-box {
@@ -162,31 +203,43 @@
 
         .input-box input, .input-box select {
             width: 100%;
-            height: 38px;
-            padding: 0 35px 0 12px;
-            border-radius: 20px;
+            height: 45px;
+            padding: 0 40px 0 15px;
+            border-radius: 25px;
             border: none;
             outline: none;
-            font-size: 11.5px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
             box-sizing: border-box;
-            transition: all 0.3s ease;
+            line-height: 45px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
             background: white;
+            transition: all 0.3s ease;
         }
 
         .input-box input:focus, .input-box select:focus {
-            box-shadow: 0 0 6px rgba(255, 193, 7, 0.5);
-            border: 1px solid #ffc107;
+            box-shadow: 0 0 0 2px #ffc107, 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        .input-box input::placeholder, .input-box select::placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: #888;
         }
 
         .password-box input {
-            padding-right: 35px !important;
+            padding-right: 45px !important;
         }
 
         .section-title {
             text-align: left;
             color: #ffc107;
-            font-size: 14px;
-            margin: 20px 0 10px 0;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            margin: 20px 0 12px 0;
             padding-bottom: 5px;
             border-bottom: 1px solid rgba(255, 193, 7, 0.3);
             display: flex;
@@ -195,25 +248,26 @@
         }
 
         .section-title i {
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .gender-container {
             text-align: left;
-            margin: 12px 0 5px 0;
+            margin: 15px 0 8px 0;
         }
 
         .gender-label {
             display: block;
             margin-bottom: 8px;
-            font-size: 12.5px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
             color: #ccc;
             padding-left: 10px;
         }
 
         .gender-category-list {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
         .gender-category-list input[type="radio"] {
@@ -223,12 +277,13 @@
         .gender-category-list label {
             flex: 1;
             display: block;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
             border: 2px solid rgba(255, 212, 29, 0.3);
-            border-radius: 18px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 12.5px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
             transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.05);
         }
@@ -255,7 +310,7 @@
 
         .password-box i {
             position: absolute;
-            right: 12px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%) scale(1);
             cursor: pointer;
@@ -268,7 +323,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85em;
+            font-size: 1.1em;
         }
 
         .password-box i.active {
@@ -276,30 +331,9 @@
             opacity: 0.85;
         }
 
-        .btn-register {
-            margin-top: 10px;
-            background: linear-gradient(to right, #4b0000, #a10000);
-            border: 1.5px solid rgba(255, 255, 255, 0.25);
-            padding: 10px;
-            width: 45%;
-            color: #fff;
-            font-size: 13px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-register:hover {
-            background: linear-gradient(to right, #6a0000, #c20000);
-            box-shadow:
-                0 0 5px #ffc107,
-                0 0 10px #ffc107,
-                0 0 20px rgba(255, 193, 7, 0.7);
-            border-color: #ffc107;
-            transform: translateY(-1px) scale(1.02);
-            animation: glowPulse 1.5s infinite alternate;
+        .password-box i:hover {
+            color: #ffc107;
+            transform: translateY(-50%) scale(1.05);
         }
 
         @keyframes glowPulse {
@@ -312,22 +346,25 @@
         }
 
         .extra-text {
-            margin-top: 12px;
-            font-size: 11.5px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
             color: #fff;
+            line-height: 1.8;
         }
 
         .sign-in-link {
             color: #ffc107;
             text-decoration: none;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 16px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 18px;
             background: rgba(255, 193, 7, 0.1);
             transition: all 0.3s ease;
             display: inline-block;
             margin-left: 5px;
-            font-size: 0.85em;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .sign-in-link:hover {
@@ -338,61 +375,44 @@
             box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
         }
 
-        .password-box i:hover {
-            color: #ffc107;
-            transform: translateY(-50%) scale(1.05);
-        }
-
         .field-error {
             color: #ffc107 !important;
-            font-size: 11px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
             text-align: left;
-            padding-left: 12px;
-            margin-top: 2px;
+            padding-left: 15px;
+            margin-top: 4px;
             margin-bottom: 6px;
             display: block;
             font-weight: 500;
             text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-            min-height: 16px;
+            min-height: 18px;
+            background: rgba(255, 193, 7, 0.1);
+            padding: 4px 8px;
+            border-radius: 5px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .general-error, .success-message {
+            padding: 12px 15px !important;
+            border-radius: 10px !important;
+            margin: 15px 0 !important;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
         }
 
         .general-error {
-            display: block;
-            margin: 8px 0 !important;
-            padding: 8px 0 !important;
-            background-color: transparent !important;
-            border: none !important;
-            border-radius: 0 !important;
+            background: rgba(255, 193, 7, 0.1) !important;
+            border: 1px solid #ffc107 !important;
             color: #ffc107 !important;
-            font-weight: 600;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            font-size: 0.85em;
         }
 
         .success-message {
-            display: block;
-            margin: 8px 0;
-            padding: 8px 0;
-            background-color: transparent;
-            border: none;
-            border-radius: 0;
-            color: #4CAF50;
-            font-weight: 600;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            font-size: 0.85em;
-        }
-
-        .gender-error {
-            color: #ffc107 !important;
-            font-size: 11px;
-            text-align: left;
-            padding-left: 10px;
-            margin-top: 5px;
-            margin-bottom: 8px;
-            display: block;
-            font-weight: 500;
-            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-            min-height: 16px;
+            background: rgba(76, 175, 80, 0.1) !important;
+            border: 1px solid #4CAF50 !important;
+            color: #4CAF50 !important;
         }
 
         .hidden {
@@ -401,27 +421,30 @@
 
         .file-upload-box {
             text-align: left;
-            margin: 10px 0;
+            margin: 15px 0;
         }
 
         .file-upload-label {
             display: block;
-            font-size: 12px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
             color: #ccc;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             padding-left: 12px;
         }
 
         .file-upload-input {
             width: 100%;
-            padding: 8px 12px;
-            border-radius: 20px;
+            padding: 12px 15px;
+            border-radius: 25px;
             border: 1px dashed rgba(255, 193, 7, 0.5);
             background: rgba(255, 255, 255, 0.05);
             color: white;
-            font-size: 11.5px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
         .file-upload-input:hover {
@@ -436,18 +459,20 @@
         }
 
         .info-text {
-            font-size: 10.5px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
             color: #aaa;
             text-align: left;
             padding-left: 12px;
-            margin-top: 3px;
+            margin-top: 5px;
             font-style: italic;
         }
 
         .form-container {
             max-height: 500px;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: 8px;
+            margin: 15px 0;
         }
 
         .form-container::-webkit-scrollbar {
@@ -468,33 +493,35 @@
             background: rgba(255, 193, 7, 0.1);
             border: 1px solid #ffc107;
             border-radius: 10px;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 15px 0;
             text-align: left;
         }
 
         .validation-summary h4 {
             color: #ffc107;
-            margin: 0 0 5px 0;
-            font-size: 13px;
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
         .validation-summary h4 i {
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .validation-summary ul {
             margin: 0;
             padding-left: 20px;
             color: #ffc107;
-            font-size: 11.5px;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .validation-summary li {
-            margin: 3px 0;
+            margin: 5px 0;
         }
 
         .input-error {
@@ -506,27 +533,30 @@
             background: rgba(76, 175, 80, 0.1);
             border: 1px solid #4CAF50;
             border-radius: 10px;
-            padding: 15px;
+            padding: 18px;
             margin: 15px 0;
             text-align: center;
         }
 
         .success-box i {
             color: #4CAF50;
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 10px;
         }
 
         .success-box h4 {
             color: #4CAF50;
-            margin: 5px 0;
-            font-size: 14px;
+            margin: 8px 0;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
         }
 
         .success-box p {
             color: #4CAF50;
             margin: 0;
-            font-size: 12px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .required-field::after {
@@ -534,44 +564,29 @@
             color: #ffc107;
         }
 
-        .field-error {
-            color: #ffc107 !important;
-            font-size: 11px;
-            text-align: left;
-            padding-left: 12px;
-            margin-top: 2px;
-            margin-bottom: 6px;
-            display: block;
-            font-weight: 500;
-            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-            min-height: 16px;
-            background: rgba(255, 193, 7, 0.1);
-            padding: 4px 8px;
-            border-radius: 5px;
-            border-left: 3px solid #ffc107;
-        }
-
-        .general-error, .success-message {
-            padding: 12px 15px !important;
-            border-radius: 10px !important;
-            margin: 15px 0 !important;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .general-error {
-            background: rgba(255, 193, 7, 0.1) !important;
-            border: 1px solid #ffc107 !important;
-        }
-
-        .success-message {
-            background: rgba(76, 175, 80, 0.1) !important;
-            border: 1px solid #4CAF50 !important;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            background-color: white;
+        }
+
+        select option {
+            font-family: 'Poppins', sans-serif;
         }
     </style>
 </head>
@@ -662,26 +677,28 @@
                         <asp:ListItem Text="Female" Value="Female"></asp:ListItem>
                         <asp:ListItem Text="Rather not say" Value="Rather not say" Selected="True"></asp:ListItem>
                     </asp:RadioButtonList>
-                    <asp:Label ID="lblGenderError" runat="server" CssClass="gender-error" Text="" Visible="false"></asp:Label>
+                    <asp:Label ID="lblGenderError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+            <div class="button-group">
                 <button type="button" class="back-btn" onclick="goBackToUserType()">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
                 <asp:Button ID="btnCustomerRegister" runat="server" Text="Register" CssClass="btn-register" OnClick="btnCustomerRegister_Click" />
             </div>
-            <div id="customerValidationSummary" class="validation-summary hidden">
-    <h4><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</h4>
-    <ul id="customerErrorList"></ul>
-</div>
 
-<div id="customerSuccessBox" class="success-box hidden">
-    <i class="fas fa-check-circle"></i>
-    <h4>Registration Successful!</h4>
-    <p>You can now login to your account.</p>
-</div>
+            <div id="customerValidationSummary" class="validation-summary hidden">
+                <h4><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</h4>
+                <ul id="customerErrorList"></ul>
+            </div>
+
+            <div id="customerSuccessBox" class="success-box hidden">
+                <i class="fas fa-check-circle"></i>
+                <h4>Registration Successful!</h4>
+                <p>You can now login to your account.</p>
+            </div>
+
             <div class="extra-text">
                 Already have an account?
                 <a href="Login.aspx" class="sign-in-link">Sign In</a>
@@ -757,7 +774,7 @@
                         <asp:ListItem Text="Female" Value="Female"></asp:ListItem>
                         <asp:ListItem Text="Rather not say" Value="Rather not say" Selected="True"></asp:ListItem>
                     </asp:RadioButtonList>
-                    <asp:Label ID="lblRiderGenderError" runat="server" CssClass="gender-error" Text="" Visible="false"></asp:Label>
+                    <asp:Label ID="lblRiderGenderError" runat="server" CssClass="field-error" Text="" Visible="false"></asp:Label>
                 </div>
 
                 <div class="section-title">
@@ -854,22 +871,24 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+            <div class="button-group">
                 <button type="button" class="back-btn" onclick="goBackToUserType()">
                     <i class="fas fa-arrow-left"></i> Back
                 </button>
                 <asp:Button ID="btnRiderRegister" runat="server" Text="Submit Application" CssClass="btn-register" OnClick="btnRiderRegister_Click" />
             </div>
-            <div id="riderValidationSummary" class="validation-summary hidden">
-    <h4><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</h4>
-    <ul id="riderErrorList"></ul>
-</div>
 
-<div id="riderSuccessBox" class="success-box hidden">
-    <i class="fas fa-check-circle"></i>
-    <h4>Application Submitted!</h4>
-    <p>We will review your documents and contact you soon.</p>
-</div>
+            <div id="riderValidationSummary" class="validation-summary hidden">
+                <h4><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</h4>
+                <ul id="riderErrorList"></ul>
+            </div>
+
+            <div id="riderSuccessBox" class="success-box hidden">
+                <i class="fas fa-check-circle"></i>
+                <h4>Application Submitted!</h4>
+                <p>We will review your documents and contact you soon.</p>
+            </div>
+
             <div class="extra-text">
                 Already have an account?
                 <a href="Login.aspx" class="sign-in-link">Sign In</a>
@@ -900,6 +919,11 @@
                 errorLabel.textContent = 'Please select your role (Customer or Rider)';
                 errorLabel.style.display = 'block';
                 errorLabel.style.visibility = 'visible';
+
+                document.querySelectorAll('.user-type-btn').forEach(btn => {
+                    btn.classList.add('input-error');
+                });
+
                 return;
             }
 
@@ -907,8 +931,12 @@
 
             if (selectedUserType === 'customer') {
                 document.getElementById('customerRegisterCard').classList.remove('hidden');
+                document.getElementById('customerValidationSummary').classList.add('hidden');
+                document.getElementById('customerSuccessBox').classList.add('hidden');
             } else if (selectedUserType === 'rider') {
                 document.getElementById('riderRegisterCard').classList.remove('hidden');
+                document.getElementById('riderValidationSummary').classList.add('hidden');
+                document.getElementById('riderSuccessBox').classList.add('hidden');
             }
         }
 
@@ -919,6 +947,7 @@
             document.getElementById('userTypeCard').classList.remove('hidden');
         }
 
+        // Password toggle functionality
         const togglePwd = document.getElementById("togglePwd");
         const pwd = document.getElementById('<%= txtPassword.ClientID %>');
         const toggleConfirmPwd = document.getElementById("toggleConfirmPwd");
@@ -984,6 +1013,7 @@
                 setTimeout(() => toggleRiderConfirmPwd.classList.remove("active"), 200);
             });
         }
+
         function showValidationSummary(formType, errors) {
             const validationDiv = document.getElementById(formType + 'ValidationSummary');
             const errorList = document.getElementById(formType + 'ErrorList');
@@ -1034,33 +1064,6 @@
                     }
                 }
             });
-        }
-
-        function continueToRegister() {
-            if (!selectedUserType) {
-                const errorLabel = document.getElementById('<%= lblUserTypeError.ClientID %>');
-                errorLabel.textContent = 'Please select your role (Customer or Rider)';
-                errorLabel.style.display = 'block';
-                errorLabel.style.visibility = 'visible';
-
-                document.querySelectorAll('.user-type-btn').forEach(btn => {
-                    btn.classList.add('input-error');
-                });
-
-                return;
-            }
-
-            document.getElementById('userTypeCard').classList.add('hidden');
-
-            if (selectedUserType === 'customer') {
-                document.getElementById('customerRegisterCard').classList.remove('hidden');
-                document.getElementById('customerValidationSummary').classList.add('hidden');
-                document.getElementById('customerSuccessBox').classList.add('hidden');
-            } else if (selectedUserType === 'rider') {
-                document.getElementById('riderRegisterCard').classList.remove('hidden');
-                document.getElementById('riderValidationSummary').classList.add('hidden');
-                document.getElementById('riderSuccessBox').classList.add('hidden');
-            }
         }
 
         function setupRealTimeValidation() {

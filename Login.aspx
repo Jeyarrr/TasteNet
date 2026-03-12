@@ -5,11 +5,12 @@
 <head runat="server">
     <title>Login | TasteNet</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             background: url('Images/landingpage.jpg') no-repeat center center fixed;
             background-size: cover;
             height: 100vh;
@@ -64,7 +65,9 @@
             margin-top: 0;
             margin-bottom: 18px;
             font-weight: 600;
-            font-size: 1.4em;
+            font-size: 1.6em;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
         }
 
         .input-group {
@@ -82,20 +85,36 @@
 
         .input-box {
             width: 85%;
-            margin: 0 auto 10px auto;
+            margin: 0 auto 15px auto;
             position: relative;
         }
 
         .input-box input {
             width: 100%;
-            height: 38px;
-            padding: 0 35px 0 12px;
-            border-radius: 20px;
+            height: 45px;
+            padding: 0 40px 0 15px;
+            border-radius: 25px;
             border: none;
             outline: none;
-            font-size: 11.5px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
             box-sizing: border-box;
-            line-height: 38px;
+            line-height: 45px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .input-box input:focus {
+            box-shadow: 0 0 0 2px #ffc107, 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        .input-box input::placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: #888;
         }
 
         .password-box {
@@ -104,13 +123,13 @@
 
         .password-box i {
             position: absolute;
-            right: 12px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%) scale(1);
             color: #777;
             cursor: pointer;
             transition: transform 0.25s ease, opacity 0.25s ease;
-            font-size: 0.85em;
+            font-size: 1.1em;
         }
 
         .password-box i.active {
@@ -123,19 +142,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 6px auto 12px auto;
-            font-size: 12.5px;
+            margin: 8px auto 15px auto;
+            font-size: 13.5px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .remember-me {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .remember-me input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
             accent-color: #ffc107;
             transform: scale(1);
@@ -152,6 +172,8 @@
             color: #fff;
             font-weight: 500;
             transition: color 0.3s ease;
+            font-size: 13.5px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .remember-me:hover label {
@@ -162,13 +184,14 @@
         .create-account {
             color: #ffc107;
             text-decoration: none;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 16px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 18px;
             background: rgba(255, 193, 7, 0.1);
             transition: all 0.3s ease;
             display: inline-block;
-            font-size: 0.85em;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .forgot-password:hover,
@@ -182,28 +205,34 @@
 
         .btn-login {
             margin-top: 10px;
-            background: linear-gradient(to right, #4b0000, #a10000);
-            border: 1.5px solid rgba(255, 255, 255, 0.25);
-            padding: 10px;
+            background: transparent;
+            border: 2px solid #ffc107;
+            padding: 8px 10px;
             width: 45%;
-            color: #fff;
-            font-size: 13px;
-            border-radius: 20px;
+            color: #ffc107;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: none;
+            display: inline-block;
         }
 
         .btn-login:hover {
-            background: linear-gradient(to right, #6a0000, #c20000);
-            box-shadow:
-                0 0 5px #ffc107,
-                0 0 10px #ffc107,
-                0 0 20px rgba(255, 193, 7, 0.7);
+            background: #ffc107;
+            color: #4b0000;
             border-color: #ffc107;
-            transform: translateY(-1px) scale(1.02);
-            animation: glowPulse 1.5s infinite alternate;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
         }
 
         @keyframes glowPulse{
@@ -220,40 +249,50 @@
             background-color: transparent !important; 
             padding: 0px 0 !important;
             border-radius: 0 !important;
-            margin: 4px 0 !important;
+            margin: 6px 0 !important;
             display: block;
-            font-weight: 600;
+            font-weight: 500;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
             border: none !important;
-            font-size: 0.85em;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .extra-text {
-            margin-top: 12px;
-            font-size: 11.5px;
+            margin-top: 15px;
+            font-size: 13px;
             color: #fff;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.8;
+        }
+
+        .extra-text br {
+            display: block;
         }
 
         .social-login {
-            margin-top: 10px;
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
         }
 
         .social-login i {
-            width: 36px;
-            height: 36px;
-            line-height: 36px;
+            width: 38px;
+            height: 38px;
+            line-height: 38px;
             border-radius: 50%;
             background: #fff;
             color: #000;
-            font-size: 16px;
-            margin: 0 4px;
+            font-size: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .social-login i:hover {
-            transform: scale(1.05) translateY(-1px);
-            box-shadow: 0 3px 10px rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
         }
 
         .social-login .fa-facebook-f {
@@ -301,7 +340,7 @@
                 </asp:HyperLink>
             </div>
 
-            <asp:Button ID="btnLogin" runat="server" Text="Log In" CssClass="btn-login" OnClick="btnLogin_Click" />
+            <asp:Button ID="btnLogin" runat="server" Text="LOGIN" CssClass="btn-login" OnClick="btnLogin_Click" />
 
             <div class="extra-text">
                 <asp:HyperLink 
