@@ -24,34 +24,75 @@ namespace TasteNet
             lblError.Visible = false;
             lblError.Text = "";
 
-            switch (username.ToLower())
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                case "superadmin" when password == "superadmin":
-                    SetUserSession(username, "SuperAdmin");
+                lblError.Text = "Please enter your username and password.";
+                lblError.Visible = true;
+                return;
+            }
+
+            string userType = null;
+
+            try
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    string query = @"SELECT UserType FROM Users 
+                                     WHERE Username = @Username 
+                                       AND Password = @Password 
+                                       AND IsActive = 1";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Username", username);
+                        cmd.Parameters.AddWithValue("@Password", password);
+
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                            userType = result.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                lblError.Text = "A system error occurred. Please try again.";
+                lblError.Visible = true;
+                return;
+            }
+
+            if (userType == null)
+            {
+                lblError.Text = "Invalid username or password.";
+                lblError.Visible = true;
+                txtPassword.Text = "";
+                txtUsername.Focus();
+                return;
+            }
+
+            SetUserSession(username, userType);
+
+            switch (userType)
+            {
+                case "SuperAdmin":
                     Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
-                    return;
-
-                case "admin" when password == "admin":
-                    SetUserSession(username, "Admin");
+                    break;
+                case "Admin":
                     Response.Redirect(ResolveUrl("~/Users/Admin/Inventory.aspx"));
-                    return;
-
-                case "rider" when password == "rider":
-                    SetUserSession(username, "Rider");
+                    break;
+                case "Rider":
                     Response.Redirect(ResolveUrl("~/Users/Rider/Dashboard.aspx"));
-                    return;
-
-                case "customer" when password == "customer":
-                    SetUserSession(username, "Customer");
+                    break;
+                case "Customer":
                     Response.Redirect(ResolveUrl("~/Users/Customer/LandingPage.aspx"));
-                    return;
-
+                    break;
                 default:
-                    lblError.Text = "Invalid username or password";
+                    lblError.Text = "Unrecognized user role. Please contact support.";
                     lblError.Visible = true;
-                    txtPassword.Text = "";
-                    txtUsername.Focus();
-                    return;
+                    break;
             }
         }
 
