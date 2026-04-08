@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace TasteNet
+namespace TasteNet.Users.Customer
 {
-    public partial class LandingPage : System.Web.UI.Page
+    public partial class CustomerPortal : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {

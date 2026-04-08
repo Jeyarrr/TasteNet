@@ -43,7 +43,7 @@ namespace TasteNet
 
                 case "customer" when password == "customer":
                     SetUserSession(username, "Customer");
-                    Response.Redirect(ResolveUrl("~/Users/Customer/LandingPage.aspx"));
+                    Response.Redirect(ResolveUrl("~/Users/Customer/CustomerPortal.aspx"));
                     return;
 
                 default:

@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TasteNet
+namespace TasteNet.Users.Customer
 {
 
 
-    public partial class LandingPage
+    public partial class CustomerPortal
     {
 
         /// <summary>

@@ -1572,19 +1572,20 @@
             border-radius: 2px;
         }
 
-        /* 6 items per row grid */
+        /* Updated grid for 6 per row */
         .menu-grid-container.six-per-row {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 25px;
+            gap: 20px;
             margin: 0 auto 30px;
             width: 100%;
             justify-items: center;
         }
         
+        /* Updated menu container for 6 per row */
         .menu-container {
             background: #fff;
-            padding: 20px;
+            padding: 15px 12px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(125, 10, 34, 0.08);
             transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -1597,8 +1598,8 @@
             overflow: hidden;
             z-index: 1;
             width: 100%;
-            max-width: 300px;
-            min-height: 350px;
+            max-width: 280px;
+            min-height: 420px;
         }
 
         .menu-container:hover {
@@ -1628,12 +1629,12 @@
         }
 
         .menu-featured-img {
-            width: 160px;
-            height: 160px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             object-fit: cover;
-            border: 6px solid var(--primary-maroon);
-            margin-bottom: 20px;
+            border: 5px solid var(--primary-maroon);
+            margin-bottom: 12px;
             transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
         }
@@ -1655,73 +1656,212 @@
 
         .category-label {
             color: var(--primary-maroon);
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             transition: all 0.4s ease;
-            min-height: 50px;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            padding: 0 2px;
+        }
+
+        /* New meal description style */
+        .meal-description-short {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            line-height: 1.2;
+            padding: 0 3px;
+            min-height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .item-price {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-yellow);
-            background: var(--primary-maroon);
-            padding: 8px 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: inline-block;
-            box-shadow: 0 4px 10px rgba(125, 10, 34, 0.15);
+        /* Price and rating row */
+        .price-rating-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 6px 0 8px;
+            padding: 0 3px;
         }
 
+        /* Updated rating stars - just one star with number */
+        .rating-stars {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            color: var(--accent-yellow);
+            font-size: 0.8rem;
+        }
+
+        .rating-stars i {
+            color: var(--accent-yellow);
+            font-size: 0.85rem;
+        }
+
+        .rating-stars span {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Updated price style - smaller */
+        .item-price-small {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-maroon);
+            background: rgba(255, 215, 0, 0.15);
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        /* Updated button container - adjusted for better fit */
         .menu-item-buttons {
             display: flex;
-            gap: 15px;
+            gap: 6px;
             justify-content: center;
-            margin-top: 15px;
-            padding-top: 15px;
+            margin-top: 10px;
+            padding-top: 8px;
             border-top: 1px solid #eee;
+            width: 100%;
         }
 
-        .view-modal-btn, .add-to-cart-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .view-modal-btn {
+        /* Updated view button - more compact */
+        .view-btn {
             background: transparent;
             color: var(--primary-maroon);
             border: 2px solid var(--primary-maroon);
+            border-radius: 20px;
+            padding: 5px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            height: 32px;
+            white-space: nowrap;
         }
 
-        .view-modal-btn:hover {
+        .view-btn:hover {
             background: var(--primary-maroon);
             color: white;
-            transform: translateY(-2px) scale(1.1);
+            transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(125, 10, 34, 0.2);
         }
 
-        .add-to-cart-btn {
+        .view-btn i {
+            font-size: 0.8rem;
+        }
+
+        /* Updated add to cart button - more compact */
+        .add-to-cart-btn-text {
             background: var(--accent-yellow);
             color: var(--primary-maroon);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 20px;
+            padding: 5px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1.2;
+            height: 32px;
+            white-space: nowrap;
         }
 
-        .add-to-cart-btn:hover {
+        .add-to-cart-btn-text:hover {
             background: var(--primary-maroon);
             color: var(--accent-yellow);
-            transform: translateY(-2px) scale(1.1);
+            border-color: var(--primary-maroon);
+            transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(125, 10, 34, 0.2);
+        }
+
+        .add-to-cart-btn-text i {
+            font-size: 0.8rem;
+        }
+
+        /* Floating Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-maroon);
+            color: var(--accent-yellow);
+            border: 2px solid var(--accent-yellow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent-yellow);
+            color: var(--primary-maroon);
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .back-to-top i {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-to-top:hover i {
+            transform: translateY(-3px);
+        }
+
+        /* Tooltip for back to top button */
+        .back-to-top::before {
+            content: 'Back to Top';
+            position: absolute;
+            right: 60px;
+            background: var(--primary-maroon);
+            color: var(--accent-yellow);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--accent-yellow);
+            pointer-events: none;
+        }
+
+        .back-to-top:hover::before {
+            opacity: 1;
+            visibility: visible;
+            right: 70px;
         }
 
         @keyframes floatMenu {
@@ -2267,26 +2407,23 @@
             color: #ffed4e;
         }
 
-        /* Menu container adjustments for 6 per row */
+        /* Updated menu container adjustments for 6 per row */
         .menu-grid-container.six-per-row .menu-container {
             max-width: 100%;
-            min-height: 320px;
-            padding: 20px 15px;
+            min-height: 420px;
+            padding: 15px 12px;
         }
 
         .menu-grid-container.six-per-row .menu-featured-img {
-            width: 140px;
-            height: 140px;
+            width: 130px;
+            height: 130px;
+            margin-bottom: 12px;
         }
 
         .menu-grid-container.six-per-row .category-label {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             min-height: 45px;
-        }
-
-        .menu-grid-container.six-per-row .item-price {
-            font-size: 1.6rem;
-            padding: 6px 12px;
+            margin-bottom: 4px;
         }
 
         /* Responsive adjustments for 6 per row */
@@ -2424,21 +2561,48 @@
             
             .menu-container {
                 max-width: 100%;
-                padding: 15px;
+                padding: 15px 10px;
+                min-height: 380px;
             }
             
             .menu-featured-img {
-                width: 140px;
-                height: 140px;
+                width: 120px;
+                height: 120px;
             }
             
             .category-label {
-                font-size: 1.3rem;
+                font-size: 1rem;
+                min-height: 40px;
             }
             
-            .item-price {
-                font-size: 1.5rem;
-                padding: 6px 12px;
+            .meal-description-short {
+                font-size: 0.75rem;
+                min-height: 28px;
+            }
+            
+            .price-rating-row {
+                flex-direction: column;
+                gap: 3px;
+                margin: 4px 0;
+            }
+            
+            .item-price-small {
+                font-size: 0.9rem;
+                padding: 2px 6px;
+            }
+            
+            .menu-item-buttons {
+                flex-direction: column;
+                gap: 5px;
+                margin-top: 8px;
+                padding-top: 6px;
+            }
+            
+            .view-btn, .add-to-cart-btn-text {
+                width: 100%;
+                padding: 4px 6px;
+                height: 28px;
+                font-size: 0.65rem;
             }
             
             .cart-modal-content {
@@ -2583,6 +2747,21 @@
             .menu-container {
                 padding: 25px;
             }
+
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .back-to-top i {
+                font-size: 1.3rem;
+            }
+
+            .back-to-top::before {
+                display: none;
+            }
         }
         
         @media (max-width: 576px) {
@@ -2595,7 +2774,7 @@
             }
             
             .menu-grid-container.six-per-row .menu-container {
-                max-width: 320px;
+                max-width: 280px;
             }
         }
 
@@ -2673,11 +2852,27 @@
             .copyright, .delivery-tag, .footer-legal {
                 min-width: 100%;
             }
+
+            .back-to-top {
+                bottom: 15px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .back-to-top i {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
+        <!-- Floating Back to Top Button -->
+        <div class="back-to-top" id="backToTopBtn" onclick="scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </div>
+
         <nav class="navbar">
             <div class="logo-container" onclick="scrollToSection('home')">
                 <img src='<%= ResolveUrl("~/Images/LOGO.png") %>' alt="TasteNet Logo" class="logo-img" />
@@ -2826,13 +3021,20 @@
                         <img src='<%= ResolveUrl("~/Images/tapsilog.jpg") %>' alt="Tapsilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Tapsilog</div>
-                            <div class="item-price">₱100.00</div>
+                            <div class="meal-description-short">Tender cured beef with garlic rice and egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.5</span>
+                                </div>
+                                <div class="item-price-small">₱100</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Tapsilog" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Tapsilog" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Tapsilog" data-price="100.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Tapsilog" data-price="100.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2842,13 +3044,20 @@
                         <img src='<%= ResolveUrl("~/Images/baconsilog.jpg") %>' alt="Baconsilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Baconsilog</div>
-                            <div class="item-price">₱75.00</div>
+                            <div class="meal-description-short">Crispy bacon with garlic rice and egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>5.0</span>
+                                </div>
+                                <div class="item-price-small">₱75</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Baconsilog" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Baconsilog" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Baconsilog" data-price="75.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Baconsilog" data-price="75.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2858,13 +3067,20 @@
                         <img src='<%= ResolveUrl("~/Images/Bangsilog.jpg") %>' alt="Bangsilog (Boneless)" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Bangsilog (Boneless)</div>
-                            <div class="item-price">₱85.00</div>
+                            <div class="meal-description-short">Boneless milkfish with garlic rice and egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.3</span>
+                                </div>
+                                <div class="item-price-small">₱85</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Bangsilog (Boneless)" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Bangsilog (Boneless)" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Bangsilog (Boneless)" data-price="85.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Bangsilog (Boneless)" data-price="85.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2874,13 +3090,20 @@
                         <img src='<%= ResolveUrl("~/Images/porksilog.jpg") %>' alt="Porksilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Porksilog</div>
-                            <div class="item-price">₱55.00</div>
+                            <div class="meal-description-short">Tender ham slices with garlic rice and egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                                <div class="item-price-small">₱55</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Porksilog" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Porksilog" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Porksilog" data-price="55.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Porksilog" data-price="55.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2890,29 +3113,43 @@
                         <img src='<%= ResolveUrl("~/Images/Hotsilog.jpg") %>' alt="Hotsilog (Purefoods)" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Hotsilog (Purefoods)</div>
-                            <div class="item-price">₱55.00</div>
+                            <div class="meal-description-short">Purefoods hotdog with garlic rice and egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.4</span>
+                                </div>
+                                <div class="item-price-small">₱55</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Hotsilog (Purefoods)" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Hotsilog (Purefoods)" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Hotsilog (Purefoods)" data-price="55.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Hotsilog (Purefoods)" data-price="55.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
                     </div>
                     
                     <div class="menu-container">
-                        <img src='<%= ResolveUrl("~/Images/tocilog.jpg") %>' alt="" class="menu-featured-img" />
+                        <img src='<%= ResolveUrl("~/Images/tocilog.jpg") %>' alt="Tocisilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Tocisilog</div>
-                            <div class="item-price">₱85.00</div>
+                            <div class="meal-description-short">Homemade longganisa with garlic rice and egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.9</span>
+                                </div>
+                                <div class="item-price-small">₱85</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Tocisilog" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Tocisilog" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Tocisilog" data-price="85.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Tocisilog" data-price="85.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2926,14 +3163,21 @@
                     <div class="menu-container">
                         <img src='<%= ResolveUrl("~/Images/sizzling.jpg") %>' alt="Sizzling" class="menu-featured-img" />
                         <div class="menu-list-container">
-                            <div class="category-label">Sizzling</div>
-                            <div class="item-price">₱150.00</div>
+                            <div class="category-label">Sizzling Sisig</div>
+                            <div class="meal-description-short">Sizzling chopped pork with onions and chili</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.7</span>
+                                </div>
+                                <div class="item-price-small">₱150</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Sizzling Sisig" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Sizzling Sisig" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Sizzling Sisig" data-price="150.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Sizzling Sisig" data-price="150.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2943,13 +3187,20 @@
                         <img src='<%= ResolveUrl("~/Images/porksteak.jpg") %>' alt="Sizzling Pork Steak" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Pork Steak</div>
-                            <div class="item-price">₱140.00</div>
+                            <div class="meal-description-short">Juicy pork steak with savory gravy</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.6</span>
+                                </div>
+                                <div class="item-price-small">₱140</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Sizzling Pork Steak" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Sizzling Pork Steak" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Sizzling Pork Steak" data-price="140.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Sizzling Pork Steak" data-price="140.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2959,13 +3210,20 @@
                         <img src='<%= ResolveUrl("~/Images/chicken.jpg") %>' alt="Sizzling Chicken" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Chicken</div>
-                            <div class="item-price">₱130.00</div>
+                            <div class="meal-description-short">Tender chicken with special sizzling sauce</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.4</span>
+                                </div>
+                                <div class="item-price-small">₱130</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Sizzling Chicken" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Sizzling Chicken" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Sizzling Chicken" data-price="130.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Sizzling Chicken" data-price="130.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2975,13 +3233,20 @@
                         <img src='<%= ResolveUrl("~/Images/tofu.jpg") %>' alt="Sizzling Tofu" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Tofu</div>
-                            <div class="item-price">₱120.00</div>
+                            <div class="meal-description-short">Crispy tofu with savory sizzling sauce</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.5</span>
+                                </div>
+                                <div class="item-price-small">₱120</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Sizzling Tofu" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Sizzling Tofu" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Sizzling Tofu" data-price="120.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Sizzling Tofu" data-price="120.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -2991,13 +3256,20 @@
                         <img src='<%= ResolveUrl("~/Images/pork.jpg") %>' alt="Sizzling Pork Sisig" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Pork Sisig</div>
-                            <div class="item-price">₱145.00</div>
+                            <div class="meal-description-short">Traditional sizzling pork sisig with egg</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.9</span>
+                                </div>
+                                <div class="item-price-small">₱145</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Sizzling Pork" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Sizzling Pork Sisig" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Sizzling Pork" data-price="145.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Sizzling Pork Sisig" data-price="145.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3007,13 +3279,20 @@
                         <img src='<%= ResolveUrl("~/Images/liempo.jpg") %>' alt="Sizzling Liempo" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Liempo</div>
-                            <div class="item-price">₱155.00</div>
+                            <div class="meal-description-short">Grilled pork belly with special sauce</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                                <div class="item-price-small">₱155</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Sizzling Liempo" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Sizzling Liempo" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Sizzling Liempo" data-price="155.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Sizzling Liempo" data-price="155.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3028,13 +3307,20 @@
                         <img src='<%= ResolveUrl("~/Images/bulalo.jpg") %>' alt="Special Bulalo" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Bulalo</div>
-                            <div class="item-price">₱120.00</div>
+                            <div class="meal-description-short">Beef shank soup with vegetables</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>5.0</span>
+                                </div>
+                                <div class="item-price-small">₱120</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Special Bulalo" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Special Bulalo" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Special Bulalo" data-price="120.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Special Bulalo" data-price="120.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3044,13 +3330,20 @@
                         <img src='<%= ResolveUrl("~/Images/sinigang.jpg") %>' alt="Special Sinigang" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Sinigang</div>
-                            <div class="item-price">₱100.00</div>
+                            <div class="meal-description-short">Sour soup with pork and vegetables</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.7</span>
+                                </div>
+                                <div class="item-price-small">₱100</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Special Sinigang" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Special Sinigang" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Special Sinigang" data-price="100.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Special Sinigang" data-price="100.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3060,13 +3353,20 @@
                         <img src='<%= ResolveUrl("~/Images/tokwa.jpg") %>' alt="Special Tokwat Baboy" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Tokwat Baboy</div>
-                            <div class="item-price">₱110.00</div>
+                            <div class="meal-description-short">Tofu and pork with savory sauce</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.3</span>
+                                </div>
+                                <div class="item-price-small">₱110</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Special Tokwat Baboy" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Special Tokwat Baboy" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Special Tokwat Baboy" data-price="110.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Special Tokwat Baboy" data-price="110.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3076,13 +3376,20 @@
                         <img src='<%= ResolveUrl("~/Images/arroz.jpg") %>' alt="Special Arrozcaldo" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Arrozcaldo</div>
-                            <div class="item-price">₱250.00</div>
+                            <div class="meal-description-short">Chicken rice porridge with ginger</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.6</span>
+                                </div>
+                                <div class="item-price-small">₱250</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Special Arrozcaldo" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Special Arrozcaldo" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Special Arrozcaldo" data-price="250.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Special Arrozcaldo" data-price="250.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3092,30 +3399,43 @@
                         <img src='<%= ResolveUrl("~/Images/gotoover.jpg") %>' alt="Special Goto Overload" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Goto Overload</div>
-                            <div class="item-price">₱220.00</div>
+                            <div class="meal-description-short">Beef tripe porridge with extra toppings</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                                <div class="item-price-small">₱220</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Special Goto Overload" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Special Goto Overload" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Special Goto Overload" data-price="220.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Special Goto Overload" data-price="220.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Special Sinigang -->
                     <div class="menu-container">
                         <img src='<%= ResolveUrl("~/Images/Goto.jpg") %>' alt="Special Goto" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Goto</div>
-                            <div class="item-price">₱180.00</div>
+                            <div class="meal-description-short">Classic beef tripe porridge</div>
+                            <div class="price-rating-row">
+                                <div class="rating-stars">
+                                    <i class="fas fa-star"></i>
+                                    <span>4.5</span>
+                                </div>
+                                <div class="item-price-small">₱180</div>
+                            </div>
                             <div class="menu-item-buttons">
-                                <button class="view-modal-btn" data-name="Special Goto" title="View Details">
-                                    <i class="fas fa-eye"></i>
+                                <button class="view-btn" data-name="Special Goto" title="View Details">
+                                    <i class="fas fa-eye"></i> VIEW
                                 </button>
-                                <button class="add-to-cart-btn" data-name="Special Goto" data-price="180.00" title="Add to Cart">
-                                    <i class="fas fa-cart-plus"></i>
+                                <button class="add-to-cart-btn-text" data-name="Special Goto" data-price="180.00" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i> ADD
                                 </button>
                             </div>
                         </div>
@@ -3370,7 +3690,7 @@
                         { name: "Add Egg", price: 10 }
                     ]
                 },
-                "Tocilog": {
+                "Tocisilog": {
                     category: "Silog Meals",
                     price: 85,
                     description: "Homemade longganisa (Filipino sausage) with garlic rice and egg.",
@@ -3382,44 +3702,6 @@
                         { name: "Add Egg", price: 10 }
                     ]
                 },
-                "Malingsilog": {
-                    category: "Silog Meals",
-                    price: 60,
-                    description: "Corned beef-style meat with garlic rice and egg.",
-                    ingredients: "Corned beef, garlic rice, egg, onions.",
-                    texture: "Savory and tender meat with rice.",
-                    image: '<%= ResolveUrl("~/Images/Hotsilog.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Add Egg", price: 10 }
-                    ]
-                },
-                "Porksilog": {
-                    category: "Silog Meals",
-                    price: 85,
-                    description: "Marinated pork chop with garlic rice and egg.",
-                    ingredients: "Pork chop, soy sauce, calamansi, garlic rice, egg.",
-                    texture: "Tender pork with crispy edges.",
-                    image: '<%= ResolveUrl("~/Images/porksilog.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Add Egg", price: 10 },
-                        { name: "Make it Spicy", price: 5 }
-                    ]
-                },
-                "Tocisilog": {
-                    category: "Silog Meals",
-                    price: 80,
-                    description: "Sweet cured pork (tocino) with garlic rice and egg.",
-                    ingredients: "Tocino, garlic rice, egg, annatto oil.",
-                    texture: "Sweet and savory pork with fluffy rice.",
-                    image: '<%= ResolveUrl("~/Images/tocilog.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Add Egg", price: 10 }
-                    ]
-                },
-
                 "Sizzling Sisig": {
                     category: "Sizzling Meals",
                     price: 150,
@@ -3469,16 +3751,17 @@
                         { name: "Extra Sauce", price: 10 }
                     ]
                 },
-                "Sizzling Pork": {
+                "Sizzling Pork Sisig": {
                     category: "Sizzling Meals",
                     price: 145,
-                    description: "Bangus (milkfish) served sizzling with vegetables.",
-                    ingredients: "Bangus, soy sauce, calamansi, onions, tomatoes.",
-                    texture: "Flaky fish with aromatic sauce.",
+                    description: "Traditional sizzling pork sisig with egg.",
+                    ingredients: "Pork face, ears, liver, onions, calamansi, chili peppers.",
+                    texture: "Crispy, savory, and slightly chewy with a zesty kick.",
                     image: '<%= ResolveUrl("~/Images/pork.jpg") %>',
                     extras: [
                         { name: "Extra Rice", price: 15 },
-                        { name: "Extra Vegetables", price: 10 }
+                        { name: "Add Egg", price: 10 },
+                        { name: "Extra Spicy", price: 5 }
                     ]
                 },
                 "Sizzling Liempo": {
@@ -3493,71 +3776,46 @@
                         { name: "Extra Sauce", price: 10 }
                     ]
                 },
-                "Sizzling Mix Platter": {
-                    category: "Sizzling Meals",
-                    price: 180,
-                    description: "Assortment of meats and seafood served sizzling.",
-                    ingredients: "Pork, chicken, shrimp, vegetables, special sauce.",
-                    texture: "Variety of textures from different proteins.",
-                    image: '<%= ResolveUrl("~/Images/Sisig.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Sauce", price: 10 }
-                    ]
-                },
-                "Sizzling Gambas": {
-                    category: "Sizzling Meals",
-                    price: 160,
-                    description: "Shrimp cooked in garlic and olive oil served sizzling.",
-                    ingredients: "Shrimp, garlic, olive oil, chili, lemon.",
-                    texture: "Juicy shrimp with garlicky oil.",
-                    image: '<%= ResolveUrl("~/Images/Sisig.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Bread", price: 10 }
-                    ]
-                },
-                "Sizzling Kangkong": {
-                    category: "Sizzling Meals",
-                    price: 110,
-                    description: "Water spinach cooked sizzling with shrimp paste.",
-                    ingredients: "Kangkong, shrimp paste, garlic, chili.",
-                    texture: "Crisp vegetables with savory sauce.",
-                    image: '<%= ResolveUrl("~/Images/Sisig.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Shrimp Paste", price: 5 }
-                    ]
-                },
                 
                 "Special Bulalo": {
                     category: "Special Meals",
                     price: 120,
-                    description: "Hearty rice porridge with beef tripe and special toppings.",
-                    ingredients: "Beef tripe, rice, garlic, ginger, egg, chicharon.",
-                    texture: "Creamy porridge with tender tripe.",
+                    description: "Hearty beef shank soup with vegetables.",
+                    ingredients: "Beef shank, bone marrow, corn, cabbage, potatoes.",
+                    texture: "Tender beef with rich broth.",
                     image: '<%= ResolveUrl("~/Images/bulalo.jpg") %>',
                     extras: [
-                        { name: "Extra Tripe", price: 20 },
-                        { name: "Extra Egg", price: 10 },
-                        { name: "Extra Chicharon", price: 15 }
+                        { name: "Extra Rice", price: 15 },
+                        { name: "Extra Vegetables", price: 20 }
                     ]
                 },
                 "Special Sinigang": {
                     category: "Special Meals",
                     price: 100,
-                    description: "Comforting rice porridge with chicken and special toppings.",
-                    ingredients: "Rice, chicken, garlic, ginger, egg, scallions.",
-                    texture: "Smooth and creamy porridge.",
+                    description: "Sour soup with pork and vegetables.",
+                    ingredients: "Pork, tamarind, vegetables, onions, tomatoes.",
+                    texture: "Tender pork in tangy broth.",
                     image: '<%= ResolveUrl("~/Images/sinigang.jpg") %>',
                     extras: [
-                        { name: "Extra Chicken", price: 20 },
-                        { name: "Extra Egg", price: 10 }
+                        { name: "Extra Rice", price: 15 },
+                        { name: "Extra Vegetables", price: 15 }
                     ]
                 },
-                "Special Arroz Caldo": {
+                "Special Tokwat Baboy": {
                     category: "Special Meals",
                     price: 110,
+                    description: "Tofu and pork with savory sauce.",
+                    ingredients: "Tofu, pork, soy sauce, vinegar, onions, chili.",
+                    texture: "Crispy tofu with tender pork in tangy sauce.",
+                    image: '<%= ResolveUrl("~/Images/tokwa.jpg") %>',
+                    extras: [
+                        { name: "Extra Rice", price: 15 },
+                        { name: "Extra Sauce", price: 10 }
+                    ]
+                },
+                "Special Arrozcaldo": {
+                    category: "Special Meals",
+                    price: 250,
                     description: "Chicken rice porridge with ginger and garlic.",
                     ingredients: "Rice, chicken, ginger, garlic, saffron, egg.",
                     texture: "Aromatic and creamy porridge.",
@@ -3567,76 +3825,29 @@
                         { name: "Extra Egg", price: 10 }
                     ]
                 },
-                "Special Arroz Caldo": {
-                    category: "Special Meals",
-                    price: 250,
-                    description: "Beef shank and marrow bone soup with vegetables.",
-                    ingredients: "Beef shank, bone marrow, corn, cabbage, potatoes.",
-                    texture: "Tender beef with rich broth.",
-                    image: '<%= ResolveUrl("~/Images/arroz.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Vegetables", price: 20 }
-                    ]
-                },
-                "Special Kare-Kare": {
+                "Special Goto Overload": {
                     category: "Special Meals",
                     price: 220,
-                    description: "Oxtail and tripe stew in peanut sauce with vegetables.",
-                    ingredients: "Oxtail, tripe, peanut butter, vegetables, shrimp paste.",
-                    texture: "Tender meat with thick peanut sauce.",
-                    image: '<%= ResolveUrl("~/Images/Goto.jpg") %>',
+                    description: "Beef tripe porridge with extra toppings.",
+                    ingredients: "Beef tripe, rice, garlic, ginger, egg, chicharon.",
+                    texture: "Creamy porridge with tender tripe.",
+                    image: '<%= ResolveUrl("~/Images/gotoover.jpg") %>',
                     extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Sauce", price: 20 }
+                        { name: "Extra Tripe", price: 20 },
+                        { name: "Extra Egg", price: 10 },
+                        { name: "Extra Chicharon", price: 15 }
                     ]
                 },
-                "Special Sinigang": {
+                "Special Goto": {
                     category: "Special Meals",
                     price: 180,
-                    description: "Sour soup with pork and vegetables.",
-                    ingredients: "Pork, tamarind, vegetables, onions, tomatoes.",
-                    texture: "Tender pork in tangy broth.",
+                    description: "Classic beef tripe porridge.",
+                    ingredients: "Beef tripe, rice, garlic, ginger, scallions.",
+                    texture: "Creamy porridge with tender tripe.",
                     image: '<%= ResolveUrl("~/Images/Goto.jpg") %>',
                     extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Vegetables", price: 15 }
-                    ]
-                },
-                "Special Adobo": {
-                    category: "Special Meals",
-                    price: 160,
-                    description: "Pork and chicken stewed in vinegar, soy sauce, and garlic.",
-                    ingredients: "Pork, chicken, vinegar, soy sauce, garlic, bay leaves.",
-                    texture: "Tender meat in savory sauce.",
-                    image: '<%= ResolveUrl("~/Images/Goto.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Sauce", price: 10 }
-                    ]
-                },
-                "Special Caldereta": {
-                    category: "Special Meals",
-                    price: 190,
-                    description: "Beef stew in tomato sauce with liver spread and cheese.",
-                    ingredients: "Beef, tomato sauce, liver spread, cheese, vegetables.",
-                    texture: "Tender beef in rich tomato sauce.",
-                    image: '<%= ResolveUrl("~/Images/Goto.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Cheese", price: 15 }
-                    ]
-                },
-                "Special Bicol Express": {
-                    category: "Special Meals",
-                    price: 170,
-                    description: "Spicy pork stew in coconut milk with chili peppers.",
-                    ingredients: "Pork, coconut milk, shrimp paste, chili peppers.",
-                    texture: "Creamy and spicy pork stew.",
-                    image: '<%= ResolveUrl("~/Images/Goto.jpg") %>',
-                    extras: [
-                        { name: "Extra Rice", price: 15 },
-                        { name: "Extra Spicy", price: 5 }
+                        { name: "Extra Tripe", price: 20 },
+                        { name: "Extra Egg", price: 10 }
                     ]
                 }
             };
@@ -3724,15 +3935,15 @@
 
                 addViewButtons: function () {
                     document.querySelectorAll('.menu-container').forEach((container) => {
-                        const viewButton = container.querySelector('.view-modal-btn');
-                        const addButton = container.querySelector('.add-to-cart-btn');
+                        const viewButton = container.querySelector('.view-btn');
+                        const addButton = container.querySelector('.add-to-cart-btn-text');
 
                         if (viewButton && !viewButton.hasEventListener) {
                             viewButton.hasEventListener = true;
                             viewButton.addEventListener('click', (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                const mealName = e.target.closest('.view-modal-btn').dataset.name;
+                                const mealName = e.target.closest('.view-btn').dataset.name;
                                 this.openModal(mealName);
                             });
                         }
@@ -3742,7 +3953,7 @@
                             addButton.addEventListener('click', (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                const button = e.target.closest('.add-to-cart-btn');
+                                const button = e.target.closest('.add-to-cart-btn-text');
                                 const mealName = button.dataset.name;
                                 const mealPrice = parseFloat(button.dataset.price);
 
@@ -4260,6 +4471,24 @@
                     });
                 }
             };
+
+            // Back to Top Button Functionality
+            const backToTopBtn = document.getElementById('backToTopBtn');
+
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
 
             document.querySelectorAll('.nav-link, .logo-container, .btn-menu, .footer-link[href^="#"]').forEach(link => {
                 link.addEventListener('click', function (e) {

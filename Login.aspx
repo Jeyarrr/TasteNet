@@ -312,7 +312,7 @@
                 <img src="Images/LOGO.png" alt="Logo" />
             </div>
 
-            <h2>Sign In tiiiiiii</h2>
+            <h2>Sign In</h2>
 
             <div class="input-box">
                 <asp:TextBox ID="txtUsername" runat="server" placeholder="Username"></asp:TextBox>
