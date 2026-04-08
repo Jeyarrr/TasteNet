@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace TasteNet
 {
@@ -18,41 +14,87 @@ namespace TasteNet
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = txtUsername.Text.Trim();
-            string password = txtPassword.Text;
+            string emailOrUsername = txtUsername.Text.Trim();
+            string password = txtPassword.Text; // Plain text password
 
             lblError.Visible = false;
             lblError.Text = "";
 
-            switch (username.ToLower())
+            try
             {
-                case "superadmin" when password == "superadmin":
-                    SetUserSession(username, "SuperAdmin");
-                    Response.Redirect(ResolveUrl("~/Users/SuperAdmin/Dashboard.aspx"));
-                    return;
+                using (SqlConnection conn = GetConnection())
+                {
+                    conn.Open();
 
-                case "admin" when password == "admin":
-                    SetUserSession(username, "Admin");
-                    Response.Redirect(ResolveUrl("~/Users/Admin/Inventory.aspx"));
-                    return;
+                    string query = @"
+                        SELECT Username, UserType, Password, IsActive
+                        FROM Users 
+                        WHERE (Email = @Login OR Username = @Login)";
 
-                case "rider" when password == "rider":
-                    SetUserSession(username, "Rider");
-                    Response.Redirect(ResolveUrl("~/Users/Rider/Dashboard.aspx"));
-                    return;
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Login", emailOrUsername);
 
-                case "customer" when password == "customer":
-                    SetUserSession(username, "Customer");
-                    Response.Redirect(ResolveUrl("~/Users/Customer/CustomerPortal.aspx"));
-                    return;
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string dbPassword = reader["Password"].ToString();
+                                string username = reader["Username"].ToString();
+                                string userType = reader["UserType"].ToString();
+                                bool isActive = Convert.ToBoolean(reader["IsActive"]);
 
-                default:
-                    lblError.Text = "Invalid username or password";
-                    lblError.Visible = true;
-                    txtPassword.Text = "";
-                    txtUsername.Focus();
-                    return;
+                                // Compare plain text passwords directly
+                                if (dbPassword == password && isActive)
+                                {
+                                    SetUserSession(username, userType);
+
+                                    // Redirect based on user type
+                                    switch (userType.ToLower())
+                                    {
+                                        case "superadmin":
+                                            Response.Redirect("~/Users/SuperAdmin/Dashboard.aspx");
+                                            break;
+                                        case "admin":
+                                            Response.Redirect("~/Users/Admin/Inventory.aspx");
+                                            break;
+                                        case "rider":
+                                            Response.Redirect("~/Users/Rider/Dashboard.aspx");
+                                            break;
+                                        case "customer":
+                                            Response.Redirect("~/Users/Customer/CustomerPortal.aspx");
+                                            break;
+                                        default:
+                                            Response.Redirect("~/Default.aspx");
+                                            break;
+                                    }
+                                    return;
+                                }
+                                else if (!isActive)
+                                {
+                                    lblError.Text = "Account is deactivated. Please contact support.";
+                                }
+                                else
+                                {
+                                    lblError.Text = "Invalid username/email or password";
+                                }
+                            }
+                            else
+                            {
+                                lblError.Text = "Invalid username/email or password";
+                            }
+                        }
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                lblError.Text = "Database error: " + ex.Message;
+            }
+
+            lblError.Visible = true;
+            txtPassword.Text = "";
+            txtUsername.Focus();
         }
 
         private void SetUserSession(string username, string userType)
@@ -61,6 +103,12 @@ namespace TasteNet
             Session["UserType"] = userType;
             Session[$"Is{userType}"] = true;
             Session["LoginTime"] = DateTime.Now;
+        }
+
+        private SqlConnection GetConnection()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
+            return new SqlConnection(connectionString);
         }
     }
 }

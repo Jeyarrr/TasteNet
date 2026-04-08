@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.IO;
+using System.Data.SqlClient;
+using System.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.IO;
 
 namespace TasteNet
 {
     public partial class Register : System.Web.UI.Page
     {
+        // ─────────────────────────────────────────────
+        // PAGE LOAD
+        // ─────────────────────────────────────────────
         protected void Page_Load(object sender, EventArgs e)
         {
-            ClearAllMessages();
-            ClearRiderMessages();
+            if (!IsPostBack)
+            {
+                ClearAllMessages();
+                ClearRiderMessages();
+            }
         }
 
+        // ─────────────────────────────────────────────
+        // CUSTOMER REGISTRATION
+        // ─────────────────────────────────────────────
         protected void btnCustomerRegister_Click(object sender, EventArgs e)
         {
             ClearAllMessages();
@@ -28,7 +37,7 @@ namespace TasteNet
             string password = txtPassword.Text.Trim();
             string confirmPassword = txtConfirmPassword.Text.Trim();
             string gender = rblGender.SelectedValue;
-            string userType = hdnUserType.Value;
+            string userType = "Customer";
 
             bool isValid = true;
 
@@ -102,13 +111,6 @@ namespace TasteNet
                 isValid = false;
             }
 
-            if (string.IsNullOrEmpty(userType))
-            {
-                lblGeneralError.Text = "Please select user type (Customer or Rider)";
-                lblGeneralError.Visible = true;
-                isValid = false;
-            }
-
             if (!isValid)
             {
                 lblGeneralError.Text = "Please fill all required fields";
@@ -117,9 +119,9 @@ namespace TasteNet
                 return;
             }
 
-            bool registrationSuccess = RegisterCustomerInDatabase(fullName, username, email, mobile, password, gender, userType);
+            bool success = RegisterCustomerInDatabase(fullName, username, email, mobile, password, gender, userType);
 
-            if (registrationSuccess)
+            if (success)
             {
                 lblSuccess.Text = "Registration successful! You can now login.";
                 lblSuccess.Visible = true;
@@ -134,71 +136,9 @@ namespace TasteNet
             }
         }
 
-        private void RegisterClientScriptForCustomerValidation()
-        {
-            string script = @"
-                <script type='text/javascript'>
-                    document.getElementById('customerValidationSummary').classList.remove('hidden');
-                    
-                    let errorMessages = [];
-                    const errorLabels = document.querySelectorAll('#customerRegisterCard .field-error, #customerRegisterCard .gender-error');
-                    
-                    errorLabels.forEach(label => {
-                        if (label.textContent.trim() !== '' && label.style.display !== 'none') {
-                            errorMessages.push(label.textContent);
-                        }
-                    });
-                    
-                    const errorList = document.getElementById('customerErrorList');
-                    errorList.innerHTML = '';
-                    errorMessages.forEach(msg => {
-                        const li = document.createElement('li');
-                        li.textContent = msg;
-                        errorList.appendChild(li);
-                    });
-                    
-                    document.getElementById('customerRegisterCard').scrollTop = 0;
-                    
-                    document.querySelectorAll('#customerRegisterCard input, #customerRegisterCard select').forEach(input => {
-                        const inputId = input.id;
-                        const errorLabel = document.querySelector(`[id$='${inputId}Error']`);
-                        if (errorLabel && errorLabel.textContent.trim() !== '' && errorLabel.style.display !== 'none') {
-                            input.classList.add('input-error');
-                        }
-                    });
-                </script>
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerValidation", script);
-        }
-
-        private void RegisterClientScriptForCustomerSuccess()
-        {
-            string script = @"
-                <script type='text/javascript'>
-                    document.getElementById('customerValidationSummary').classList.add('hidden');
-                    document.getElementById('customerSuccessBox').classList.remove('hidden');
-                    document.querySelectorAll('.input-error').forEach(el => {
-                        el.classList.remove('input-error');
-                    });
-                    document.getElementById('customerSuccessBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                </script>
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerSuccess", script);
-        }
-
-        private void RegisterClientScriptForCustomerError()
-        {
-            string script = @"
-                <script type='text/javascript'>
-                    document.getElementById('customerValidationSummary').classList.remove('hidden');
-                    const errorList = document.getElementById('customerErrorList');
-                    errorList.innerHTML = '<li>Registration failed. Username or email might already exist.</li>';
-                    document.getElementById('customerRegisterCard').scrollTop = 0;
-                </script>
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerError", script);
-        }
-
+        // ─────────────────────────────────────────────
+        // RIDER REGISTRATION
+        // ─────────────────────────────────────────────
         protected void btnRiderRegister_Click(object sender, EventArgs e)
         {
             ClearAllMessages();
@@ -213,16 +153,12 @@ namespace TasteNet
             string password = txtRiderPassword.Text.Trim();
             string confirmPassword = txtRiderConfirmPassword.Text.Trim();
             string gender = rblRiderGender.SelectedValue;
-            string userType = "rider";
-            System.Diagnostics.Debug.WriteLine("Current user type: " + userType);
-
             string vehicleType = ddlVehicleType.SelectedValue;
             string makeModel = txtMakeModel.Text.Trim();
             string year = txtYear.Text.Trim();
             string licensePlate = txtLicensePlate.Text.Trim();
             string vehicleColor = txtVehicleColor.Text.Trim();
             string orcr = txtORCR.Text.Trim();
-
             string insurancePolicy = txtInsurancePolicy.Text.Trim();
             string insuranceExpiry = txtInsuranceExpiry.Text.Trim();
 
@@ -312,7 +248,7 @@ namespace TasteNet
                 isValid = false;
             }
 
-            if (string.IsNullOrEmpty(vehicleType) || vehicleType == "")
+            if (string.IsNullOrEmpty(vehicleType))
             {
                 lblVehicleTypeError.Text = "Vehicle type is required";
                 lblVehicleTypeError.Visible = true;
@@ -380,17 +316,15 @@ namespace TasteNet
             else
             {
                 DateTime expiryDate;
-                if (DateTime.TryParse(insuranceExpiry, out expiryDate))
+                if (DateTime.TryParse(insuranceExpiry, out expiryDate) && expiryDate < DateTime.Now)
                 {
-                    if (expiryDate < DateTime.Now)
-                    {
-                        lblInsuranceExpiryError.Text = "Insurance must be valid (not expired)";
-                        lblInsuranceExpiryError.Visible = true;
-                        isValid = false;
-                    }
+                    lblInsuranceExpiryError.Text = "Insurance must be valid (not expired)";
+                    lblInsuranceExpiryError.Visible = true;
+                    isValid = false;
                 }
             }
 
+            // File upload validation
             if (!fuDriverLicense.HasFile)
             {
                 lblDriverLicenseFileError.Text = "Driver's License file is required";
@@ -419,6 +353,7 @@ namespace TasteNet
                 isValid = false;
             }
 
+            // File type/size validation
             if (isValid)
             {
                 string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx" };
@@ -461,6 +396,7 @@ namespace TasteNet
                 return;
             }
 
+            // Save uploaded files
             Dictionary<string, string> uploadedFiles = new Dictionary<string, string>();
             try
             {
@@ -477,15 +413,15 @@ namespace TasteNet
                 return;
             }
 
-            bool registrationSuccess = RegisterRiderInDatabase(
+            bool success = RegisterRiderInDatabase(
                 fullName, username, email, mobile, driverLicense, nbiClearance,
                 password, gender, vehicleType, makeModel, year, licensePlate,
                 vehicleColor, orcr, insurancePolicy, insuranceExpiry, uploadedFiles
             );
 
-            if (registrationSuccess)
+            if (success)
             {
-                lblRiderSuccess.Text = "Rider application submitted successfully! We will review your documents and contact you soon.";
+                lblRiderSuccess.Text = "Rider application submitted! We will review your documents and contact you soon.";
                 lblRiderSuccess.Visible = true;
                 RegisterClientScriptForRiderSuccess();
                 ClearRiderFormFields();
@@ -498,7 +434,7 @@ namespace TasteNet
 
                 foreach (var filePath in uploadedFiles.Values)
                 {
-                    if (File.Exists(filePath))
+                    if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
                     {
                         try { File.Delete(filePath); } catch { }
                     }
@@ -506,214 +442,60 @@ namespace TasteNet
             }
         }
 
-        private void RegisterClientScriptForRiderValidation()
-        {
-            string script = @"
-                <script type='text/javascript'>
-                    document.getElementById('riderValidationSummary').classList.remove('hidden');
-                    
-                    let errorMessages = [];
-                    const errorLabels = document.querySelectorAll('#riderRegisterCard .field-error, #riderRegisterCard .gender-error');
-                    
-                    errorLabels.forEach(label => {
-                        if (label.textContent.trim() !== '' && label.style.display !== 'none') {
-                            errorMessages.push(label.textContent);
-                        }
-                    });
-                    
-                    const errorList = document.getElementById('riderErrorList');
-                    errorList.innerHTML = '';
-                    errorMessages.forEach(msg => {
-                        const li = document.createElement('li');
-                        li.textContent = msg;
-                        errorList.appendChild(li);
-                    });
-                    
-                    document.getElementById('riderRegisterCard').scrollTop = 0;
-                    
-                    document.querySelectorAll('#riderRegisterCard input, #riderRegisterCard select, #riderRegisterCard .file-upload-input').forEach(input => {
-                        const inputId = input.id;
-                        const errorLabel = document.querySelector(`[id$='${inputId}Error']`);
-                        if (errorLabel && errorLabel.textContent.trim() !== '' && errorLabel.style.display !== 'none') {
-                            input.classList.add('input-error');
-                        }
-                    });
-                </script>
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderValidation", script);
-        }
-
-        private void RegisterClientScriptForRiderSuccess()
-        {
-            string script = @"
-                <script type='text/javascript'>
-                    document.getElementById('riderValidationSummary').classList.add('hidden');
-                    document.getElementById('riderSuccessBox').classList.remove('hidden');
-                    document.querySelectorAll('.input-error').forEach(el => {
-                        el.classList.remove('input-error');
-                    });
-                    document.getElementById('riderSuccessBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
-                </script>
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderSuccess", script);
-        }
-
-        private void RegisterClientScriptForRiderError()
-        {
-            string script = @"
-                <script type='text/javascript'>
-                    document.getElementById('riderValidationSummary').classList.remove('hidden');
-                    const errorList = document.getElementById('riderErrorList');
-                    errorList.innerHTML = '<li>Registration failed. Username or email might already exist.</li>';
-                    document.getElementById('riderRegisterCard').scrollTop = 0;
-                </script>
-            ";
-            ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderError", script);
-        }
-
-        private bool ValidateFileUpload(FileUpload fileUpload, string[] allowedExtensions, long maxSize)
-        {
-            if (!fileUpload.HasFile) return false;
-
-            string fileExtension = Path.GetExtension(fileUpload.FileName).ToLower();
-            if (!allowedExtensions.Contains(fileExtension)) return false;
-
-            if (fileUpload.FileContent.Length > maxSize) return false;
-
-            return true;
-        }
-
-        private string SaveUploadedFile(FileUpload fileUpload, string username, string documentType)
-        {
-            if (!fileUpload.HasFile) return null;
-
-            string uploadsFolder = Server.MapPath("~/Uploads/RiderDocuments/" + username);
-            if (!Directory.Exists(uploadsFolder))
-            {
-                Directory.CreateDirectory(uploadsFolder);
-            }
-
-            string fileExtension = Path.GetExtension(fileUpload.FileName);
-            string fileName = $"{documentType}_{DateTime.Now:yyyyMMddHHmmss}{fileExtension}";
-            string filePath = Path.Combine(uploadsFolder, fileName);
-
-            fileUpload.SaveAs(filePath);
-
-            return filePath;
-        }
-
-        private void ClearAllMessages()
-        {
-            lblGeneralError.Visible = false;
-            lblGeneralError.Text = "";
-
-            lblFullNameError.Visible = false;
-            lblFullNameError.Text = "";
-
-            lblUsernameError.Visible = false;
-            lblUsernameError.Text = "";
-
-            lblEmailError.Visible = false;
-            lblEmailError.Text = "";
-
-            lblMobileError.Visible = false;
-            lblMobileError.Text = "";
-
-            lblPasswordError.Visible = false;
-            lblPasswordError.Text = "";
-
-            lblConfirmPasswordError.Visible = false;
-            lblConfirmPasswordError.Text = "";
-
-            lblGenderError.Visible = false;
-            lblGenderError.Text = "";
-
-            lblSuccess.Visible = false;
-            lblSuccess.Text = "";
-        }
-
-        private void ClearRiderMessages()
-        {
-            lblRiderGeneralError.Visible = false;
-            lblRiderGeneralError.Text = "";
-
-            lblRiderFullNameError.Visible = false;
-            lblRiderFullNameError.Text = "";
-
-            lblRiderUsernameError.Visible = false;
-            lblRiderUsernameError.Text = "";
-
-            lblRiderEmailError.Visible = false;
-            lblRiderEmailError.Text = "";
-
-            lblRiderMobileError.Visible = false;
-            lblRiderMobileError.Text = "";
-
-            lblDriverLicenseError.Visible = false;
-            lblDriverLicenseError.Text = "";
-
-            lblNBIClearanceError.Visible = false;
-            lblNBIClearanceError.Text = "";
-
-            lblRiderPasswordError.Visible = false;
-            lblRiderPasswordError.Text = "";
-
-            lblRiderConfirmPasswordError.Visible = false;
-            lblRiderConfirmPasswordError.Text = "";
-
-            lblRiderGenderError.Visible = false;
-            lblRiderGenderError.Text = "";
-
-            lblVehicleTypeError.Visible = false;
-            lblVehicleTypeError.Text = "";
-
-            lblMakeModelError.Visible = false;
-            lblMakeModelError.Text = "";
-
-            lblYearError.Visible = false;
-            lblYearError.Text = "";
-
-            lblLicensePlateError.Visible = false;
-            lblLicensePlateError.Text = "";
-
-            lblVehicleColorError.Visible = false;
-            lblVehicleColorError.Text = "";
-
-            lblORCRError.Visible = false;
-            lblORCRError.Text = "";
-
-            lblInsurancePolicyError.Visible = false;
-            lblInsurancePolicyError.Text = "";
-
-            lblInsuranceExpiryError.Visible = false;
-            lblInsuranceExpiryError.Text = "";
-
-            lblDriverLicenseFileError.Visible = false;
-            lblDriverLicenseFileError.Text = "";
-
-            lblVehicleRegistrationError.Visible = false;
-            lblVehicleRegistrationError.Text = "";
-
-            lblInsuranceFileError.Visible = false;
-            lblInsuranceFileError.Text = "";
-
-            lblNBIClearanceFileError.Visible = false;
-            lblNBIClearanceFileError.Text = "";
-
-            lblRiderSuccess.Visible = false;
-            lblRiderSuccess.Text = "";
-        }
-
-        private bool RegisterCustomerInDatabase(string name, string user, string mail, string phone, string pass, string gen, string userType)
+        // ─────────────────────────────────────────────
+        // DATABASE METHODS - NO HASHING
+        // ─────────────────────────────────────────────
+        private bool RegisterCustomerInDatabase(string name, string user, string mail,
+            string phone, string pass, string gen, string userType)
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Customer Registration: {name}, {user}, {mail}, UserType: {userType}");
-                return true;
+                // NO HASHING - Store password as plain text
+                string plainPassword = pass;
+
+                using (SqlConnection conn = GetConnection())
+                {
+                    conn.Open();
+
+                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username OR Email = @Email";
+                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@Username", user);
+                        checkCmd.Parameters.AddWithValue("@Email", mail);
+                        int existing = (int)checkCmd.ExecuteScalar();
+                        if (existing > 0)
+                        {
+                            return false;
+                        }
+                    }
+
+                    string insertQuery = @"
+                        INSERT INTO Users 
+                            (Username, Password, UserType, FullName, Email, Phone, Gender, IsActive, CreatedAt)
+                        VALUES 
+                            (@Username, @Password, @UserType, @FullName, @Email, @Phone, @Gender, @IsActive, @CreatedAt)";
+
+                    using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
+                    {
+                        insertCmd.Parameters.AddWithValue("@Username", user);
+                        insertCmd.Parameters.AddWithValue("@Password", plainPassword); // Plain text!
+                        insertCmd.Parameters.AddWithValue("@UserType", userType);
+                        insertCmd.Parameters.AddWithValue("@FullName", name);
+                        insertCmd.Parameters.AddWithValue("@Email", mail);
+                        insertCmd.Parameters.AddWithValue("@Phone", phone);
+                        insertCmd.Parameters.AddWithValue("@Gender", gen);
+                        insertCmd.Parameters.AddWithValue("@IsActive", 1);
+                        insertCmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                        int rows = insertCmd.ExecuteNonQuery();
+                        return rows > 0;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Customer registration error: {ex.Message}");
+                lblGeneralError.Text = "DB Error: " + ex.Message;
+                lblGeneralError.Visible = true;
                 return false;
             }
         }
@@ -727,20 +509,101 @@ namespace TasteNet
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"Rider Registration Attempt:");
-                System.Diagnostics.Debug.WriteLine($"Name: {name}, Username: {user}");
-                System.Diagnostics.Debug.WriteLine($"Email: {mail}, Phone: {phone}");
-                System.Diagnostics.Debug.WriteLine($"Vehicle: {makeModel} ({year})");
-                System.Diagnostics.Debug.WriteLine($"License Plate: {licensePlate}");
-                System.Diagnostics.Debug.WriteLine($"Documents uploaded: {uploadedFiles.Count}");
+                // NO HASHING - Store password as plain text
+                string plainPassword = pass;
 
-                return true;
+                using (SqlConnection conn = GetConnection())
+                {
+                    conn.Open();
+
+                    string checkQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username OR Email = @Email";
+                    using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@Username", user);
+                        checkCmd.Parameters.AddWithValue("@Email", mail);
+                        int existing = (int)checkCmd.ExecuteScalar();
+                        if (existing > 0)
+                        {
+                            return false;
+                        }
+                    }
+
+                    string insertUserQuery = @"
+                        INSERT INTO Users 
+                            (Username, Password, UserType, FullName, Email, Phone, Gender, IsActive, CreatedAt)
+                        VALUES 
+                            (@Username, @Password, @UserType, @FullName, @Email, @Phone, @Gender, @IsActive, @CreatedAt);
+                        SELECT SCOPE_IDENTITY();";
+
+                    int userId;
+                    using (SqlCommand insertUserCmd = new SqlCommand(insertUserQuery, conn))
+                    {
+                        insertUserCmd.Parameters.AddWithValue("@Username", user);
+                        insertUserCmd.Parameters.AddWithValue("@Password", plainPassword); // Plain text!
+                        insertUserCmd.Parameters.AddWithValue("@UserType", "Rider");
+                        insertUserCmd.Parameters.AddWithValue("@FullName", name);
+                        insertUserCmd.Parameters.AddWithValue("@Email", mail);
+                        insertUserCmd.Parameters.AddWithValue("@Phone", phone);
+                        insertUserCmd.Parameters.AddWithValue("@Gender", gen);
+                        insertUserCmd.Parameters.AddWithValue("@IsActive", 1);
+                        insertUserCmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
+
+                        userId = Convert.ToInt32(insertUserCmd.ExecuteScalar());
+                    }
+
+                    string insertRiderQuery = @"
+                        INSERT INTO RiderApplications 
+                            (UserID, DriverLicense, NBIClearance, VehicleType, MakeModel, Year,
+                             LicensePlate, VehicleColor, ORCRNumber, InsurancePolicy, InsuranceExpiry,
+                             DriverLicenseFile, VehicleRegistrationFile, InsuranceFile, NBIClearanceFile,
+                             ApplicationDate, Status)
+                        VALUES 
+                            (@UserID, @DriverLicense, @NBIClearance, @VehicleType, @MakeModel, @Year,
+                             @LicensePlate, @VehicleColor, @ORCRNumber, @InsurancePolicy, @InsuranceExpiry,
+                             @DriverLicenseFile, @VehicleRegistrationFile, @InsuranceFile, @NBIClearanceFile,
+                             @ApplicationDate, @Status)";
+
+                    using (SqlCommand insertRiderCmd = new SqlCommand(insertRiderQuery, conn))
+                    {
+                        insertRiderCmd.Parameters.AddWithValue("@UserID", userId);
+                        insertRiderCmd.Parameters.AddWithValue("@DriverLicense", driverLicense);
+                        insertRiderCmd.Parameters.AddWithValue("@NBIClearance", nbiClearance);
+                        insertRiderCmd.Parameters.AddWithValue("@VehicleType", vehicleType);
+                        insertRiderCmd.Parameters.AddWithValue("@MakeModel", makeModel);
+                        insertRiderCmd.Parameters.AddWithValue("@Year", Convert.ToInt32(year));
+                        insertRiderCmd.Parameters.AddWithValue("@LicensePlate", licensePlate);
+                        insertRiderCmd.Parameters.AddWithValue("@VehicleColor", vehicleColor);
+                        insertRiderCmd.Parameters.AddWithValue("@ORCRNumber", orcr);
+                        insertRiderCmd.Parameters.AddWithValue("@InsurancePolicy", insurancePolicy);
+                        insertRiderCmd.Parameters.AddWithValue("@InsuranceExpiry", Convert.ToDateTime(insuranceExpiry));
+                        insertRiderCmd.Parameters.AddWithValue("@DriverLicenseFile", uploadedFiles.ContainsKey("DriverLicense") ? uploadedFiles["DriverLicense"] : "");
+                        insertRiderCmd.Parameters.AddWithValue("@VehicleRegistrationFile", uploadedFiles.ContainsKey("VehicleRegistration") ? uploadedFiles["VehicleRegistration"] : "");
+                        insertRiderCmd.Parameters.AddWithValue("@InsuranceFile", uploadedFiles.ContainsKey("Insurance") ? uploadedFiles["Insurance"] : "");
+                        insertRiderCmd.Parameters.AddWithValue("@NBIClearanceFile", uploadedFiles.ContainsKey("NBIClearance") ? uploadedFiles["NBIClearance"] : "");
+                        insertRiderCmd.Parameters.AddWithValue("@ApplicationDate", DateTime.Now);
+                        insertRiderCmd.Parameters.AddWithValue("@Status", "Pending");
+
+                        insertRiderCmd.ExecuteNonQuery();
+                    }
+
+                    return true;
+                }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Rider registration error: {ex.Message}");
+                lblRiderGeneralError.Text = "DB Error: " + ex.Message;
+                lblRiderGeneralError.Visible = true;
                 return false;
             }
+        }
+
+        // ─────────────────────────────────────────────
+        // HELPER METHODS
+        // ─────────────────────────────────────────────
+        private SqlConnection GetConnection()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
+            return new SqlConnection(connectionString);
         }
 
         private bool IsValidEmail(string email)
@@ -750,12 +613,126 @@ namespace TasteNet
                 var addr = new System.Net.Mail.MailAddress(email);
                 return addr.Address == email;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
+        private bool ValidateFileUpload(FileUpload fileUpload, string[] allowedExtensions, long maxSize)
+        {
+            if (!fileUpload.HasFile) return false;
+            string ext = Path.GetExtension(fileUpload.FileName).ToLower();
+            if (!System.Linq.Enumerable.Contains(allowedExtensions, ext)) return false;
+            if (fileUpload.FileContent.Length > maxSize) return false;
+            return true;
+        }
+
+        private string SaveUploadedFile(FileUpload fileUpload, string username, string documentType)
+        {
+            if (!fileUpload.HasFile) return null;
+
+            string folder = Server.MapPath("~/Uploads/RiderDocuments/" + username);
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string ext = Path.GetExtension(fileUpload.FileName);
+            string fileName = $"{documentType}_{DateTime.Now:yyyyMMddHHmmss}{ext}";
+            string filePath = Path.Combine(folder, fileName);
+
+            fileUpload.SaveAs(filePath);
+            return filePath;
+        }
+
+        // ─────────────────────────────────────────────
+        // CLIENT SCRIPTS
+        // ─────────────────────────────────────────────
+        private void RegisterClientScriptForCustomerValidation()
+        {
+            string script = @"
+                <script type='text/javascript'>
+                    document.getElementById('customerValidationSummary').classList.remove('hidden');
+                    let errorMessages = [];
+                    document.querySelectorAll('#customerRegisterCard .field-error, #customerRegisterCard .gender-error').forEach(label => {
+                        if (label.textContent.trim() !== '') errorMessages.push(label.textContent);
+                    });
+                    const errorList = document.getElementById('customerErrorList');
+                    errorList.innerHTML = '';
+                    errorMessages.forEach(msg => {
+                        const li = document.createElement('li');
+                        li.textContent = msg;
+                        errorList.appendChild(li);
+                    });
+                    document.getElementById('customerRegisterCard').scrollTop = 0;
+                </script>";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerValidation", script);
+        }
+
+        private void RegisterClientScriptForCustomerSuccess()
+        {
+            string script = @"
+                <script type='text/javascript'>
+                    document.getElementById('customerValidationSummary').classList.add('hidden');
+                    document.getElementById('customerSuccessBox').classList.remove('hidden');
+                    document.getElementById('customerSuccessBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                </script>";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerSuccess", script);
+        }
+
+        private void RegisterClientScriptForCustomerError()
+        {
+            string script = @"
+                <script type='text/javascript'>
+                    document.getElementById('customerValidationSummary').classList.remove('hidden');
+                    document.getElementById('customerErrorList').innerHTML = '<li>Registration failed. Username or email might already exist.</li>';
+                    document.getElementById('customerRegisterCard').scrollTop = 0;
+                </script>";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerError", script);
+        }
+
+        private void RegisterClientScriptForRiderValidation()
+        {
+            string script = @"
+                <script type='text/javascript'>
+                    document.getElementById('riderValidationSummary').classList.remove('hidden');
+                    let errorMessages = [];
+                    document.querySelectorAll('#riderRegisterCard .field-error, #riderRegisterCard .gender-error').forEach(label => {
+                        if (label.textContent.trim() !== '') errorMessages.push(label.textContent);
+                    });
+                    const errorList = document.getElementById('riderErrorList');
+                    errorList.innerHTML = '';
+                    errorMessages.forEach(msg => {
+                        const li = document.createElement('li');
+                        li.textContent = msg;
+                        errorList.appendChild(li);
+                    });
+                    document.getElementById('riderRegisterCard').scrollTop = 0;
+                </script>";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderValidation", script);
+        }
+
+        private void RegisterClientScriptForRiderSuccess()
+        {
+            string script = @"
+                <script type='text/javascript'>
+                    document.getElementById('riderValidationSummary').classList.add('hidden');
+                    document.getElementById('riderSuccessBox').classList.remove('hidden');
+                    document.getElementById('riderSuccessBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                </script>";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderSuccess", script);
+        }
+
+        private void RegisterClientScriptForRiderError()
+        {
+            string script = @"
+                <script type='text/javascript'>
+                    document.getElementById('riderValidationSummary').classList.remove('hidden');
+                    document.getElementById('riderErrorList').innerHTML = '<li>Registration failed. Username or email might already exist.</li>';
+                    document.getElementById('riderRegisterCard').scrollTop = 0;
+                </script>";
+            ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderError", script);
+        }
+
+        // ─────────────────────────────────────────────
+        // CLEAR FORM FIELDS
+        // ─────────────────────────────────────────────
         private void ClearFormFields()
         {
             txtFullName.Text = "";
@@ -778,21 +755,57 @@ namespace TasteNet
             txtRiderPassword.Text = "";
             txtRiderConfirmPassword.Text = "";
             rblRiderGender.ClearSelection();
-
             ddlVehicleType.SelectedIndex = 0;
             txtMakeModel.Text = "";
             txtYear.Text = "";
             txtLicensePlate.Text = "";
             txtVehicleColor.Text = "";
             txtORCR.Text = "";
-
             txtInsurancePolicy.Text = "";
             txtInsuranceExpiry.Text = "";
+        }
 
-            fuDriverLicense.Attributes.Clear();
-            fuVehicleRegistration.Attributes.Clear();
-            fuInsurance.Attributes.Clear();
-            fuNBIClearance.Attributes.Clear();
+        // ─────────────────────────────────────────────
+        // CLEAR MESSAGES
+        // ─────────────────────────────────────────────
+        private void ClearAllMessages()
+        {
+            lblGeneralError.Visible = false; lblGeneralError.Text = "";
+            lblFullNameError.Visible = false; lblFullNameError.Text = "";
+            lblUsernameError.Visible = false; lblUsernameError.Text = "";
+            lblEmailError.Visible = false; lblEmailError.Text = "";
+            lblMobileError.Visible = false; lblMobileError.Text = "";
+            lblPasswordError.Visible = false; lblPasswordError.Text = "";
+            lblConfirmPasswordError.Visible = false; lblConfirmPasswordError.Text = "";
+            lblGenderError.Visible = false; lblGenderError.Text = "";
+            lblSuccess.Visible = false; lblSuccess.Text = "";
+        }
+
+        private void ClearRiderMessages()
+        {
+            lblRiderGeneralError.Visible = false; lblRiderGeneralError.Text = "";
+            lblRiderFullNameError.Visible = false; lblRiderFullNameError.Text = "";
+            lblRiderUsernameError.Visible = false; lblRiderUsernameError.Text = "";
+            lblRiderEmailError.Visible = false; lblRiderEmailError.Text = "";
+            lblRiderMobileError.Visible = false; lblRiderMobileError.Text = "";
+            lblDriverLicenseError.Visible = false; lblDriverLicenseError.Text = "";
+            lblNBIClearanceError.Visible = false; lblNBIClearanceError.Text = "";
+            lblRiderPasswordError.Visible = false; lblRiderPasswordError.Text = "";
+            lblRiderConfirmPasswordError.Visible = false; lblRiderConfirmPasswordError.Text = "";
+            lblRiderGenderError.Visible = false; lblRiderGenderError.Text = "";
+            lblVehicleTypeError.Visible = false; lblVehicleTypeError.Text = "";
+            lblMakeModelError.Visible = false; lblMakeModelError.Text = "";
+            lblYearError.Visible = false; lblYearError.Text = "";
+            lblLicensePlateError.Visible = false; lblLicensePlateError.Text = "";
+            lblVehicleColorError.Visible = false; lblVehicleColorError.Text = "";
+            lblORCRError.Visible = false; lblORCRError.Text = "";
+            lblInsurancePolicyError.Visible = false; lblInsurancePolicyError.Text = "";
+            lblInsuranceExpiryError.Visible = false; lblInsuranceExpiryError.Text = "";
+            lblDriverLicenseFileError.Visible = false; lblDriverLicenseFileError.Text = "";
+            lblVehicleRegistrationError.Visible = false; lblVehicleRegistrationError.Text = "";
+            lblInsuranceFileError.Visible = false; lblInsuranceFileError.Text = "";
+            lblNBIClearanceFileError.Visible = false; lblNBIClearanceFileError.Text = "";
+            lblRiderSuccess.Visible = false; lblRiderSuccess.Text = "";
         }
     }
 }
