@@ -947,7 +947,6 @@
             document.getElementById('userTypeCard').classList.remove('hidden');
         }
 
-        // Password toggle functionality
         const togglePwd = document.getElementById("togglePwd");
         const pwd = document.getElementById('<%= txtPassword.ClientID %>');
         const toggleConfirmPwd = document.getElementById("toggleConfirmPwd");

@@ -10,9 +10,6 @@ namespace TasteNet
 {
     public partial class Register : System.Web.UI.Page
     {
-        // ─────────────────────────────────────────────
-        // PAGE LOAD
-        // ─────────────────────────────────────────────
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -21,10 +18,6 @@ namespace TasteNet
                 ClearRiderMessages();
             }
         }
-
-        // ─────────────────────────────────────────────
-        // CUSTOMER REGISTRATION
-        // ─────────────────────────────────────────────
         protected void btnCustomerRegister_Click(object sender, EventArgs e)
         {
             ClearAllMessages();
@@ -135,10 +128,6 @@ namespace TasteNet
                 RegisterClientScriptForCustomerError();
             }
         }
-
-        // ─────────────────────────────────────────────
-        // RIDER REGISTRATION
-        // ─────────────────────────────────────────────
         protected void btnRiderRegister_Click(object sender, EventArgs e)
         {
             ClearAllMessages();
@@ -324,7 +313,6 @@ namespace TasteNet
                 }
             }
 
-            // File upload validation
             if (!fuDriverLicense.HasFile)
             {
                 lblDriverLicenseFileError.Text = "Driver's License file is required";
@@ -353,7 +341,6 @@ namespace TasteNet
                 isValid = false;
             }
 
-            // File type/size validation
             if (isValid)
             {
                 string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx" };
@@ -396,7 +383,6 @@ namespace TasteNet
                 return;
             }
 
-            // Save uploaded files
             Dictionary<string, string> uploadedFiles = new Dictionary<string, string>();
             try
             {
@@ -441,16 +427,11 @@ namespace TasteNet
                 }
             }
         }
-
-        // ─────────────────────────────────────────────
-        // DATABASE METHODS - NO HASHING
-        // ─────────────────────────────────────────────
         private bool RegisterCustomerInDatabase(string name, string user, string mail,
             string phone, string pass, string gen, string userType)
         {
             try
             {
-                // NO HASHING - Store password as plain text
                 string plainPassword = pass;
 
                 using (SqlConnection conn = GetConnection())
@@ -499,7 +480,6 @@ namespace TasteNet
                 return false;
             }
         }
-
         private bool RegisterRiderInDatabase(
             string name, string user, string mail, string phone,
             string driverLicense, string nbiClearance, string pass, string gen,
@@ -509,7 +489,6 @@ namespace TasteNet
         {
             try
             {
-                // NO HASHING - Store password as plain text
                 string plainPassword = pass;
 
                 using (SqlConnection conn = GetConnection())
@@ -596,16 +575,11 @@ namespace TasteNet
                 return false;
             }
         }
-
-        // ─────────────────────────────────────────────
-        // HELPER METHODS
-        // ─────────────────────────────────────────────
         private SqlConnection GetConnection()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
             return new SqlConnection(connectionString);
         }
-
         private bool IsValidEmail(string email)
         {
             try
@@ -615,7 +589,6 @@ namespace TasteNet
             }
             catch { return false; }
         }
-
         private bool ValidateFileUpload(FileUpload fileUpload, string[] allowedExtensions, long maxSize)
         {
             if (!fileUpload.HasFile) return false;
@@ -624,7 +597,6 @@ namespace TasteNet
             if (fileUpload.FileContent.Length > maxSize) return false;
             return true;
         }
-
         private string SaveUploadedFile(FileUpload fileUpload, string username, string documentType)
         {
             if (!fileUpload.HasFile) return null;
@@ -640,10 +612,6 @@ namespace TasteNet
             fileUpload.SaveAs(filePath);
             return filePath;
         }
-
-        // ─────────────────────────────────────────────
-        // CLIENT SCRIPTS
-        // ─────────────────────────────────────────────
         private void RegisterClientScriptForCustomerValidation()
         {
             string script = @"
@@ -664,7 +632,6 @@ namespace TasteNet
                 </script>";
             ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerValidation", script);
         }
-
         private void RegisterClientScriptForCustomerSuccess()
         {
             string script = @"
@@ -675,7 +642,6 @@ namespace TasteNet
                 </script>";
             ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerSuccess", script);
         }
-
         private void RegisterClientScriptForCustomerError()
         {
             string script = @"
@@ -686,7 +652,6 @@ namespace TasteNet
                 </script>";
             ClientScript.RegisterStartupScript(this.GetType(), "ShowCustomerError", script);
         }
-
         private void RegisterClientScriptForRiderValidation()
         {
             string script = @"
@@ -718,7 +683,6 @@ namespace TasteNet
                 </script>";
             ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderSuccess", script);
         }
-
         private void RegisterClientScriptForRiderError()
         {
             string script = @"
@@ -730,9 +694,6 @@ namespace TasteNet
             ClientScript.RegisterStartupScript(this.GetType(), "ShowRiderError", script);
         }
 
-        // ─────────────────────────────────────────────
-        // CLEAR FORM FIELDS
-        // ─────────────────────────────────────────────
         private void ClearFormFields()
         {
             txtFullName.Text = "";
@@ -743,7 +704,6 @@ namespace TasteNet
             txtConfirmPassword.Text = "";
             rblGender.ClearSelection();
         }
-
         private void ClearRiderFormFields()
         {
             txtRiderFullName.Text = "";
@@ -764,10 +724,6 @@ namespace TasteNet
             txtInsurancePolicy.Text = "";
             txtInsuranceExpiry.Text = "";
         }
-
-        // ─────────────────────────────────────────────
-        // CLEAR MESSAGES
-        // ─────────────────────────────────────────────
         private void ClearAllMessages()
         {
             lblGeneralError.Visible = false; lblGeneralError.Text = "";
@@ -780,7 +736,6 @@ namespace TasteNet
             lblGenderError.Visible = false; lblGenderError.Text = "";
             lblSuccess.Visible = false; lblSuccess.Text = "";
         }
-
         private void ClearRiderMessages()
         {
             lblRiderGeneralError.Visible = false; lblRiderGeneralError.Text = "";

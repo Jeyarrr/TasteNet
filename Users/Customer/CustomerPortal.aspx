@@ -188,6 +188,7 @@
             display: flex; 
             gap: 3px; 
             font-size: 1.2rem; 
+            position: relative;
         }
         
         .nav-icons a { 
@@ -266,6 +267,123 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
         }
 
+        /* Profile Dropdown Modal - Like Cart Modal */
+        .profile-dropdown {
+            display: none;
+            position: absolute;
+            top: 55px;
+            right: 10px;
+            width: 280px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 2002;
+            animation: fadeInDown 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border-left: 4px solid var(--primary-maroon);
+            overflow: hidden;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .profile-dropdown-header {
+            background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .profile-dropdown-header .profile-avatar-small {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            border: 2px solid var(--accent-yellow);
+        }
+        
+        .profile-dropdown-header .profile-avatar-small i {
+            font-size: 1.5rem;
+            color: var(--accent-yellow);
+        }
+        
+        .profile-dropdown-header .profile-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 3px;
+        }
+        
+        .profile-dropdown-header .profile-email {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .profile-dropdown-menu {
+            padding: 8px 0;
+            background: white;
+        }
+        
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .profile-dropdown-item:hover {
+            background: rgba(125, 10, 34, 0.06);
+            padding-left: 22px;
+        }
+        
+        .profile-dropdown-item i {
+            width: 20px;
+            color: var(--primary-maroon);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .profile-dropdown-item:hover i {
+            color: var(--accent-yellow);
+        }
+        
+        .profile-dropdown-divider {
+            height: 1px;
+            background: #eee;
+            margin: 5px 0;
+        }
+        
+        .profile-dropdown-logout {
+            color: #ff4444;
+        }
+        
+        .profile-dropdown-logout i {
+            color: #ff4444;
+        }
+        
+        .profile-dropdown-logout:hover {
+            background: rgba(255, 68, 68, 0.08);
+        }
+        
+        .profile-dropdown-logout:hover i {
+            color: #ff4444;
+        }
+
         .cart-modal {
             display: none;
             position: fixed;
@@ -288,8 +406,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .cart-modal-content {
@@ -305,7 +422,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            animation: slideIn 0.3s ease;
+            animation: slideIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             border: 2px solid var(--accent-yellow);
         }
 
@@ -673,8 +790,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .meal-modal-content {
@@ -689,7 +805,7 @@
             border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
             border: 2px solid var(--accent-yellow);
-            animation: slideInUp 0.3s ease;
+            animation: slideInUp 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -1002,6 +1118,103 @@
             border-color: var(--accent-yellow);
             transform: translateY(-1px);
             box-shadow: 0 5px 15px rgba(125, 10, 34, 0.15);
+        }
+
+        .login-required-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2003;
+            animation: fadeIn 0.3s ease;
+        }
+        .login-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .login-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            border: 2px solid var(--accent-yellow);
+            animation: slideInUp 0.3s ease;
+            overflow: hidden;
+        }
+        .login-modal-header {
+            background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--accent-yellow);
+        }
+        .login-modal-header i {
+            font-size: 3rem;
+            color: var(--accent-yellow);
+            margin-bottom: 10px;
+        }
+        .login-modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .login-modal-body {
+            padding: 30px;
+            text-align: center;
+        }
+        .login-modal-body p {
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+        .login-modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .btn-login-now {
+            background: var(--primary-maroon);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-login-now:hover {
+            background: var(--accent-yellow);
+            color: var(--primary-maroon);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-cancel-login {
+            background: #f8f8f8;
+            color: var(--text-muted);
+            border: 1px solid #ddd;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-cancel-login:hover {
+            background: #e0e0e0;
+            color: var(--primary-maroon);
         }
 
         .section-fade-in {
@@ -1539,7 +1752,6 @@
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
         
-        /* Menu Category Containers */
         .menu-category-container {
             margin-bottom: 60px;
             width: 100%;
@@ -1572,7 +1784,6 @@
             border-radius: 2px;
         }
 
-        /* Updated grid for 6 per row */
         .menu-grid-container.six-per-row {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -1582,7 +1793,6 @@
             justify-items: center;
         }
         
-        /* Updated menu container for 6 per row */
         .menu-container {
             background: #fff;
             padding: 15px 12px;
@@ -1668,7 +1878,6 @@
             padding: 0 2px;
         }
 
-        /* New meal description style */
         .meal-description-short {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -1681,7 +1890,6 @@
             justify-content: center;
         }
 
-        /* Price and rating row */
         .price-rating-row {
             display: flex;
             justify-content: space-between;
@@ -1691,7 +1899,6 @@
             padding: 0 3px;
         }
 
-        /* Updated rating stars - just one star with number */
         .rating-stars {
             display: flex;
             align-items: center;
@@ -1711,7 +1918,6 @@
             font-weight: 600;
         }
 
-        /* Updated price style - smaller */
         .item-price-small {
             font-size: 1rem;
             font-weight: 700;
@@ -1722,7 +1928,6 @@
             display: inline-block;
         }
 
-        /* Updated button container - adjusted for better fit */
         .menu-item-buttons {
             display: flex;
             gap: 6px;
@@ -1733,7 +1938,6 @@
             width: 100%;
         }
 
-        /* Updated view button - more compact */
         .view-btn {
             background: transparent;
             color: var(--primary-maroon);
@@ -1764,7 +1968,6 @@
             font-size: 0.8rem;
         }
 
-        /* Updated add to cart button - more compact */
         .add-to-cart-btn-text {
             background: var(--accent-yellow);
             color: var(--primary-maroon);
@@ -1796,7 +1999,6 @@
             font-size: 0.8rem;
         }
 
-        /* Floating Back to Top Button */
         .back-to-top {
             position: fixed;
             bottom: 30px;
@@ -1839,7 +2041,6 @@
             transform: translateY(-3px);
         }
 
-        /* Tooltip for back to top button */
         .back-to-top::before {
             content: 'Back to Top';
             position: absolute;
@@ -2407,7 +2608,6 @@
             color: #ffed4e;
         }
 
-        /* Updated menu container adjustments for 6 per row */
         .menu-grid-container.six-per-row .menu-container {
             max-width: 100%;
             min-height: 420px;
@@ -2426,7 +2626,6 @@
             margin-bottom: 4px;
         }
 
-        /* Responsive adjustments for 6 per row */
         @media (max-width: 1400px) {
             .menu-grid-container.six-per-row {
                 grid-template-columns: repeat(5, 1fr);
@@ -2868,9 +3067,58 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <!-- Floating Back to Top Button -->
         <div class="back-to-top" id="backToTopBtn" onclick="scrollToTop()">
             <i class="fas fa-arrow-up"></i>
+        </div>
+
+        <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+                <div class="profile-avatar-small">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-name" id="dropdownFullName">jayr bermeo casano</div>
+                <div class="profile-email" id="dropdownEmail">jayrcasano01@gmail.com</div>
+            </div>
+            <div class="profile-dropdown-menu">
+                <a href="#" class="profile-dropdown-item" id="dropdownMyProfileLink">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="profile-dropdown-item" id="dropdownMessagesLink">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="profile-dropdown-item" id="dropdownTermsLink">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Terms & Privacy Policy</span>
+                </a>
+                <div class="profile-dropdown-divider"></div>
+                <a href="<%= ResolveUrl("~/Login.aspx") %>" class="profile-dropdown-item profile-dropdown-logout" id="dropdownLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>LOG OUT</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="login-required-modal" id="loginRequiredModal">
+            <div class="login-modal-overlay" id="loginOverlay"></div>
+            <div class="login-modal-content">
+                <div class="login-modal-header">
+                    <i class="fas fa-lock"></i>
+                    <h3>Login Required</h3>
+                </div>
+                <div class="login-modal-body">
+                    <p>You need to log in first before adding items to your cart.</p>
+                    <div class="login-modal-actions">
+                        <a href="<%= ResolveUrl("~/Login.aspx") %>" class="btn-login-now">
+                            <i class="fas fa-sign-in-alt"></i> Login Now
+                        </a>
+                        <button type="button" class="btn-cancel-login" id="cancelLoginBtn">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <nav class="navbar">
@@ -2889,7 +3137,9 @@
                     <i class="fas fa-shopping-basket"></i>
                     <span class="cart-badge" id="cartBadge">0</span>
                 </a>
-                <a href="<%= ResolveUrl("~/Login.aspx") %>" data-tooltip="Account"><i class="fas fa-user-circle"></i></a>
+                <a href="#" data-tooltip="Account" id="profileIcon">
+                    <i class="fas fa-user-circle"></i>
+                </a>
             </div>
         </nav>
 
@@ -2985,8 +3235,8 @@
 
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" class="search-input" placeholder="Search for Tapsilog, Sisig, or your Favorite..." />
-                    <button type="button" class="btn-search">Search</button>
+                    <input type="text" class="search-input" id="heroSearchInput" placeholder="Search for Tapsilog, Sisig, or your Favorite..." />
+                    <button type="button" class="btn-search" id="heroSearchBtn">Search</button>
                 </div>
 
                 <div class="cta-group">
@@ -3017,7 +3267,7 @@
             <div class="menu-category-container">
                 <h3 class="category-title">Silog Meals</h3>
                 <div class="menu-grid-container six-per-row">
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Tapsilog" data-price="100.00">
                         <img src='<%= ResolveUrl("~/Images/tapsilog.jpg") %>' alt="Tapsilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Tapsilog</div>
@@ -3040,7 +3290,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Baconsilog" data-price="75.00">
                         <img src='<%= ResolveUrl("~/Images/baconsilog.jpg") %>' alt="Baconsilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Baconsilog</div>
@@ -3063,7 +3313,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Bangsilog (Boneless)" data-price="85.00">
                         <img src='<%= ResolveUrl("~/Images/Bangsilog.jpg") %>' alt="Bangsilog (Boneless)" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Bangsilog (Boneless)</div>
@@ -3086,7 +3336,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Porksilog" data-price="55.00">
                         <img src='<%= ResolveUrl("~/Images/porksilog.jpg") %>' alt="Porksilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Porksilog</div>
@@ -3109,7 +3359,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Hotsilog (Purefoods)" data-price="55.00">
                         <img src='<%= ResolveUrl("~/Images/Hotsilog.jpg") %>' alt="Hotsilog (Purefoods)" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Hotsilog (Purefoods)</div>
@@ -3132,7 +3382,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Tocisilog" data-price="85.00">
                         <img src='<%= ResolveUrl("~/Images/tocilog.jpg") %>' alt="Tocisilog" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Tocisilog</div>
@@ -3160,7 +3410,7 @@
             <div class="menu-category-container">
                 <h3 class="category-title">Sizzling Meals</h3>
                 <div class="menu-grid-container six-per-row">
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Sizzling Sisig" data-price="150.00">
                         <img src='<%= ResolveUrl("~/Images/sizzling.jpg") %>' alt="Sizzling" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Sisig</div>
@@ -3183,7 +3433,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Sizzling Pork Steak" data-price="140.00">
                         <img src='<%= ResolveUrl("~/Images/porksteak.jpg") %>' alt="Sizzling Pork Steak" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Pork Steak</div>
@@ -3206,7 +3456,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Sizzling Chicken" data-price="130.00">
                         <img src='<%= ResolveUrl("~/Images/chicken.jpg") %>' alt="Sizzling Chicken" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Chicken</div>
@@ -3229,7 +3479,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Sizzling Tofu" data-price="120.00">
                         <img src='<%= ResolveUrl("~/Images/tofu.jpg") %>' alt="Sizzling Tofu" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Tofu</div>
@@ -3252,7 +3502,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Sizzling Pork Sisig" data-price="145.00">
                         <img src='<%= ResolveUrl("~/Images/pork.jpg") %>' alt="Sizzling Pork Sisig" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Pork Sisig</div>
@@ -3275,7 +3525,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Sizzling Liempo" data-price="155.00">
                         <img src='<%= ResolveUrl("~/Images/liempo.jpg") %>' alt="Sizzling Liempo" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Sizzling Liempo</div>
@@ -3303,7 +3553,7 @@
             <div class="menu-category-container">
                 <h3 class="category-title">Special Meals</h3>
                 <div class="menu-grid-container six-per-row">
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Special Bulalo" data-price="120.00">
                         <img src='<%= ResolveUrl("~/Images/bulalo.jpg") %>' alt="Special Bulalo" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Bulalo</div>
@@ -3326,7 +3576,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Special Sinigang" data-price="100.00">
                         <img src='<%= ResolveUrl("~/Images/sinigang.jpg") %>' alt="Special Sinigang" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Sinigang</div>
@@ -3349,7 +3599,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Special Tokwat Baboy" data-price="110.00">
                         <img src='<%= ResolveUrl("~/Images/tokwa.jpg") %>' alt="Special Tokwat Baboy" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Tokwat Baboy</div>
@@ -3372,7 +3622,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Special Arrozcaldo" data-price="250.00">
                         <img src='<%= ResolveUrl("~/Images/arroz.jpg") %>' alt="Special Arrozcaldo" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Arrozcaldo</div>
@@ -3395,7 +3645,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Special Goto Overload" data-price="220.00">
                         <img src='<%= ResolveUrl("~/Images/gotoover.jpg") %>' alt="Special Goto Overload" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Goto Overload</div>
@@ -3418,7 +3668,7 @@
                         </div>
                     </div>
                     
-                    <div class="menu-container">
+                    <div class="menu-container" data-name="Special Goto" data-price="180.00">
                         <img src='<%= ResolveUrl("~/Images/Goto.jpg") %>' alt="Special Goto" class="menu-featured-img" />
                         <div class="menu-list-container">
                             <div class="category-label">Special Goto</div>
@@ -3479,7 +3729,7 @@
                 <div class="cta-banner">
                     <h3 class="cta-title">Hungry? Order Now!</h3>
                     <p class="cta-subtitle">Free delivery on orders over ₱500</p>
-                    <a href="<%= ResolveUrl("~/Users/Customer/Menu.aspx") %>" class="btn-cta-large">Order Now</a>
+                    <a href="#menu" class="btn-cta-large" id="orderNowRedirectBtn">Order Now</a>
                     
                     <div class="contact-info">
                         <p><i class="fas fa-phone"></i> Call us for inquiries:</p>
@@ -3602,10 +3852,10 @@
                     <div class="quick-links-grid">
                         <a href="#menu" class="footer-link">Menu</a>
                         <a href="#about" class="footer-link">About Us</a>
-                        <a href="#" class="footer-link">Order Tracking</a>
-                        <a href="#" class="footer-link">Become a Vendor</a>
-                        <a href="#" class="footer-link">Terms & Conditions</a>
-                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link" id="orderTrackingLink">Order Tracking</a>
+                        <a href="#" class="footer-link" id="becomeVendorLink">Become a Vendor</a>
+                        <a href="#" class="footer-link" id="termsLink">Terms & Conditions</a>
+                        <a href="#" class="footer-link" id="privacyLink">Privacy Policy</a>
                     </div>
                 </div>
             </div>
@@ -3620,14 +3870,98 @@
                         <span>Delivering in Dasmariñas City, Cavite</span>
                     </div>
                     <div class="footer-legal">
-                        <a href="#">Terms & Conditions</a>
-                        <a href="#">Privacy Policy</a>
+                        <a href="#" id="termsFooterLink">Terms & Conditions</a>
+                        <a href="#" id="privacyFooterLink">Privacy Policy</a>
                     </div>
                 </div>
             </div>
         </footer>
 
         <script>
+            let currentUser = {
+                fullName: "Jay-r Casano",
+                email: "jayrcasano01@gmail.com"
+            };
+            
+            let isLoggedIn = true;
+            
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileIcon = document.getElementById('profileIcon');
+            
+            function toggleProfileDropdown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (profileDropdown.style.display === 'block') {
+                    profileDropdown.style.display = 'none';
+                } else {
+                    document.getElementById('dropdownFullName').textContent = currentUser.fullName;
+                    document.getElementById('dropdownEmail').textContent = currentUser.email;
+                    profileDropdown.style.display = 'block';
+                }
+            }
+            
+            function closeProfileDropdown() {
+                if (profileDropdown) {
+                    profileDropdown.style.display = 'none';
+                }
+            }
+            
+            if (profileIcon) {
+                profileIcon.addEventListener('click', toggleProfileDropdown);
+            }
+            
+            document.addEventListener('click', function(e) {
+                if (profileDropdown && profileIcon) {
+                    if (!profileDropdown.contains(e.target) && !profileIcon.contains(e.target)) {
+                        profileDropdown.style.display = 'none';
+                    }
+                }
+            });
+            
+            const cartIcon = document.getElementById('cartIcon');
+            if (cartIcon) {
+                cartIcon.addEventListener('click', function() {
+                    closeProfileDropdown();
+                });
+            }
+            
+            document.getElementById('dropdownMyProfileLink')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeProfileDropdown();
+                showInfoModal('My Profile', `Name: ${currentUser.fullName}\nEmail: ${currentUser.email}\n\nProfile settings will be available soon.`);
+            });
+            
+            document.getElementById('dropdownMessagesLink')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeProfileDropdown();
+                showInfoModal('Messages', 'Messages feature will be available soon. Check back later for updates!');
+            });
+            
+            document.getElementById('dropdownTermsLink')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeProfileDropdown();
+                showInfoModal('Terms & Privacy Policy', 'We value your privacy. Your personal information is safe with us. Terms and conditions apply.');
+            });
+            
+            function showLoginModal() {
+                const modal = document.getElementById('loginRequiredModal');
+                if (modal) {
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            function closeLoginModal() {
+                const modal = document.getElementById('loginRequiredModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+            
+            document.getElementById('cancelLoginBtn')?.addEventListener('click', closeLoginModal);
+            document.getElementById('loginOverlay')?.addEventListener('click', closeLoginModal);
+
             const mealData = {
                 "Tapsilog": {
                     category: "Silog Meals",
@@ -3904,7 +4238,7 @@
                     });
 
                     document.addEventListener('input', (e) => {
-                        if (e.target.classList.contains('.meal-quantity-input')) {
+                        if (e.target.classList.contains('meal-quantity-input')) {
                             let value = parseInt(e.target.value);
                             if (isNaN(value) || value < 1) value = 1;
                             if (value > 10) value = 10;
@@ -4413,7 +4747,6 @@
                 },
 
                 setupEventListeners: function () {
-                    const cartIcon = document.getElementById('cartIcon');
                     if (cartIcon) {
                         cartIcon.addEventListener('click', (e) => {
                             e.preventDefault();
@@ -4472,7 +4805,102 @@
                 }
             };
 
-            // Back to Top Button Functionality
+            function performSearch() {
+                const searchInput = document.getElementById('heroSearchInput');
+                const searchTerm = searchInput.value.trim().toLowerCase();
+
+                if (searchTerm === '') {
+                    scrollToSection('menu');
+                    return;
+                }
+
+                const allMenuContainers = document.querySelectorAll('.menu-container');
+                let foundMatch = false;
+
+                allMenuContainers.forEach(container => {
+                    const mealName = container.getAttribute('data-name') || container.querySelector('.category-label')?.innerText || '';
+                    const mealDescription = container.querySelector('.meal-description-short')?.innerText || '';
+
+                    if (mealName.toLowerCase().includes(searchTerm) || mealDescription.toLowerCase().includes(searchTerm)) {
+                        foundMatch = true;
+                        container.style.transition = 'all 0.3s ease';
+                        container.style.border = '2px solid var(--accent-yellow)';
+                        container.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.5)';
+
+                        setTimeout(() => {
+                            container.style.border = '';
+                            container.style.boxShadow = '';
+                        }, 3000);
+                    }
+                });
+
+                scrollToSection('menu');
+
+                if (foundMatch) {
+                    const notification = document.createElement('div');
+                    notification.innerHTML = `<i class="fas fa-search"></i> Found items matching "${searchTerm}"`;
+                    notification.style.cssText = `
+                        position: fixed;
+                        bottom: 100px;
+                        right: 20px;
+                        background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 10px;
+                        z-index: 3000;
+                        border: 2px solid var(--accent-yellow);
+                        animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 3s forwards;
+                    `;
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 3300);
+                } else if (searchTerm !== '') {
+                    const notification = document.createElement('div');
+                    notification.innerHTML = `<i class="fas fa-exclamation-triangle"></i> No items found matching "${searchTerm}"`;
+                    notification.style.cssText = `
+                        position: fixed;
+                        bottom: 100px;
+                        right: 20px;
+                        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 10px;
+                        z-index: 3000;
+                        border: 2px solid var(--accent-yellow);
+                        animation: slideInRight 0.3s ease, slideOutRight 0.3s ease 3s forwards;
+                    `;
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 3300);
+                }
+            }
+
+            const searchBtn = document.getElementById('heroSearchBtn');
+            const searchInput = document.getElementById('heroSearchInput');
+
+            if (searchBtn) {
+                searchBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    performSearch();
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        performSearch();
+                    }
+                });
+            }
+
+            const orderNowBtn = document.getElementById('orderNowRedirectBtn');
+            if (orderNowBtn) {
+                orderNowBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    scrollToSection('menu');
+                });
+            }
+
             const backToTopBtn = document.getElementById('backToTopBtn');
 
             window.addEventListener('scroll', function () {
@@ -4511,14 +4939,108 @@
                 });
             });
 
-            document.querySelector('.btn-search')?.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+            const orderTrackingLink = document.getElementById('orderTrackingLink');
+            const becomeVendorLink = document.getElementById('becomeVendorLink');
+            const termsLink = document.getElementById('termsLink');
+            const privacyLink = document.getElementById('privacyLink');
+            const termsFooterLink = document.getElementById('termsFooterLink');
+            const privacyFooterLink = document.getElementById('privacyFooterLink');
+
+            function showInfoModal(title, message) {
+                let infoModal = document.getElementById('infoModal');
+                if (!infoModal) {
+                    infoModal = document.createElement('div');
+                    infoModal.id = 'infoModal';
+                    infoModal.className = 'login-required-modal';
+                    infoModal.innerHTML = `
+                        <div class="login-modal-overlay" id="infoModalOverlay"></div>
+                        <div class="login-modal-content">
+                            <div class="login-modal-header">
+                                <i class="fas fa-info-circle"></i>
+                                <h3 id="infoModalTitle">Information</h3>
+                            </div>
+                            <div class="login-modal-body">
+                                <p id="infoModalMessage">Message</p>
+                                <div class="login-modal-actions">
+                                    <button type="button" class="btn-cancel-login" id="closeInfoModalBtn">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(infoModal);
+
+                    const closeBtn = document.getElementById('closeInfoModalBtn');
+                    const overlay = document.getElementById('infoModalOverlay');
+                    if (closeBtn) closeBtn.addEventListener('click', () => {
+                        infoModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    });
+                    if (overlay) overlay.addEventListener('click', () => {
+                        infoModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    });
+                }
+
+                document.getElementById('infoModalTitle').innerText = title;
+                document.getElementById('infoModalMessage').innerText = message;
+                infoModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+
+            if (orderTrackingLink) {
+                orderTrackingLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showInfoModal('Order Tracking', 'Order tracking feature will be available soon. Please check back later!');
+                });
+            }
+
+            if (becomeVendorLink) {
+                becomeVendorLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showInfoModal('Become a Vendor', 'Interested in becoming a vendor? Please contact us at 046-473-9753 or email us at vendors@tastenet.com');
+                });
+            }
+
+            if (termsLink) {
+                termsLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showInfoModal('Terms & Conditions', 'Terms and conditions will be available soon. By using our service, you agree to our terms.');
+                });
+            }
+
+            if (privacyLink) {
+                privacyLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showInfoModal('Privacy Policy', 'We value your privacy. Your personal information is safe with us and will never be shared with third parties.');
+                });
+            }
+
+            if (termsFooterLink) {
+                termsFooterLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showInfoModal('Terms & Conditions', 'Terms and conditions will be available soon. By using our service, you agree to our terms.');
+                });
+            }
+
+            if (privacyFooterLink) {
+                privacyFooterLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showInfoModal('Privacy Policy', 'We value your privacy. Your personal information is safe with us and will never be shared with third parties.');
+                });
+            }
+
+            document.querySelectorAll('.btn-search').forEach(btn => {
+                if (btn.id !== 'heroSearchBtn') {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                }
             });
 
             document.querySelectorAll('button:not([type="submit"])').forEach(button => {
                 button.addEventListener('click', function (e) {
-                    if (this.type !== 'submit') {
+                    if (this.type !== 'submit' && this.id !== 'heroSearchBtn' && !this.closest('.meal-modal-actions') && !this.closest('.profile-dropdown')) {
                         e.preventDefault();
                         e.stopPropagation();
                     }
@@ -4584,7 +5106,6 @@
                 });
 
                 cart.init();
-
                 mealModal.init();
             });
 
@@ -4609,7 +5130,7 @@
                         return;
                     }
 
-                    if (this.tagName === 'BUTTON' && this.type !== 'submit') {
+                    if (this.tagName === 'BUTTON' && this.type !== 'submit' && this.id !== 'heroSearchBtn' && !this.closest('.profile-dropdown')) {
                         e.preventDefault();
                         e.stopPropagation();
                     }

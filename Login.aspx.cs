@@ -15,7 +15,7 @@ namespace TasteNet
         protected void btnLogin_Click(object sender, EventArgs e)
         {
             string emailOrUsername = txtUsername.Text.Trim();
-            string password = txtPassword.Text; // Plain text password
+            string password = txtPassword.Text;
 
             lblError.Visible = false;
             lblError.Text = "";
@@ -44,12 +44,10 @@ namespace TasteNet
                                 string userType = reader["UserType"].ToString();
                                 bool isActive = Convert.ToBoolean(reader["IsActive"]);
 
-                                // Compare plain text passwords directly
                                 if (dbPassword == password && isActive)
                                 {
                                     SetUserSession(username, userType);
 
-                                    // Redirect based on user type
                                     switch (userType.ToLower())
                                     {
                                         case "superadmin":
