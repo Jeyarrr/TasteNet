@@ -1,7 +1,10 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/Admin.Master" AutoEventWireup="true" CodeBehind="Inventory.aspx.cs" Inherits="TasteNet.Users.Admin.Inventory" %>
+<%@ Register TagPrefix="asp" Namespace="System.Web.UI" Assembly="System.Web.Extensions" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --primary-maroon: #6b0d1e;
@@ -436,7 +439,7 @@
         .full-table { 
             width: 100%; 
             border-collapse: collapse;
-            min-width: 100%;
+            min-width: 1100px;
             font-size: 13px;
             table-layout: fixed;
         }
@@ -467,48 +470,6 @@
             text-align: center;
             word-wrap: break-word;
             overflow-wrap: break-word;
-        }
-
-        .full-table th:nth-child(1),
-        .full-table td:nth-child(1) {
-            width: 20%;
-            min-width: 180px;
-        }
-
-        .full-table th:nth-child(2),
-        .full-table td:nth-child(2) {
-            width: 12%;
-            min-width: 100px;
-        }
-
-        .full-table th:nth-child(3),
-        .full-table td:nth-child(3) {
-            width: 13%;
-            min-width: 110px;
-        }
-
-        .full-table th:nth-child(4),
-        .full-table td:nth-child(4) {
-            width: 13%;
-            min-width: 110px;
-        }
-
-        .full-table th:nth-child(5),
-        .full-table td:nth-child(5) {
-            width: 22%;
-            min-width: 180px;
-        }
-
-        .full-table th:nth-child(6),
-        .full-table td:nth-child(6) {
-            width: 10%;
-            min-width: 90px;
-        }
-
-        .full-table th:nth-child(7),
-        .full-table td:nth-child(7) {
-            width: 10%;
-            min-width: 90px;
         }
 
         .full-table tbody tr {
@@ -609,11 +570,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            background: var(--bg-lighter);
+            gap: 5px;
             padding: 6px 12px;
-            border-radius: var(--radius-md);
-            border: 2px solid var(--border-light);
             width: fit-content;
             margin: 0 auto;
             transition: all var(--transition-fast);
@@ -673,6 +631,23 @@
             font-size: 16px;
             min-width: 30px;
             text-align: center;
+        }
+
+        .unit-price, .total-price {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .unit-price {
+            color: var(--primary-maroon);
+        }
+
+        .total-price {
+            color: #2d9d78;
+            background: rgba(45, 157, 120, 0.1);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
         }
 
         .switch { 
@@ -894,7 +869,7 @@
             border-radius: var(--radius-lg);
             box-shadow: 0 20px 60px rgba(107, 13, 30, 0.25);
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             animation: slideUp 0.4s ease;
@@ -1144,16 +1119,6 @@
                 font-size: 12px;
                 padding: 14px 8px;
             }
-
-            .full-table th:nth-child(1),
-            .full-table td:nth-child(1) {
-                min-width: 150px;
-            }
-
-            .full-table th:nth-child(5),
-            .full-table td:nth-child(5) {
-                min-width: 150px;
-            }
         }
 
         @media (max-width: 992px) {
@@ -1216,16 +1181,6 @@
             .action-icons {
                 flex-wrap: wrap;
                 justify-content: center;
-            }
-
-            .full-table th:nth-child(1),
-            .full-table td:nth-child(1) {
-                min-width: 120px;
-            }
-
-            .full-table th:nth-child(5),
-            .full-table td:nth-child(5) {
-                min-width: 120px;
             }
 
             .delete-modal-body {
@@ -1337,7 +1292,10 @@
         }
     </style>
 </asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <asp:HiddenField ID="hfInventoryID" runat="server" />
+    
     <div id="full-page-wrapper">
         <div class="page-header">
             <div class="header-title">
@@ -1345,8 +1303,8 @@
                 <p>Manage ingredient stock and suppliers</p>
             </div>
             <div class="header-actions">
-                <button type="button" class="btn btn--secondary" id="addIngredientBtn"><i class="fas fa-plus"></i>Add New Ingredient</button>
-                <button type="button" class="btn btn--primary" id="bulkRestockBtn"><i class="fas fa-sync-alt"></i>Bulk Restock</button>
+                <asp:Button ID="btnAddIngredient" runat="server" Text="Add New Ingredient" CssClass="btn btn--secondary" OnClick="btnAddIngredient_Click" />
+                <asp:Button ID="btnBulkRestock" runat="server" Text="Bulk Restock" CssClass="btn btn--primary" OnClick="btnBulkRestock_Click" />
             </div>
         </div>
 
@@ -1356,7 +1314,9 @@
                     <span class="stat-card__label">Total Ingredients</span>
                     <div class="stat-icon icon-items"><i class="fas fa-apple-alt"></i></div>
                 </div>
-                <div class="stat-card__value" id="totalIngredients">8</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblTotalIngredients" runat="server" Text="0" />
+                </div>
                 <div class="stat-card__trend">All categories</div>
             </div>
             <div class="stat-card">
@@ -1364,7 +1324,9 @@
                     <span class="stat-card__label">Low Stock Alerts</span>
                     <div class="stat-icon icon-low"><i class="fas fa-exclamation-triangle"></i></div>
                 </div>
-                <div class="stat-card__value" id="lowStockCount">3</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblLowStockCount" runat="server" Text="0" />
+                </div>
                 <div class="stat-card__trend">Needs restocking</div>
             </div>
             <div class="stat-card">
@@ -1372,7 +1334,9 @@
                     <span class="stat-card__label">Out of Stock</span>
                     <div class="stat-icon icon-out"><i class="fas fa-times-circle"></i></div>
                 </div>
-                <div class="stat-card__value" id="outOfStockCount">1</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblOutOfStockCount" runat="server" Text="0" />
+                </div>
                 <div class="stat-card__trend">Currently unavailable</div>
             </div>
             <div class="stat-card">
@@ -1380,50 +1344,170 @@
                     <span class="stat-card__label">Inventory Value</span>
                     <div class="stat-icon icon-value"><i class="fas fa-peso-sign"></i></div>
                 </div>
-                <div class="stat-card__value">₱25,480</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblInventoryValue" runat="server" Text="₱0" />
+                </div>
                 <div class="stat-card__trend">Total stock value</div>
             </div>
         </div>
 
         <div class="filter-container">
-            <div class="search-wrapper" id="searchBox">
+            <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search by ingredient name or description...">
+                <asp:TextBox ID="txtSearch" runat="server" placeholder="Search by ingredient name or description..." AutoPostBack="true" OnTextChanged="txtSearch_TextChanged" />
             </div>
-            <select class="filter-dropdown" id="categoryFilter">
-                <option value="all">All Categories</option>
-                <option value="protein">Protein (Meat, Eggs, etc.)</option>
-                <option value="produce">Produce (Vegetables and Fruits)</option>
-                <option value="grains">Grains & Starches</option>
-                <option value="spices">Spices & Seasonings</option>
-                <option value="essentials">Cooking Essentials</option>
-            </select>
-            <select class="filter-dropdown" id="statusFilter">
-                <option value="all">All Stock Status</option>
-                <option value="in-stock">In Stock</option>
-                <option value="low-stock">Low Stock</option>
-                <option value="out-of-stock">Out of Stock</option>
-            </select>
+            <asp:DropDownList ID="ddlCategoryFilter" runat="server" CssClass="filter-dropdown" AutoPostBack="true" OnSelectedIndexChanged="ddlFilter_SelectedIndexChanged">
+                <asp:ListItem Text="All Categories" Value="all" />
+                <asp:ListItem Text="Protein" Value="1" />
+                <asp:ListItem Text="Produce" Value="2" />
+                <asp:ListItem Text="Grains & Starches" Value="3" />
+                <asp:ListItem Text="Spices & Seasonings" Value="4" />
+                <asp:ListItem Text="Cooking Essentials" Value="5" />
+            </asp:DropDownList>
+            <asp:DropDownList ID="ddlStatusFilter" runat="server" CssClass="filter-dropdown" AutoPostBack="true" OnSelectedIndexChanged="ddlFilter_SelectedIndexChanged">
+                <asp:ListItem Text="All Stock Status" Value="all" />
+                <asp:ListItem Text="In Stock" Value="in-stock" />
+                <asp:ListItem Text="Low Stock" Value="low-stock" />
+                <asp:ListItem Text="Out of Stock" Value="out-of-stock" />
+            </asp:DropDownList>
         </div>
 
         <div class="table-wrapper">
             <div class="table-inner-wrapper">
-                <table class="full-table">
-                    <thead>
+                <asp:Repeater ID="rptInventory" runat="server" OnItemCommand="rptInventory_ItemCommand" OnItemDataBound="rptInventory_ItemDataBound">
+                    <HeaderTemplate>
+                        <table class="full-table">
+                            <thead>
+                                <tr>
+                                    <th>Ingredient Name</th>
+                                    <th>Category</th>
+                                    <th>Stock Status</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Price</th>
+                                    <th>Supplier</th>
+                                    <th>Available</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    </HeaderTemplate>
+                    <ItemTemplate>
                         <tr>
-                            <th>Ingredient Name</th>
-                            <th>Category</th>
-                            <th>Stock Status</th>
-                            <th>Quantity</th>
-                            <th>Supplier</th>
-                            <th>Available</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ingredientsTableBody">
-                    </tbody>
-                </table>
-                <div class="no-results" id="noResultsMessage">
+                            <td>
+                                <span class="item-name"><%# Eval("ItemName") %></span>
+                                <span class="item-category"><%# Eval("Description") %></span>
+                            </span>
+                            <td><span class="item-category"><%# Eval("CategoryName") %></span></td>
+                            <td>
+                                <span class="stock-badge <%# GetStockStatusClass(Eval("StockStatus").ToString()) %>">
+                                    <%# GetStockStatusText(Eval("StockStatus").ToString()) %>
+                                </span>
+                            </span>
+                            <td>
+                                <div class="quantity-controls">
+                                    <asp:LinkButton ID="btnMinus" runat="server" CssClass="qty-btn" CommandName="DecreaseQuantity" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' Text="-" />
+                                    <span class="quantity-value"><%# Eval("Quantity") %></span>
+                                    <asp:LinkButton ID="btnPlus" runat="server" CssClass="qty-btn" CommandName="IncreaseQuantity" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' Text="+" />
+                                </div>
+                            </span>
+                            <td>
+                                <span class="unit-price">₱<%# string.Format("{0:N2}", Eval("UnitPrice")) %></span>
+                            </span>
+                            <td>
+                                <span class="total-price">₱<%# string.Format("{0:N2}", Convert.ToDecimal(Eval("Quantity")) * Convert.ToDecimal(Eval("UnitPrice"))) %></span>
+                            </span>
+                            <td>
+                                <div class="supplier-info">
+                                    <span class="supplier-name"><%# Eval("SupplierName") %></span>
+                                    <span class="supplier-contact"><%# Eval("SupplierContact") %></span>
+                                </div>
+                            </span>
+                            <td>
+                                <label class="switch">
+                                    <asp:CheckBox ID="chkAvailable" runat="server" Checked='<%# Eval("Available") %>' 
+                                        AutoPostBack="true" OnCheckedChanged="chkAvailable_CheckedChanged" />
+                                    <span class="slider"></span>
+                                </label>
+                            </span>
+                            <td>
+                                <div class="action-icons">
+                                    <asp:LinkButton ID="btnEdit" runat="server" CssClass="action-icon edit" CommandName="EditItem" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' ToolTip="Edit Ingredient">
+                                        <i class="fas fa-edit"></i>
+                                    </asp:LinkButton>
+                                    <asp:LinkButton ID="btnDelete" runat="server" CssClass="action-icon delete" CommandName="DeleteItem" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' ToolTip="Delete Ingredient"
+                                        OnClientClick="return confirm('Are you sure you want to delete this ingredient?');">
+                                        <i class="fas fa-trash"></i>
+                                    </asp:LinkButton>
+                                </div>
+                            </span>
+                        </span>
+                    </ItemTemplate>
+                    <AlternatingItemTemplate>
+                        <tr style="background-color: #f9f9f9;">
+                            <td>
+                                <span class="item-name"><%# Eval("ItemName") %></span>
+                                <span class="item-category"><%# Eval("Description") %></span>
+                            </span>
+                            <td><span class="item-category"><%# Eval("CategoryName") %></span></span>
+                            <td>
+                                <span class="stock-badge <%# GetStockStatusClass(Eval("StockStatus").ToString()) %>">
+                                    <%# GetStockStatusText(Eval("StockStatus").ToString()) %>
+                                </span>
+                            </span>
+                            <td>
+                                <div class="quantity-controls">
+                                    <asp:LinkButton ID="btnMinus" runat="server" CssClass="qty-btn" CommandName="DecreaseQuantity" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' Text="-" />
+                                    <span class="quantity-value"><%# Eval("Quantity") %></span>
+                                    <asp:LinkButton ID="btnPlus" runat="server" CssClass="qty-btn" CommandName="IncreaseQuantity" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' Text="+" />
+                                </div>
+                            </span>
+                            <td>
+                                <span class="unit-price">₱<%# string.Format("{0:N2}", Eval("UnitPrice")) %></span>
+                            </span>
+                            <td>
+                                <span class="total-price">₱<%# string.Format("{0:N2}", Convert.ToDecimal(Eval("Quantity")) * Convert.ToDecimal(Eval("UnitPrice"))) %></span>
+                            </span>
+                            <td>
+                                <div class="supplier-info">
+                                    <span class="supplier-name"><%# Eval("SupplierName") %></span>
+                                    <span class="supplier-contact"><%# Eval("SupplierContact") %></span>
+                                </div>
+                            </span>
+                            <td>
+                                <label class="switch">
+                                    <asp:CheckBox ID="chkAvailable" runat="server" Checked='<%# Eval("Available") %>' 
+                                        AutoPostBack="true" OnCheckedChanged="chkAvailable_CheckedChanged" />
+                                    <span class="slider"></span>
+                                </label>
+                            </span>
+                            <td>
+                                <div class="action-icons">
+                                    <asp:LinkButton ID="btnEdit" runat="server" CssClass="action-icon edit" CommandName="EditItem" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' ToolTip="Edit Ingredient">
+                                        <i class="fas fa-edit"></i>
+                                    </asp:LinkButton>
+                                    <asp:LinkButton ID="btnDelete" runat="server" CssClass="action-icon delete" CommandName="DeleteItem" 
+                                        CommandArgument='<%# Eval("InventoryID") %>' ToolTip="Delete Ingredient"
+                                        OnClientClick="return confirm('Are you sure you want to delete this ingredient?');">
+                                        <i class="fas fa-trash"></i>
+                                    </asp:LinkButton>
+                                </div>
+                            </span>
+                        </span>
+                    </AlternatingItemTemplate>
+                    <FooterTemplate>
+                            </tbody>
+                         <table>
+                    </FooterTemplate>
+                </asp:Repeater>
+                <div class="no-results" id="noResultsMessage" runat="server" visible="false">
                     <i class="fas fa-search"></i>
                     <h3>No ingredients found</h3>
                     <p>Try adjusting your search or filters</p>
@@ -1435,59 +1519,66 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="edit-modal-header">
-                <h3 id="editModalTitle">Edit Ingredient</h3>
-                <button class="edit-modal-close" id="closeEditModal">&times;</button>
+                <h3 id="modalTitle">Edit Ingredient</h3>
+                <button type="button" class="edit-modal-close" onclick="closeModal('editModal')">&times;</button>
             </div>
             <div class="edit-modal-body">
                 <div class="form-group">
-                    <label for="editName">Ingredient Name</label>
-                    <input type="text" id="editName" class="form-control" placeholder="Enter ingredient name">
+                    <label>Ingredient Name</label>
+                    <asp:TextBox ID="txtItemName" runat="server" CssClass="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="editDescription">Description</label>
-                    <input type="text" id="editDescription" class="form-control" placeholder="Enter description">
+                    <label>Description</label>
+                    <asp:TextBox ID="txtDescription" runat="server" CssClass="form-control" />
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editCategory">Category</label>
-                        <select id="editCategory" class="form-control">
-                            <option value="protein">Protein</option>
-                            <option value="produce">Produce</option>
-                            <option value="grains">Grains & Starches</option>
-                            <option value="spices">Spices & Seasonings</option>
-                            <option value="essentials">Cooking Essentials</option>
-                        </select>
+                        <label>Category</label>
+                        <asp:DropDownList ID="ddlCategory" runat="server" CssClass="form-control" />
                     </div>
                     <div class="form-group">
-                        <label for="editQuantity">Quantity</label>
-                        <input type="number" id="editQuantity" class="form-control" min="0" placeholder="Enter quantity">
+                        <label>Quantity</label>
+                        <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" TextMode="Number" Step="1" />
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="editLowStockThreshold">Low Stock Threshold</label>
-                        <input type="number" id="editLowStockThreshold" class="form-control" min="1" placeholder="Enter threshold">
+                        <label>Low Stock Threshold</label>
+                        <asp:TextBox ID="txtLowStockThreshold" runat="server" CssClass="form-control" TextMode="Number" Step="1" />
                     </div>
                     <div class="form-group">
-                        <label for="editAvailable">Available</label>
-                        <select id="editAvailable" class="form-control">
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
-                        </select>
+                        <label>Unit of Measure</label>
+                        <asp:DropDownList ID="ddlUnitOfMeasure" runat="server" CssClass="form-control">
+                            <asp:ListItem Text="Pieces (pcs)" Value="pcs" />
+                            <asp:ListItem Text="Kilograms (kg)" Value="kg" />
+                            <asp:ListItem Text="Grams (g)" Value="g" />
+                            <asp:ListItem Text="Liters (L)" Value="L" />
+                            <asp:ListItem Text="Milliliters (ml)" Value="ml" />
+                        </asp:DropDownList>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Unit Cost (₱)</label>
+                        <asp:TextBox ID="txtUnitCost" runat="server" CssClass="form-control" TextMode="Number" Step="0.01" />
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price (₱)</label>
+                        <asp:TextBox ID="txtUnitPrice" runat="server" CssClass="form-control" TextMode="Number" Step="0.01" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editSupplierName">Supplier Name</label>
-                    <input type="text" id="editSupplierName" class="form-control" placeholder="Enter supplier name">
+                    <label>Supplier</label>
+                    <asp:DropDownList ID="ddlSupplier" runat="server" CssClass="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="editSupplierContact">Supplier Contact</label>
-                    <input type="text" id="editSupplierContact" class="form-control" placeholder="Enter supplier contact">
+                    <label>Available</label>
+                    <asp:CheckBox ID="chkIsAvailable" runat="server" />
                 </div>
             </div>
             <div class="edit-modal-footer">
-                <button type="button" class="btn btn--outline" id="cancelEdit">Cancel</button>
-                <button type="button" class="btn btn--primary" id="saveEdit">Save</button>
+                <button type="button" class="btn btn--outline" onclick="closeModal('editModal')">Cancel</button>
+                <asp:Button ID="btnSave" runat="server" Text="Save Changes" CssClass="btn btn--primary" OnClick="btnSave_Click" />
             </div>
         </div>
     </div>
@@ -1501,10 +1592,10 @@
                 <div class="delete-icon">
                     <i class="fas fa-trash"></i>
                 </div>
-                <div class="delete-message" id="deleteMessage">
+                <div class="delete-message">
                     Are you sure you want to delete <span class="delete-ingredient-name" id="deleteIngredientName"></span>?
                 </div>
-                <div class="delete-warning" id="deleteWarning">
+                <div class="delete-warning">
                     This action cannot be undone.
                 </div>
             </div>
@@ -1515,673 +1606,112 @@
         </div>
     </div>
 
-    <script>
-        let ingredientsData = [
-            {
-                id: 1,
-                name: "Beef Tapa Strips",
-                description: "Tapsilog ingredient",
-                category: "protein",
-                categoryDisplay: "Protein",
-                status: "in-stock",
-                quantity: 45,
-                supplier: {
-                    name: "Meat King Supplier",
-                    contact: "0917-123-4567"
-                },
-                available: true,
-                lowStockThreshold: 10
-            },
-            {
-                id: 2,
-                name: "Eggs (Large)",
-                description: "For silog meals",
-                category: "protein",
-                categoryDisplay: "Protein",
-                status: "low-stock",
-                quantity: 12,
-                supplier: {
-                    name: "Fresh Poultry Farm",
-                    contact: "0918-234-5678"
-                },
-                available: true,
-                lowStockThreshold: 15
-            },
-            {
-                id: 3,
-                name: "Garlic (Minced)",
-                description: "Seasoning",
-                category: "spices",
-                categoryDisplay: "Spices & Seasonings",
-                status: "out-of-stock",
-                quantity: 0,
-                supplier: {
-                    name: "Spice Masters Inc.",
-                    contact: "0919-345-6789"
-                },
-                available: false,
-                lowStockThreshold: 5
-            },
-            {
-                id: 4,
-                name: "Jasmine Rice",
-                description: "For all rice meals",
-                category: "grains",
-                categoryDisplay: "Grains & Starches",
-                status: "in-stock",
-                quantity: 28,
-                supplier: {
-                    name: "Rice Supply Co.",
-                    contact: "0920-456-7890"
-                },
-                available: true,
-                lowStockThreshold: 20
-            },
-            {
-                id: 5,
-                name: "Bangus (Milkfish)",
-                description: "Bangsilog ingredient",
-                category: "protein",
-                categoryDisplay: "Protein",
-                status: "low-stock",
-                quantity: 5,
-                supplier: {
-                    name: "Fresh Seafood Market",
-                    contact: "0921-567-8901"
-                },
-                available: true,
-                lowStockThreshold: 10
-            },
-            {
-                id: 6,
-                name: "Tomatoes (Fresh)",
-                description: "For salads and sides",
-                category: "produce",
-                categoryDisplay: "Produce",
-                status: "in-stock",
-                quantity: 35,
-                supplier: {
-                    name: "Vegetable Garden Supply",
-                    contact: "0922-678-9012"
-                },
-                available: true,
-                lowStockThreshold: 15
-            },
-            {
-                id: 7,
-                name: "Soy Sauce (Premium)",
-                description: "Marinade and seasoning",
-                category: "spices",
-                categoryDisplay: "Spices & Seasonings",
-                status: "in-stock",
-                quantity: 18,
-                supplier: {
-                    name: "Asian Condiments Inc.",
-                    contact: "0923-789-0123"
-                },
-                available: true,
-                lowStockThreshold: 8
-            },
-            {
-                id: 8,
-                name: "Cooking Oil",
-                description: "For frying and cooking",
-                category: "essentials",
-                categoryDisplay: "Cooking Essentials",
-                status: "low-stock",
-                quantity: 3,
-                supplier: {
-                    name: "Oil & Fat Suppliers",
-                    contact: "0924-890-1234"
-                },
-                available: true,
-                lowStockThreshold: 5
-            }
-        ];
-
-        let allIngredients = [];
-        let currentFilters = {
-            search: '',
-            category: 'all',
-            status: 'all'
-        };
-
-        let currentEditIngredientId = null;
-
-        function initializeIngredientsTable() {
-            const tbody = document.getElementById('ingredientsTableBody');
-            tbody.innerHTML = '';
-
-            updateAllIngredientStatuses();
-
-            ingredientsData.forEach(ingredient => {
-                const row = document.createElement('tr');
-                row.setAttribute('data-ingredient-id', ingredient.id);
-                row.setAttribute('data-category', ingredient.category);
-                row.setAttribute('data-status', ingredient.status);
-
-                row.innerHTML = `
-                    <td>
-                        <span class="item-name">${ingredient.name}</span>
-                        <span class="item-category">${ingredient.description}</span>
-                    </td>
-                    <td><span class="item-category">${ingredient.categoryDisplay}</span></td>
-                    <td><span class="stock-badge ${ingredient.status}">${getStatusText(ingredient.status)}</span></td>
-                    <td>
-                        <div class="quantity-controls">
-                            <button type="button" class="qty-btn minus-btn">-</button>
-                            <span class="quantity-value">${ingredient.quantity}</span>
-                            <button type="button" class="qty-btn plus-btn">+</button>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="supplier-info">
-                            <span class="supplier-name">${ingredient.supplier.name}</span>
-                            <span class="supplier-contact">${ingredient.supplier.contact}</span>
-                        </div>
-                    </td>
-                    <td><label class="switch"><input type="checkbox" ${ingredient.available ? 'checked' : ''}><span class="slider"></span></label></td>
-                    <td>
-                        <div class="action-icons">
-                            <div class="action-icon edit" title="Edit Ingredient">
-                                <i class="fas fa-edit"></i>
-                            </div>
-                            <div class="action-icon delete" title="Delete Ingredient">
-                                <i class="fas fa-trash"></i>
-                            </div>
-                        </div>
-                    </td>
-                `;
-
-                tbody.appendChild(row);
-            });
-
-            initializeIngredientData();
-            updateStats();
-            applyFilters();
+    <asp:Label ID="lblMessage" runat="server" Style="display: none;" />
+    
+    <script type="text/javascript">
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
         }
-
-        function getStatusText(status) {
-            switch (status) {
-                case 'in-stock': return 'IN STOCK';
-                case 'low-stock': return 'LOW STOCK';
-                case 'out-of-stock': return 'OUT OF STOCK';
-                default: return 'UNKNOWN';
-            }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
-
-        function updateAllIngredientStatuses() {
-            ingredientsData.forEach(ingredient => {
-                updateIngredientStatus(ingredient);
-            });
+        
+        function showToast(message, type) {
+            var toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.backgroundColor = type === 'success' ? '#2d9d78' : type === 'error' ? '#b91c1c' : '#d97706';
+            toast.innerHTML = '<i class="fas ' + (type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle') + '"></i><span>' + message + '</span>';
+            document.body.appendChild(toast);
+            
+            setTimeout(function() {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(function() {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
         }
-
-        function updateIngredientStatus(ingredient) {
-            if (ingredient.quantity === 0) {
-                ingredient.status = 'out-of-stock';
-            } else if (ingredient.quantity <= ingredient.lowStockThreshold) {
-                ingredient.status = 'low-stock';
-            } else {
-                ingredient.status = 'in-stock';
-            }
-        }
-
-        function initializeIngredientData() {
-            const rows = document.querySelectorAll('#ingredientsTableBody tr');
-            allIngredients = [];
-
-            rows.forEach(row => {
-                const ingredientId = parseInt(row.dataset.ingredientId);
-                const ingredient = ingredientsData.find(i => i.id === ingredientId);
-
-                if (ingredient) {
-                    ingredient.element = row;
-                    allIngredients.push(ingredient);
+        
+        window.onload = function() {
+            var messageLabel = document.getElementById('<%= lblMessage.ClientID %>');
+            if (messageLabel && messageLabel.innerText) {
+                var parts = messageLabel.innerText.split('|');
+                if (parts.length === 2) {
+                    showToast(parts[0], parts[1]);
+                    messageLabel.innerText = '';
                 }
-            });
-        }
-
-        function handleSearch() {
-            const searchInput = document.getElementById('searchInput');
-            const searchBox = document.getElementById('searchBox');
-
-            currentFilters.search = searchInput.value.toLowerCase().trim();
-            searchBox.classList.add('loading');
-
-            setTimeout(() => {
-                applyFilters();
-                searchBox.classList.remove('loading');
-            }, 300);
-        }
-
-        function handleCategoryFilter() {
-            const categoryFilter = document.getElementById('categoryFilter');
-            currentFilters.category = categoryFilter.value;
-            applyFilters();
-        }
-
-        function handleStatusFilter() {
-            const statusFilter = document.getElementById('statusFilter');
-            currentFilters.status = statusFilter.value;
-            applyFilters();
-        }
-
-        function applyFilters() {
-            let hasVisibleRows = false;
-
-            allIngredients.forEach(ingredient => {
-                const searchMatches = currentFilters.search === '' ||
-                    ingredient.name.toLowerCase().includes(currentFilters.search) ||
-                    ingredient.description.toLowerCase().includes(currentFilters.search);
-
-                const categoryMatches = currentFilters.category === 'all' ||
-                    ingredient.category === currentFilters.category;
-
-                const statusMatches = currentFilters.status === 'all' ||
-                    ingredient.status === currentFilters.status;
-
-                const shouldShow = searchMatches && categoryMatches && statusMatches;
-
-                if (ingredient.element) {
-                    ingredient.element.style.display = shouldShow ? '' : 'none';
-                    if (shouldShow) hasVisibleRows = true;
-                }
-            });
-
-            const noResultsMessage = document.getElementById('noResultsMessage');
-            if (!hasVisibleRows) {
-                noResultsMessage.style.display = 'block';
-            } else {
-                noResultsMessage.style.display = 'none';
             }
-
-            updateStats();
         }
 
-        function setupQuantityControls() {
-            document.addEventListener('click', function (e) {
-                if (e.target.classList.contains('qty-btn')) {
-                    const button = e.target;
-                    const controls = button.closest('.quantity-controls');
-                    const valueSpan = controls.querySelector('.quantity-value');
-                    const row = button.closest('tr');
-                    const ingredientId = parseInt(row.dataset.ingredientId);
-                    const ingredient = ingredientsData.find(i => i.id === ingredientId);
+        document.addEventListener('DOMContentLoaded', function () {
+            var confirmDeleteBtn = document.getElementById('confirmDelete');
+            var cancelDeleteBtn = document.getElementById('cancelDelete');
+            var deleteModal = document.getElementById('deleteModal');
 
-                    if (!ingredient) return;
-
-                    let currentValue = parseInt(valueSpan.textContent);
-
-                    if (button.classList.contains('minus-btn')) {
-                        currentValue = Math.max(0, currentValue - 1);
-                    } else if (button.classList.contains('plus-btn')) {
-                        currentValue++;
+            if (confirmDeleteBtn) {
+                confirmDeleteBtn.addEventListener('click', function () {
+                    var deleteButton = document.querySelector('.action-icon.delete[data-delete-id]');
+                    if (deleteButton) {
+                        __doPostBack(deleteButton.getAttribute('data-target'), deleteButton.getAttribute('data-delete-id'));
                     }
-
-                    ingredient.quantity = currentValue;
-                    updateIngredientStatus(ingredient);
-
-                    valueSpan.textContent = currentValue;
-
-                    const statusBadge = row.querySelector('.stock-badge');
-                    statusBadge.className = `stock-badge ${ingredient.status}`;
-                    statusBadge.textContent = getStatusText(ingredient.status);
-
-                    row.setAttribute('data-status', ingredient.status);
-
-                    updateStats();
-
-                    if (currentFilters.status !== 'all') {
-                        applyFilters();
-                    }
-
-                    button.style.transform = 'scale(0.9)';
-                    setTimeout(() => {
-                        button.style.transform = 'scale(1)';
-                    }, 150);
-                }
-            });
-        }
-
-        function setupToggleSwitches() {
-            document.addEventListener('change', function (e) {
-                if (e.target.type === 'checkbox' && e.target.closest('.switch')) {
-                    const toggle = e.target;
-                    const row = toggle.closest('tr');
-                    const ingredientId = parseInt(row.dataset.ingredientId);
-                    const ingredient = ingredientsData.find(i => i.id === ingredientId);
-
-                    if (ingredient) {
-                        ingredient.available = toggle.checked;
-
-                        const slider = toggle.nextElementSibling;
-                        slider.style.transform = 'scale(0.95)';
-                        setTimeout(() => {
-                            slider.style.transform = 'scale(1)';
-                        }, 200);
-                    }
-                }
-            });
-        }
-
-        function updateStats() {
-            const totalIngredients = ingredientsData.length;
-            const lowStockCount = ingredientsData.filter(i => i.status === 'low-stock').length;
-            const outOfStockCount = ingredientsData.filter(i => i.status === 'out-of-stock').length;
-
-            document.getElementById('totalIngredients').textContent = totalIngredients;
-            document.getElementById('lowStockCount').textContent = lowStockCount;
-            document.getElementById('outOfStockCount').textContent = outOfStockCount;
-        }
-
-        function openEditModal(ingredientId, isNew = false) {
-            const modal = document.getElementById('editModal');
-            const modalTitle = document.getElementById('editModalTitle');
-
-            if (isNew) {
-                modalTitle.textContent = 'Add New Ingredient';
-                currentEditIngredientId = null;
-
-                document.getElementById('editName').value = '';
-                document.getElementById('editDescription').value = '';
-                document.getElementById('editCategory').value = 'protein';
-                document.getElementById('editQuantity').value = '';
-                document.getElementById('editLowStockThreshold').value = '10';
-                document.getElementById('editAvailable').value = 'true';
-                document.getElementById('editSupplierName').value = '';
-                document.getElementById('editSupplierContact').value = '';
-            } else {
-                modalTitle.textContent = 'Edit Ingredient';
-                currentEditIngredientId = ingredientId;
-
-                const ingredient = ingredientsData.find(i => i.id === ingredientId);
-                if (!ingredient) return;
-
-                document.getElementById('editName').value = ingredient.name;
-                document.getElementById('editDescription').value = ingredient.description;
-                document.getElementById('editCategory').value = ingredient.category;
-                document.getElementById('editQuantity').value = ingredient.quantity;
-                document.getElementById('editLowStockThreshold').value = ingredient.lowStockThreshold;
-                document.getElementById('editAvailable').value = ingredient.available ? 'true' : 'false';
-                document.getElementById('editSupplierName').value = ingredient.supplier.name;
-                document.getElementById('editSupplierContact').value = ingredient.supplier.contact;
+                    closeModal('deleteModal');
+                });
             }
 
-            modal.style.display = 'flex';
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-            currentEditIngredientId = null;
-        }
-
-        function saveEditChanges() {
-            const name = document.getElementById('editName').value;
-            const description = document.getElementById('editDescription').value;
-            const category = document.getElementById('editCategory').value;
-            const quantity = parseInt(document.getElementById('editQuantity').value);
-            const lowStockThreshold = parseInt(document.getElementById('editLowStockThreshold').value);
-            const available = document.getElementById('editAvailable').value === 'true';
-            const supplierName = document.getElementById('editSupplierName').value;
-            const supplierContact = document.getElementById('editSupplierContact').value;
-
-            if (!name || !description || !supplierName || !supplierContact || isNaN(quantity) || isNaN(lowStockThreshold)) {
-                showNotification('Please fill in all required fields correctly!', 'error');
-                return;
+            if (cancelDeleteBtn) {
+                cancelDeleteBtn.addEventListener('click', function () {
+                    closeModal('deleteModal');
+                });
             }
 
-            if (currentEditIngredientId) {
-                const ingredient = ingredientsData.find(i => i.id === currentEditIngredientId);
-                if (!ingredient) return;
-
-                ingredient.name = name;
-                ingredient.description = description;
-                ingredient.category = category;
-                ingredient.quantity = quantity;
-                ingredient.lowStockThreshold = lowStockThreshold;
-                ingredient.available = available;
-                ingredient.supplier.name = supplierName;
-                ingredient.supplier.contact = supplierContact;
-                ingredient.categoryDisplay = getCategoryDisplayText(category);
-
-                updateIngredientStatus(ingredient);
-                showNotification(`${ingredient.name} updated successfully!`, 'success');
-            } else {
-                const newIngredient = {
-                    id: ingredientsData.length > 0 ? Math.max(...ingredientsData.map(i => i.id)) + 1 : 1,
-                    name: name,
-                    description: description,
-                    category: category,
-                    categoryDisplay: getCategoryDisplayText(category),
-                    status: quantity > 0 ? (quantity <= lowStockThreshold ? 'low-stock' : 'in-stock') : 'out-of-stock',
-                    quantity: quantity,
-                    supplier: {
-                        name: supplierName,
-                        contact: supplierContact
-                    },
-                    available: available,
-                    lowStockThreshold: lowStockThreshold
-                };
-
-                ingredientsData.push(newIngredient);
-                showNotification(`${newIngredient.name} added successfully!`, 'success');
+            if (deleteModal) {
+                deleteModal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeModal('deleteModal');
+                    }
+                });
             }
+        });
 
-            initializeIngredientsTable();
-            closeEditModal();
-        }
-
-        function openDeleteModal(ingredientId) {
-            const ingredient = ingredientsData.find(i => i.id === ingredientId);
-            if (!ingredient) return;
-
-            document.getElementById('deleteIngredientName').textContent = ingredient.name;
-            document.getElementById('deleteModal').style.display = 'flex';
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-        }
-
-        function confirmDelete() {
-            const ingredient = ingredientsData.find(i => i.id === currentEditIngredientId);
-            if (!ingredient) return;
-
-            const index = ingredientsData.findIndex(i => i.id === currentEditIngredientId);
-            ingredientsData.splice(index, 1);
-
-            initializeIngredientsTable();
-
-            showNotification(`${ingredient.name} deleted successfully!`, 'success');
-
-            closeDeleteModal();
-        }
-
-        function getCategoryDisplayText(category) {
-            const categoryMap = {
-                'protein': 'Protein',
-                'produce': 'Produce',
-                'grains': 'Grains & Starches',
-                'spices': 'Spices & Seasonings',
-                'essentials': 'Cooking Essentials'
-            };
-            return categoryMap[category] || category;
-        }
-
-        function setupActionButtons() {
-            document.addEventListener('click', function (e) {
-                const editBtn = e.target.closest('.action-icon.edit');
-                const deleteBtn = e.target.closest('.action-icon.delete');
-
-                if (editBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const row = editBtn.closest('tr');
-                    const ingredientId = parseInt(row.dataset.ingredientId);
-
-                    openEditModal(ingredientId, false);
-                    return false;
-                }
-
-                if (deleteBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const row = deleteBtn.closest('tr');
-                    const ingredientId = parseInt(row.dataset.ingredientId);
-
-                    openDeleteModal(ingredientId);
-                    return false;
-                }
-            });
-        }
-
-        function setupModalHandlers() {
-            document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
-            document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
-            document.getElementById('saveEdit').addEventListener('click', saveEditChanges);
-
-            document.getElementById('confirmDelete').addEventListener('click', confirmDelete);
-            document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
-
-            document.getElementById('editModal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    closeEditModal();
-                }
-            });
-
-            document.getElementById('deleteModal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    closeDeleteModal();
-                }
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    if (document.getElementById('editModal').style.display === 'flex') {
-                        closeEditModal();
-                    }
-                    if (document.getElementById('deleteModal').style.display === 'flex') {
-                        closeDeleteModal();
-                    }
-                }
-            });
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
+        var style = document.createElement('style');
+        style.textContent = `
+            .toast-notification {
                 position: fixed;
                 top: 20px;
                 right: 20px;
                 padding: 15px 20px;
-                background: ${type === 'success' ? 'var(--success-green)' : type === 'error' ? 'var(--danger-red)' : 'var(--warning-orange)'};
+                border-radius: 10px;
                 color: white;
-                border-radius: var(--radius-md);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 z-index: 10001;
                 animation: slideInRight 0.3s ease;
                 display: flex;
                 align-items: center;
                 gap: 10px;
                 max-width: 300px;
-            `;
-
-            notification.innerHTML = `
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                <span>${message}</span>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
-
-        function setupAddIngredientButton() {
-            document.getElementById('addIngredientBtn').addEventListener('click', function () {
-                openEditModal(null, true);
-            });
-        }
-
-        function setupBulkRestockButton() {
-            document.getElementById('bulkRestockBtn').addEventListener('click', function () {
-                let restockedCount = 0;
-
-                ingredientsData.forEach(ingredient => {
-                    if (ingredient.status === 'low-stock' || ingredient.status === 'out-of-stock') {
-                        const oldQuantity = ingredient.quantity;
-                        ingredient.quantity = Math.max(ingredient.lowStockThreshold * 2, 20);
-                        updateIngredientStatus(ingredient);
-                        restockedCount++;
-                    }
-                });
-
-                if (restockedCount > 0) {
-                    initializeIngredientsTable();
-                    showNotification(`${restockedCount} ingredients restocked!`, 'success');
-                } else {
-                    showNotification("No items need restocking", 'info');
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
                 }
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log("Page loaded - initializing ingredients table");
-
-            initializeIngredientsTable();
-
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', handleSearch);
-
-            const categoryFilter = document.getElementById('categoryFilter');
-            categoryFilter.addEventListener('change', handleCategoryFilter);
-
-            const statusFilter = document.getElementById('statusFilter');
-            statusFilter.addEventListener('change', handleStatusFilter);
-
-            setupQuantityControls();
-
-            setupToggleSwitches();
-
-            setupActionButtons();
-
-            setupModalHandlers();
-
-            setupAddIngredientButton();
-
-            setupBulkRestockButton();
-
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
-                
-                @keyframes slideOutRight {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
-            `;
-            document.head.appendChild(style);
-        });
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </asp:Content>
