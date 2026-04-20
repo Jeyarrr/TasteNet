@@ -1,5 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Ticketing.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Ticketing" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+﻿<%@ Page Title="Ticketing System" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Ticketing.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Ticketing" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -56,6 +57,7 @@
         background-color: var(--soft-cream) !important;
         font-family: 'Poppins', sans-serif !important;
         color: var(--text-dark) !important;
+        scroll-behavior: smooth !important;
     }
 
     body.ticketing-page,
@@ -75,10 +77,9 @@
     .ticketing-container {
         background: var(--soft-cream) !important;
         padding: 25px 35px !important;
-        max-width: 1400px !important;
+        max-width: 1600px !important;
         margin: 0 auto !important;
         min-height: 100vh !important;
-        animation: fadeIn 0.5s ease-out !important;
     }
 
     .page-header-main {
@@ -90,7 +91,6 @@
         gap: 15px !important;
         padding-bottom: 20px !important;
         border-bottom: 1px solid var(--border-light) !important;
-        animation: fadeIn 0.5s ease-out !important;
     }
 
     .header-title h1 {
@@ -99,6 +99,14 @@
         margin: 0 !important;
         font-size: 28px !important;
         letter-spacing: -0.5px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .header-title h1 i {
+        color: var(--primary-maroon) !important;
+        font-size: 32px !important;
     }
 
     .header-title p {
@@ -129,35 +137,23 @@
         display: flex !important;
         align-items: center !important;
         gap: 8px !important;
-        position: relative !important;
-        overflow: hidden !important;
         background: transparent !important;
         color: var(--text-dark) !important;
         border: none !important;
+        text-decoration: none !important;
     }
 
-    .status-tab::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: var(--primary-maroon) !important;
-        opacity: 0 !important;
-        transition: opacity var(--transition-base) !important;
-        z-index: -1 !important;
+    .status-tab:hover {
+        background: var(--bg-hover) !important;
+        transform: translateY(-2px) !important;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     .status-tab.active {
         background: var(--primary-maroon) !important;
         color: white !important;
         box-shadow: var(--button-shadow) !important;
-    }
-
-    .status-tab:not(.active):hover {
-        background: var(--bg-hover) !important;
-        transform: translateY(-1px) !important;
     }
 
     .status-badge {
@@ -176,10 +172,10 @@
 
     .tickets-grid {
         display: grid !important;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
-        gap: 25px !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 20px !important;
         margin-top: 20px !important;
-        animation: fadeIn 0.6s ease-out !important;
+        width: 100% !important;
     }
 
     .ticket-card {
@@ -187,95 +183,121 @@
         border-radius: var(--radius-lg) !important;
         overflow: hidden !important;
         box-shadow: var(--card-shadow) !important;
-        transition: all var(--transition-base) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         position: relative !important;
         border: 1px solid var(--border-light) !important;
-        animation: slideInUp 0.4s ease-out !important;
-        animation-fill-mode: both !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        animation: fadeInUp 0.5s ease-out !important;
     }
 
-    .ticket-card:nth-child(1) { animation-delay: 0.1s !important; }
-    .ticket-card:nth-child(2) { animation-delay: 0.2s !important; }
-    .ticket-card:nth-child(3) { animation-delay: 0.3s !important; }
-    .ticket-card:nth-child(4) { animation-delay: 0.4s !important; }
-    .ticket-card:nth-child(5) { animation-delay: 0.5s !important; }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
     .ticket-card:hover {
         transform: translateY(-5px) !important;
-        box-shadow: var(--card-shadow-lifted) !important;
+        box-shadow: var(--card-shadow-hover) !important;
         border-color: var(--primary-maroon-light) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
-    .ticket-card::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 4px !important;
-        height: 100% !important;
-        background: var(--primary-maroon) !important;
-        opacity: 0 !important;
-        transition: opacity var(--transition-base) !important;
+    .ticket-icon-bg {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        width: 80px;
+        height: 80px;
+        background: var(--primary-maroon);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.12;
+        z-index: 0;
     }
 
-    .ticket-card:hover::before {
-        opacity: 1 !important;
+    .ticket-icon-bg i {
+        font-size: 55px;
+        color: white;
+        transform: rotate(15deg);
     }
 
     .ticket-header {
         background: linear-gradient(135deg, var(--primary-maroon) 0%, var(--primary-maroon-dark) 100%) !important;
         color: white !important;
-        padding: 18px !important;
+        padding: 14px 16px !important;
         position: relative !important;
-        overflow: hidden !important;
-    }
-
-    .ticket-header::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        background: linear-gradient(
-            45deg,
-            transparent 30%,
-            rgba(255, 255, 255, 0.1) 50%,
-            transparent 70%
-        ) !important;
-        animation: shimmer 3s infinite linear !important;
+        z-index: 1;
     }
 
     .ticket-title {
-        font-size: 16px !important;
+        font-size: 14px !important;
         font-weight: 700 !important;
         margin-bottom: 4px !important;
         display: flex !important;
         align-items: center !important;
-        gap: 8px !important;
+        gap: 6px !important;
         position: relative !important;
         z-index: 1 !important;
+        flex-wrap: wrap !important;
+        padding-right: 40px !important;
+    }
+
+    .ticket-title i {
+        font-size: 13px !important;
     }
 
     .ticket-time {
-        font-size: 12px !important;
-        opacity: 0.9 !important;
+        font-size: 10px !important;
+        opacity: 0.85 !important;
         font-weight: 400 !important;
         margin: 0 !important;
         position: relative !important;
         z-index: 1 !important;
         display: flex !important;
         align-items: center !important;
-        gap: 6px !important;
+        gap: 5px !important;
+    }
+
+    .status-dot {
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        display: inline-block !important;
+        animation: pulse 2s infinite !important;
+    }
+
+    .status-dot.open {
+        background-color: #ff4444 !important;
+        box-shadow: 0 0 6px rgba(255, 68, 68, 0.5) !important;
+    }
+
+    .status-dot.inprogress {
+        background-color: #ffa500 !important;
+        box-shadow: 0 0 6px rgba(255, 165, 0, 0.5) !important;
+    }
+
+    .status-dot.completed {
+        background-color: #00c851 !important;
+        box-shadow: 0 0 6px rgba(0, 200, 81, 0.5) !important;
     }
 
     .ticket-time i {
-        font-size: 11px !important;
+        font-size: 9px !important;
     }
 
     .ticket-action {
         position: absolute !important;
-        right: 15px !important;
+        right: 12px !important;
         top: 50% !important;
         transform: translateY(-50%) !important;
         background: rgba(255, 255, 255, 0.2) !important;
@@ -286,179 +308,53 @@
         align-items: center !important;
         justify-content: center !important;
         cursor: pointer !important;
-        transition: all var(--transition-base) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         z-index: 2 !important;
+        color: white !important;
+        text-decoration: none !important;
+        font-size: 12px !important;
     }
 
     .ticket-action:hover {
-        background: rgba(255, 255, 255, 0.3) !important;
-        transform: translateY(-50%) scale(1.1) !important;
+        background: rgba(255, 255, 255, 0.4) !important;
+        transform: translateY(-50%) scale(1.15) rotate(90deg) !important;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .ticket-action i {
+        font-size: 12px !important;
     }
 
     .ticket-body {
-        padding: 20px !important;
+        padding: 14px !important;
         background: var(--bg-lighter) !important;
+        position: relative;
+        z-index: 1;
+        flex: 1;
     }
 
     .ticket-info {
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
-        margin-bottom: 15px !important;
-        padding-bottom: 12px !important;
+        margin-bottom: 12px !important;
+        padding-bottom: 10px !important;
         border-bottom: 1px solid var(--border-light) !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
     }
 
     .order-type {
         background: var(--accent-purple-light) !important;
         color: var(--accent-purple) !important;
-        padding: 6px 12px !important;
-        border-radius: var(--radius-sm) !important;
-        font-size: 12px !important;
-        font-weight: 600 !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-    }
-
-    .customer-name {
-        font-weight: 600 !important;
-        font-size: 14px !important;
-        color: var(--text-dark) !important;
-    }
-
-    .ticket-items {
-        margin-bottom: 20px !important;
-        font-size: 13px !important;
-        color: var(--text-dark) !important;
-        line-height: 1.6 !important;
-    }
-
-    .item-row {
-        display: flex !important;
-        justify-content: space-between !important;
-        padding: 8px 0 !important;
-        border-bottom: 1px dashed var(--border-light) !important;
-    }
-
-    .item-row:last-child {
-        border-bottom: none !important;
-    }
-
-    .item-name {
-        font-weight: 500 !important;
-    }
-
-    .item-quantity {
-        color: var(--primary-maroon) !important;
-        font-weight: 700 !important;
-        background: var(--accent-pink) !important;
-        padding: 2px 8px !important;
-        border-radius: 10px !important;
-        min-width: 24px !important;
-        text-align: center !important;
-    }
-
-    .ticket-footer {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding-top: 15px !important;
-        border-top: 1px solid var(--border-light) !important;
-    }
-
-    .ticket-actions {
-        display: flex !important;
-        gap: 10px !important;
-    }
-
-    .action-btn {
-        padding: 10px 20px !important;
-        border-radius: var(--radius-md) !important;
-        border: none !important;
-        font-family: 'Poppins', sans-serif !important;
-        font-weight: 600 !important;
-        font-size: 13px !important;
-        cursor: pointer !important;
-        transition: all var(--transition-base) !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-        position: relative !important;
-        overflow: hidden !important;
-        z-index: 1 !important;
-        min-width: 120px !important;
-        justify-content: center !important;
-    }
-
-    .action-btn::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        width: 0 !important;
-        height: 0 !important;
-        border-radius: 50% !important;
-        background: rgba(255, 255, 255, 0.3) !important;
-        transform: translate(-50%, -50%) !important;
-        transition: width 0.6s, height 0.6s !important;
-        z-index: -1 !important;
-    }
-
-    .action-btn:active::before {
-        width: 200px !important;
-        height: 200px !important;
-    }
-
-    .btn-start {
-        background: var(--accent-teal) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.25) !important;
-    }
-
-    .btn-start:hover {
-        background: #0da594 !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 18px rgba(20, 184, 166, 0.35) !important;
-    }
-
-    .btn-done {
-        background: var(--success-green) !important;
-        color: white !important;
-        box-shadow: 0 4px 12px rgba(45, 157, 120, 0.25) !important;
-    }
-
-    .btn-done:hover {
-        background: var(--success-green-dark) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 18px rgba(45, 157, 120, 0.35) !important;
-    }
-
-    .btn-delete {
-        background: white !important;
-        color: var(--danger-red) !important;
-        border: 1px solid var(--danger-red) !important;
-    }
-
-    .btn-delete:hover {
-        background: var(--danger-red) !important;
-        color: white !important;
-    }
-
-    .rush-badge {
-        background: var(--danger-red-light) !important;
-        color: var(--danger-red) !important;
         padding: 4px 10px !important;
-        border-radius: 12px !important;
-        font-size: 10px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        display: inline-flex !important;
+        border-radius: var(--radius-sm) !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        display: flex !important;
         align-items: center !important;
-        gap: 4px !important;
-        margin-left: 8px !important;
-        animation: pulse 2s infinite !important;
+        gap: 5px !important;
     }
 
     .delivery-badge {
@@ -471,15 +367,359 @@
         color: var(--accent-yellow-dark) !important;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+    .customer-name {
+        font-weight: 600 !important;
+        font-size: 12px !important;
+        color: var(--text-dark) !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+
+    .customer-name i {
+        font-size: 11px !important;
+    }
+
+    .ticket-items {
+        margin-bottom: 12px !important;
+        font-size: 11px !important;
+        color: var(--text-dark) !important;
+        line-height: 1.5 !important;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+
+    .item-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 5px 0 !important;
+        border-bottom: 1px dashed var(--border-light) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .item-row:hover {
+        background: rgba(107, 13, 30, 0.05) !important;
+        padding-left: 5px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .item-row:last-child {
+        border-bottom: none !important;
+    }
+
+    .item-name {
+        font-weight: 500 !important;
+        font-size: 11px !important;
+    }
+
+    .item-quantity {
+        color: var(--primary-maroon) !important;
+        font-weight: 700 !important;
+        background: var(--accent-pink) !important;
+        padding: 2px 6px !important;
+        border-radius: 10px !important;
+        min-width: 20px !important;
+        text-align: center !important;
+        font-size: 10px !important;
+    }
+
+    .ticket-footer {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding-top: 10px !important;
+        border-top: 1px solid var(--border-light) !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+
+    .ticket-footer > div:first-child {
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        color: var(--primary-maroon) !important;
+    }
+
+    .ticket-actions {
+        display: flex !important;
+        gap: 8px !important;
+    }
+
+    .action-btn {
+        padding: 6px 12px !important;
+        border-radius: var(--radius-sm) !important;
+        border: none !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 11px !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        min-width: auto !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+    }
+
+    .action-btn i {
+        font-size: 10px !important;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px) scale(1.05) !important;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .btn-start {
+        background: var(--accent-teal) !important;
+        color: white !important;
+    }
+
+    .btn-start:hover {
+        background: #0da594 !important;
+        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3) !important;
+    }
+
+    .btn-done {
+        background: var(--success-green) !important;
+        color: white !important;
+    }
+
+    .btn-done:hover {
+        background: var(--success-green-dark) !important;
+        box-shadow: 0 4px 12px rgba(45, 157, 120, 0.3) !important;
+    }
+
+    .btn-primary-custom {
+        background: var(--primary-maroon) !important;
+        color: white !important;
+        padding: 10px 20px !important;
+        font-size: 13px !important;
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: var(--button-shadow-hover) !important;
+    }
+
+    .rush-badge {
+        background: var(--danger-red-light) !important;
+        color: var(--danger-red) !important;
+        padding: 2px 8px !important;
+        border-radius: 10px !important;
+        font-size: 9px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 3px !important;
+        margin-left: 6px !important;
+        animation: pulse 2s infinite !important;
+    }
+
+    .rush-badge i {
+        font-size: 8px !important;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: var(--radius-lg);
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: var(--card-shadow-lifted);
+        animation: slideInUp 0.3s ease;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-maroon) 0%, var(--primary-maroon-dark) 100%);
+        color: white;
+        padding: 18px 20px;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+    }
+
+    .modal-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all var(--transition-base);
+    }
+
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1) rotate(90deg);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 13px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        font-family: 'Poppins', sans-serif;
+        transition: all var(--transition-base);
+        font-size: 13px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-maroon);
+        box-shadow: 0 0 0 3px var(--primary-maroon-light);
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .item-row-modal {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .item-row-modal select {
+        flex: 2;
+    }
+
+    .item-row-modal input {
+        flex: 1;
+    }
+
+    .btn-add-item {
+        background: var(--accent-teal);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: 600;
+        transition: all var(--transition-base);
+        font-size: 12px;
+    }
+
+    .btn-add-item:hover {
+        background: #0da594;
+        transform: translateY(-1px);
+    }
+
+    .items-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        padding: 10px;
+        background: var(--bg-lighter);
+    }
+
+    .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        position: sticky;
+        bottom: 0;
+        background: white;
+    }
+
+    .btn-cancel {
+        background: #ccc;
+        color: #333;
+    }
+
+    .btn-cancel:hover {
+        background: #bbb;
+        transform: translateY(-1px);
+    }
+
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10001;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-spinner {
+        background: white;
+        padding: 25px;
+        border-radius: var(--radius-lg);
+        text-align: center;
+    }
+
+    .no-tickets {
+        text-align: center;
+        padding: 50px;
+        color: var(--muted-text);
+        grid-column: 1 / -1 !important;
+    }
+
+    .no-tickets i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.5;
     }
 
     @keyframes slideInUp {
         from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(30px);
         }
         to {
             opacity: 1;
@@ -487,9 +727,15 @@
         }
     }
 
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
 
     @keyframes pulse {
@@ -498,39 +744,8 @@
     }
 
     @media (max-width: 1200px) {
-        .ticketing-container {
-            padding: 20px !important;
-        }
-        
         .tickets-grid {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .page-header-main {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 15px !important;
-        }
-        
-        .status-tabs-container {
-            width: 100% !important;
-            justify-content: center !important;
-        }
-        
-        .ticket-footer {
-            flex-direction: column !important;
-            gap: 15px !important;
-            align-items: stretch !important;
-        }
-        
-        .ticket-actions {
-            width: 100% !important;
-        }
-        
-        .action-btn {
-            width: 100% !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         }
     }
 
@@ -539,478 +754,428 @@
             padding: 15px !important;
         }
         
-        .header-title h1 {
-            font-size: 24px !important;
-        }
-        
         .tickets-grid {
             grid-template-columns: 1fr !important;
         }
         
         .ticket-info {
-            flex-direction: column !important;
-            gap: 10px !important;
+            flex-direction: column;
             align-items: flex-start !important;
+            gap: 8px;
+        }
+        
+        .ticket-footer {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .ticket-actions {
+            width: 100%;
+        }
+        
+        .action-btn {
+            width: 100%;
+            padding: 8px 12px !important;
+        }
+        
+        .page-header-main {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .status-tabs-container {
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
         }
     }
 
     @media (max-width: 480px) {
         .ticketing-container {
-            padding: 12px !important;
+            padding: 10px !important;
         }
         
         .status-tab {
-            padding: 8px 15px !important;
-            font-size: 12px !important;
-        }
-        
-        .ticket-header {
-            padding: 15px !important;
-        }
-        
-        .ticket-body {
-            padding: 15px !important;
+            padding: 6px 12px !important;
+            font-size: 11px !important;
         }
     }
+        @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
 </style>
-    <div class="ticketing-container">
+
+<asp:ScriptManager ID="ScriptManager1" runat="server" />
+
+<div class="ticketing-container">
     <div class="page-header-main">
         <div class="header-title">
             <h1>Ticket Management</h1>
             <p>Manage and track order tickets in real-time</p>
         </div>
         
-        <div class="status-tabs-container">
-            <div class="status-tab active">
-                <i class="fas fa-inbox"></i>
-                Open Tickets
-                <span class="status-badge">4</span>
-            </div>
-            <div class="status-tab">
-                <i class="fas fa-check-circle"></i>
-                Complete
-                <span class="status-badge">2</span>
-            </div>
-            <div class="status-tab">
-                <i class="fas fa-history"></i>
-                All Tickets
-                <span class="status-badge">6</span>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <button type="button" class="action-btn btn-primary-custom" onclick="openModalDirect()">
+                    Create Ticket
+            </button>
+            
+            <div class="status-tabs-container">
+                <asp:LinkButton ID="btnFilterOpen" runat="server" CssClass="status-tab" OnClick="btnFilterOpen_Click">
+                    Open Tickets
+                    <span class="status-badge"><asp:Literal ID="litOpenCount" runat="server">0</asp:Literal></span>
+                </asp:LinkButton>
+                
+                <asp:LinkButton ID="btnFilterInProgress" runat="server" CssClass="status-tab" OnClick="btnFilterInProgress_Click">
+                    In Progress
+                    <span class="status-badge"><asp:Literal ID="litInProgressCount" runat="server">0</asp:Literal></span>
+                </asp:LinkButton>
+                
+                <asp:LinkButton ID="btnFilterCompleted" runat="server" CssClass="status-tab" OnClick="btnFilterCompleted_Click">
+                    Completed
+                    <span class="status-badge"><asp:Literal ID="litCompletedCount" runat="server">0</asp:Literal></span>
+                </asp:LinkButton>
+                
+                <asp:LinkButton ID="btnFilterAll" runat="server" CssClass="status-tab" OnClick="btnFilterAll_Click">
+                    All Tickets
+                    <span class="status-badge"><asp:Literal ID="litAllCount" runat="server">0</asp:Literal></span>
+                </asp:LinkButton>
             </div>
         </div>
     </div>
 
-    <div class="tickets-grid">
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-title">
-                    <i class="fas fa-receipt"></i>
-                    Order #001
-                    <span class="rush-badge">
-                        <i class="fas fa-bolt"></i>
-                        RUSH
-                    </span>
-                </div>
-                <div class="ticket-time">
-                    <i class="far fa-clock"></i>
-                    1:00 PM
-                </div>
-                <div class="ticket-action" onclick="deleteTicket(this)">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
+    <asp:UpdatePanel ID="upTickets" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <div class="tickets-grid">
+                <asp:Repeater ID="rptTickets" runat="server" OnItemCommand="RptTickets_ItemCommand" OnItemDataBound="RptTickets_ItemDataBound">
+                    <ItemTemplate>
+                        <div class="ticket-card">
+                            <div class="ticket-icon-bg">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="ticket-header">
+                                <div class="ticket-title">
+                                    <i class="fas fa-receipt"></i>
+                                    <%# Eval("TicketNumber") %>
+                                    <%# Eval("Priority").ToString() == "Rush" ? "<span class='rush-badge'><i class='fas fa-bolt'></i> RUSH</span>" : "" %>
+                                </div>
+                                <div class="ticket-time">
+                                    <span class='status-dot <%# GetStatusDotClass(Eval("Status").ToString()) %>'></span>
+                                    <i class="far fa-clock"></i>
+                                    <%# Eval("CreatedTime") %>
+                                    <%# Convert.ToInt32(Eval("MinutesAgo")) > 0 ? $" ({Eval("MinutesAgo")} min ago)" : "" %>
+                                </div>
+                                <asp:LinkButton ID="btnDeleteTicket" runat="server" 
+                                    CommandName="DeleteTicket" 
+                                    CommandArgument='<%# Eval("TicketID") %>'
+                                    CssClass="ticket-action"
+                                    OnClientClick='return confirm("Delete <%# Eval("TicketNumber") %>? This action cannot be undone!");'>
+                                    <i class="fas fa-times"></i>
+                                </asp:LinkButton>
+                            </div>
+                            
+                            <div class="ticket-body">
+                                <div class="ticket-info">
+                                    <span class='order-type <%# Eval("OrderType").ToString() == "Delivery" ? "delivery-badge" : "table-badge" %>'>
+                                        <i class='<%# Eval("OrderType").ToString() == "Delivery" ? "fas fa-motorcycle" : "fas fa-utensils" %>'></i>
+                                        <%# Eval("OrderType") %> <%# Eval("TableNumber") != DBNull.Value ? $"Table {Eval("TableNumber")}" : "" %>
+                                    </span>
+                                    <span class="customer-name">
+                                        <i class="fas fa-user"></i> <%# Eval("CustomerName") %>
+                                    </span>
+                                </div>
+                                
+                                <div class="ticket-items">
+                                    <asp:Repeater ID="rptItems" runat="server">
+                                        <ItemTemplate>
+                                            <div class="item-row">
+                                                <span class="item-name"><%# Eval("Quantity") %>x <%# Eval("ItemName") %></span>
+                                                <span class="item-quantity">₱<%# Convert.ToDecimal(Eval("SubTotal")).ToString("N2") %></span>
+                                            </div>
+                                        </ItemTemplate>
+                                    </asp:Repeater>
+                                </div>
+                                
+                                <div class="ticket-footer">
+                                    <div>Total: ₱<%# Convert.ToDecimal(Eval("TotalAmount")).ToString("N2") %></div>
+                                    <div class="ticket-actions">
+                                        <asp:LinkButton ID="btnStart" runat="server" 
+                                            CommandName="Start" 
+                                            CommandArgument='<%# Eval("TicketID") %>'
+                                            CssClass="action-btn btn-start"
+                                            Visible='<%# Eval("Status").ToString() == "Open" %>'>
+                                            <i class="fas fa-play"></i> Start
+                                        </asp:LinkButton>
+                                        
+                                        <asp:LinkButton ID="btnComplete" runat="server" 
+                                            CommandName="Complete" 
+                                            CommandArgument='<%# Eval("TicketID") %>'
+                                            CssClass="action-btn btn-done"
+                                            Visible='<%# Eval("Status").ToString() == "In Progress" %>'>
+                                            <i class="fas fa-check-double"></i> Complete
+                                        </asp:LinkButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+                
+                <asp:Panel ID="pnlNoTickets" runat="server" Visible="false" CssClass="no-tickets">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>No tickets found</h3>
+                    <p>Click "Create Ticket" to create your first ticket</p>
+                </asp:Panel>
             </div>
             
-            <div class="ticket-body">
-                <div class="ticket-info">
-                    <span class="order-type delivery-badge">
-                        <i class="fas fa-motorcycle"></i>
-                        Delivery
-                    </span>
-                    <span class="customer-name">Jay-r Casano</span>
-                </div>
-                
-                <div class="ticket-items">
-                    <div class="item-row">
-                        <span class="item-name">Tofu Sisig</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Pork Sisig</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Coke (500ml)</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                </div>
-                
-                <div class="ticket-footer">
-                    <div class="ticket-actions">
-                        <button type="button" class="action-btn btn-done">
-                            <i class="fas fa-check-double"></i>
-                            Mark as Done
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <asp:HiddenField ID="hfSelectedStatus" runat="server" Value="Open" />
+        </ContentTemplate>
+    </asp:UpdatePanel>
+</div>
 
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-title">
-                    <i class="fas fa-receipt"></i>
-                    Order #002
-                </div>
-                <div class="ticket-time">
-                    <i class="far fa-clock"></i>
-                    2:00 PM
-                </div>
-                <div class="ticket-action" onclick="deleteTicket(this)">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-            </div>
-            
-            <div class="ticket-body">
-                <div class="ticket-info">
-                    <span class="order-type table-badge">
-                        <i class="fas fa-utensils"></i>
-                        Table 001
-                    </span>
-                    <span class="customer-name">George Gonzaga</span>
-                </div>
-                
-                <div class="ticket-items">
-                    <div class="item-row">
-                        <span class="item-name">Tofu Sisig</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Goto</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Coke</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                </div>
-                
-                <div class="ticket-footer">
-                    <div class="ticket-actions">
-                        <button type="button" class="action-btn btn-done">
-                            <i class="fas fa-check-double"></i>
-                            Mark as Done
-                        </button>
-                    </div>
-                </div>
-            </div>
+<div id="ticketModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3><i class="fas fa-plus-circle"></i> Create New Ticket</h3>
+            <button type="button" class="modal-close" onclick="closeModal()">✕</button>
         </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-title">
-                    <i class="fas fa-receipt"></i>
-                    Order #003
-                    <span class="rush-badge">
-                        <i class="fas fa-bolt"></i>
-                        RUSH
-                    </span>
-                </div>
-                <div class="ticket-time">
-                    <i class="far fa-clock"></i>
-                    3:00 PM
-                </div>
-                <div class="ticket-action" onclick="deleteTicket(this)">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-            </div>
-            
-            <div class="ticket-body">
-                <div class="ticket-info">
-                    <span class="order-type table-badge">
-                        <i class="fas fa-utensils"></i>
-                        Table 002
-                    </span>
-                    <span class="customer-name">Bryle Magallano</span>
-                </div>
-                
-                <div class="ticket-items">
-                    <div class="item-row">
-                        <span class="item-name">Pares</span>
-                        <span class="item-quantity">1</span>
+        <asp:UpdatePanel ID="upModal" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Order Type:</label>
+                        <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control" 
+                            AutoPostBack="true" OnSelectedIndexChanged="DdlOrderType_SelectedIndexChanged">
+                            <asp:ListItem Value="Dine-In">Dine-In</asp:ListItem>
+                            <asp:ListItem Value="Delivery">Delivery</asp:ListItem>
+                            <asp:ListItem Value="Takeout">Takeout</asp:ListItem>
+                        </asp:DropDownList>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Mami</span>
-                        <span class="item-quantity">1</span>
+                    
+                    <div class="form-group" id="divTableNumber" runat="server" style="display:none;">
+                        <label>Table Number (1-15):</label>
+                        <asp:DropDownList ID="ddlTableNumber" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="">Select Table</asp:ListItem>
+                            <asp:ListItem Value="1">Table 1</asp:ListItem>
+                            <asp:ListItem Value="2">Table 2</asp:ListItem>
+                            <asp:ListItem Value="3">Table 3</asp:ListItem>
+                            <asp:ListItem Value="4">Table 4</asp:ListItem>
+                            <asp:ListItem Value="5">Table 5</asp:ListItem>
+                            <asp:ListItem Value="6">Table 6</asp:ListItem>
+                            <asp:ListItem Value="7">Table 7</asp:ListItem>
+                            <asp:ListItem Value="8">Table 8</asp:ListItem>
+                            <asp:ListItem Value="9">Table 9</asp:ListItem>
+                            <asp:ListItem Value="10">Table 10</asp:ListItem>
+                            <asp:ListItem Value="11">Table 11</asp:ListItem>
+                            <asp:ListItem Value="12">Table 12</asp:ListItem>
+                            <asp:ListItem Value="13">Table 13</asp:ListItem>
+                            <asp:ListItem Value="14">Table 14</asp:ListItem>
+                            <asp:ListItem Value="15">Table 15</asp:ListItem>
+                        </asp:DropDownList>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Coke</span>
-                        <span class="item-quantity">2</span>
+                    
+                    <div class="form-group" id="divDeliveryAddress" runat="server" style="display:none;">
+                        <label>Delivery Address:</label>
+                        <asp:TextBox ID="txtDeliveryAddress" runat="server" CssClass="form-control" 
+                            TextMode="MultiLine" Rows="3" />
                     </div>
-                </div>
-                
-                <div class="ticket-footer">
-                    <div class="ticket-actions">
-                        <button type="button" class="action-btn btn-start">
-                            <i class="fas fa-play"></i>
-                            Start Preparation
-                        </button>
+                    
+                    <div class="form-group">
+                        <label>Customer Name <span style="color:red;">*</span>:</label>
+                        <asp:TextBox ID="txtCustomerName" runat="server" CssClass="form-control" />
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-title">
-                    <i class="fas fa-receipt"></i>
-                    Order #004
-                </div>
-                <div class="ticket-time">
-                    <i class="far fa-clock"></i>
-                    1:00 PM
-                </div>
-                <div class="ticket-action" onclick="deleteTicket(this)">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-            </div>
-            
-            <div class="ticket-body">
-                <div class="ticket-info">
-                    <span class="order-type delivery-badge">
-                        <i class="fas fa-motorcycle"></i>
-                        Delivery
-                    </span>
-                    <span class="customer-name">Lalaine Reyes</span>
-                </div>
-                
-                <div class="ticket-items">
-                    <div class="item-row">
-                        <span class="item-name">Tofu Sisig</span>
-                        <span class="item-quantity">1</span>
+                    
+                    <div class="form-group">
+                        <label>Customer Phone:</label>
+                        <asp:TextBox ID="txtCustomerPhone" runat="server" CssClass="form-control" />
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Pork Sisig</span>
-                        <span class="item-quantity">1</span>
+                    
+                    <div class="form-group">
+                        <label>Priority:</label>
+                        <asp:DropDownList ID="ddlPriority" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="Normal">Normal</asp:ListItem>
+                            <asp:ListItem Value="Rush">Rush</asp:ListItem>
+                        </asp:DropDownList>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Coke</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Extra Rice</span>
-                        <span class="item-quantity">2</span>
-                    </div>
-                </div>
-                
-                <div class="ticket-footer">
-                    <div class="ticket-actions">
-                        <button type="button" class="action-btn btn-start">
-                            <i class="fas fa-play"></i>
-                            Start Preparation
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-title">
-                    <i class="fas fa-receipt"></i>
-                    Order #005
-                </div>
-                <div class="ticket-time">
-                    <i class="far fa-clock"></i>
-                    1:00 PM
-                </div>
-                <div class="ticket-action" onclick="deleteTicket(this)">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-            </div>
-            
-            <div class="ticket-body">
-                <div class="ticket-info">
-                    <span class="order-type table-badge">
-                        <i class="fas fa-utensils"></i>
-                        Table 003
-                    </span>
-                    <span class="customer-name">Zea Sulit</span>
-                </div>
-                
-                <div class="ticket-items">
-                    <div class="item-row">
-                        <span class="item-name">Pork Sisig</span>
-                        <span class="item-quantity">1</span>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Extra Rice</span>
-                        <span class="item-quantity">2</span>
+                    
+                    <div class="form-group">
+                        <label>Add Items:</label>
+                        <div class="item-row-modal">
+                            <asp:DropDownList ID="ddlMenuItem" runat="server" CssClass="form-control">
+                            </asp:DropDownList>
+                            <asp:TextBox ID="txtQuantity" runat="server" Text="1" TextMode="Number" 
+                                CssClass="form-control" style="width:80px;" />
+                            <asp:Button ID="btnAddItem" runat="server" Text="Add Item" 
+                                CssClass="btn-add-item" OnClick="BtnAddItem_Click" UseSubmitBehavior="false" />
+                        </div>
+                        
+                        <div class="items-list">
+                            <asp:Panel ID="pnlNoItems" runat="server" Visible="true" 
+                                style="text-align:center; padding:20px; color:#999;">
+                                No items added yet
+                            </asp:Panel>
+                            
+                            <asp:Repeater ID="rptSelectedItems" runat="server" OnItemCommand="RptSelectedItems_ItemCommand">
+                                <ItemTemplate>
+                                    <div style="display:flex; gap:10px; align-items:center; margin:8px 0; padding:8px; background:#f9f4ee; border-radius:6px;">
+                                        <strong style="flex:2; color:#4a0e0e;">
+                                            <%# Eval("Quantity") %>x <%# Eval("ItemName") %>
+                                        </strong>
+                                        <span style="flex:1; color:#6b0d1e; font-weight:bold;">
+                                            ₱<%# Convert.ToDecimal(Eval("SubTotal")).ToString("N2") %>
+                                        </span>
+                                        <asp:LinkButton ID="btnRemoveItem" runat="server" CommandName="RemoveItem" 
+                                            CommandArgument='<%# Container.ItemIndex %>' 
+                                            style="background:#b91c1c; color:white; padding:4px 12px; border-radius:4px; text-decoration:none;"
+                                            OnClientClick="return confirm('Remove this item?');">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </asp:LinkButton>
+                                    </div>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                            
+                            <div style="font-weight:bold; margin-top:15px; padding-top:10px; border-top:2px solid #6b0d1e; 
+                                        display:flex; justify-content:space-between; color:#4a0e0e;">
+                                <span>Total:</span> 
+                                <asp:Literal ID="litModalTotal" runat="server">₱0.00</asp:Literal>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="ticket-footer">
-                    <div class="ticket-actions">
-                        <button type="button" class="action-btn btn-start">
-                            <i class="fas fa-play"></i>
-                            Start Preparation
-                        </button>
-                    </div>
+                <div class="modal-footer">
+                    <asp:Button ID="btnCreateTicket" runat="server" Text="Create Ticket" 
+                        CssClass="action-btn btn-done" OnClick="BtnCreateTicket_Click" />
+                    <button type="button" class="action-btn btn-cancel" onclick="closeModal()">Cancel</button>
                 </div>
-            </div>
-        </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
     </div>
 </div>
 
-<script>
-    // Add class to body for more specific CSS targeting
-    document.body.classList.add('ticketing-page');
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin fa-3x"></i>
+        <p style="margin-top: 15px;">Processing...</p>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let modalShouldStayOpen = false;
 
     document.addEventListener('DOMContentLoaded', function () {
-        const statusTabs = document.querySelectorAll('.status-tab');
-        const startButtons = document.querySelectorAll('.btn-start');
-        const doneButtons = document.querySelectorAll('.btn-done');
-        const deleteButtons = document.querySelectorAll('.ticket-action');
+        document.body.classList.add('ticketing-page');
 
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed !important;
-                top: 20px !important;
-                right: 20px !important;
-                padding: 15px 20px !important;
-                background: ${type === 'success' ? 'var(--success-green)' :
-                    type === 'info' ? 'var(--accent-blue-dark)' :
-                        type === 'warning' ? 'var(--warning-orange)' :
-                            'var(--danger-red)'} !important;
-                color: white !important;
-                border-radius: var(--radius-md) !important;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-                z-index: 10001 !important;
-                animation: slideInRight 0.3s ease !important;
-                display: flex !important;
-                align-items: center !important;
-                gap: 10px !important;
-                max-width: 300px !important;
-                font-family: 'Poppins', sans-serif !important;
-                font-weight: 500 !important;
-            `;
-            notification.innerHTML = `
-                <i class="fas ${type === 'success' ? 'fa-check-circle' :
-                    type === 'info' ? 'fa-info-circle' :
-                        type === 'warning' ? 'fa-exclamation-circle' :
-                            'fa-times-circle'}"></i>
-                <span>${message}</span>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'slideInRight 0.3s ease reverse !important';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        function startTicketPreparation(ticketCard) {
-            const orderId = ticketCard.querySelector('.ticket-title').textContent.trim();
-            const btn = ticketCard.querySelector('.btn-start');
-
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-check"></i> Started';
-                btn.className = 'action-btn btn-done';
-                btn.onclick = () => completeTicket(ticketCard);
-
-                showNotification(`${orderId} preparation started`, 'success');
-            }, 1500);
-        }
-
-        function completeTicket(ticketCard) {
-            const orderId = ticketCard.querySelector('.ticket-title').textContent.trim();
-            const btn = ticketCard.querySelector('.btn-done');
-
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Completing...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                ticketCard.style.animation = 'slideInRight 0.3s ease reverse !important';
-                setTimeout(() => {
-                    ticketCard.remove();
-
-                    const openBadge = document.querySelector('.status-tab.active .status-badge');
-                    openBadge.textContent = parseInt(openBadge.textContent) - 1;
-
-                    const completeTab = document.querySelectorAll('.status-tab')[1];
-                    const completeBadge = completeTab.querySelector('.status-badge');
-                    completeBadge.textContent = parseInt(completeBadge.textContent) + 1;
-
-                    showNotification(`${orderId} marked as completed`, 'success');
-                }, 300);
-            }, 1500);
-        }
-
-        function deleteTicket(ticketCard) {
-            const orderId = ticketCard.querySelector('.ticket-title').textContent.trim();
-
-            if (confirm(`Are you sure you want to delete ${orderId}?`)) {
-                ticketCard.style.animation = 'slideInRight 0.3s ease reverse !important';
-                setTimeout(() => {
-                    ticketCard.remove();
-
-                    const openBadge = document.querySelector('.status-tab.active .status-badge');
-                    openBadge.textContent = parseInt(openBadge.textContent) - 1;
-
-                    showNotification(`${orderId} deleted successfully`, 'info');
-                }, 300);
-            }
-        }
-
-        statusTabs.forEach(tab => {
-            tab.addEventListener('click', function () {
-                statusTabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                showNotification(`Showing ${this.textContent.trim()} tickets`, 'info');
-            });
-        });
-
-        startButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const ticketCard = this.closest('.ticket-card');
-                startTicketPreparation(ticketCard);
-            });
-        });
-
-        doneButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const ticketCard = this.closest('.ticket-card');
-                completeTicket(ticketCard);
-            });
-        });
-
-        setInterval(() => {
-            const timeElements = document.querySelectorAll('.ticket-time');
-            timeElements.forEach(timeEl => {
-                const timeText = timeEl.textContent;
-                if (timeText.includes('min')) {
-                    const minutes = parseInt(timeText.match(/\d+/)[0]);
-                    timeEl.innerHTML = `<i class="far fa-clock"></i> ${minutes + 1} min ago`;
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
-        }, 60000);
+        });
+    });
+
+    function openModalDirect() {
+        var modal = document.getElementById('ticketModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            modalShouldStayOpen = true;
+            modal.style.animation = 'fadeIn 0.3s ease-out';
+        }
+        return false;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('ticketModal');
+        if (modal) {
+            modal.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modalShouldStayOpen = false;
+            }, 300);
+        }
+    }
+
+    function showLoading(show) {
+        var overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.style.display = show ? 'flex' : 'none';
+        }
+    }
+
+    function showNotification(message, type) {
+        var existingNotif = document.querySelector('.custom-notification');
+        if (existingNotif) {
+            existingNotif.remove();
+        }
+
+        var notification = document.createElement('div');
+        notification.className = 'custom-notification';
+        var bgColor = type === 'success' ? '#2d9d78' : (type === 'warning' ? '#d97706' : '#b91c1c');
+        var icon = type === 'success' ? 'fa-check-circle' : (type === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle');
+
+        notification.style.cssText = `
+            position: fixed; bottom: 20px; right: 20px; padding: 15px 20px;
+            background: ${bgColor}; color: white; border-radius: 8px; 
+            z-index: 10002; animation: slideInRight 0.3s ease;
+            font-family: 'Poppins', sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 350px; font-size: 14px;
+        `;
+        notification.innerHTML = `<i class="fas ${icon}" style="margin-right: 10px;"></i> ${message}`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                if (notification && notification.remove) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 4000);
+    }
+
+    window.onclick = function (event) {
+        var modal = document.getElementById('ticketModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (sender, args) {
+        showLoading(false);
+
+        if (modalShouldStayOpen) {
+            setTimeout(function () {
+                var modal = document.getElementById('ticketModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            }, 100);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     });
 </script>
-
 </asp:Content>
