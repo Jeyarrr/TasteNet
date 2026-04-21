@@ -6,6 +6,7 @@
     <title>Login | TasteNet</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body {
             margin: 0;
@@ -219,8 +220,9 @@
             margin-top: 5px;
             background: #fff;
             border: 2px solid #ffc107;
-            padding: 10px 10px;
-            width: 45%;
+            padding: 10px 16px;
+            width: auto;
+            min-width: 220px;
             font-size: 14px;
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
@@ -234,6 +236,7 @@
             justify-content: center;
             gap: 12px;
             color: #333;
+            white-space: nowrap;
         }
 
         .google-btn:hover {
@@ -247,6 +250,12 @@
             box-shadow: 0 2px 5px rgba(255, 193, 7, 0.4);
         }
 
+        .google-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .google-icon-svg {
             width: 20px;
             height: 20px;
@@ -256,12 +265,8 @@
         }
 
         @keyframes glowPulse{
-            from{
-                box-shadow: 0 0 5px #ffc107;
-            }
-            to{
-                box-shadow: 0 0 12px #ffc107, 0 0 24px rgba(255, 193, 7, 0.8);
-            }
+            from{ box-shadow: 0 0 5px #ffc107; }
+            to{ box-shadow: 0 0 12px #ffc107, 0 0 24px rgba(255, 193, 7, 0.8); }
         }
         
         .error-message {
@@ -286,9 +291,7 @@
             line-height: 1.4;
         }
 
-        .extra-text br {
-            display: block;
-        }
+        .extra-text br { display: block; }
 
         .or-text {
             margin: 4px 0;
@@ -304,20 +307,14 @@
         }
 
         @media (max-width: 400px) {
-            .btn-login, .google-btn {
-                width: 70%;
-            }
-            .google-btn {
-                font-size: 12px;
-                gap: 8px;
-            }
+            .btn-login, .google-btn { width: 70%; }
+            .google-btn { font-size: 12px; gap: 8px; }
         }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <div class="login-card">
-
             <div class="logo">
                 <img src="Images/LOGO.png" alt="Logo" />
             </div>
@@ -333,33 +330,20 @@
                 <i id="togglePwd" class="fa fa-eye-slash"></i>
             </div>
 
-            <asp:Label ID="lblError" runat="server" CssClass="error-message" 
-               Visible="false"></asp:Label>
+            <asp:Label ID="lblError" runat="server" CssClass="error-message" Visible="false"></asp:Label>
 
             <div class="remember-forgot">
                 <div class="remember-me">
                     <asp:CheckBox ID="chkRemember" runat="server" />
                     <asp:Label ID="lblRemember" runat="server" Text="Remember me" AssociatedControlID="chkRemember"></asp:Label>
                 </div>
-                <asp:HyperLink 
-                    ID="lnkForgot" 
-                    runat="server" 
-                    NavigateUrl="~/ForgotPassword.aspx"
-                    CssClass="forgot-password">
-                    Forgot Password?
-                </asp:HyperLink>
+                <asp:HyperLink ID="lnkForgot" runat="server" NavigateUrl="~/ForgotPassword.aspx" CssClass="forgot-password">Forgot Password?</asp:HyperLink>
             </div>
 
             <asp:Button ID="btnLogin" runat="server" Text="LOGIN" CssClass="btn-login" OnClick="btnLogin_Click" />
 
             <div class="extra-text">
-                <asp:HyperLink 
-                    ID="lnkRegister" 
-                    runat="server" 
-                    NavigateUrl="~/Register.aspx"
-                    CssClass="create-account">
-                    Create your account
-                </asp:HyperLink>
+                <asp:HyperLink ID="lnkRegister" runat="server" NavigateUrl="~/Register.aspx" CssClass="create-account">Create your account</asp:HyperLink>
             </div>
 
             <div class="or-text">or</div>
@@ -377,18 +361,17 @@
                     <span>Sign in with Google</span>
                 </button>
             </div>
-
         </div>
     </form>
 
     <script>
+        window.googleClientId = '212574206218-1q5521s82manegu756dr108a7n6eck0s.apps.googleusercontent.com';
+
         const toggle = document.getElementById("togglePwd");
         const pwd = document.getElementById('<%= txtPassword.ClientID %>');
-
         if (toggle && pwd) {
             toggle.addEventListener("click", () => {
                 toggle.classList.add("active");
-
                 if (pwd.type === "password") {
                     pwd.type = "text";
                     toggle.classList.replace("fa-eye-slash", "fa-eye");
@@ -396,17 +379,58 @@
                     pwd.type = "password";
                     toggle.classList.replace("fa-eye", "fa-eye-slash");
                 }
-
                 setTimeout(() => toggle.classList.remove("active"), 200);
             });
         }
 
         const googleBtn = document.getElementById("googleSignInBtn");
         if (googleBtn) {
-            googleBtn.addEventListener("click", function () {
-                console.log("Google Sign-In clicked");
-                alert("Google Sign-In - Add your OAuth redirect URL here");
+            googleBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                googleBtn.disabled = true;
+                googleBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Redirecting...';
+
+                const redirectUri = encodeURIComponent(window.location.href);
+                const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                    `client_id=${window.googleClientId}&` +
+                    `redirect_uri=${redirectUri}&` +
+                    `response_type=code&` +
+                    `scope=openid%20email%20profile&` +
+                    `state=google-login&access_type=offline&prompt=consent`;
+
+                window.location.href = authUrl;
             });
+        }
+
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code && urlParams.get('state') === 'google-login') {
+                handleGoogleCallback(code);
+            }
+        };
+
+        function handleGoogleCallback(code) {
+            fetch('GoogleAuth.ashx', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        alert('Google login failed: ' + data.error);
+                        googleBtn.disabled = false;
+                        googleBtn.innerHTML = '<span class="google-icon-svg">...</span><span>Sign in with Google</span>';
+                    }
+                })
+                .catch(error => {
+                    alert('Error: ' + error);
+                    googleBtn.disabled = false;
+                    googleBtn.innerHTML = '<span class="google-icon-svg">...</span><span>Sign in with Google</span>';
+                });
         }
     </script>
 </body>
