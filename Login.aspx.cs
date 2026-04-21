@@ -1,112 +1,113 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Web.UI;
+using System.IO;
+using System.Net.Http;
+using System.Web;
 
-namespace TasteNet
+
+public class Login : IHttpHandler
 {
-    public partial class Login : System.Web.UI.Page
+    public void ProcessRequest(HttpContext context)
     {
-        protected void Page_Load(object sender, EventArgs e)
+        context.Response.ContentType = "application/json";
+        context.Response.Charset = "utf-8";
+
+        try
         {
-            lblError.Visible = false;
-        }
+            string requestBody = new StreamReader(context.Request.InputStream).ReadToEnd();
+            dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(requestBody);
+            string code = data.code;
 
-        protected void btnLogin_Click(object sender, EventArgs e)
-        {
-            string emailOrUsername = txtUsername.Text.Trim();
-            string password = txtPassword.Text;
+            // Google Client ID to 
+            string clientId = "212574206218-1q5521s82manegu756dr108a7n6eck0s.apps.googleusercontent.com";
+            string clientSecret = "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";
 
-            lblError.Visible = false;
-            lblError.Text = "";
+            string redirectUri = HttpUtility.UrlEncode(context.Request.Url.GetLeftPart(UriPartial.Authority) + "/Login.aspx");
 
-            try
+            using (var client = new HttpClient())
             {
-                using (SqlConnection conn = GetConnection())
+                var tokenContent = new FormUrlEncodedContent(new[]
                 {
-                    conn.Open();
+                    new KeyValuePair<string, string>("code", code),
+                    new KeyValuePair<string, string>("client_id", clientId),
+                    new KeyValuePair<string, string>("client_secret", clientSecret),
+                    new KeyValuePair<string, string>("redirect_uri", redirectUri),
+                    new KeyValuePair<string, string>("grant_type", "authorization_code")
+                });
 
-                    string query = @"
-                        SELECT Username, UserType, Password, IsActive
-                        FROM Users 
-                        WHERE (Email = @Login OR Username = @Login)";
+                var tokenResponse = client.PostAsync("https://oauth2.googleapis.com/token", tokenContent).Result;
+                string tokenJson = tokenResponse.Content.ReadAsStringAsync().Result;
+                dynamic tokenData = JObject.Parse(tokenJson);
+                string accessToken = tokenData.access_token;
 
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                var userResponse = client.GetAsync($"https://www.googleapis.com/oauth2/v2/userinfo?access_token={accessToken}").Result;
+                string userJson = userResponse.Content.ReadAsStringAsync().Result;
+                dynamic userData = JObject.Parse(userJson);
+
+                var userInfo = LoginOrCreateUser(context, userData.email, userData.name, userData.picture);
+
+                context.Session["Username"] = userInfo.Username;
+                context.Session["UserType"] = userInfo.UserType;
+                context.Session[$"Is{userInfo.UserType}"] = true;
+                context.Session["LoginTime"] = DateTime.Now;
+
+                string redirectUrl = GetRedirectUrl(userInfo.UserType);
+                context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new
+                {
+                    success = true,
+                    email = userData.email,
+                    name = userData.name,
+                    userType = userInfo.UserType,
+                    redirectUrl = redirectUrl
+                }));
+            }
+        }
+        catch (Exception ex)
+        {
+            context.Response.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                success = false,
+                error = ex.Message
+            }));
+        }
+    }
+
+    private dynamic LoginOrCreateUser(HttpContext context, string email, string name, string picture)
+    {
+        using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString))
+        {
+            conn.Open();
+
+            string checkQuery = "SELECT Username, UserType FROM Users WHERE Email = @Email OR Username = @Email";
+            using (SqlCommand cmd = new SqlCommand(checkQuery, conn))
+            {
+                cmd.Parameters.AddWithValue("@Email", email);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
                     {
-                        cmd.Parameters.AddWithValue("@Login", emailOrUsername);
-
-                        using (SqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                string dbPassword = reader["Password"].ToString();
-                                string username = reader["Username"].ToString();
-                                string userType = reader["UserType"].ToString();
-                                bool isActive = Convert.ToBoolean(reader["IsActive"]);
-
-                                if (dbPassword == password && isActive)
-                                {
-                                    SetUserSession(username, userType);
-
-                                    switch (userType.ToLower())
-                                    {
-                                        case "superadmin":
-                                            Response.Redirect("~/Users/SuperAdmin/Dashboard.aspx");
-                                            break;
-                                        case "admin":
-                                            Response.Redirect("~/Users/Admin/Inventory.aspx");
-                                            break;
-                                        case "rider":
-                                            Response.Redirect("~/Users/Rider/Dashboard.aspx");
-                                            break;
-                                        case "customer":
-                                            Response.Redirect("~/Users/Customer/CustomerPortal.aspx");
-                                            break;
-                                        default:
-                                            Response.Redirect("~/Default.aspx");
-                                            break;
-                                    }
-                                    return;
-                                }
-                                else if (!isActive)
-                                {
-                                    lblError.Text = "Account is deactivated. Please contact support.";
-                                }
-                                else
-                                {
-                                    lblError.Text = "Invalid username/email or password";
-                                }
-                            }
-                            else
-                            {
-                                lblError.Text = "Invalid username/email or password";
-                            }
-                        }
+                        return new { Username = reader["Username"].ToString(), UserType = reader["UserType"].ToString() };
                     }
                 }
             }
-            catch (Exception ex)
+
+            string username = email.Split('@')[0].Replace(".", "").Replace("_", "");
+            string insertQuery = @"INSERT INTO Users (Username, Email, UserType, IsActive, ProfilePicture, CreatedDate) 
+                                  VALUES (@Username, @Email, 'customer', 1, @Picture, GETDATE())";
+
+            using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
             {
-                lblError.Text = "Database error: " + ex.Message;
+                cmd.Parameters.AddWithValue("@Username", username);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Picture", picture ?? "");
+                cmd.ExecuteNonQuery();
             }
 
-            lblError.Visible = true;
-            txtPassword.Text = "";
-            txtUsername.Focus();
-        }
-
-        private void SetUserSession(string username, string userType)
-        {
-            Session["Username"] = username;
-            Session["UserType"] = userType;
-            Session[$"Is{userType}"] = true;
-            Session["LoginTime"] = DateTime.Now;
-        }
-
-        private SqlConnection GetConnection()
-        {
-            string connectionString = ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
-            return new SqlConnection(connectionString);
+            return new { Username = username, UserType = "customer" };
         }
     }
+    public bool IsReusable { get { return false; } }
 }
