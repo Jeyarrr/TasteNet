@@ -405,12 +405,6 @@
               
                 <div class="menu-title">Orders</div>
                 <li>
-                    <a href="/Users/Admin/AcceptOrder.aspx" id="link-accept-orders">
-                        <i class="fa-solid fa-cart-plus"></i>
-                        <span>Accept Orders</span>
-                    </a>
-                </li>
-                <li>
                     <a href="/Users/Admin/Ticketing.aspx" id="link-ticketing">
                         <i class="fa-solid fa-ticket"></i>
                         <span>Ticketing</span>

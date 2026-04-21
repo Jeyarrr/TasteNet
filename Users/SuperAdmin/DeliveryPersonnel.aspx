@@ -1564,13 +1564,13 @@
 
             <div class="stat-card">
                 <div class="stat-card__header">
-                    <span class="stat-card__label">Active Orders</span>
+                    <span class="stat-card__label">Offline</span>
                     <div class="stat-card__icon stat-card__icon--orders">
-                        <i class="fas fa-cube"></i>
+                        <i class="fas fa-moon"></i>
                     </div>
                 </div>
-                <div class="stat-card__value">6</div>
-                <div class="stat-card__trend">Being delivered</div>
+                <div class="stat-card__value" id="offlineRiders">0</div>
+                <div class="stat-card__trend">Not available</div>
             </div>
         </div>
 
@@ -1752,9 +1752,21 @@
                 </button>
             </div>
             <div class="add-rider-modal__body">
-                <class id="addRiderForm">
+                <div id="addRiderForm">
                     <div class="form-section">
                         <h4><i class="fas fa-user-circle"></i> Personal Information</h4>
+
+                        <!-- Profile Picture -->
+                        <div class="form-group" style="display:flex;flex-direction:column;align-items:center;margin-bottom:18px;">
+                            <label style="margin-bottom:8px;font-weight:600;">Profile Picture</label>
+                            <div id="profilePicPreviewWrap" style="width:90px;height:90px;border-radius:50%;overflow:hidden;border:3px solid var(--border-light);background:var(--bg-light);display:flex;align-items:center;justify-content:center;margin-bottom:10px;cursor:pointer;" onclick="document.getElementById('newRiderProfilePic').click()">
+                                <img id="profilePicPreviewImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                                <i id="profilePicIcon" class="fas fa-camera" style="font-size:28px;color:var(--muted-text);"></i>
+                            </div>
+                            <input type="file" id="newRiderProfilePic" accept="image/*" style="display:none;">
+                            <small class="form-text" style="text-align:center;">Click photo to upload (JPG, PNG)</small>
+                        </div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="newRiderFullName">Full Name *</label>
@@ -1842,9 +1854,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="newRiderVehicleYear">Year *</label>
-                                <select id="newRiderVehicleYear" class="form-control" required>
-                                    <option value="">Select year</option>
-                                </select>
+                                <input type="number" id="newRiderVehicleYear" class="form-control" placeholder="e.g. 2022" min="2000" max="2027" required>
                             </div>
                             <div class="form-group">
                                 <label for="newRiderLicensePlate">License Plate Number *</label>
@@ -1940,108 +1950,19 @@
                         <button type="button" class="btn btn--outline" onclick="closeAddRiderModal()">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn--primary">
+                        <button type="button" class="btn btn--primary" onclick="addNewRider(event)">
                             <i class="fas fa-save"></i> Save Rider
                         </button>
                     </div>
-                </class>
+                </div>
             </div>
         </div>
     </div>
 
     <script type="text/javascript">
-        let ridersData = [
-            {
-                id: "001",
-                name: "Zea Mae Sulit",
-                joinDate: "Jan 15, 2024",
-                phone: "0917-111-2222",
-                email: "zeamae.s@email.com",
-                vehicle: "Motorcycle",
-                status: "available",
-                assigned: 2,
-                completed: 487,
-                rating: 4.8,
-                lastActivity: "Today, 10:30 AM",
-                recentDeliveries: [
-                    { orderId: "ORD-2024-001", time: "Today, 09:45 AM", status: "Delivered" },
-                    { orderId: "ORD-2024-002", time: "Yesterday, 02:30 PM", status: "Delivered" },
-                    { orderId: "ORD-2024-003", time: "Yesterday, 11:15 AM", status: "Delivered" }
-                ]
-            },
-            {
-                id: "002",
-                name: "Jay-r Casano",
-                joinDate: "Dec 22, 2023",
-                phone: "0918-222-3333",
-                email: "jayr.c@email.com",
-                vehicle: "Motorcycle",
-                status: "delivery",
-                assigned: 1,
-                completed: 523,
-                rating: 5.0,
-                lastActivity: "Currently delivering",
-                recentDeliveries: [
-                    { orderId: "ORD-2024-004", time: "Currently delivering", status: "In Progress" },
-                    { orderId: "ORD-2024-005", time: "Today, 08:30 AM", status: "Delivered" },
-                    { orderId: "ORD-2024-006", time: "Yesterday, 04:45 PM", status: "Delivered" }
-                ]
-            },
-            {
-                id: "003",
-                name: "George Gonzaga",
-                joinDate: "Feb 10, 2024",
-                phone: "0919-333-4444",
-                email: "gonzaga.g@email.com",
-                vehicle: "Bicycle",
-                status: "available",
-                assigned: 0,
-                completed: 156,
-                rating: 4.0,
-                lastActivity: "Today, 11:15 AM",
-                recentDeliveries: [
-                    { orderId: "ORD-2024-007", time: "Today, 10:00 AM", status: "Delivered" },
-                    { orderId: "ORD-2024-008", time: "Yesterday, 03:30 PM", status: "Delivered" },
-                    { orderId: "ORD-2024-009", time: "2 days ago, 01:45 PM", status: "Delivered" }
-                ]
-            },
-            {
-                id: "004",
-                name: "Lalaine Reyes",
-                joinDate: "Mar 05, 2024",
-                phone: "0920-444-5555",
-                email: "laline.r@email.com",
-                vehicle: "Motorcycle",
-                status: "delivery",
-                assigned: 3,
-                completed: 89,
-                rating: 3.5,
-                lastActivity: "Currently delivering",
-                recentDeliveries: [
-                    { orderId: "ORD-2024-010", time: "Currently delivering", status: "In Progress" },
-                    { orderId: "ORD-2024-011", time: "Currently delivering", status: "In Progress" },
-                    { orderId: "ORD-2024-012", time: "Today, 09:00 AM", status: "Delivered" }
-                ]
-            },
-            {
-                id: "005",
-                name: "Bryce Magallano",
-                joinDate: "Apr 12, 2024",
-                phone: "0921-555-6666",
-                email: "bryce.g@email.com",
-                vehicle: "Motorcycle",
-                status: "available",
-                assigned: 1,
-                completed: 312,
-                rating: 5.0,
-                lastActivity: "Today, 10:45 AM",
-                recentDeliveries: [
-                    { orderId: "ORD-2024-013", time: "Today, 09:30 AM", status: "Delivered" },
-                    { orderId: "ORD-2024-014", time: "Yesterday, 05:15 PM", status: "Delivered" },
-                    { orderId: "ORD-2024-015", time: "Yesterday, 02:00 PM", status: "Delivered" }
-                ]
-            }
-        ];
+        // Data injected directly from code-behind on page load
+        let ridersData = <%= GetRidersJson() %>;
+        const saveRiderUrl = '<%= ResolveUrl("~/" + Request.AppRelativeCurrentExecutionFilePath.Replace("~/","").Replace(System.IO.Path.GetFileName(Request.AppRelativeCurrentExecutionFilePath),"") + "SaveRider.ashx") %>';
 
         let allRiders = [];
         let currentRiderId = null;
@@ -2074,9 +1995,16 @@
                         <span class="rider-id">RDR-${rider.id.padStart(3, '0')}</span>
                     </td>
                     <td>
-                        <div class="rider-info">
-                            <span class="rider-name">${rider.name}</span>
-                            <span class="rider-contact">Joined: ${rider.joinDate}</span>
+                        <div class="rider-info" style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;background:var(--bg-light);flex-shrink:0;border:2px solid var(--border-light);">
+                                ${rider.profilePicture
+                        ? `<img src="${rider.profilePicture}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<i class=\'fas fa-user\' style=\'font-size:18px;color:var(--muted-text);margin:auto;display:block;padding-top:9px;\'></i>'">`
+                        : `<i class="fas fa-user" style="font-size:18px;color:var(--muted-text);margin:auto;display:block;padding-top:9px;"></i>`}
+                            </div>
+                            <div>
+                                <span class="rider-name">${rider.name}</span>
+                                <span class="rider-contact">Joined: ${rider.joinDate}</span>
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -2471,27 +2399,67 @@
         function confirmDelete() {
             if (!riderToDelete) return;
 
-            const riderIndex = ridersData.findIndex(r => r.id === riderToDelete);
-            if (riderIndex === -1) return;
+            // Normalise: compare as strings since data-rider-id is always a string
+            const riderIndex = ridersData.findIndex(r => String(r.id) === String(riderToDelete));
+            if (riderIndex === -1) {
+                showNotification('Rider not found in list.', 'error');
+                return;
+            }
 
-            ridersData.splice(riderIndex, 1);
+            const deleteBtn = document.getElementById('confirmDelete');
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Deleting...';
 
-            initializeRiderTable();
+            // Build URL the same way SaveRider does — replace filename only
+            const deleteUrl = saveRiderUrl.replace('SaveRider.ashx', 'DeleteRider.ashx');
 
-            closeModal();
+            const formData = new FormData();
+            formData.append('riderId', String(riderToDelete));
 
-            showNotification('Rider deleted successfully!', 'success');
+            fetch(deleteUrl, { method: 'POST', body: formData })
+                .then(function (res) {
+                    // Log raw response text first so we can see 404 HTML or errors
+                    return res.text();
+                })
+                .then(function (text) {
+                    console.log('DeleteRider raw response:', text);
+                    let result;
+                    try { result = JSON.parse(text); }
+                    catch (e) {
+                        showNotification('Server error: ' + text.substring(0, 100), 'error');
+                        return;
+                    }
+                    if (result && result.success) {
+                        ridersData.splice(riderIndex, 1);
+                        initializeRiderTable();
+                        updateStatCards();
+                        closeModal();
+                        showNotification('Rider deleted successfully!', 'success');
+                    } else {
+                        showNotification(result.message || 'Failed to delete rider from database.', 'error');
+                    }
+                })
+                .catch(function (err) {
+                    console.error('DeleteRider error:', err);
+                    showNotification('Network error: ' + err.message, 'error');
+                })
+                .finally(function () {
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = 'Delete';
+                });
         }
 
         function updateStats() {
             const visibleRiders = allRiders.filter(r => r.element.style.display !== 'none');
             const availableRiders = visibleRiders.filter(r => r.status === 'available').length;
             const onDeliveryRiders = visibleRiders.filter(r => r.status === 'delivery').length;
-            const totalRiders = availableRiders + onDeliveryRiders;
+            const offlineRiders = visibleRiders.filter(r => r.status === 'offline').length;
+            const totalRiders = visibleRiders.length;
 
             document.getElementById('totalRiders').textContent = totalRiders;
             document.getElementById('availableRiders').textContent = availableRiders;
             document.getElementById('onDeliveryRiders').textContent = onDeliveryRiders;
+            document.getElementById('offlineRiders').textContent = offlineRiders;
         }
 
         function showAddRiderModal() {
@@ -2499,7 +2467,10 @@
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
-            document.getElementById('addRiderForm').reset();
+            document.querySelectorAll('#addRiderForm input, #addRiderForm select, #addRiderForm textarea').forEach(function (el) {
+                if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+                else el.value = '';
+            });
 
             document.querySelectorAll('.file-preview').forEach(preview => {
                 preview.classList.remove('show');
@@ -2523,7 +2494,7 @@
         }
 
         function addNewRider(event) {
-            event.preventDefault();
+            if (event) event.preventDefault();
 
             const password = document.getElementById('newRiderPassword').value;
             const confirmPassword = document.getElementById('newRiderConfirmPassword').value;
@@ -2559,59 +2530,117 @@
                 return false;
             }
 
-            const newId = (ridersData.length + 1).toString().padStart(3, '0');
-
             const formattedMobile = mobile.startsWith('0') ? mobile : '0' + mobile;
 
             let genderDisplay = 'Rather not say';
             if (gender === 'male') genderDisplay = 'Male';
             if (gender === 'female') genderDisplay = 'Female';
 
-            const newRider = {
-                id: newId,
-                name: fullName,
-                username: username,
-                joinDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                phone: formattedMobile,
-                email: email,
-                licenseNumber: licenseNumber,
-                nbiNumber: nbiNumber,
-                gender: genderDisplay,
-                vehicle: vehicleType,
-                vehicleModel: vehicleModel,
-                vehicleYear: vehicleYear,
-                licensePlate: licensePlate,
-                vehicleColor: vehicleColor,
-                orcrNumber: orcrNumber,
-                insurancePolicy: insurancePolicy,
-                insuranceDate: insuranceDate,
-                status: "available",
-                assigned: 0,
-                completed: 0,
-                rating: 4.0,
-                lastActivity: 'Today, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                recentDeliveries: [],
-                documents: {
-                    license: licenseFile.name,
-                    orcr: orcrFile.name,
-                    insurance: insuranceFile.name,
-                    nbi: nbiFile.name
-                }
-            };
+            // --- Save to database via SaveRider.ashx (supports file upload) ---
+            const saveBtn = document.querySelector('#addRiderForm .btn--primary');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
-            ridersData.push(newRider);
+            const formData = new FormData();
+            formData.append('fullName', fullName);
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('contact', formattedMobile);
+            formData.append('gender', genderDisplay);
+            formData.append('licenseNumber', licenseNumber);
+            formData.append('nbiNumber', nbiNumber);
+            formData.append('vehicle', vehicleType);
+            formData.append('vehicleModel', vehicleModel);
+            formData.append('vehicleYear', vehicleYear);
+            formData.append('licensePlate', licensePlate);
+            formData.append('vehicleColor', vehicleColor);
+            formData.append('orcrNumber', orcrNumber);
+            formData.append('insurancePolicy', insurancePolicy);
+            formData.append('insuranceDate', insuranceDate);
 
-            initializeRiderTable();
+            // profilePhoto maps to the new ProfilePhoto column
+            const profilePicFile = document.getElementById('newRiderProfilePic').files[0];
+            if (profilePicFile) formData.append('profilePhoto', profilePicFile);
 
-            closeAddRiderModal();
+            // Document photos — map to new dedicated columns
+            const licensePhotoFile = document.getElementById('newRiderLicenseFile').files[0];
+            if (licensePhotoFile) formData.append('driverLicensePhoto', licensePhotoFile);
 
-            document.getElementById('addRiderForm').reset();
-            document.querySelectorAll('.file-preview').forEach(preview => {
-                preview.classList.remove('show');
-                preview.innerHTML = '';
-            });
+            const orcrPhotoFile = document.getElementById('newRiderORCRFile').files[0];
+            if (orcrPhotoFile) formData.append('orcrPhoto', orcrPhotoFile);
 
-            showNotification('Rider added successfully!', 'success');
+            const insurancePhotoFile = document.getElementById('newRiderInsuranceFile').files[0];
+            if (insurancePhotoFile) formData.append('insurancePhoto', insurancePhotoFile);
+
+            const nbiPhotoFile = document.getElementById('newRiderNBIFile').files[0];
+            if (nbiPhotoFile) formData.append('nbiClearancePhoto', nbiPhotoFile);
+
+            fetch(saveRiderUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then(function (response) { return response.json(); })
+                .then(function (result) {
+                    if (result && result.success) {
+                        const newRider = {
+                            id: result.riderId.toString(),
+                            name: fullName,
+                            username: username,
+                            joinDate: result.joinDate,
+                            phone: formattedMobile,
+                            email: email,
+                            licenseNumber: licenseNumber,
+                            nbiNumber: nbiNumber,
+                            gender: genderDisplay,
+                            vehicle: vehicleType,
+                            vehicleModel: vehicleModel,
+                            vehicleYear: vehicleYear,
+                            licensePlate: licensePlate,
+                            vehicleColor: vehicleColor,
+                            orcrNumber: orcrNumber,
+                            insurancePolicy: insurancePolicy,
+                            insuranceDate: insuranceDate,
+                            profilePicture: result.profilePicture || '',
+                            driverLicensePhoto: result.driverLicensePhoto || '',
+                            orcrPhoto: result.orcrPhoto || '',
+                            insurancePhoto: result.insurancePhoto || '',
+                            nbiClearancePhoto: result.nbiClearancePhoto || '',
+                            status: "available",
+                            assigned: 0,
+                            completed: 0,
+                            rating: 4.0,
+                            lastActivity: 'Today, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            recentDeliveries: []
+                        };
+
+                        ridersData.push(newRider);
+                        initializeRiderTable();
+                        updateStatCards();
+                        closeAddRiderModal();
+                        document.querySelectorAll('#addRiderForm input, #addRiderForm select, #addRiderForm textarea').forEach(function (el) {
+                            if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+                            else el.value = '';
+                        });
+                        document.getElementById('profilePicPreviewImg').style.display = 'none';
+                        document.getElementById('profilePicIcon').style.display = '';
+                        document.querySelectorAll('.file-preview').forEach(function (preview) {
+                            preview.classList.remove('show');
+                            preview.innerHTML = '';
+                        });
+                        showNotification('Rider added successfully!', 'success');
+                    } else {
+                        showNotification(result && result.message ? result.message : 'Failed to save rider.', 'error');
+                    }
+                })
+                .catch(function (err) {
+                    console.error('SaveRider error:', err);
+                    showNotification('Server error. Please try again.', 'error');
+                })
+                .finally(function () {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Rider';
+                });
 
             return false;
         }
@@ -2633,6 +2662,22 @@
         }
 
         function setupFileUploads() {
+            // Profile picture live preview
+            document.getElementById('newRiderProfilePic').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (ev) {
+                        const img = document.getElementById('profilePicPreviewImg');
+                        const icon = document.getElementById('profilePicIcon');
+                        img.src = ev.target.result;
+                        img.style.display = 'block';
+                        icon.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
             document.getElementById('newRiderLicenseFile').addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 const preview = document.getElementById('licensePreview');
@@ -2730,10 +2775,22 @@
         `;
         document.head.appendChild(style);
 
+        function updateStatCards() {
+            var total = ridersData.length;
+            var available = ridersData.filter(function (r) { return r.status === 'available'; }).length;
+            var onDelivery = ridersData.filter(function (r) { return r.status === 'delivery'; }).length;
+            var offline = ridersData.filter(function (r) { return r.status === 'offline'; }).length;
+            document.getElementById('totalRiders').textContent = total;
+            document.getElementById('availableRiders').textContent = available;
+            document.getElementById('onDeliveryRiders').textContent = onDelivery;
+            document.getElementById('offlineRiders').textContent = offline;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             console.log("Page loaded - initializing rider table");
 
             initializeRiderTable();
+            updateStatCards();
 
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', handleSearch);
@@ -2746,11 +2803,6 @@
 
             const sortFilter = document.getElementById('sortFilter');
             sortFilter.addEventListener('change', handleSort);
-
-            const addRiderForm = document.getElementById('addRiderForm');
-            addRiderForm.addEventListener('submit', addNewRider);
-
-            populateYearDropdown();
 
             setupFileUploads();
 
@@ -2776,12 +2828,7 @@
                 }
             });
 
-            document.addEventListener('submit', function (e) {
-                if (e.target.id !== 'addRiderForm') {
-                    e.preventDefault();
-                    return false;
-                }
-            });
+
         });
     </script>
 </asp:Content>
