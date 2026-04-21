@@ -1,6 +1,9 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Menu.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Menu" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <%-- ScriptManager required for PageMethods (WebMethod calls from JavaScript) --%>
+    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -1990,6 +1993,22 @@
             </select>
         </div>
 
+        <%-- ═══════════════════════════════════════════════════════════════════
+             Hidden save form — posts FoodName/FoodType/Price/MenuId + image file
+             to btnSaveMenu_Click in the code-behind.
+             JavaScript fills the hidden inputs and programmatically clicks the button.
+             ══════════════════════════════════════════════════════════════════ --%>
+        <div style="display:none;">
+            <asp:FileUpload ID="fuMenuImage" runat="server" />
+            <input type="hidden" name="hMenuId"    id="hMenuId"    value="" />
+            <input type="hidden" name="hFoodName"  id="hFoodName"  value="" />
+            <input type="hidden" name="hFoodType"  id="hFoodType"  value="" />
+            <input type="hidden" name="hPrice"     id="hPrice"     value="" />
+            <input type="hidden" name="hImagePath" id="hImagePath" value="" />
+            <asp:Button ID="btnSaveMenu" runat="server" Text="Save"
+                        OnClick="btnSaveMenu_Click" />
+        </div>
+
         <%-- Repeater is kept for data binding only; JS renders the visual grid from window.__menusData --%>
         <div style="display:none;">
             <asp:Repeater ID="rptMenu" runat="server">
@@ -2421,13 +2440,19 @@
             //      overlay div, so the photo never appeared on the card.
             //      Using background-image on the parent div puts the photo behind
             //      everything by default — then we layer the overlay on top.
-            var headerBgStyle = menu.imagePath
-                ? 'background-image:url(\'' + menu.imagePath + '\');background-size:cover;background-position:center;'
-                : '';   // no image → plain cream background colour only
+            // Build absolute image URL using the app root injected by the server
+            var _imgUrl = '';
+            if (menu.imagePath) {
+                var _root = (window.__appRoot || '').replace(/\/+$/, '');
+                _imgUrl = _root + '/' + menu.imagePath.replace(/^\//, '');
+            }
+            var headerBgStyle = _imgUrl
+                ? 'background-image:url(\'' + _imgUrl + '\');background-size:cover;background-position:center;'
+                : '';
 
             // If there IS an image, add a semi-transparent dark tint so the
             // white food name text is readable against any photo colour.
-            var overlayBg = menu.imagePath
+            var overlayBg = _imgUrl
                 ? 'rgba(0,0,0,0.38)'   // dark tint when photo is present
                 : 'none';              // no tint needed when there is no photo
 
@@ -2484,7 +2509,7 @@
                         <!-- Item count (orders/dishes linked to this menu) -->
                         <div class="item-count">
                             <i class="fas fa-utensils"></i>
-                            <span>${itemCount} items</span>
+                            
                         </div>
 
                         <!-- Action buttons — clicks handled by setupActionButtons() event delegation -->
@@ -2717,7 +2742,9 @@
 
             // ── Header: use the photo as a background image (same fix as card) ─
             var viewModalHeader = document.getElementById('viewModalHeader');
-            viewModalHeader.style.backgroundImage = menu.imagePath ? "url('" + menu.imagePath + "')" : '';
+            var _vmRoot = (window.__appRoot || '').replace(/\/+$/, '');
+            var _vmImg = menu.imagePath ? _vmRoot + '/' + menu.imagePath.replace(/^\//, '') : '';
+            viewModalHeader.style.backgroundImage = _vmImg ? "url('" + _vmImg + "')" : '';
 
             // ── Populate all the detail fields ────────────────────────────────
             document.getElementById('viewModalIcon').className = 'fas ' + iconCls + ' view-modal-icon';
@@ -2813,9 +2840,9 @@
             const foodName = document.getElementById('editFoodName').value.trim();
             const foodType = document.getElementById('editFoodType').value;
             const price = document.getElementById('editPrice').value.trim();
-            const imagePath = document.getElementById('editImagePath').value.trim(); // existing DB path (fallback)
+            const imagePath = document.getElementById('editImagePath').value.trim();
 
-            // ── 2. Validate — stop early and highlight the bad field ─────────
+            // ── 2. Validate ──────────────────────────────────────────────────
             if (!foodName) {
                 showNotification('Food Name is required!', 'error');
                 document.getElementById('editFoodName').focus();
@@ -2838,97 +2865,46 @@
                 return;
             }
 
-            // ── 3. Show loading spinner on the Save button ───────────────────
+            // ── 3. Show loading ──────────────────────────────────────────────
             saveBtn.classList.add('btn--loading');
             saveBtn.disabled = true;
 
-            try {
-                // ── 4. Build the FormData payload ────────────────────────────
-                // We use FormData (not JSON) so we can include the image file
-                // as a multipart upload which the ASHX handler can read via
-                // context.Request.Files["ImageFile"].
-                const formData = new FormData();
-                formData.append('FoodName', foodName);
-                formData.append('FoodType', foodType);
-                formData.append('Price', parseFloat(price).toFixed(2));
+            // ── 4. Fill hidden inputs so the code-behind can read them ───────
+            const hiddenMenuId = document.getElementById('editMenuId').value;
+            document.getElementById('hMenuId').value = hiddenMenuId;
+            document.getElementById('hFoodName').value = foodName;
+            document.getElementById('hFoodType').value = foodType;
+            document.getElementById('hPrice').value = parseFloat(price).toFixed(2);
+            document.getElementById('hImagePath').value = imagePath;
 
-                // ── 5. Image: prefer the new uploaded file ───────────────────
-                // If the user selected a file from disk (_selectedFile / fileInput),
-                // send it as "ImageFile" so the server saves it and stores the path.
-                // If no new file was chosen, send "ImagePath" (the current DB value)
-                // so the server keeps the existing image unchanged.
-                //
-                // FIX NOTE: This is the client-side half of the image-upload fix.
-                // The server-side half is in AddMenu.ashx / UpdateMenu.ashx:
-                //   → Read context.Request.Files["ImageFile"] FIRST
-                //   → Create ~/Images/Menus/ with Directory.CreateDirectory() if needed
-                //   → Save the file with a Guid filename
-                //   → Store "Images/Menus/<filename>" as ImagePath in the DB
-                const fileInput = document.getElementById('editImageFile');
-                if (fileInput.files && fileInput.files[0]) {
-                    formData.append('ImageFile', fileInput.files[0]); // new photo upload
-                } else {
-                    formData.append('ImagePath', imagePath);           // keep existing path
-                }
+            // ── 5. Upload image first via fetch, then postback ───────────────
+            const editFileInput = document.getElementById('editImageFile');
+            const isEditing = hiddenMenuId !== '' && hiddenMenuId !== '0';
 
-                // ── 6. Decide: Add (new) vs Update (existing) ────────────────
-                // The hidden input #editMenuId is empty for new items and holds
-                // the real MenuID when editing an existing record.
-                const hiddenMenuId = document.getElementById('editMenuId').value;
-                const isEditing = hiddenMenuId !== '' && hiddenMenuId !== '0';
-                if (isEditing) {
-                    formData.append('MenuID', hiddenMenuId); // tell the handler which row to update
-                }
-
-                const endpoint = isEditing ? 'UpdateMenu.ashx' : 'AddMenu.ashx';
-
-                // ── 7. POST to the ASHX handler ──────────────────────────────
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    body: formData   // browser sets Content-Type: multipart/form-data automatically
-                });
-
-                // ── 8. Parse the JSON response ───────────────────────────────
-                // The handler should return: { "success": true } or
-                // { "success": false, "message": "reason" }
-                const rawText = await response.text();
-                let result;
+            if (editFileInput && editFileInput.files && editFileInput.files[0]) {
                 try {
-                    result = JSON.parse(rawText);
-                } catch (parseErr) {
-                    // The server returned something that isn't JSON — show first 150 chars for debugging
-                    throw new Error('Server error: ' + rawText.substring(0, 150));
+                    var imgFd = new FormData();
+                    imgFd.append('ImageFile', editFileInput.files[0]);
+                    var upResp = await fetch(window.location.pathname + '?action=upload', { method: 'POST', body: imgFd });
+                    var upRes = await upResp.json();
+                    if (upRes.success && upRes.imagePath) {
+                        document.getElementById('hImagePath').value = upRes.imagePath;
+                    }
+                } catch (upErr) {
+                    console.warn('Image upload failed:', upErr);
                 }
-
-                // ── 9. Handle success ────────────────────────────────────────
-                if (result.success) {
-                    saveBtn.classList.remove('btn--loading');
-                    saveBtn.disabled = false;
-                    saveBtn.classList.add('btn--success'); // briefly turn the button green
-
-                    const msg = isEditing
-                        ? `"${foodName}" updated successfully!`
-                        : `"${foodName}" added to the database!`;
-                    showNotification(msg, 'success');
-
-                    setTimeout(() => {
-                        closeEditModal();
-                        location.reload(); // reload so the Repeater fetches fresh DB data
-                    }, 1000);
-
-                } else {
-                    // Server returned success:false — surface the reason
-                    throw new Error(result.message || (isEditing ? 'Update failed.' : 'Database insert failed.'));
-                }
-
-            } catch (err) {
-                // ── 10. Handle any error (network, parse, server) ────────────
-                saveBtn.classList.remove('btn--loading');
-                saveBtn.disabled = false;
-                saveBtn.classList.add('btn--error'); // briefly shake the button red
-                setTimeout(() => saveBtn.classList.remove('btn--error'), 600);
-                showNotification('Error: ' + err.message, 'error');
             }
+
+            // ── 6. Submit the hidden form via the server button ───────────────
+            const itemLabel = isEditing ? '"' + foodName + '" updated!' : '"' + foodName + '" added!';
+            saveBtn.classList.remove('btn--loading');
+            saveBtn.classList.add('btn--success');
+            showNotification(itemLabel, 'success');
+
+            setTimeout(function () {
+                _isDeleting = false; // reset delete guard whenever we save
+                document.getElementById('<%= btnSaveMenu.ClientID %>').click();
+            }, 600);
         }
 
         // ─────────────────────────────────────────────────────────────────────
@@ -2959,37 +2935,41 @@
             currentEditMenuId = null;
         }
 
+        var _isDeleting = false; // guard against double-clicks / double-fires
+
         async function confirmDelete() {
+            if (_isDeleting) return; // already in-flight — ignore
+            _isDeleting = true;
+
             const deleteBtn = document.getElementById('confirmDelete');
 
             var menu = menusData.find(function (m) { return m.menuId === currentEditMenuId; });
-            if (!menu) return;
+            if (!menu) { _isDeleting = false; return; }
 
-            // Show loading spinner on the Delete button
             deleteBtn.classList.add('btn--loading');
             deleteBtn.disabled = true;
 
             try {
-                // POST the MenuID to DeleteMenu.ashx
-                var formData = new FormData();
-                formData.append('MenuID', menu.menuId);
-
-                var response = await fetch('DeleteMenu.ashx', { method: 'POST', body: formData });
-                var result = await response.json();
-
-                if (result.success) {
+                var fd = new FormData();
+                fd.append('menuId', menu.menuId);
+                var resp = await fetch(window.location.pathname + '?action=delete', { method: 'POST', body: fd });
+                var res = await resp.json();
+                if (res.success) {
                     showNotification((menu.foodName || 'Menu') + ' deleted successfully!', 'success');
                     closeDeleteModal();
-                    setTimeout(function () { location.reload(); }, 800); // reload to reflect DB change
+                    // Use location.replace() instead of location.reload() so the browser
+                    // does NOT replay the last form POST (which would duplicate the save).
+                    setTimeout(function () { location.replace(window.location.pathname); }, 800);
                 } else {
-                    throw new Error(result.message || 'Delete failed.');
+                    throw new Error(res.message || 'Delete failed.');
                 }
-            } catch (err) {
+            } catch (e) {
+                _isDeleting = false; // allow retry on error
                 deleteBtn.classList.remove('btn--loading');
                 deleteBtn.disabled = false;
                 deleteBtn.classList.add('btn--error');
                 setTimeout(function () { deleteBtn.classList.remove('btn--error'); }, 600);
-                showNotification('Error: ' + err.message, 'error');
+                showNotification('Error: ' + e.message, 'error');
             }
         }
 
@@ -3003,51 +2983,33 @@
             var menu = menusData.find(function (m) { return m.menuId === menuId; });
             if (!menu) return;
 
-            // Flip the current status
             var newStatus = (!menu.status || menu.status === 'active') ? 'hidden' : 'active';
 
             try {
-                var formData = new FormData();
-                formData.append('MenuID', menuId);
-                formData.append('Status', newStatus);
-
-                var response = await fetch('UpdateMenuStatus.ashx', { method: 'POST', body: formData });
-
-                var rawText = await response.text();
-                var result;
-                try {
-                    result = JSON.parse(rawText);
-                } catch (parseErr) {
-                    showNotification('Server error: ' + rawText.substring(0, 150), 'error');
-                    return;
-                }
-
-                if (result.success) {
-                    // Update the in-memory data so stats and filters stay correct
+                var fd = new FormData();
+                fd.append('menuId', menuId);
+                fd.append('newStatus', newStatus);
+                var resp = await fetch(window.location.pathname + '?action=toggleStatus', { method: 'POST', body: fd });
+                var res = await resp.json();
+                if (res.success) {
                     menu.status = newStatus;
-
-                    // ── Update the badge button colour + text in-place ────────
                     var badge = document.querySelector('.status-toggle-btn[data-menu-id="' + menuId + '"]');
                     if (badge) {
                         badge.textContent = newStatus === 'active' ? 'ACTIVE' : 'HIDDEN';
                         badge.style.background = newStatus === 'active' ? 'var(--success-green)' : 'var(--warning-orange)';
                     }
-
-                    // ── Update the small status dot on the card header ────────
                     var card = document.querySelector('.menu-card[data-menu-id="' + menuId + '"]');
                     if (card) {
                         var dot = card.querySelector('div[style*="border-radius:50%"]');
                         if (dot) dot.style.background = newStatus === 'active' ? '#2d9d78' : '#d97706';
                     }
-
-                    // Recalculate the stat card numbers
                     updateStats();
                     showNotification(menu.foodName + ' is now ' + newStatus + '!', 'success');
                 } else {
-                    throw new Error(result.message || 'Status update failed.');
+                    showNotification('Error: ' + (res.message || 'Status update failed.'), 'error');
                 }
-            } catch (err) {
-                showNotification('Error: ' + err.message, 'error');
+            } catch (e) {
+                showNotification('Error updating status. Please try again.', 'error');
             }
         }
 
@@ -3148,9 +3110,6 @@
                 if (e.target === this) closeDeleteModal();
             });
 
-            document.getElementById('editStatus').addEventListener('change', function () {
-                document.getElementById('statusText').textContent = this.checked ? 'Active' : 'Hidden';
-            });
 
             // Modal focus trap
             document.querySelectorAll('.modal-overlay').forEach(modal => {
@@ -3253,29 +3212,13 @@
         // a thumbnail preview inside the modal using a FileReader data URL.
         function applyFileToPreview(file) {
             if (!file) return;
-
-            // Guard: reject files larger than 5 MB
-            if (file.size > 5 * 1024 * 1024) {
-                showNotification('File is too large (max 5 MB).', 'error');
-                return;
-            }
-
-            // Guard: reject non-image files (PDF, Word, etc.)
-            if (!file.type.startsWith('image/')) {
-                showNotification('Please select a valid image file.', 'error');
-                return;
-            }
-
-            // Store the file reference so saveEditChanges() can attach it to FormData
             _selectedFile = file;
-
-            // Use FileReader to generate a local data URL for the preview <img>
             var reader = new FileReader();
             reader.onload = function (ev) {
-                document.getElementById('imagePreview').src = ev.target.result;       // show thumbnail
-                document.getElementById('imagePreviewName').textContent = file.name;  // show filename
-                document.getElementById('imagePreviewWrapper').style.display = 'block'; // show preview area
-                document.getElementById('dropZonePlaceholder').style.display = 'none'; // hide empty state
+                document.getElementById('imagePreview').src = ev.target.result;
+                document.getElementById('imagePreviewName').textContent = file.name;
+                document.getElementById('imagePreviewWrapper').style.display = 'block';
+                document.getElementById('dropZonePlaceholder').style.display = 'none';
             };
             reader.readAsDataURL(file);
         }
@@ -3296,8 +3239,8 @@
             var removeBtn = document.getElementById('removeImageBtn');
 
             // "Browse" and "Change" both just trigger the hidden file input
-            browseBtn.addEventListener('click', function () { fileInput.click(); });
-            changeBtn.addEventListener('click', function () { fileInput.click(); });
+            browseBtn.addEventListener('click', function (e) { e.stopPropagation(); fileInput.click(); });
+            changeBtn.addEventListener('click', function (e) { e.stopPropagation(); fileInput.click(); });
 
             // When the user picks a file through the native dialog
             fileInput.addEventListener('change', function () {

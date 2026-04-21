@@ -1395,7 +1395,7 @@
                         <i class="fas fa-users"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="totalCustomers">5</div>
+                <div class="stat-card__value" id="totalCustomers"><asp:Label ID="lblTotalCustomers" runat="server" Text="0"></asp:Label></div>
                 <div class="stat-card__trend">All registered accounts</div>
             </div>
 
@@ -1406,7 +1406,7 @@
                         <i class="fas fa-user-check"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="activeCustomers">4</div>
+                <div class="stat-card__value" id="activeCustomers"><asp:Label ID="lblActiveCustomers" runat="server" Text="0"></asp:Label></div>
                 <div class="stat-card__trend">Currently active users</div>
             </div>
 
@@ -1417,7 +1417,7 @@
                         <i class="fas fa-ban"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="blockedCustomers">1</div>
+                <div class="stat-card__value" id="blockedCustomers"><asp:Label ID="lblBlockedCustomers" runat="server" Text="0"></asp:Label></div>
                 <div class="stat-card__trend">Suspended accounts</div>
             </div>
 
@@ -1428,7 +1428,7 @@
                         <i class="fas fa-peso-sign"></i>
                     </div>
                 </div>
-                <div class="stat-card__value">₱33,680</div>
+                <div class="stat-card__value"><asp:Label ID="lblTotalRevenue" runat="server" Text="&#8369;0"></asp:Label></div>
                 <div class="stat-card__trend">From all customer orders</div>
             </div>
         </div>
@@ -1510,15 +1510,30 @@
                                     <td class="customer-stats customer-stats--spent">₱<%# ((decimal)Eval("TotalSpent")).ToString("N0") %></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button type="button" class="action-button action-button--view" title="View Details" onclick='viewCustomer("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
+                                            <%-- View: pure JS, no postback needed --%>
+                                            <button type="button" class="action-button action-button--view" title="View Details"
+                                                onclick='viewCustomer("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button type="button" class="action-button action-button--block" title="Block/Unblock" onclick='toggleBlockCustomer("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                            <button type="button" class="action-button action-button--delete" title="Delete Customer" onclick='showDeleteConfirmation("<%# Eval("CustomerID").ToString().Replace("CUST-", "") %>")'>
+
+                                            <%-- Block / Unblock: server postback updates DB --%>
+                                            <asp:LinkButton runat="server" CssClass='<%# "action-button action-button--block" %>'
+                                                CommandName='<%# Eval("Status").ToString() == "ACTIVE" ? "BLOCK" : "UNBLOCK" %>'
+                                                CommandArgument='<%# Eval("RawUserID") %>'
+                                                ToolTip='<%# Eval("Status").ToString() == "ACTIVE" ? "Block Customer" : "Unblock Customer" %>'
+                                                OnClick="btnToggleBlock_Click"
+                                                OnClientClick="return confirm('Change this customer\'s status?');">
+                                                <i class='<%# "fas " + (Eval("Status").ToString() == "ACTIVE" ? "fa-ban" : "fa-check") %>'></i>
+                                            </asp:LinkButton>
+
+                                            <%-- Delete: server postback removes from DB --%>
+                                            <asp:LinkButton runat="server" CssClass="action-button action-button--delete"
+                                                CommandArgument='<%# Eval("RawUserID") %>'
+                                                ToolTip="Delete Customer"
+                                                OnClick="btnDelete_Click"
+                                                OnClientClick="return confirm('Permanently delete this customer? This cannot be undone.');">
                                                 <i class="fas fa-trash"></i>
-                                            </button>
+                                            </asp:LinkButton>
                                         </div>
                                     </td>
                                 </tr>

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.IO;
 using System.Text;
+using System.Web;
 using System.Web.UI;
 
 namespace TasteNet.Users.SuperAdmin
@@ -12,15 +14,196 @@ namespace TasteNet.Users.SuperAdmin
                   .ConnectionStrings["TasteNetDB"]
                   .ConnectionString;
 
-        protected void Page_Load(object sender, EventArgs e) { }
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string action = Request.QueryString["action"] ?? "";
 
-        // Helper: safely read a string column — returns "" if column missing or null
+            // Inline AJAX handlers — replaces SaveRider.ashx and DeleteRider.ashx
+            if (action == "saveRider")
+            {
+                Response.ContentType = "application/json";
+                Response.Write(DoSaveRider());
+                Response.End();
+                return;
+            }
+
+            if (action == "deleteRider")
+            {
+                Response.ContentType = "application/json";
+                Response.Write(DoDeleteRider());
+                Response.End();
+                return;
+            }
+
+            // Normal page load — GetRidersJson() is called inline from the ASPX markup
+        }
+
+        // ── Add a new rider ───────────────────────────────────────────────────
+        private string DoSaveRider()
+        {
+            try
+            {
+                string fullName = Request.Form["fullName"] ?? "";
+                string username = Request.Form["username"] ?? "";
+                string email = Request.Form["email"] ?? "";
+                string password = Request.Form["password"] ?? "";
+                string contact = Request.Form["contact"] ?? "";
+                string gender = Request.Form["gender"] ?? "";
+                string licenseNumber = Request.Form["licenseNumber"] ?? "";
+                string nbiNumber = Request.Form["nbiNumber"] ?? "";
+                string vehicle = Request.Form["vehicle"] ?? "";
+                string vehicleModel = Request.Form["vehicleModel"] ?? "";
+                string vehicleYear = Request.Form["vehicleYear"] ?? "";
+                string licensePlate = Request.Form["licensePlate"] ?? "";
+                string vehicleColor = Request.Form["vehicleColor"] ?? "";
+                string orcrNumber = Request.Form["orcrNumber"] ?? "";
+                string insurancePolicy = Request.Form["insurancePolicy"] ?? "";
+                string insuranceDate = Request.Form["insuranceDate"] ?? "";
+
+                string uploadFolder = Server.MapPath("~/Uploads/Riders/");
+                if (!Directory.Exists(uploadFolder)) Directory.CreateDirectory(uploadFolder);
+
+                string profilePicPath = SaveUploadedFile("profilePhoto", uploadFolder);
+                string driverLicensePath = SaveUploadedFile("driverLicensePhoto", uploadFolder);
+                string orcrPhotoPath = SaveUploadedFile("orcrPhoto", uploadFolder);
+                string insurancePhotoPath = SaveUploadedFile("insurancePhoto", uploadFolder);
+                string nbiClearancePath = SaveUploadedFile("nbiClearancePhoto", uploadFolder);
+
+                string hashedPassword = HashPassword(password);
+                string joinDate = DateTime.Now.ToString("MMM d, yyyy");
+                int newId = 0;
+
+                using (var con = new SqlConnection(ConnStr))
+                {
+                    con.Open();
+                    const string sql = @"
+                        INSERT INTO [DeliverySystem].[dbo].[riders]
+                            (FullName, Username, Email, Password, Contact, Gender,
+                             LicenseNumber, NBINumber, Vehicle, VehicleModel, VehicleYear,
+                             LicensePlate, VehicleColor, ORCRNumber, InsurancePolicy,
+                             InsuranceDate, ProfilePhoto, DriverLicensePhoto, ORCRPhoto,
+                             InsurancePhoto, NBIClearancePhoto, Status, DateJoined,
+                             AssignedOrders, CompletedOrders, Ratings)
+                        OUTPUT INSERTED.RiderId
+                        VALUES
+                            (@FullName, @Username, @Email, @Password, @Contact, @Gender,
+                             @LicenseNumber, @NBINumber, @Vehicle, @VehicleModel, @VehicleYear,
+                             @LicensePlate, @VehicleColor, @ORCRNumber, @InsurancePolicy,
+                             @InsuranceDate, @ProfilePhoto, @DriverLicensePhoto, @ORCRPhoto,
+                             @InsurancePhoto, @NBIClearancePhoto, 'available', GETDATE(), 0, 0, 0)";
+
+                    using (var cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@FullName", fullName);
+                        cmd.Parameters.AddWithValue("@Username", username);
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        cmd.Parameters.AddWithValue("@Password", hashedPassword);
+                        cmd.Parameters.AddWithValue("@Contact", contact);
+                        cmd.Parameters.AddWithValue("@Gender", gender);
+                        cmd.Parameters.AddWithValue("@LicenseNumber", licenseNumber);
+                        cmd.Parameters.AddWithValue("@NBINumber", nbiNumber);
+                        cmd.Parameters.AddWithValue("@Vehicle", vehicle);
+                        cmd.Parameters.AddWithValue("@VehicleModel", vehicleModel);
+                        cmd.Parameters.AddWithValue("@VehicleYear", vehicleYear);
+                        cmd.Parameters.AddWithValue("@LicensePlate", licensePlate);
+                        cmd.Parameters.AddWithValue("@VehicleColor", vehicleColor);
+                        cmd.Parameters.AddWithValue("@ORCRNumber", orcrNumber);
+                        cmd.Parameters.AddWithValue("@InsurancePolicy", insurancePolicy);
+                        cmd.Parameters.AddWithValue("@InsuranceDate",
+                            string.IsNullOrEmpty(insuranceDate) ? (object)DBNull.Value : DateTime.Parse(insuranceDate));
+                        cmd.Parameters.AddWithValue("@ProfilePhoto",
+                            string.IsNullOrEmpty(profilePicPath) ? (object)DBNull.Value : profilePicPath);
+                        cmd.Parameters.AddWithValue("@DriverLicensePhoto",
+                            string.IsNullOrEmpty(driverLicensePath) ? (object)DBNull.Value : driverLicensePath);
+                        cmd.Parameters.AddWithValue("@ORCRPhoto",
+                            string.IsNullOrEmpty(orcrPhotoPath) ? (object)DBNull.Value : orcrPhotoPath);
+                        cmd.Parameters.AddWithValue("@InsurancePhoto",
+                            string.IsNullOrEmpty(insurancePhotoPath) ? (object)DBNull.Value : insurancePhotoPath);
+                        cmd.Parameters.AddWithValue("@NBIClearancePhoto",
+                            string.IsNullOrEmpty(nbiClearancePath) ? (object)DBNull.Value : nbiClearancePath);
+
+                        newId = (int)cmd.ExecuteScalar();
+                    }
+                }
+
+                string appRoot = Request.ApplicationPath.TrimEnd('/');
+                string WebPath(string serverPath) =>
+                    string.IsNullOrEmpty(serverPath) ? "" :
+                    appRoot + "/Uploads/Riders/" + Path.GetFileName(serverPath);
+
+                return "{\"success\":true," +
+                       "\"riderId\":" + newId + "," +
+                       "\"joinDate\":\"" + joinDate + "\"," +
+                       "\"profilePicture\":\"" + WebPath(profilePicPath) + "\"," +
+                       "\"driverLicensePhoto\":\"" + WebPath(driverLicensePath) + "\"," +
+                       "\"orcrPhoto\":\"" + WebPath(orcrPhotoPath) + "\"," +
+                       "\"insurancePhoto\":\"" + WebPath(insurancePhotoPath) + "\"," +
+                       "\"nbiClearancePhoto\":\"" + WebPath(nbiClearancePath) + "\"}";
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
+            }
+        }
+
+        // ── Delete a rider ────────────────────────────────────────────────────
+        private string DoDeleteRider()
+        {
+            try
+            {
+                int riderId = 0;
+                int.TryParse(Request.Form["riderId"], out riderId);
+                if (riderId == 0)
+                    return "{\"success\":false,\"message\":\"Invalid rider ID.\"}";
+
+                using (var con = new SqlConnection(ConnStr))
+                using (var cmd = new SqlCommand(
+                    "DELETE FROM [DeliverySystem].[dbo].[riders] WHERE RiderId=@RiderId", con))
+                {
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return "{\"success\":true}";
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
+            }
+        }
+
+        // ── Save uploaded file to disk, return server path ────────────────────
+        private string SaveUploadedFile(string inputName, string folder)
+        {
+            HttpPostedFile file = Request.Files[inputName];
+            if (file == null || file.ContentLength == 0) return "";
+            string ext = Path.GetExtension(file.FileName).ToLower();
+            string name = Guid.NewGuid().ToString("N") + ext;
+            string path = Path.Combine(folder, name);
+            file.SaveAs(path);
+            return path;
+        }
+
+        // ── SHA-256 password hash ─────────────────────────────────────────────
+        private static string HashPassword(string password)
+        {
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var sb = new StringBuilder();
+                foreach (byte b in bytes) sb.Append(b.ToString("x2"));
+                return sb.ToString();
+            }
+        }
+
+        // ── Safely read a nullable DB column ─────────────────────────────────
         private static string SafeStr(System.Data.IDataRecord dr, string col)
         {
             try { return dr[col] == DBNull.Value ? "" : dr[col].ToString(); }
             catch { return ""; }
         }
 
+        // ── Build the riders JSON array injected into the page ────────────────
         protected string GetRidersJson()
         {
             var sb = new StringBuilder("[");
@@ -28,12 +211,9 @@ namespace TasteNet.Users.SuperAdmin
 
             try
             {
-                // Use SELECT * so we never crash on a missing non-critical column
-                // New table uses ProfilePhoto (was ProfilePicture) and has separate photo columns
-                string selectSql = "SELECT TOP(1000) * FROM [DeliverySystem].[dbo].[riders] ORDER BY RiderId";
-
                 using (var con = new SqlConnection(ConnStr))
-                using (var cmd = new SqlCommand(selectSql, con))
+                using (var cmd = new SqlCommand(
+                    "SELECT TOP(1000) * FROM [DeliverySystem].[dbo].[riders] ORDER BY RiderId", con))
                 {
                     con.Open();
                     using (var dr = cmd.ExecuteReader())
@@ -43,7 +223,6 @@ namespace TasteNet.Users.SuperAdmin
                             if (!first) sb.Append(",");
                             first = false;
 
-                            // Normalise status → available | delivery | offline
                             string status = SafeStr(dr, "Status").ToLower().Trim();
                             if (status == "on delivery" || status == "delivering") status = "delivery";
                             else if (status == "active" || status == "online") status = "available";
@@ -60,17 +239,14 @@ namespace TasteNet.Users.SuperAdmin
                             }
                             catch { }
 
-                            // Column is now ProfilePhoto (renamed from ProfilePicture)
-                            string profilePic = "";
-                            string rawPic = SafeStr(dr, "ProfilePhoto");
-                            if (!string.IsNullOrEmpty(rawPic))
-                                profilePic = rawPic.Replace("~/", Request.ApplicationPath.TrimEnd('/') + "/");
+                            string appRoot = Request.ApplicationPath.TrimEnd('/');
+                            string profilePic = SafeStr(dr, "ProfilePhoto").Replace("~/", appRoot + "/");
 
-                            // Dedicated document photo columns (new in this schema)
-                            string driverLicensePhoto = SafeStr(dr, "DriverLicensePhoto");
-                            string orcrPhoto = SafeStr(dr, "ORCRPhoto");
-                            string insurancePhoto = SafeStr(dr, "InsurancePhoto");
-                            string nbiClearancePhoto = SafeStr(dr, "NBIClearancePhoto");
+                            // Resolve photo paths to absolute web URLs
+                            string driverLicensePhoto = SafeStr(dr, "DriverLicensePhoto").Replace("~/", appRoot + "/");
+                            string orcrPhoto = SafeStr(dr, "ORCRPhoto").Replace("~/", appRoot + "/");
+                            string insurancePhoto = SafeStr(dr, "InsurancePhoto").Replace("~/", appRoot + "/");
+                            string nbiClearancePhoto = SafeStr(dr, "NBIClearancePhoto").Replace("~/", appRoot + "/");
 
                             string insDate = "";
                             try
@@ -80,71 +256,46 @@ namespace TasteNet.Users.SuperAdmin
                             }
                             catch { }
 
-                            sb.AppendFormat(
-                                "{{" +
-                                "\"id\":{0}," +
-                                "\"name\":{1}," +
-                                "\"username\":{2}," +
-                                "\"phone\":{3}," +
-                                "\"email\":{4}," +
-                                "\"gender\":{5}," +
-                                "\"joinDate\":{6}," +
-                                "\"vehicle\":{7}," +
-                                "\"vehicleModel\":{8}," +
-                                "\"vehicleYear\":{9}," +
-                                "\"licensePlate\":{10}," +
-                                "\"vehicleColor\":{11}," +
-                                "\"licenseNumber\":{12}," +
-                                "\"nbiNumber\":{13}," +
-                                "\"orcrNumber\":{14}," +
-                                "\"insurancePolicy\":{15}," +
-                                "\"insuranceDate\":{16}," +
-                                "\"profilePicture\":{17}," +
-                                "\"driverLicensePhoto\":{18}," +
-                                "\"orcrPhoto\":{19}," +
-                                "\"insurancePhoto\":{20}," +
-                                "\"nbiClearancePhoto\":{21}," +
-                                "\"status\":{22}," +
-                                "\"assigned\":{23}," +
-                                "\"completed\":{24}," +
-                                "\"rating\":{25}," +
-                                "\"lastActivity\":\"\"," +
-                                "\"recentDeliveries\":[]" +
-                                "}}",
-                                JsonStr(SafeStr(dr, "RiderId")),
-                                JsonStr(SafeStr(dr, "FullName")),
-                                JsonStr(SafeStr(dr, "Username")),
-                                JsonStr(SafeStr(dr, "Contact")),
-                                JsonStr(SafeStr(dr, "Email")),
-                                JsonStr(SafeStr(dr, "Gender")),
-                                JsonStr(joinDate),
-                                JsonStr(SafeStr(dr, "Vehicle")),
-                                JsonStr(SafeStr(dr, "VehicleModel")),
-                                JsonStr(SafeStr(dr, "VehicleYear")),
-                                JsonStr(SafeStr(dr, "LicensePlate")),
-                                JsonStr(SafeStr(dr, "VehicleColor")),
-                                JsonStr(SafeStr(dr, "LicenseNumber")),
-                                JsonStr(SafeStr(dr, "NBINumber")),
-                                JsonStr(SafeStr(dr, "ORCRNumber")),
-                                JsonStr(SafeStr(dr, "InsurancePolicy")),
-                                JsonStr(insDate),
-                                JsonStr(profilePic),
-                                JsonStr(driverLicensePhoto),
-                                JsonStr(orcrPhoto),
-                                JsonStr(insurancePhoto),
-                                JsonStr(nbiClearancePhoto),
-                                JsonStr(status),
-                                SafeStr(dr, "AssignedOrders") == "" ? "0" : SafeStr(dr, "AssignedOrders"),
-                                SafeStr(dr, "CompletedOrders") == "" ? "0" : SafeStr(dr, "CompletedOrders"),
-                                rating.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)
-                            );
+                            // Emit assigned/completed/rating as bare numbers (not quoted strings)
+                            // so JS can call .toFixed() / .toLocaleString() without type errors
+                            int assigned = 0; int.TryParse(SafeStr(dr, "AssignedOrders"), out assigned);
+                            int completed = 0; int.TryParse(SafeStr(dr, "CompletedOrders"), out completed);
+
+                            sb.Append("{");
+                            sb.AppendFormat("\"id\":{0},", JsonStr(SafeStr(dr, "RiderId")));
+                            sb.AppendFormat("\"name\":{0},", JsonStr(SafeStr(dr, "FullName")));
+                            sb.AppendFormat("\"username\":{0},", JsonStr(SafeStr(dr, "Username")));
+                            sb.AppendFormat("\"phone\":{0},", JsonStr(SafeStr(dr, "Contact")));
+                            sb.AppendFormat("\"email\":{0},", JsonStr(SafeStr(dr, "Email")));
+                            sb.AppendFormat("\"gender\":{0},", JsonStr(SafeStr(dr, "Gender")));
+                            sb.AppendFormat("\"joinDate\":{0},", JsonStr(joinDate));
+                            sb.AppendFormat("\"vehicle\":{0},", JsonStr(SafeStr(dr, "Vehicle")));
+                            sb.AppendFormat("\"vehicleModel\":{0},", JsonStr(SafeStr(dr, "VehicleModel")));
+                            sb.AppendFormat("\"vehicleYear\":{0},", JsonStr(SafeStr(dr, "VehicleYear")));
+                            sb.AppendFormat("\"licensePlate\":{0},", JsonStr(SafeStr(dr, "LicensePlate")));
+                            sb.AppendFormat("\"vehicleColor\":{0},", JsonStr(SafeStr(dr, "VehicleColor")));
+                            sb.AppendFormat("\"licenseNumber\":{0},", JsonStr(SafeStr(dr, "LicenseNumber")));
+                            sb.AppendFormat("\"nbiNumber\":{0},", JsonStr(SafeStr(dr, "NBINumber")));
+                            sb.AppendFormat("\"orcrNumber\":{0},", JsonStr(SafeStr(dr, "ORCRNumber")));
+                            sb.AppendFormat("\"insurancePolicy\":{0},", JsonStr(SafeStr(dr, "InsurancePolicy")));
+                            sb.AppendFormat("\"insuranceDate\":{0},", JsonStr(insDate));
+                            sb.AppendFormat("\"profilePicture\":{0},", JsonStr(profilePic));
+                            sb.AppendFormat("\"driverLicensePhoto\":{0},", JsonStr(driverLicensePhoto));
+                            sb.AppendFormat("\"orcrPhoto\":{0},", JsonStr(orcrPhoto));
+                            sb.AppendFormat("\"insurancePhoto\":{0},", JsonStr(insurancePhoto));
+                            sb.AppendFormat("\"nbiClearancePhoto\":{0},", JsonStr(nbiClearancePhoto));
+                            sb.AppendFormat("\"status\":{0},", JsonStr(status));
+                            // Numbers — NOT quoted, so JS arithmetic works directly
+                            sb.AppendFormat("\"assigned\":{0},", assigned);
+                            sb.AppendFormat("\"completed\":{0},", completed);
+                            sb.AppendFormat("\"rating\":{0},", rating.ToString("F1", System.Globalization.CultureInfo.InvariantCulture));
+                            sb.Append("\"lastActivity\":\"\",\"recentDeliveries\":[]}");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Surface the real error as a JS comment so you can see it in browser DevTools
                 System.Diagnostics.Debug.WriteLine("GetRidersJson error: " + ex.Message);
                 return "[] /* ERROR: " + ex.Message.Replace("*/", "") + " */";
             }

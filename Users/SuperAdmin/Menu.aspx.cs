@@ -2,190 +2,250 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Web;
+using System.Web.Script.Services;
+using System.Web.Services;
+using System.Web.Services.Description;
 using System.Web.UI;
 
 namespace TasteNet.Users.SuperAdmin
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // Menu.aspx.cs  —  Code-behind for the SuperAdmin Menu management page.
-    //
-    // Responsibilities:
-    //   • LoadMenu()        → fetches all rows from the [Menu] table and
-    //                         (a) binds them to the server-side Repeater as
-    //                             a fallback, and
-    //                         (b) serialises them into window.__menusData so the
-    //                             client-side JavaScript grid can work with real
-    //                             database data without an extra AJAX call.
-    //   • ShowError()       → injects a styled error banner above the Repeater
-    //                         when a database or unexpected error occurs.
-    //   • JsEscape()        → helper to safely embed string values in the
-    //                         inline <script> JSON without breaking the JS.
-    //
-    // Image upload (Add / Edit):
-    //   The actual file saving is handled in AddMenu.ashx / UpdateMenu.ashx.
-    //   See the NOTE block below for the expected handler logic.
-    // ─────────────────────────────────────────────────────────────────────────
+    [ScriptService]
     public partial class Menu : System.Web.UI.Page
     {
-        // ──────────────────────────────────────────────────────────────────────
-        // NOTE FOR AddMenu.ashx / UpdateMenu.ashx — Image Upload Handler Steps
-        //
-        // When the user picks a file in the modal, the JS posts it as the
-        // "ImageFile" field inside a multipart/form-data request.
-        // Your handler MUST:
-        //
-        //   1. Read the file FIRST (before reading Request.Form):
-        //        HttpPostedFile imgFile = context.Request.Files["ImageFile"];
-        //
-        //   2. Validate the extension (.jpg, .jpeg, .png, .webp, .gif only).
-        //
-        //   3. Ensure the save folder exists (this is the most common reason
-        //      uploads silently fail):
-        //        string folder = context.Server.MapPath("~/Images/Menus/");
-        //        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-        //
-        //   4. Save with a unique filename to avoid collisions:
-        //        string unique = Guid.NewGuid().ToString("N") + ext;
-        //        imgFile.SaveAs(Path.Combine(folder, unique));
-        //
-        //   5. Store the RELATIVE path in the DB (not the physical path):
-        //        savedImagePath = "Images/Menus/" + unique;
-        //
-        //   6. If no file was posted, fall back to the "ImagePath" form field:
-        //        if (imgFile == null || imgFile.ContentLength == 0)
-        //            savedImagePath = context.Request.Form["ImagePath"] ?? "";
-        //
-        //   7. Return JSON: { "success": true } or { "success": false, "message": "..." }
-        // ──────────────────────────────────────────────────────────────────────
+        private static string ConnStr =>
+            ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
 
-        // Connection string pulled from Web.config → <connectionStrings>
-        private string connStr = ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Page_Load
-        //   ASP.NET lifecycle entry point.  We only load data on the first
-        //   request (IsPostBack = false) because all subsequent interactions
-        //   (add / edit / delete) go through the ASHX handlers and reload
-        //   the page from scratch.
-        // ─────────────────────────────────────────────────────────────────────
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+            // ── Intercept AJAX actions posted by JS fetch calls ───────────────
+            string action = Request.QueryString["action"] ?? "";
+
+            if (action == "upload")
             {
-                LoadMenu();
+                // Save the uploaded image file, return the relative path as JSON
+                Response.ContentType = "application/json";
+                Response.Write(DoImageUpload());
+                Response.End();
+                return;
+            }
+
+            if (action == "toggleStatus")
+            {
+                // Toggle active <-> hidden for a menu item
+                Response.ContentType = "application/json";
+                int menuId = 0;
+                int.TryParse(Request.Form["menuId"], out menuId);
+                string newStatus = Request.Form["newStatus"] ?? "active";
+                Response.Write(DoToggleStatus(menuId, newStatus));
+                Response.End();
+                return;
+            }
+
+            if (action == "delete")
+            {
+                // Delete a menu item
+                Response.ContentType = "application/json";
+                int menuId = 0;
+                int.TryParse(Request.Form["menuId"], out menuId);
+                Response.Write(DoDelete(menuId));
+                Response.End();
+                return;
+            }
+
+            // Normal page load
+            LoadMenu();
+        }
+
+        // ── Save uploaded image file ──────────────────────────────────────────
+        private string DoImageUpload()
+        {
+            try
+            {
+                HttpPostedFile img = Request.Files["ImageFile"];
+                if (img == null || img.ContentLength == 0)
+                    return "{\"success\":true,\"imagePath\":\"\"}";
+
+                string ext = Path.GetExtension(img.FileName).ToLower();
+                string folder = Server.MapPath("~/Images/Menus/");
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                string uniqueName = Guid.NewGuid().ToString("N") + ext;
+                img.SaveAs(Path.Combine(folder, uniqueName));
+                string path = "Images/Menus/" + uniqueName;
+
+                return "{\"success\":true,\"imagePath\":\"" + path + "\"}";
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // LoadMenu()
-        //   1. Queries the [Menu] table ordered newest-first.
-        //   2. Binds the result to rptMenu (server-side Repeater — HTML fallback
-        //      for non-JS environments or search-engine crawlers).
-        //   3. Serialises the same rows into a <script> block that sets
-        //      window.__menusData so the JavaScript grid has real DB data
-        //      without a separate AJAX / fetch call.
-        // ─────────────────────────────────────────────────────────────────────
+        // ── Toggle menu status ────────────────────────────────────────────────
+        private string DoToggleStatus(int menuId, string newStatus)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConnStr))
+                using (SqlCommand cmd = new SqlCommand(
+                    "UPDATE Menu SET Status=@Status WHERE MenuID=@MenuID", con))
+                {
+                    cmd.Parameters.AddWithValue("@Status", newStatus);
+                    cmd.Parameters.AddWithValue("@MenuID", menuId);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return "{\"success\":true}";
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
+            }
+        }
+
+        // ── Delete menu item ──────────────────────────────────────────────────
+        private string DoDelete(int menuId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(ConnStr))
+                using (SqlCommand cmd = new SqlCommand(
+                    "DELETE FROM Menu WHERE MenuID=@MenuID", con))
+                {
+                    cmd.Parameters.AddWithValue("@MenuID", menuId);
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return "{\"success\":true}";
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
+            }
+        }
+
+        // ── Save (Add or Edit) triggered by the hidden form postback ─────────
+        protected void btnSaveMenu_Click(object sender, EventArgs e)
+        {
+            string foodName = Request.Form["hFoodName"] ?? "";
+            string foodType = Request.Form["hFoodType"] ?? "";
+            string priceStr = Request.Form["hPrice"] ?? "0";
+            string menuIdStr = Request.Form["hMenuId"] ?? "";
+            string imagePath = Request.Form["hImagePath"] ?? "";
+
+            decimal price = 0;
+            decimal.TryParse(priceStr,
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out price);
+
+            using (SqlConnection con = new SqlConnection(ConnStr))
+            {
+                con.Open();
+                bool isEdit = !string.IsNullOrEmpty(menuIdStr) && menuIdStr != "0";
+
+                if (isEdit)
+                {
+                    string sql = string.IsNullOrEmpty(imagePath)
+                        ? "UPDATE Menu SET FoodName=@N,FoodType=@T,Price=@P WHERE MenuID=@ID"
+                        : "UPDATE Menu SET FoodName=@N,FoodType=@T,Price=@P,ImagePath=@I WHERE MenuID=@ID";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    {
+                        cmd.Parameters.AddWithValue("@N", foodName);
+                        cmd.Parameters.AddWithValue("@T", foodType);
+                        cmd.Parameters.AddWithValue("@P", price);
+                        cmd.Parameters.AddWithValue("@ID", int.Parse(menuIdStr));
+                        if (!string.IsNullOrEmpty(imagePath))
+                            cmd.Parameters.AddWithValue("@I", imagePath);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    using (SqlCommand cmd = new SqlCommand(
+                        "INSERT INTO Menu(FoodName,FoodType,Price,ImagePath,Status) VALUES(@N,@T,@P,@I,'active')", con))
+                    {
+                        cmd.Parameters.AddWithValue("@N", foodName);
+                        cmd.Parameters.AddWithValue("@T", foodType);
+                        cmd.Parameters.AddWithValue("@P", price);
+                        cmd.Parameters.AddWithValue("@I", imagePath);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            // PRG (Post-Redirect-Get): redirect back to the same page so the browser
+            // history holds a GET, not a POST.  This prevents the "refresh duplicates"
+            // bug where hitting F5 / reload re-submits the hidden save form.
+            Response.Redirect(Request.Url.AbsolutePath, false);
+            Context.ApplicationInstance.CompleteRequest();
+        }
+
+        // ── Load all menu rows and inject as window.__menusData ───────────────
         private void LoadMenu()
         {
             DataTable dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(connStr))
-                using (SqlCommand cmd = new SqlCommand())
+                using (SqlConnection con = new SqlConnection(ConnStr))
+                using (SqlCommand cmd = new SqlCommand(@"
+                    SELECT MenuID, FoodName, FoodType, Price,
+                           ISNULL(ImagePath,'') AS ImagePath,
+                           ISNULL(Status,'active') AS Status
+                    FROM   Menu
+                    ORDER  BY MenuID DESC", con))
                 {
-                    cmd.Connection = con;
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = @"
-                        SELECT MenuID, FoodName, FoodType, Price, ImagePath,
-                               ISNULL(Status, 'active') AS Status
-                        FROM   Menu
-                        ORDER  BY MenuID DESC"; 
-
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     con.Open();
-                    da.Fill(dt); // fill the DataTable
+                    da.Fill(dt);
                 }
 
-                // ── Server-side Repeater (HTML fallback) ──────────────────────
                 rptMenu.DataSource = dt;
                 rptMenu.DataBind();
 
-                // ── Client-side JSON injection ────────────────────────────────
-                // Serialize every row into a JS array literal so the browser's
-                // JavaScript can access live DB data the moment the page loads,
-                // without waiting for a separate AJAX request.
-                //
-                // Output format:
-                //   <script>window.__menusData = [{...}, {...}];</script>
-                //
-                // The JS code in Menu.aspx reads this via:
-                //   var menusData = window.__menusData || [];
+                // Inject app root so JS can build absolute image URLs
+                string appRoot = VirtualPathUtility.ToAbsolute("~/").TrimEnd('/');
+
                 var sb = new StringBuilder();
-                sb.Append("<script>window.__menusData = [");
+                sb.AppendFormat("<script>window.__appRoot='{0}';window.__menusData=[", appRoot);
 
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     DataRow r = dt.Rows[i];
-                    if (i > 0) sb.Append(","); // comma-separate objects
-
+                    if (i > 0) sb.Append(",");
                     sb.Append("{");
                     sb.AppendFormat("\"menuId\":{0},", r["MenuID"]);
-                    sb.AppendFormat("\"foodName\":\"{0}\",", JsEscape(r["FoodName"]));
-                    sb.AppendFormat("\"foodType\":\"{0}\",", JsEscape(r["FoodType"]));
-                    // Always use InvariantCulture so we get "12.50" not "12,50" on European servers
+                    sb.AppendFormat("\"foodName\":\"{0}\",", JsEsc(r["FoodName"]));
+                    sb.AppendFormat("\"foodType\":\"{0}\",", JsEsc(r["FoodType"]));
                     sb.AppendFormat("\"price\":{0},",
-                        Convert.ToDecimal(r["Price"]).ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
-                    sb.AppendFormat("\"imagePath\":\"{0}\",", JsEscape(r["ImagePath"]));
-                    sb.AppendFormat("\"status\":\"{0}\",", JsEscape(r["Status"]));
-                    sb.AppendFormat("\"itemCount\":{0}", 0); // placeholder — join to OrderItems if needed
-                    sb.Append("}");
+                        Convert.ToDecimal(r["Price"]).ToString("F2",
+                            System.Globalization.CultureInfo.InvariantCulture));
+                    sb.AppendFormat("\"imagePath\":\"{0}\",", JsEsc(r["ImagePath"]));
+                    sb.AppendFormat("\"status\":\"{0}\",", JsEsc(r["Status"]));
+                    sb.Append("\"itemCount\":0}");
                 }
 
                 sb.Append("];</script>");
-                MenusJsonLiteral.Text = sb.ToString(); // render the <script> block into the page
+                MenusJsonLiteral.Text = sb.ToString();
             }
-            catch (SqlException sqlEx) { ShowError("Database error: " + sqlEx.Message); }
-            catch (Exception ex) { ShowError("Unexpected error: " + ex.Message); }
+            catch (Exception ex)
+            {
+                MenusJsonLiteral.Text =
+                    "<script>window.__appRoot='';window.__menusData=[];" +
+                    "console.error('Menu load error: " + JsEsc(ex.Message) + "');</script>";
+            }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // JsEscape(val)
-        //   Makes a database value safe to embed inside a JavaScript string
-        //   literal by escaping backslashes, double-quotes, and line breaks.
-        //   Returns an empty string for NULL / DBNull values.
-        // ─────────────────────────────────────────────────────────────────────
-        private static string JsEscape(object val)
+        private static string JsEsc(object val)
         {
             if (val == null || val == DBNull.Value) return "";
             return val.ToString()
-                      .Replace("\\", "\\\\")  // backslash  → \\
-                      .Replace("\"", "\\\"")  // quote      → \"
-                      .Replace("\r", "")      // strip CR
-                      .Replace("\n", "");     // strip LF  (newlines break JS string literals)
-        }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // ShowError(message)
-        //   Injects a red error banner directly above the Repeater control
-        //   when LoadMenu() catches an exception.  The message is HTML-encoded
-        //   before output to prevent XSS.
-        // ─────────────────────────────────────────────────────────────────────
-        private void ShowError(string message)
-        {
-            string banner = string.Format(@"
-                <div style=""background:#fee2e2;border:1px solid #fca5a5;border-left:4px solid #b91c1c;
-                    color:#7f1d1d;padding:14px 18px;border-radius:10px;font-family:'Poppins',sans-serif;
-                    font-size:14px;margin:10px 0 20px 0;display:flex;align-items:center;gap:10px;"">
-                    <i class=""fas fa-exclamation-circle"" style=""font-size:18px;color:#b91c1c;""></i>
-                    <span>{0}</span>
-                </div>", HttpUtility.HtmlEncode(message)); // HtmlEncode prevents XSS
-
-            // Insert the banner immediately before the Repeater in the control tree
-            rptMenu.Parent.Controls.AddAt(
-                rptMenu.Parent.Controls.IndexOf(rptMenu),
-                new LiteralControl(banner));
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"")
+                .Replace("\r", "").Replace("\n", "");
         }
     }
 }

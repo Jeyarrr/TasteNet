@@ -1707,6 +1707,11 @@
                 </div>
 
                 <div class="rider-activity" style="margin-top: 20px;">
+                    <h4><i class="fas fa-file-alt"></i> Requirement Documents</h4>
+                    <div id="modalDocPhotos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:14px;"></div>
+                </div>
+
+                <div class="rider-activity" style="margin-top: 20px;">
                     <h4><i class="fas fa-history"></i> Recent Deliveries</h4>
                     <div id="recentDeliveries">
                         <p style="text-align: center; color: var(--muted-text); padding: 20px;">
@@ -1961,8 +1966,17 @@
 
     <script type="text/javascript">
         // Data injected directly from code-behind on page load
-        let ridersData = <%= GetRidersJson() %>;
-        const saveRiderUrl = '<%= ResolveUrl("~/" + Request.AppRelativeCurrentExecutionFilePath.Replace("~/","").Replace(System.IO.Path.GetFileName(Request.AppRelativeCurrentExecutionFilePath),"") + "SaveRider.ashx") %>';
+        // Normalise types: id→string, rating→number, assigned/completed→number
+        let ridersData = (<%= GetRidersJson() %>).map(function (r) {
+            return Object.assign(r, {
+                id: String(r.id),
+                rating: parseFloat(r.rating) || 0,
+                assigned: parseInt(r.assigned) || 0,
+                completed: parseInt(r.completed) || 0
+            });
+        });
+        // All AJAX actions post directly to this page with ?action= — no .ashx files needed
+        const pageUrl = window.location.pathname;
 
         let allRiders = [];
         let currentRiderId = null;
@@ -2272,6 +2286,7 @@
             }
 
             loadRecentDeliveries(rider.recentDeliveries);
+            renderDocumentPhotos(rider);
 
             const modal = document.getElementById('riderModal');
             modal.style.display = 'flex';
@@ -2410,8 +2425,8 @@
             deleteBtn.disabled = true;
             deleteBtn.textContent = 'Deleting...';
 
-            // Build URL the same way SaveRider does — replace filename only
-            const deleteUrl = saveRiderUrl.replace('SaveRider.ashx', 'DeleteRider.ashx');
+            // Post to this page's inline deleteRider action — no .ashx needed
+            const deleteUrl = pageUrl + '?action=deleteRider';
 
             const formData = new FormData();
             formData.append('riderId', String(riderToDelete));
@@ -2576,7 +2591,7 @@
             const nbiPhotoFile = document.getElementById('newRiderNBIFile').files[0];
             if (nbiPhotoFile) formData.append('nbiClearancePhoto', nbiPhotoFile);
 
-            fetch(saveRiderUrl, {
+            fetch(pageUrl + '?action=saveRider', {
                 method: 'POST',
                 body: formData
             })
@@ -2830,5 +2845,65 @@
 
 
         });
+    </script>
+
+    <!-- Photo lightbox overlay -->
+    <div id="photoLightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:20000;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+        <button onclick="closeLightbox()" style="position:absolute;top:18px;right:22px;background:rgba(255,255,255,0.15);border:none;color:white;font-size:26px;width:42px;height:42px;border-radius:50%;cursor:pointer;line-height:42px;text-align:center;">&times;</button>
+        <img id="lightboxImg" src="" alt="" style="max-width:90vw;max-height:82vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,0.5);object-fit:contain;">
+        <span id="lightboxCaption" style="color:rgba(255,255,255,0.8);font-size:13px;font-family:'Poppins',sans-serif;letter-spacing:0.5px;"></span>
+    </div>
+
+    <script type="text/javascript">
+        function openLightbox(src, caption) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxCaption').textContent = caption;
+            var lb = document.getElementById('photoLightbox');
+            lb.style.display = 'flex';
+        }
+        function closeLightbox() {
+            document.getElementById('photoLightbox').style.display = 'none';
+        }
+        document.getElementById('photoLightbox').addEventListener('click', function (e) {
+            if (e.target === this) closeLightbox();
+        });
+
+        function renderDocumentPhotos(rider) {
+            var docs = [
+                { key: 'driverLicensePhoto', label: "Driver's License" },
+                { key: 'orcrPhoto', label: 'OR/CR' },
+                { key: 'insurancePhoto', label: 'Insurance' },
+                { key: 'nbiClearancePhoto', label: 'NBI Clearance' }
+            ];
+            var container = document.getElementById('modalDocPhotos');
+            container.innerHTML = '';
+            var anyPhoto = false;
+
+            docs.forEach(function (doc) {
+                var src = rider[doc.key];
+                if (!src) return;
+                anyPhoto = true;
+                var card = document.createElement('div');
+                card.style.cssText = 'cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid var(--border-light);background:var(--bg-lighter);transition:box-shadow 0.2s,transform 0.2s;';
+                card.onmouseover = function () { this.style.boxShadow = '0 6px 20px rgba(107,13,30,0.15)'; this.style.transform = 'translateY(-3px)'; };
+                card.onmouseout = function () { this.style.boxShadow = ''; this.style.transform = ''; };
+                card.onclick = function () { openLightbox(src, doc.label); };
+                card.innerHTML =
+                    '<div style="height:110px;overflow:hidden;background:var(--bg-light);">' +
+                    '<img src="' + src + '" alt="' + doc.label + '" ' +
+                    'style="width:100%;height:100%;object-fit:cover;" ' +
+                    'onerror="this.parentElement.innerHTML=\'<div style=&quot;height:110px;display:flex;align-items:center;justify-content:center;color:var(--muted-text);&quot;><i class=&quot;fas fa-file-image&quot; style=&quot;font-size:32px;&quot;></i></div>\'">' +
+                    '</div>' +
+                    '<div style="padding:8px 10px;font-size:11px;font-weight:600;color:var(--text-dark);text-align:center;">' +
+                    doc.label +
+                    '<span style="display:block;font-size:10px;color:var(--muted-text);font-weight:400;margin-top:2px;">Click to view</span>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+
+            if (!anyPhoto) {
+                container.innerHTML = '<p style="color:var(--muted-text);font-size:13px;grid-column:1/-1;margin:0;">No document photos uploaded.</p>';
+            }
+        }
     </script>
 </asp:Content>
