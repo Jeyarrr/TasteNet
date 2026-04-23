@@ -16,11 +16,11 @@ namespace TasteNet.Users.Admin
         {
             get
             {
-                if (Session["AdminModalItems"] == null)
-                    Session["AdminModalItems"] = new List<ModalMenuItem>();
-                return (List<ModalMenuItem>)Session["AdminModalItems"];
+                if (Session["ModalItems"] == null)
+                    Session["ModalItems"] = new List<ModalMenuItem>();
+                return (List<ModalMenuItem>)Session["ModalItems"];
             }
-            set { Session["AdminModalItems"] = value; }
+            set { Session["ModalItems"] = value; }
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -28,9 +28,6 @@ namespace TasteNet.Users.Admin
             if (!IsPostBack)
             {
                 hfSelectedStatus.Value = "Open";
-                divTableNumber.Visible = true;
-                divDeliveryAddress.Visible = false;
-
                 LoadTickets();
                 LoadMenuItemsIntoDropdown();
                 LoadTicketCounts();
@@ -70,6 +67,7 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("LoadTicketCounts ERROR: " + ex.Message);
+                ShowClientNotification("Error loading ticket counts: " + ex.Message, "error");
             }
         }
 
@@ -78,6 +76,7 @@ namespace TasteNet.Users.Admin
             try
             {
                 string status = string.IsNullOrEmpty(hfSelectedStatus.Value) ? "Open" : hfSelectedStatus.Value;
+                System.Diagnostics.Debug.WriteLine($"Loading tickets with status: {status}");
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -85,9 +84,9 @@ namespace TasteNet.Users.Admin
                         SELECT 
                             TicketID, 
                             TicketNumber, 
+                            OrderNumber,
                             OrderType, 
-                            CustomerName, 
-                            TableNumber,
+                            DeliveryAddress,
                             Priority, 
                             Status, 
                             TotalAmount, 
@@ -109,6 +108,8 @@ namespace TasteNet.Users.Admin
                         SqlDataAdapter da = new SqlDataAdapter(cmd);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
+
+                        System.Diagnostics.Debug.WriteLine($"Tickets found: {dt.Rows.Count}");
 
                         rptTickets.DataSource = dt;
                         rptTickets.DataBind();
@@ -150,18 +151,18 @@ namespace TasteNet.Users.Admin
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT InventoryID, ItemName, UnitPrice FROM Inventory WHERE IsActive = 1 AND UnitPrice > 0";
+                    string query = "SELECT MenuID, FoodName, Price FROM Menu WHERE Status = 'active' ORDER BY FoodType, FoodName";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         conn.Open();
                         SqlDataReader reader = cmd.ExecuteReader();
                         ddlMenuItem.Items.Clear();
-                        ddlMenuItem.Items.Add(new ListItem("Select item...", ""));
+                        ddlMenuItem.Items.Add(new ListItem("-- Select item --", ""));
 
                         while (reader.Read())
                         {
-                            string text = $"{reader["ItemName"]} - ₱{Convert.ToDecimal(reader["UnitPrice"]):N2}";
-                            ddlMenuItem.Items.Add(new ListItem(text, reader["InventoryID"].ToString()));
+                            string text = $"{reader["FoodName"]} - ₱{Convert.ToDecimal(reader["Price"]):N2}";
+                            ddlMenuItem.Items.Add(new ListItem(text, reader["MenuID"].ToString()));
                         }
                     }
                 }
@@ -171,13 +172,6 @@ namespace TasteNet.Users.Admin
                 System.Diagnostics.Debug.WriteLine("Menu load ERROR: " + ex.Message);
                 ShowClientNotification("Error loading menu: " + ex.Message, "error");
             }
-        }
-
-        protected void DdlOrderType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            divTableNumber.Visible = ddlOrderType.SelectedValue == "Dine-In";
-            divDeliveryAddress.Visible = ddlOrderType.SelectedValue == "Delivery";
-            upModal.Update();
         }
 
         protected void RptTickets_ItemDataBound(object sender, RepeaterItemEventArgs e)
@@ -204,7 +198,7 @@ namespace TasteNet.Users.Admin
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = "SELECT Quantity, ItemName, SubTotal FROM TicketItems WHERE TicketID = @id";
+                    string query = "SELECT Quantity, FoodName AS ItemName, SubTotal FROM TicketItems WHERE TicketID = @id";
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@id", ticketId);
@@ -228,13 +222,13 @@ namespace TasteNet.Users.Admin
             if (e.CommandName == "Start")
             {
                 UpdateTicketStatus(ticketId, "In Progress");
-                ShowClientNotification("Ticket started!", "success");
+                ShowClientNotification("Ticket started successfully!", "success");
                 LoadTickets();
             }
             else if (e.CommandName == "Complete")
             {
                 UpdateTicketStatus(ticketId, "Completed");
-                ShowClientNotification("Ticket completed!", "success");
+                ShowClientNotification("Ticket completed successfully!", "success");
                 LoadTickets();
             }
             else if (e.CommandName == "DeleteTicket")
@@ -323,7 +317,7 @@ namespace TasteNet.Users.Admin
 
         protected void BtnAddItem_Click(object sender, EventArgs e)
         {
-            if (ddlMenuItem.SelectedIndex == 0)
+            if (string.IsNullOrEmpty(ddlMenuItem.SelectedValue) || ddlMenuItem.SelectedValue == "")
             {
                 ShowClientNotification("Please select an item", "warning");
                 return;
@@ -344,7 +338,7 @@ namespace TasteNet.Users.Admin
                     if (qty < 1) qty = 1;
                 }
 
-                var existingItem = ModalItems.FirstOrDefault(x => x.InventoryID == int.Parse(ddlMenuItem.SelectedValue));
+                var existingItem = ModalItems.FirstOrDefault(x => x.MenuID == int.Parse(ddlMenuItem.SelectedValue));
 
                 if (existingItem != null)
                 {
@@ -356,7 +350,7 @@ namespace TasteNet.Users.Admin
                 {
                     ModalItems.Add(new ModalMenuItem
                     {
-                        InventoryID = int.Parse(ddlMenuItem.SelectedValue),
+                        MenuID = int.Parse(ddlMenuItem.SelectedValue),
                         ItemName = itemName,
                         Quantity = qty,
                         UnitPrice = price,
@@ -407,6 +401,80 @@ namespace TasteNet.Users.Admin
             upModal.Update();
         }
 
+        /// <summary>
+        /// Generates a sequential ticket number in format: ORD-YYYYMMDD-XXX
+        /// Example: ORD-20260423-001, ORD-20260423-002, etc.
+        /// </summary>
+        private string GenerateTicketNumber()
+        {
+            string today = DateTime.Now.ToString("yyyyMMdd");
+            int nextNumber = GetNextSequenceNumber("ORD", today);
+            return $"ORD-{today}-{nextNumber:D3}";
+        }
+
+        /// <summary>
+        /// Generates a sequential order number in format: ON-YYYYMMDD-XXX
+        /// Example: ON-20260423-001, ON-20260423-002, etc.
+        /// </summary>
+        private string GenerateOrderNumber()
+        {
+            string today = DateTime.Now.ToString("yyyyMMdd");
+            int nextNumber = GetNextSequenceNumber("ON", today);
+            return $"ON-{today}-{nextNumber:D3}";
+        }
+
+        /// <summary>
+        /// Gets the next sequence number for a given prefix and date
+        /// </summary>
+        /// <param name="prefix">Prefix like 'ORD' or 'ON'</param>
+        /// <param name="datePrefix">Date in YYYYMMDD format</param>
+        /// <returns>Next sequence number (1, 2, 3, etc.)</returns>
+        private int GetNextSequenceNumber(string prefix, string datePrefix)
+        {
+            int nextNumber = 1;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string pattern = $"{prefix}-{datePrefix}-%";
+                    string query = @"
+                        SELECT TOP 1 
+                            CAST(SUBSTRING(TicketNumber, LEN(@pattern) - 2, 3) AS INT) AS SeqNumber
+                        FROM Tickets 
+                        WHERE TicketNumber LIKE @pattern
+                        ORDER BY TicketNumber DESC";
+
+                    string fieldToCheck = (prefix == "ORD") ? "TicketNumber" : "OrderNumber";
+                    query = $@"
+                        SELECT TOP 1 
+                            CAST(SUBSTRING({fieldToCheck}, LEN(@pattern) - 2, 3) AS INT) AS SeqNumber
+                        FROM Tickets 
+                        WHERE {fieldToCheck} LIKE @pattern
+                        ORDER BY {fieldToCheck} DESC";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@pattern", pattern);
+                        conn.Open();
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            nextNumber = Convert.ToInt32(result) + 1;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"GetNextSequenceNumber ERROR: {ex.Message}");
+                nextNumber = 1;
+            }
+
+            return nextNumber;
+        }
+
         protected void BtnCreateTicket_Click(object sender, EventArgs e)
         {
             decimal total = ModalItems.Sum(x => x.SubTotal);
@@ -417,24 +485,11 @@ namespace TasteNet.Users.Admin
                 return;
             }
 
-            if (string.IsNullOrEmpty(txtCustomerName.Text))
-            {
-                ShowClientNotification("Please enter customer name", "warning");
-                return;
-            }
-
-            if (ddlOrderType.SelectedValue == "Dine-In")
-            {
-                if (string.IsNullOrEmpty(ddlTableNumber.SelectedValue))
-                {
-                    ShowClientNotification("Please select a table number (1-15)", "warning");
-                    return;
-                }
-            }
-
             try
             {
-                string ticketNumber = "ORD-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
+                string ticketNumber = GenerateTicketNumber();
+                string orderNumber = GenerateOrderNumber();
+                System.Diagnostics.Debug.WriteLine($"Creating ticket: {ticketNumber}, Order: {orderNumber}");
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -444,26 +499,16 @@ namespace TasteNet.Users.Admin
                         try
                         {
                             string ticketSql = @"
-                                INSERT INTO Tickets (TicketNumber, OrderType, CustomerName, CustomerPhone, 
-                                                   TableNumber, DeliveryAddress, Priority, Status, TotalAmount)
-                                VALUES (@num, @type, @name, @phone, @table, @addr, @priority, 'Open', @total);
+                                INSERT INTO Tickets (TicketNumber, OrderNumber, OrderType, DeliveryAddress, Priority, Status, TotalAmount)
+                                VALUES (@num, @ordernum, @type, @addr, @priority, 'Open', @total);
                                 SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                             using (SqlCommand cmd = new SqlCommand(ticketSql, conn, trans))
                             {
                                 cmd.Parameters.AddWithValue("@num", ticketNumber);
+                                cmd.Parameters.AddWithValue("@ordernum", orderNumber);
                                 cmd.Parameters.AddWithValue("@type", ddlOrderType.SelectedValue);
-                                cmd.Parameters.AddWithValue("@name", txtCustomerName.Text.Trim());
-                                cmd.Parameters.AddWithValue("@phone", string.IsNullOrEmpty(txtCustomerPhone.Text) ? (object)DBNull.Value : txtCustomerPhone.Text);
-
-                                object tableValue = DBNull.Value;
-                                if (ddlOrderType.SelectedValue == "Dine-In" && !string.IsNullOrEmpty(ddlTableNumber.SelectedValue))
-                                {
-                                    tableValue = ddlTableNumber.SelectedValue;
-                                }
-                                cmd.Parameters.AddWithValue("@table", tableValue);
-
-                                cmd.Parameters.AddWithValue("@addr", string.IsNullOrEmpty(txtDeliveryAddress.Text) ? (object)DBNull.Value : txtDeliveryAddress.Text);
+                                cmd.Parameters.AddWithValue("@addr", DBNull.Value);
                                 cmd.Parameters.AddWithValue("@priority", ddlPriority.SelectedValue);
                                 cmd.Parameters.AddWithValue("@total", total);
 
@@ -475,41 +520,42 @@ namespace TasteNet.Users.Admin
                                 }
 
                                 int ticketId = Convert.ToInt32(result);
+                                System.Diagnostics.Debug.WriteLine($"Ticket created with ID: {ticketId}");
 
                                 string itemSql = @"
-                                    INSERT INTO TicketItems (TicketID, InventoryID, ItemName, Quantity, UnitPrice, SubTotal)
-                                    VALUES (@tid, @iid, @name, @qty, @price, @subtotal)";
+                                    INSERT INTO TicketItems (TicketID, MenuID, FoodName, Quantity, UnitPrice, SubTotal)
+                                    VALUES (@tid, @mid, @name, @qty, @price, @subtotal)";
 
                                 foreach (var item in ModalItems)
                                 {
                                     using (SqlCommand itemCmd = new SqlCommand(itemSql, conn, trans))
                                     {
                                         itemCmd.Parameters.AddWithValue("@tid", ticketId);
-                                        itemCmd.Parameters.AddWithValue("@iid", item.InventoryID);
+                                        itemCmd.Parameters.AddWithValue("@mid", item.MenuID);
                                         itemCmd.Parameters.AddWithValue("@name", item.ItemName);
                                         itemCmd.Parameters.AddWithValue("@qty", item.Quantity);
                                         itemCmd.Parameters.AddWithValue("@price", item.UnitPrice);
                                         itemCmd.Parameters.AddWithValue("@subtotal", item.SubTotal);
                                         itemCmd.ExecuteNonQuery();
+                                        System.Diagnostics.Debug.WriteLine($"Added item: {item.ItemName}, Qty: {item.Quantity}");
                                     }
                                 }
 
                                 trans.Commit();
+                                System.Diagnostics.Debug.WriteLine("Transaction committed successfully");
 
                                 ModalItems.Clear();
                                 RefreshModalItemsDisplay();
 
-                                txtCustomerName.Text = "";
-                                txtCustomerPhone.Text = "";
-                                txtDeliveryAddress.Text = "";
-                                ddlTableNumber.ClearSelection();
                                 ddlPriority.SelectedIndex = 0;
                                 ddlOrderType.SelectedIndex = 0;
 
                                 string script = $@"
                                     closeModal();
-                                    showNotification('✅ Ticket {ticketNumber} created successfully! Total: ₱{total:N2}', 'success');
-                                    setTimeout(function() {{ __doPostBack('{upTickets.ClientID}', ''); }}, 500);
+                                    showNotification('✅ Ticket {ticketNumber} (Order: {orderNumber}) created successfully! Total: ₱{total:N2}', 'success');
+                                    setTimeout(function() {{ 
+                                        __doPostBack('{upTickets.ClientID}', ''); 
+                                    }}, 500);
                                 ";
                                 ScriptManager.RegisterStartupScript(this, GetType(), "success", script, true);
 
@@ -519,6 +565,8 @@ namespace TasteNet.Users.Admin
                         catch (Exception ex)
                         {
                             trans.Rollback();
+                            System.Diagnostics.Debug.WriteLine($"Transaction error: {ex.Message}");
+                            System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
                             throw;
                         }
                     }
@@ -527,9 +575,11 @@ namespace TasteNet.Users.Admin
             catch (SqlException sqlEx)
             {
                 System.Diagnostics.Debug.WriteLine($"SQL ERROR: {sqlEx.Message}");
+                System.Diagnostics.Debug.WriteLine($"SQL Error Number: {sqlEx.Number}");
+
                 if (sqlEx.Number == 547)
                 {
-                    ShowClientNotification("Database constraint error. Please check if Inventory items exist.", "error");
+                    ShowClientNotification("Database constraint error. Please check if Menu items exist.", "error");
                 }
                 else if (sqlEx.Number == 8152)
                 {
@@ -543,6 +593,7 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Create ERROR: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
                 ShowClientNotification($"Create ERROR: {ex.Message}", "error");
             }
         }
@@ -573,9 +624,9 @@ namespace TasteNet.Users.Admin
 
         private void ShowClientNotification(string msg, string type)
         {
-            string safeMsg = msg.Replace("'", "\\'");
+            string safeMsg = msg.Replace("'", "\\'").Replace("\"", "\\\"");
             string script = $"showNotification('{safeMsg}', '{type}');";
-            ScriptManager.RegisterStartupScript(this, GetType(), "alert", script, true);
+            ScriptManager.RegisterStartupScript(this, GetType(), "notification_" + Guid.NewGuid().ToString(), script, true);
         }
 
         protected string GetStatusDotClass(string status)
@@ -595,7 +646,7 @@ namespace TasteNet.Users.Admin
 
         public class ModalMenuItem
         {
-            public int InventoryID { get; set; }
+            public int MenuID { get; set; }
             public string ItemName { get; set; }
             public int Quantity { get; set; }
             public decimal UnitPrice { get; set; }

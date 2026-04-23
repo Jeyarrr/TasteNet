@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Settings.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Settings" %>
+﻿<%@ Page Title="Platform Settings" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="Settings.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.Settings" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -404,6 +404,53 @@
             line-height: 1.6;
         }
 
+        /* Message Styles */
+        .message-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-message {
+            padding: 15px 20px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-message i {
+            font-size: 18px;
+        }
+
         @media (max-width: 1200px) {
             .settings-layout {
                 grid-template-columns: 220px 1fr;
@@ -502,6 +549,13 @@
             <p>Configure system-wide settings and preferences</p>
         </div>
 
+        <asp:Panel ID="pnlMessage" runat="server" CssClass="message-container" Visible="false">
+            <div class="alert-message" id="messageDiv" runat="server">
+                <i class="fas" id="messageIcon" runat="server"></i>
+                <span id="messageText" runat="server"></span>
+            </div>
+        </asp:Panel>
+
         <div class="settings-layout">
             <div class="settings-sidebar">
                 <button type="button" class="nav-item active" onclick="showTab('general', this)">
@@ -521,66 +575,68 @@
                 </button>
             </div>
 
+            <!-- General Settings Tab -->
             <div id="general" class="settings-card active">
                 <h3>General Settings</h3>
                 <div class="form-group">
                     <label class="form-label">System Name</label>
-                    <asp:TextBox ID="txtSystemName" runat="server" CssClass="form-control" Text="Caballeros TasteNet"></asp:TextBox>
+                    <asp:TextBox ID="txtSystemName" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Logo Upload</label>
-                    <div class="logo-upload-box">
+                    <div class="logo-upload-box" onclick="document.getElementById('<%= fileLogo.ClientID %>').click();">
                         <i class="fas fa-upload"></i><br />
                         <b>Click to upload or drag and drop</b><br />
                         <span>SVG, PNG, JPG (max. 2MB)</span>
+                        <asp:FileUpload ID="fileLogo" runat="server" style="display: none;" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Contact Email</label>
-                    <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" Text="support@caballerostastenet.com"></asp:TextBox>
+                    <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Contact Phone</label>
-                    <asp:TextBox ID="txtPhone" runat="server" CssClass="form-control" Text="(046) 123-4567"></asp:TextBox>
+                    <asp:TextBox ID="txtPhone" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Store Address</label>
-                    <asp:TextBox ID="txtAddress" runat="server" CssClass="form-control" Text="Dasmariñas, Cavite, Philippines"></asp:TextBox>
+                    <asp:TextBox ID="txtAddress" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Operating Hours</label>
                     <div class="grid-2-col">
                         <div>
                             <span>Opening Time</span>
-                            <asp:TextBox ID="txtOpen" runat="server" CssClass="form-control" Text="09:00 AM"></asp:TextBox>
+                            <asp:TextBox ID="txtOpen" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
                         <div>
                             <span>Closing Time</span>
-                            <asp:TextBox ID="txtClose" runat="server" CssClass="form-control" Text="09:00 PM"></asp:TextBox>
+                            <asp:TextBox ID="txtClose" runat="server" CssClass="form-control"></asp:TextBox>
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <asp:Button ID="btnSaveGeneral" runat="server" CssClass="btn-save" OnClick="btnSaveGeneral_Click" Text="Save Changes" />
             </div>
 
             <div id="order" class="settings-card">
                 <h3>Order Settings</h3>
                 <div class="form-group">
                     <label class="form-label">Minimum Order Amount</label>
-                    <asp:TextBox ID="txtMinOrder" runat="server" CssClass="form-control" Text="₱ 100"></asp:TextBox>
+                    <asp:TextBox ID="txtMinOrder" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Delivery Fee</label>
-                    <asp:TextBox ID="txtDelFee" runat="server" CssClass="form-control" Text="₱ 30"></asp:TextBox>
+                    <asp:TextBox ID="txtDelFee" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Order Cut-off Time</label>
-                    <asp:TextBox ID="txtCutoff" runat="server" CssClass="form-control" Text="08:30 PM"></asp:TextBox>
+                    <asp:TextBox ID="txtCutoff" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Auto-cancel Time (Unpaid Orders)</label>
                     <asp:DropDownList ID="ddlAutoCancel" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="30 minutes" Value="30" Selected="True" />
+                        <asp:ListItem Text="30 minutes" Value="30" />
                         <asp:ListItem Text="45 minutes" Value="45" />
                         <asp:ListItem Text="60 minutes" Value="60" />
                     </asp:DropDownList>
@@ -588,7 +644,7 @@
                 <div class="form-group">
                     <label class="form-label">Estimated Preparation Time</label>
                     <asp:DropDownList ID="ddlPrepTime" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="30 minutes" Value="30" Selected="True" />
+                        <asp:ListItem Text="30 minutes" Value="30" />
                         <asp:ListItem Text="45 minutes" Value="45" />
                         <asp:ListItem Text="60 minutes" Value="60" />
                     </asp:DropDownList>
@@ -596,12 +652,12 @@
                 <div class="form-group">
                     <label class="form-label">Estimated Delivery Time</label>
                     <asp:DropDownList ID="ddlDeliveryTime" runat="server" CssClass="form-control">
-                        <asp:ListItem Text="30 minutes" Value="30" Selected="True" />
+                        <asp:ListItem Text="30 minutes" Value="30" />
                         <asp:ListItem Text="45 minutes" Value="45" />
                         <asp:ListItem Text="60 minutes" Value="60" />
                     </asp:DropDownList>
                 </div>
-                <button type="button" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <asp:Button ID="btnSaveOrder" runat="server" CssClass="btn-save" OnClick="btnSaveOrder_Click" Text="Save Changes" />
             </div>
 
             <div id="payment" class="settings-card">
@@ -619,7 +675,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <asp:CheckBox ID="chkCOD" runat="server" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -633,7 +689,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <asp:CheckBox ID="chkGCash" runat="server" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -647,7 +703,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <asp:CheckBox ID="chkPayMaya" runat="server" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -661,7 +717,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox">
+                            <asp:CheckBox ID="chkBankTransfer" runat="server" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -669,22 +725,20 @@
 
                 <div class="form-group" style="margin-top: 25px;">
                     <label class="form-label">Payment Instructions</label>
-                    <asp:TextBox ID="txtPaymentInstructions" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4" 
-                        Text="Please ensure accurate payment details. For GCash/PayMaya, send payment screenshot. Bank transfers should include order reference number."></asp:TextBox>
+                    <asp:TextBox ID="txtPaymentInstructions" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="4"></asp:TextBox>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">GCash Account Details</label>
-                    <asp:TextBox ID="txtGCashDetails" runat="server" CssClass="form-control" Text="09171234567"></asp:TextBox>
+                    <asp:TextBox ID="txtGCashDetails" runat="server" CssClass="form-control"></asp:TextBox>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Bank Account Details</label>
-                    <asp:TextBox ID="txtBankDetails" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3" 
-                        Text="BDO - Account Name: Caballeros TasteNet&#10;Account Number: 1234567890"></asp:TextBox>
+                    <asp:TextBox ID="txtBankDetails" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3"></asp:TextBox>
                 </div>
 
-                <button type="button" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <asp:Button ID="btnSavePayment" runat="server" CssClass="btn-save" OnClick="btnSavePayment_Click" Text="Save Changes" />
             </div>
 
             <div id="security" class="settings-card">
@@ -700,21 +754,15 @@
                             <i class="fas fa-user-cog"></i>
                             <div class="method-text">
                                 <b>Administrator</b>
-                                <span style="color: var(--text-dark);">admin@caballerostastenet.com</span>
+                                <span id="adminEmail" runat="server" style="color: var(--text-dark);">admin@caballerostastenet.com</span>
                             </div>
                         </div>
-                        <button type="button" class="btn-save" style="padding: 6px 12px; font-size: 13px; margin: 0;">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
+                        <asp:Button ID="btnEditAdmin" runat="server" CssClass="btn-save" style="padding: 6px 12px; font-size: 13px; margin: 0;" Text="Edit" OnClick="btnEditAdmin_Click" />
                     </div>
                     
                     <div style="margin-top: 15px;">
-                        <button type="button" class="nav-item" style="margin-bottom: 0; width: auto; display: inline-flex; background: var(--soft-cream);">
-                            <i class="fas fa-sliders-h"></i> System Controls
-                        </button>
-                        <button type="button" class="nav-item" style="margin-bottom: 0; width: auto; display: inline-flex; background: var(--soft-cream); margin-left: 10px;">
-                            <i class="fas fa-user-plus"></i> Add Admin Account
-                        </button>
+                        <asp:Button ID="btnSystemControls" runat="server" CssClass="nav-item" style="margin-bottom: 0; width: auto; display: inline-flex; background: var(--soft-cream);" Text="System Controls" OnClick="btnSystemControls_Click" />
+                        <asp:Button ID="btnAddAdmin" runat="server" CssClass="nav-item" style="margin-bottom: 0; width: auto; display: inline-flex; background: var(--soft-cream); margin-left: 10px;" Text="Add Admin Account" OnClick="btnAddAdmin_Click" />
                     </div>
                 </div>
 
@@ -753,7 +801,7 @@
                             <span>Timeout Duration</span>
                             <asp:DropDownList ID="ddlSessionTimeout" runat="server" CssClass="form-control">
                                 <asp:ListItem Text="30 minutes" Value="30" />
-                                <asp:ListItem Text="1 hour" Value="60" Selected="True" />
+                                <asp:ListItem Text="1 hour" Value="60" />
                                 <asp:ListItem Text="2 hours" Value="120" />
                                 <asp:ListItem Text="4 hours" Value="240" />
                             </asp:DropDownList>
@@ -762,7 +810,7 @@
                             <span style="margin-bottom: 8px; display: block;">Auto-logout Setting</span>
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <label class="switch" style="flex-shrink: 0;">
-                                    <input type="checkbox" checked>
+                                    <asp:CheckBox ID="chkAutoLogout" runat="server" Checked="true" />
                                     <span class="slider"></span>
                                 </label>
                                 <span style="font-weight: 600; color: var(--text-dark); flex: 1;">Auto-logout inactive sessions</span>
@@ -788,7 +836,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox">
+                            <asp:CheckBox ID="chkTwoFactor" runat="server" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -804,7 +852,7 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <asp:Button ID="btnSaveSecurity" runat="server" CssClass="btn-save" OnClick="btnSaveSecurity_Click" Text="Save Changes" />
             </div>
 
             <div id="system" class="settings-card">
@@ -822,13 +870,11 @@
                                 <b>Backup Database</b>
                                 <span>Create a backup of all data</span>
                             </div>
-                            <button type="button" class="btn-save" style="padding: 8px 16px; font-size: 13px; margin: 0; background: #1565c0; color: white;">
-                                <i class="fas fa-download"></i> Backup Now
-                            </button>
+                            <asp:Button ID="btnBackupDatabase" runat="server" CssClass="btn-save" style="padding: 8px 16px; font-size: 13px; margin: 0; background: #1565c0; color: white;" Text="Backup Now" OnClick="btnBackupDatabase_Click" />
                         </div>
                         <div style="width: 100%; padding: 8px 12px; background: #f5f5f5; border-radius: var(--radius-lg); font-size: 12px; color: var(--muted-text);">
                             <i class="fas fa-history" style="margin-right: 8px;"></i> 
-                            Last backup: <b>January 7, 2026 at 11:45 PM</b>
+                            Last backup: <b id="lastBackupDate" runat="server">Not available</b>
                         </div>
                     </div>
 
@@ -840,9 +886,7 @@
                                 <span>Restore from a previous backup</span>
                             </div>
                         </div>
-                        <button type="button" class="btn-save" style="padding: 8px 16px; font-size: 13px; margin: 0; background: #2e7d32; color: white;">
-                            <i class="fas fa-undo"></i> Restore
-                        </button>
+                        <asp:Button ID="btnRestoreDatabase" runat="server" CssClass="btn-save" style="padding: 8px 16px; font-size: 13px; margin: 0; background: #2e7d32; color: white;" Text="Restore" OnClick="btnRestoreDatabase_Click" />
                     </div>
 
                     <div class="payment-method-row" style="border: 2px solid #f3ebe0; background: #fefaf5; margin-top: 12px;">
@@ -854,7 +898,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" checked>
+                            <asp:CheckBox ID="chkAutoBackup" runat="server" Checked="true" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -874,7 +918,7 @@
                             </div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox">
+                            <asp:CheckBox ID="chkMaintenanceMode" runat="server" />
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -903,9 +947,7 @@
                                 <span>Track all admin activities and changes</span>
                             </div>
                         </div>
-                        <button type="button" class="btn-save" style="padding: 8px 16px; font-size: 13px; margin: 0; background: #3949ab; color: white;">
-                            <i class="fas fa-search"></i> View Logs
-                        </button>
+                        <asp:Button ID="btnViewLogs" runat="server" CssClass="btn-save" style="padding: 8px 16px; font-size: 13px; margin: 0; background: #3949ab; color: white;" Text="View Logs" OnClick="btnViewLogs_Click" />
                     </div>
                 </div>
 
@@ -923,28 +965,28 @@
                                 </div>
                                 <div style="margin-bottom: 15px;">
                                     <div style="font-size: 12px; color: var(--muted-text); margin-bottom: 5px;">Total Orders</div>
-                                    <div style="font-size: 14px; font-weight: 700; color: var(--primary-maroon);">1,847</div>
+                                    <div style="font-size: 14px; font-weight: 700; color: var(--primary-maroon);" id="totalOrders" runat="server">0</div>
                                 </div>
                             </div>
                             <div>
                                 <div style="margin-bottom: 15px;">
                                     <div style="font-size: 12px; color: var(--muted-text); margin-bottom: 5px;">Database Size</div>
-                                    <div style="font-size: 14px; font-weight: 700; color: var(--primary-maroon);">245 MB</div>
+                                    <div style="font-size: 14px; font-weight: 700; color: var(--primary-maroon);" id="dbSize" runat="server">0 MB</div>
                                 </div>
                                 <div>
                                     <div style="font-size: 12px; color: var(--muted-text); margin-bottom: 5px;">Storage Used</div>
-                                    <div style="font-size: 14px; font-weight: 700; color: var(--primary-maroon);">1.2 GB / 10 GB</div>
+                                    <div style="font-size: 14px; font-weight: 700; color: var(--primary-maroon);" id="storageUsed" runat="server">0 GB / 10 GB</div>
                                     <div style="height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 5px; overflow: hidden;">
-                                        <div style="width: 12%; height: 100%; background: var(--primary-maroon); border-radius: 3px;"></div>
+                                        <div id="storageBar" runat="server" style="width: 0%; height: 100%; background: var(--primary-maroon); border-radius: 3px;"></div>
                                     </div>
-                                    <div style="font-size: 11px; color: var(--muted-text); margin-top: 5px;">12% of storage used</div>
+                                    <div style="font-size: 11px; color: var(--muted-text); margin-top: 5px;" id="storagePercent" runat="server">0% of storage used</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button type="button" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                <asp:Button ID="btnSaveSystem" runat="server" CssClass="btn-save" OnClick="btnSaveSystem_Click" Text="Save Changes" />
             </div>
         </div>
     </div>
@@ -1004,6 +1046,22 @@
                     icon.style.transform = 'scale(1) rotate(0)';
                 }
             });
+        });
+
+        function hideMessage() {
+            const messageContainer = document.querySelector('.message-container');
+            if (messageContainer) {
+                setTimeout(() => {
+                    messageContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        messageContainer.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            hideMessage();
         });
     </script>
 </asp:Content>

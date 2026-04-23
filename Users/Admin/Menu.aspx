@@ -3,6 +3,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* All your CSS styles remain exactly the same */
         :root {
             --primary-maroon: #6b0d1e;
             --primary-maroon-dark: #5a0b19;
@@ -678,6 +679,111 @@
             transform: translateY(-1px);
         }
 
+        /* ==================== */
+        /* CATEGORY TABS        */
+        /* ==================== */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            border: 2px solid var(--border-light);
+            background: white;
+            color: var(--muted-text);
+            transition: all var(--transition-base);
+            box-shadow: 0 2px 6px rgba(107,13,30,0.05);
+            white-space: nowrap;
+        }
+
+        .category-tab i {
+            font-size: 13px;
+        }
+
+        .category-tab:hover {
+            border-color: var(--primary-maroon);
+            color: var(--primary-maroon);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107,13,30,0.1);
+        }
+
+        .category-tab.active {
+            background: var(--primary-maroon);
+            border-color: var(--primary-maroon);
+            color: white;
+            box-shadow: var(--button-shadow);
+        }
+
+        .category-tab.active:hover {
+            background: var(--primary-maroon-dark);
+            border-color: var(--primary-maroon-dark);
+            color: white;
+        }
+
+        /* ==================== */
+        /* CATEGORY SECTION HDR */
+        /* ==================== */
+        .category-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 16px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .category-section-header:first-child {
+            margin-top: 0;
+        }
+
+        .category-section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-maroon);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .category-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .category-section-count {
+            margin-left: auto;
+            background: var(--bg-light);
+            color: var(--muted-text);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 50px;
+        }
+
+        .category-section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
         .filter-dropdown:focus {
             transform: translateY(0);
             border-color: var(--primary-maroon);
@@ -697,15 +803,13 @@
             background-color: var(--primary-maroon-pale);
         }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin-top: 30px;
+        .menus-grid {
+            display: block;
+            margin-top: 10px;
             width: 100%;
         }
 
-        .category-card {
+        .menu-card {
             background: white;
             border-radius: var(--radius-2xl);
             box-shadow: var(--card-shadow);
@@ -716,22 +820,22 @@
             border: 2px solid transparent;
         }
 
-        /* Accessibility for category cards */
-        .category-card:focus-visible {
+        /* Accessibility for menu cards */
+        .menu-card:focus-visible {
             outline: 3px solid var(--primary-maroon);
             outline-offset: 2px;
             box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.3);
             transform: translateY(-4px);
         }
 
-        .category-card:hover {
+        .menu-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--card-shadow-hover);
             border-color: var(--border-light);
             z-index: 2;
         }
 
-        .category-header {
+        .menu-header {
             height: 180px;
             display: flex;
             flex-direction: column;
@@ -746,16 +850,11 @@
             background-repeat: no-repeat;
         }
 
-        /* Using direct image URLs that will work */
-        .category-header[data-menu-id="1"] {
-            background-image: url('background-image: url('Images/Hotsilog.jpg');');
-        }
-        
-        .category-header[data-menu-id="2"] {
+        .menu-header[data-menu-id="2"] {
             background-image: url('https://media.istockphoto.com/id/1253850022/photo/filipino-breakfast-food.jpg?s=1024x1024&w=is&k=20&c=YbJ7Q8ZQ9Q8XqyQ6QjzJXq9q9q8=');
         }
 
-        .category-image {
+        .menu-image {
             position: absolute;
             top: 0;
             left: 0;
@@ -767,56 +866,57 @@
             opacity: 1;
         }
 
-        .category-card:hover .category-image {
+        .menu-card:hover .menu-image {
             transform: scale(1.05);
         }
 
-        .category-header::before {
+        .menu-header::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(107, 13, 30, 0.7) 0%, rgba(90, 11, 25, 0.5) 100%);
+            background: none;
             z-index: 1;
         }
 
-        .category-icon {
+        .menu-icon {
             font-size: 32px;
             margin-bottom: 12px;
             z-index: 2;
             position: relative;
             transition: transform var(--transition-base);
             color: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
 
-        .category-card:hover .category-icon {
+        .menu-card:hover .menu-icon {
             transform: scale(1.2) rotate(5deg);
         }
 
-        .category-title {
+        .menu-title {
             font-size: 24px;
             font-weight: 700;
             color: white;
             margin: 0;
             z-index: 2;
             position: relative;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            
         }
 
-        .category-body {
+        .menu-body {
             padding: 24px;
         }
 
-        .category-meta {
+        .menu-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
 
-        .category-code {
+        .menu-code {
             color: var(--primary-maroon);
             font-weight: 700;
             font-size: 13px;
@@ -830,7 +930,7 @@
             position: relative;
         }
 
-        .category-status {
+        .menu-status {
             padding: 6px 32px 6px 16px;
             border-radius: 20px;
             font-size: 11px;
@@ -851,7 +951,7 @@
             background-size: 10px;
         }
 
-        .category-status:focus-visible {
+        .menu-status:focus-visible {
             outline: 2px solid var(--primary-maroon);
             outline-offset: 2px;
             transform: translateY(-1px);
@@ -933,7 +1033,7 @@
             display: block;
         }
 
-        .category-description {
+        .menu-description {
             color: var(--muted-text);
             font-size: 14px;
             line-height: 1.6;
@@ -944,7 +1044,7 @@
             overflow: hidden;
         }
 
-        .category-footer {
+        .menu-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -964,7 +1064,7 @@
             color: var(--primary-maroon);
         }
 
-        .category-actions {
+        .menu-actions {
             display: flex;
             gap: 8px;
         }
@@ -1491,10 +1591,95 @@
         /* ==================== */
         
         @media (max-width: 1400px) {
-            .categories-grid {
+            .category-section-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* ==================== */
+        /* IMAGE UPLOAD WIDGET  */
+        /* ==================== */
+        .image-drop-zone {
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            background: var(--bg-lighter);
+            transition: border-color var(--transition-base), background var(--transition-base);
+            overflow: hidden;
+            position: relative;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-drop-zone.drag-over {
+            border-color: var(--primary-maroon);
+            background: var(--accent-pink);
+        }
+        .drop-zone-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 28px 20px;
+            text-align: center;
+            width: 100%;
+        }
+        .drop-zone-icon {
+            font-size: 36px;
+            color: var(--primary-maroon-pale);
+        }
+        .drop-zone-text {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--muted-text);
+        }
+        .drop-zone-hint {
+            margin: 0;
+            font-size: 11px;
+            color: var(--muted-text);
+            opacity: 0.7;
+        }
+        .image-preview-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .image-preview-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .image-preview-overlay {
+            position: absolute;
+            bottom: 30px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        .image-preview-name {
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 11px;
+            padding: 4px 10px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .image-path-fallback {
+            margin-top: 10px;
+        }
+        .image-path-fallback summary {
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--primary-maroon);
+            font-weight: 500;
+            margin-bottom: 8px;
+            list-style: none;
+        }
+        .image-path-fallback summary::before { content: '▸ '; }
+        .image-path-fallback[open] summary::before { content: '▾ '; }
 
         @media (max-width: 1200px) {
             #full-page-wrapper {
@@ -1536,7 +1721,7 @@
                 font-size: 28px;
             }
             
-            .categories-grid {
+            .category-section-grid {
                 grid-template-columns: 1fr;
                 max-width: 600px;
                 margin-left: auto;
@@ -1585,7 +1770,7 @@
                 min-width: auto;
             }
             
-            .category-card {
+            .menu-card {
                 max-width: 100%;
             }
 
@@ -1658,20 +1843,20 @@
                 min-height: 44px;
             }
 
-            .category-header {
+            .menu-header {
                 height: 160px;
                 padding: 15px;
             }
 
-            .category-title {
+            .menu-title {
                 font-size: 20px;
             }
 
-            .category-body {
+            .menu-body {
                 padding: 20px;
             }
 
-            .category-actions {
+            .menu-actions {
                 flex-wrap: wrap;
                 justify-content: center;
             }
@@ -1725,19 +1910,21 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <%-- ScriptManager must be inside the form, so it goes here in the main content --%>
+    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true" />
+
     <div id="full-page-wrapper">
         <div class="page-header">
             <div class="header-title">
                 <h1>Menu</h1>
-                <p>Organize and manage menu categories</p>
+                <p>Organize and manage menus</p>
             </div>
             <div class="header-actions">
-                <button type="button" class="btn btn--primary" id="addMenuBtn">
+                <button type="button" class="btn btn--secondary" id="addMenuBtn">
                     <i class="fas fa-plus"></i>Add Menu
                 </button>
             </div>
         </div>
-
         <div class="stats-grid">
             <div class="stat-card" tabindex="0" role="button" aria-label="View total menus">
                 <div class="stat-card__header">
@@ -1745,7 +1932,7 @@
                     <div class="stat-icon icon-total"><i class="fas fa-layer-group"></i></div>
                 </div>
                 <div class="stat-card__value" id="totalMenus">2</div>
-                <div class="stat-card__subtitle">All menu </div>
+                <div class="stat-card__subtitle">All menus</div>
             </div>
             <div class="stat-card" tabindex="0" role="button" aria-label="View active menus">
                 <div class="stat-card__header">
@@ -1769,8 +1956,23 @@
                     <div class="stat-icon icon-items"><i class="fas fa-utensils"></i></div>
                 </div>
                 <div class="stat-card__value" id="totalItems">11</div>
-                <div class="stat-card__subtitle">Across all </div>
+                <div class="stat-card__subtitle">Across all menus</div>
             </div>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs">
+            <button type="button" class="category-tab active" data-category="all">
+                <i class="fas fa-th-large"></i> All Categories
+            </button>
+            <button type="button" class="category-tab" data-category="Silog">
+                <i class="fas fa-egg"></i> Silog
+            </button>
+            <button type="button" class="category-tab" data-category="Sizzling Specials">
+                <i class="fas fa-fire"></i> Sizzling Specials
+            </button>
+            <button type="button" class="category-tab" data-category="Special Meals">
+                <i class="fas fa-star"></i> Special Meals
+            </button>
         </div>
 
         <div class="filter-container">
@@ -1788,19 +1990,39 @@
                 <option value="oldest">Sort by: Oldest</option>
                 <option value="name-asc">Sort by: Name (A-Z)</option>
                 <option value="name-desc">Sort by: Name (Z-A)</option>
-                <option value="items-high">Sort by: Items (High-Low)</option>
-                <option value="items-low">Sort by: Items (Low-High)</option>
-                <option value="created-asc">Sort by: Created (Oldest)</option>
-                <option value="created-desc">Sort by: Created (Newest)</option>
+                <option value="price-high">Sort by: Price (High-Low)</option>
+                <option value="price-low">Sort by: Price (Low-High)</option>
             </select>
         </div>
 
-        <div class="categories-grid" id="menusGrid">
+        <%-- ═══════════════════════════════════════════════════════════════════
+             Hidden save form — posts FoodName/FoodType/Price/MenuId + image file
+             to btnSaveMenu_Click in the code-behind.
+             JavaScript fills the hidden inputs and programmatically clicks the button.
+             ══════════════════════════════════════════════════════════════════ --%>
+        <div style="display:none;">
+            <asp:FileUpload ID="fuMenuImage" runat="server" />
+            <input type="hidden" name="hMenuId"    id="hMenuId"    value="" />
+            <input type="hidden" name="hFoodName"  id="hFoodName"  value="" />
+            <input type="hidden" name="hFoodType"  id="hFoodType"  value="" />
+            <input type="hidden" name="hPrice"     id="hPrice"     value="" />
+            <input type="hidden" name="hImagePath" id="hImagePath" value="" />
+            <asp:Button ID="btnSaveMenu" runat="server" Text="Save"
+                        OnClick="btnSaveMenu_Click" />
         </div>
+
+        <%-- Repeater is kept for data binding only; JS renders the visual grid from window.__menusData --%>
+        <div style="display:none;">
+            <asp:Repeater ID="rptMenu" runat="server">
+                <ItemTemplate></ItemTemplate>
+            </asp:Repeater>
+        </div>
+
+        <div class="menus-grid" id="menusGrid"></div>
         
         <div class="no-results" id="noResultsMessage">
             <i class="fas fa-search"></i>
-            <h3>No menu found</h3>
+            <h3>No menus found</h3>
             <p>Try adjusting your search or filters</p>
         </div>
     </div>
@@ -1851,69 +2073,92 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="editModalTitle">Add Menu </h3>
+                <h3 id="editModalTitle">Add Food Item</h3>
                 <button class="modal-close" id="closeEditModal" aria-label="Close edit modal">&times;</button>
             </div>
             <div class="edit-modal-body">
+                <%-- Hidden MenuID — set when editing, empty when adding --%>
+                <input type="hidden" id="editMenuId" value="">
+
+                <%-- FoodName --%>
                 <div class="form-group">
-                    <label for="editName">Menu Name</label>
-                    <input type="text" id="editName" class="form-control" placeholder="Enter menu name">
+                    <label for="editFoodName">
+                        <i class="fas fa-utensils" style="margin-right:6px;color:var(--primary-maroon);"></i>
+                        Food Name <span style="color:var(--danger-red);">*</span>
+                    </label>
+                    <input type="text" id="editFoodName" class="form-control" placeholder="e.g., Chicken Adobo">
                 </div>
+
+                <%-- FoodType --%>
                 <div class="form-group">
-                    <label for="editDescription">Description</label>
-                    <textarea id="editDescription" class="form-control" placeholder="Enter menu description" rows="3"></textarea>
+                    <label for="editFoodType">
+                        <i class="fas fa-tag" style="margin-right:6px;color:var(--primary-maroon);"></i>
+                        Food Type <span style="color:var(--danger-red);">*</span>
+                    </label>
+                    <select id="editFoodType" class="form-control">
+                        <option value="">-- Select type --</option>
+                        <option value="Silog">🍳 Silog</option>
+                        <option value="Sizzling Specials">🔥 Sizzling Specials</option>
+                        <option value="Special Meals">⭐ Special Meals</option>
+                    </select>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editColor">Menu Color</label>
-                        <select id="editColor" class="form-control">
-                            <option value="maroon">Maroon</option>
-                            <option value="maroon-light">Light Maroon</option>
-                            <option value="maroon-pale">Pale Maroon</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editIcon">Icon</label>
-                        <select id="editIcon" class="form-control">
-                            <option value="fa-layer-group">Stack</option>
-                            <option value="fa-utensils">Utensils</option>
-                            <option value="fa-fire">Fire</option>
-                            <option value="fa-mug-hot">Coffee</option>
-                            <option value="fa-pizza-slice">Pizza</option>
-                            <option value="fa-hamburger">Burger</option>
-                            <option value="fa-seedling">Vegetarian</option>
-                            <option value="fa-cookie">Dessert</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="editCode">Menu Code</label>
-                        <input type="text" id="editCode" class="form-control" placeholder="e.g., MEN-001">
-                    </div>
-                    <div class="form-group">
-                        <label for="editItemCount">Number of Items</label>
-                        <input type="number" id="editItemCount" class="form-control" min="0" placeholder="Enter item count">
-                    </div>
-                </div>
+
+                <%-- Price --%>
                 <div class="form-group">
-                    <label for="editImage">Menu Image URL</label>
-                    <input type="text" id="editImage" class="form-control" placeholder="e.g., https://media.istockphoto.com/...">
+                    <label for="editPrice">
+                        <i class="fas fa-peso-sign" style="margin-right:6px;color:var(--primary-maroon);"></i>
+                        Price (₱) <span style="color:var(--danger-red);">*</span>
+                    </label>
+                    <input type="number" id="editPrice" class="form-control" min="0" step="0.01" placeholder="e.g., 150.00">
                 </div>
+
+                <%-- ImagePath / File Upload --%>
                 <div class="form-group">
-                    <label for="editStatus">Status</label>
-                    <div class="flex items-center gap-4">
-                        <label class="switch">
-                            <input type="checkbox" id="editStatus" checked>
-                            <span class="slider"></span>
-                        </label>
-                        <span id="statusText" class="text-sm font-medium">Active</span>
+                    <label>
+                        <i class="fas fa-image" style="margin-right:6px;color:var(--primary-maroon);"></i>
+                        Food Photo
+                    </label>
+
+                    <%-- Drop zone --%>
+                    <div id="imageDropZone" class="image-drop-zone">
+                        <input type="file" id="editImageFile" accept="image/*" style="display:none;">
+                        <div id="dropZonePlaceholder" class="drop-zone-placeholder">
+                            <i class="fas fa-cloud-upload-alt drop-zone-icon"></i>
+                            <p class="drop-zone-text">Drag & drop a photo here, or</p>
+                            <button type="button" class="btn btn--outline btn--sm" id="browseFileBtn">
+                                <i class="fas fa-folder-open"></i> Browse File
+                            </button>
+                            <p class="drop-zone-hint">JPG, PNG, WEBP — max 5 MB</p>
+                        </div>
+                        <div id="imagePreviewWrapper" class="image-preview-wrapper" style="display:none;">
+                            <img id="imagePreview" src="" alt="Preview" class="image-preview-img">
+                            <div class="image-preview-overlay">
+                                <button type="button" class="btn btn--sm btn--outline" id="changeImageBtn">
+                                    <i class="fas fa-pencil-alt"></i> Change
+                                </button>
+                                <button type="button" class="btn btn--sm btn--danger" id="removeImageBtn">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <div class="image-preview-name" id="imagePreviewName"></div>
+                        </div>
                     </div>
+
+                    <%-- Fallback: manual URL / relative path --%>
+                    <details class="image-path-fallback">
+                        <summary>Or enter an image path / URL manually</summary>
+                        <input type="text" id="editImagePath" class="form-control" placeholder="e.g., Images/chicken_adobo.jpg or https://...">
+                        <small style="color:var(--muted-text);font-size:11px;margin-top:4px;display:block;">
+                            Used only when no file is selected above.
+                        </small>
+                    </details>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelEdit">Cancel</button>
-                <button type="button" class="btn btn--primary" id="saveEdit">Save</button>
+                <button type="button" class="btn btn--primary" id="saveEdit">
+                    <i class="fas fa-save" style="margin-right:6px;"></i>Save to Database
+                </button>
             </div>
         </div>
     </div>
@@ -1933,49 +2178,27 @@
                         Are you sure you want to delete this menu?
                     </p>
                     <p class="text-gray-600 text-sm" id="deleteWarning">
-                        This will also remove all items in this. This action cannot be undone.
+                        This will also remove all items in this menu. This action cannot be undone.
                     </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn--outline" id="cancelDelete">Cancel</button>
-                <button type="button" class="btn btn--danger" id="confirmDelete">Delete </button>
+                <button type="button" class="btn btn--danger" id="confirmDelete">Delete Menu</button>
             </div>
         </div>
     </div>
 
+    <asp:Literal ID="MenusJsonLiteral" runat="server" />
+    <asp:Literal ID="ErrorLiteral" runat="server" />
     <script>
-        let menusData = [
-            {
-                id: 1,
-                name: "Sizzling Sisig",
-                code: "MEN-001",
-                description: "Premium sizzling plate meals featuring authentic flavors and high-quality ingredients. Our sizzling specials are served hot on cast-iron plates to preserve the aroma and taste.",
-                color: "maroon",
-                icon: "fa-fire",
-                status: "active",
-                itemCount: 5,
-                image: "https://media.istockphoto.com/id/623516426/photo/sizzling-pork-sisig-filipino-cuisine.jpg?s=1024x1024&w=is&k=20&c=G9mG8xf9QO8c9yWpFgQ7iZl8vZ7XqyQ6QjzJXq9q9q8=",
-                createdAt: "2024-01-15"
-            },
-            {
-                id: 2,
-                name: "Tapsilog",
-                code: "MEN-002",
-                description: "Classic Filipino breakfast combinations with rice, egg, and your choice of protein. Perfect for any time of the day, these comforting meals are a customer favorite.",
-                color: "maroon-light",
-                icon: "fa-utensils",
-                status: "active",
-                itemCount: 6,
-                image: "Images/Hotsilog.jpg",
-                createdAt: "2024-01-20"
-            },
-        ];
+        let menusData = window.__menusData || [];
 
         let currentFilters = {
             search: '',
             status: 'all',
-            sort: 'newest'
+            sort: 'newest',
+            category: 'all'
         };
 
         let currentEditMenuId = null;
@@ -2056,7 +2279,7 @@
                         e.preventDefault();
                     }
 
-                    if (activeElement.classList.contains('category-status')) {
+                    if (activeElement.classList.contains('menu-status')) {
                         activeElement.click();
                         e.preventDefault();
                     }
@@ -2064,7 +2287,7 @@
 
                 // Arrow key navigation for menu cards
                 if (e.key.startsWith('Arrow') && !e.target.matches('input, textarea, select')) {
-                    const cards = document.querySelectorAll('.category-card');
+                    const cards = document.querySelectorAll('.menu-card');
                     const currentIndex = Array.from(cards).findIndex(card => card === document.activeElement);
 
                     if (currentIndex !== -1) {
@@ -2146,136 +2369,292 @@
             }
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // updateStats()
+        //   Recalculates the four stat card numbers from the in-memory
+        //   menusData array and writes them into the DOM.
+        //   Called on page load and after any status toggle.
+        // ─────────────────────────────────────────────────────────────────────
         function updateStats() {
-            const totalMenus = menusData.length;
-            const activeMenus = menusData.filter(m => m.status === 'active').length;
-            const hiddenMenus = menusData.filter(m => m.status === 'hidden').length;
-            const totalItems = menusData.reduce((sum, menu) => sum + menu.itemCount, 0);
+            var total = menusData.length;
+            var active = menusData.filter(function (m) { return !m.status || m.status === 'active'; }).length;
+            var hidden = menusData.filter(function (m) { return m.status === 'hidden'; }).length;
+            var items = menusData.reduce(function (sum, m) { return sum + (m.itemCount || 0); }, 0);
 
-            document.getElementById('totalMenus').textContent = totalMenus;
-            document.getElementById('activeMenus').textContent = activeMenus;
-            document.getElementById('hiddenMenus').textContent = hiddenMenus;
-            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('totalMenus').textContent = total;
+            document.getElementById('activeMenus').textContent = active;
+            document.getElementById('hiddenMenus').textContent = hidden;
+            document.getElementById('totalItems').textContent = items;
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // foodTypeIcons  — maps FoodType strings to Font Awesome icon classes.
+        // CATEGORIES     — the three canonical category definitions used for
+        //                  the tab bar and grouped section headers.
+        // ─────────────────────────────────────────────────────────────────────
+
+        // Food-type icon map — aligned to the 3 categories
+        var foodTypeIcons = {
+            'Silog': 'fa-egg',
+            'Sizzling Specials': 'fa-fire',
+            'Special Meals': 'fa-star',
+            // fallback legacy values
+            'Breakfast': 'fa-egg', 'Main Course': 'fa-drumstick-bite',
+            'Lunch': 'fa-drumstick-bite', 'Dinner': 'fa-drumstick-bite',
+            'Appetizer': 'fa-leaf', 'Snack': 'fa-cookie-bite',
+            'Merienda': 'fa-cookie-bite', 'Dessert': 'fa-ice-cream',
+            'Beverage': 'fa-mug-hot'
+        };
+
+        // Canonical category definitions
+        var CATEGORIES = [
+            { key: 'Silog', label: 'Silog', icon: 'fa-egg' },
+            { key: 'Sizzling Specials', label: 'Sizzling Specials', icon: 'fa-fire' },
+            { key: 'Special Meals', label: 'Special Meals', icon: 'fa-star' }
+        ];
+
+        // ─────────────────────────────────────────────────────────────────────
+        // buildMenuCard(menu)
+        //   Builds one menu card DOM element from a menu data object.
+        //   Called by renderMenus() for every item in the filtered list.
+        //
+        //   FIX (Image not showing):
+        //   Previously we used an <img> tag inside the header, but the overlay
+        //   div above it had z-index:2 which completely hid the image underneath.
+        //   The fix is to set the image as a CSS background-image on the header
+        //   div itself (same technique used in the View modal). This way the
+        //   overlay sits on top of the image correctly and a dark tint is added
+        //   so the food name text stays readable.
+        // ─────────────────────────────────────────────────────────────────────
+        function buildMenuCard(menu) {
+
+            // ── Basic card values ────────────────────────────────────────────
+            var menuId = menu.menuId;
+            var code = 'MEN-' + String(menuId).padStart(3, '0');   // e.g. MEN-007
+            var status = menu.status || 'active';                     // default to active if null
+            var iconCls = foodTypeIcons[menu.foodType] || 'fa-utensils'; // icon for food type
+            var itemCount = menu.itemCount || 0;
+            var desc = menu.description
+                || (menu.foodType + ' — ₱' + parseFloat(menu.price).toFixed(2));
+
+            // ── Image: use background-image on the header div instead of <img> ──
+            // WHY: An <img> tag inside the header was hidden behind the z-index:2
+            //      overlay div, so the photo never appeared on the card.
+            //      Using background-image on the parent div puts the photo behind
+            //      everything by default — then we layer the overlay on top.
+            // Build absolute image URL using the app root injected by the server
+            var _imgUrl = '';
+            if (menu.imagePath) {
+                var _root = (window.__appRoot || '').replace(/\/+$/, '');
+                _imgUrl = _root + '/' + menu.imagePath.replace(/^\//, '');
+            }
+            var headerBgStyle = _imgUrl
+                ? 'background-image:url(\'' + _imgUrl + '\');background-size:cover;background-position:center;'
+                : '';
+
+            // If there IS an image, add a semi-transparent dark tint so the
+            // white food name text is readable against any photo colour.
+            var overlayBg = _imgUrl
+                ? 'rgba(0,0,0,0.38)'   // dark tint when photo is present
+                : 'none';              // no tint needed when there is no photo
+
+            // ── Status indicator styles ──────────────────────────────────────
+            var statusDotClass = status === 'active' ? 'background:#2d9d78' : 'background:#d97706';
+            var statusBadgeBg = status === 'active' ? 'background:var(--success-green)' : 'background:var(--warning-orange)';
+            var statusLabel = status === 'active' ? 'ACTIVE' : 'HIDDEN';
+
+            // ── Create the card element ──────────────────────────────────────
+            var card = document.createElement('div');
+            card.className = 'menu-card';
+            card.setAttribute('data-menu-id', menuId);
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'article');
+            card.setAttribute('aria-label', menu.foodName + ', ' + menu.foodType);
+
+            // ── Build inner HTML ─────────────────────────────────────────────
+            card.innerHTML = `
+                <!--
+                  .menu-header  → the coloured/photo banner at the top of the card.
+                  The photo (if any) is set as a CSS background-image here.
+                  The overlay div below it adds the dark tint + centres the icon & title.
+                  The small coloured dot (top-right) shows active / hidden status.
+                -->
+                <div class="menu-header" style="position:relative;background-color:#f3ebe0;${headerBgStyle}">
+
+                    <!-- Dark tint overlay + centred icon and food name -->
+                    <div style="position:absolute;inset:0;background:${overlayBg};display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;padding:20px;text-align:center;">
+                        <i class="fas ${iconCls} menu-icon" aria-hidden="true"></i>
+                        <h3 class="menu-title" style="font-size:24px;margin:0;">${menu.foodName}</h3>
+                    </div>
+
+                    <!-- Small status dot — green = active, orange = hidden -->
+                    <div style="position:absolute;top:12px;right:12px;z-index:3;width:13px;height:13px;border-radius:50%;${statusDotClass};border:2px solid white;box-shadow:0 0 0 2px rgba(255,255,255,0.3);"></div>
+                </div>
+
+                <!-- Card body: code badge, description, item count, action buttons -->
+                <div class="menu-body">
+                    <div class="menu-meta">
+                        <!-- Menu code badge (e.g. MEN-001) -->
+                        <span class="menu-code">${code}</span>
+                        <!-- Status toggle button — clicking calls toggleMenuStatus() via event delegation -->
+                        <button type="button" class="status-toggle-btn" data-menu-id="${menuId}"
+                            style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:700;
+                                   text-transform:uppercase;letter-spacing:.6px;color:white;
+                                   cursor:pointer;user-select:none;border:none;outline:none;${statusBadgeBg};"
+                            title="Click to toggle status">${statusLabel}</button>
+                    </div>
+
+                    <!-- Short description or "FoodType — ₱Price" fallback -->
+                    <p class="menu-description">${desc}</p>
+
+                    <div class="menu-footer">
+                        <!-- Item count (orders/dishes linked to this menu) -->
+                        <div class="item-count">
+                            <i class="fas fa-utensils"></i>
+                            
+                        </div>
+
+                        <!-- Action buttons — clicks handled by setupActionButtons() event delegation -->
+                        <div class="menu-actions">
+                            <button type="button" class="action-icon view"   tabindex="0" title="View Details"  aria-label="View ${menu.foodName}"><i class="fas fa-eye"></i></button>
+                            <button type="button" class="action-icon edit"   tabindex="0" title="Edit Item"     aria-label="Edit ${menu.foodName}"><i class="fas fa-edit"></i></button>
+                            <button type="button" class="action-icon delete" tabindex="0" title="Delete Item"   aria-label="Delete ${menu.foodName}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // renderMenus()
+        //   Main render function — clears the grid then rebuilds it from
+        //   menusData after applying the active search / status / category /
+        //   sort filters.  Groups cards under category section headers.
+        //   Called on load and whenever any filter changes.
+        // ─────────────────────────────────────────────────────────────────────
         function renderMenus() {
             const grid = document.getElementById('menusGrid');
-            grid.innerHTML = '';
+            grid.innerHTML = ''; // clear the current grid before rebuilding
 
+            // ── 1. Start with a full copy so we never mutate the master array ─
             let filteredMenus = [...menusData];
 
+            // ── 2. Search filter (foodName or foodType) ───────────────────────
             if (currentFilters.search) {
-                const searchTerm = currentFilters.search.toLowerCase();
-                filteredMenus = filteredMenus.filter(menu =>
-                    menu.name.toLowerCase().includes(searchTerm) ||
-                    menu.description.toLowerCase().includes(searchTerm) ||
-                    menu.code.toLowerCase().includes(searchTerm)
+                const s = currentFilters.search.toLowerCase();
+                filteredMenus = filteredMenus.filter(m =>
+                    (m.foodName || '').toLowerCase().includes(s) ||
+                    (m.foodType || '').toLowerCase().includes(s)
                 );
             }
 
-            if (currentFilters.status !== 'all') {
-                filteredMenus = filteredMenus.filter(menu =>
-                    menu.status === currentFilters.status
+            // ── 3. Status filter (all / active / hidden) ──────────────────────
+            if (currentFilters.status && currentFilters.status !== 'all') {
+                filteredMenus = filteredMenus.filter(m =>
+                    (m.status || 'active') === currentFilters.status
                 );
             }
 
-            // Apply sorting
+            // ── 4. Category tab filter ────────────────────────────────────────
+            if (currentFilters.category && currentFilters.category !== 'all') {
+                filteredMenus = filteredMenus.filter(m =>
+                    (m.foodType || '').toLowerCase() === currentFilters.category.toLowerCase()
+                );
+            }
+
+            // ── 5. Sort within the filtered set ───────────────────────────────
             filteredMenus.sort((a, b) => {
                 switch (currentFilters.sort) {
-                    case 'newest':
-                    case 'created-desc':
-                        return new Date(b.createdAt) - new Date(a.createdAt);
-                    case 'oldest':
-                    case 'created-asc':
-                        return new Date(a.createdAt) - new Date(b.createdAt);
-                    case 'name-asc':
-                        return a.name.localeCompare(b.name);
-                    case 'name-desc':
-                        return b.name.localeCompare(a.name);
-                    case 'items-high':
-                        return b.itemCount - a.itemCount;
-                    case 'items-low':
-                        return a.itemCount - b.itemCount;
-                    default:
-                        return 0;
+                    case 'name-asc': return (a.foodName || '').localeCompare(b.foodName || '');
+                    case 'name-desc': return (b.foodName || '').localeCompare(a.foodName || '');
+                    case 'price-high': return (b.price || 0) - (a.price || 0);
+                    case 'price-low': return (a.price || 0) - (b.price || 0);
+                    default: return b.menuId - a.menuId; // newest first (default)
                 }
             });
 
+            // ── 6. Empty state — show message if nothing matches ──────────────
             if (filteredMenus.length === 0) {
                 document.getElementById('noResultsMessage').style.display = 'block';
-            } else {
-                document.getElementById('noResultsMessage').style.display = 'none';
+                return;
+            }
+            document.getElementById('noResultsMessage').style.display = 'none';
 
-                filteredMenus.forEach(menu => {
-                    const menuElement = document.createElement('div');
-                    menuElement.className = 'category-card';
-                    menuElement.setAttribute('data-menu-id', menu.id);
-                    menuElement.setAttribute('data-status', menu.status);
-                    menuElement.setAttribute('tabindex', '0');
-                    menuElement.setAttribute('role', 'article');
-                    menuElement.setAttribute('aria-label', `${menu.name} category with ${menu.itemCount} items`);
+            // ── 7. Grouped rendering — one section per category ───────────────
+            // If a specific category tab is active, only render that one section.
+            var categoriesToShow = currentFilters.category !== 'all'
+                ? CATEGORIES.filter(c => c.key.toLowerCase() === currentFilters.category.toLowerCase())
+                : CATEGORIES;
 
-                    menuElement.innerHTML = `
-                        <div class="category-header ${getColorClass(menu.color)}" data-menu-id="${menu.id}">
-                            <div class="status-indicator ${menu.status === 'active' ? 'active' : 'hidden'}" aria-label="Status: ${menu.status}"></div>
-                            <i class="fas ${menu.icon} category-icon" aria-hidden="true"></i>
-                            <h3 class="category-title">${menu.name}</h3>
-                        </div>
-                        <div class="category-body">
-                            <div class="category-meta">
-                                <span class="category-code">${menu.code}</span>
-                                <div class="status-dropdown-container">
-                                    <button type="button" class="category-status ${getStatusClass(menu.status)}" 
-                                            tabindex="0" 
-                                            aria-label="Current status: ${menu.status}, click to change">
-                                        ${getStatusText(menu.status)}
-                                    </button>
-                                    <div class="status-options">
-                                        <button type="button" class="status-option ${menu.status === 'active' ? 'active' : ''}" 
-                                                data-status="active" 
-                                                aria-label="Set to active">
-                                            <i class="fas fa-eye"></i> Active
-                                        </button>
-                                        <button type="button" class="status-option ${menu.status === 'hidden' ? 'hidden' : ''}" 
-                                                data-status="hidden" 
-                                                aria-label="Set to hidden">
-                                            <i class="fas fa-eye-slash"></i> Hidden
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="category-description">${menu.description}</p>
-                            <div class="category-footer">
-                                <div class="item-count">
-                                    <i class="fas fa-utensils" aria-hidden="true"></i>
-                                    <span>${menu.itemCount} items</span>
-                                </div>
-                                <div class="category-actions">
-                                    <button type="button" class="action-icon view" tabindex="0" title="View Details" aria-label="View details for ${menu.name}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button type="button" class="action-icon edit" tabindex="0" title="Edit Category" aria-label="Edit ${menu.name} category">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button" class="action-icon delete" tabindex="0" title="Delete Category" aria-label="Delete ${menu.name} category">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+            // Items whose FoodType doesn't match any of the 3 canonical categories
+            // (e.g. legacy data entered before the categories were defined)
+            var knownKeys = CATEGORIES.map(c => c.key.toLowerCase());
+            var otherItems = filteredMenus.filter(m =>
+                !knownKeys.includes((m.foodType || '').toLowerCase())
+            );
 
-                    grid.appendChild(menuElement);
+            var hasContent = false;
+
+            // Render a section header + card grid for each matching category
+            categoriesToShow.forEach(function (cat) {
+                var items = filteredMenus.filter(m =>
+                    (m.foodType || '').toLowerCase() === cat.key.toLowerCase()
+                );
+                if (items.length === 0) return; // skip empty sections
+
+                hasContent = true;
+
+                // Section header (icon + category name + item count badge)
+                var header = document.createElement('div');
+                header.className = 'category-section-header';
+                header.innerHTML = `
+                    <div class="category-section-icon"><i class="fas ${cat.icon}"></i></div>
+                    <h2 class="category-section-title">${cat.label}</h2>
+                    <span class="category-section-count">${items.length} item${items.length !== 1 ? 's' : ''}</span>
+                `;
+                grid.appendChild(header);
+
+                // Responsive card grid for this category
+                var sectionGrid = document.createElement('div');
+                sectionGrid.className = 'category-section-grid';
+                items.forEach(function (menu) {
+                    sectionGrid.appendChild(buildMenuCard(menu)); // build each card
                 });
+                grid.appendChild(sectionGrid);
+            });
 
-                // Add event listeners for status dropdowns
-                setupStatusDropdowns();
+            // ── 8. "Other Items" section — legacy / uncategorised items ───────
+            if (otherItems.length > 0 && currentFilters.category === 'all') {
+                hasContent = true;
+
+                var header = document.createElement('div');
+                header.className = 'category-section-header';
+                header.innerHTML = `
+                    <div class="category-section-icon"><i class="fas fa-utensils"></i></div>
+                    <h2 class="category-section-title">Other Items</h2>
+                    <span class="category-section-count">${otherItems.length} item${otherItems.length !== 1 ? 's' : ''}</span>
+                `;
+                grid.appendChild(header);
+
+                var sectionGrid = document.createElement('div');
+                sectionGrid.className = 'category-section-grid';
+                otherItems.forEach(function (menu) {
+                    sectionGrid.appendChild(buildMenuCard(menu));
+                });
+                grid.appendChild(sectionGrid);
+            }
+
+            // Fallback if grouped rendering produced nothing
+            if (!hasContent) {
+                document.getElementById('noResultsMessage').style.display = 'block';
             }
         }
 
         function setupStatusDropdowns() {
             document.querySelectorAll('.status-dropdown-container').forEach(container => {
-                const statusBtn = container.querySelector('.category-status');
+                const statusBtn = container.querySelector('.menu-status');
                 const statusOptions = container.querySelector('.status-options');
 
                 statusBtn.addEventListener('click', function (e) {
@@ -2296,7 +2675,7 @@
                     option.addEventListener('click', function (e) {
                         e.stopPropagation();
                         const newStatus = this.dataset.status;
-                        const menuId = parseInt(container.closest('.category-card').dataset.menuId);
+                        const menuId = parseInt(container.closest('.menu-card').dataset.menuId);
                         const menu = menusData.find(m => m.id === menuId);
 
                         if (menu && menu.status !== newStatus) {
@@ -2346,32 +2725,45 @@
             renderMenus();
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // openViewModal(menuId)
+        //   Populates and opens the read-only View Details modal for the given
+        //   menu item.  Pulls data from menusData (already in memory).
+        // ─────────────────────────────────────────────────────────────────────
         function openViewModal(menuId) {
             currentViewMenuId = menuId;
-            const menu = menusData.find(m => m.id === menuId);
-
+            var menu = menusData.find(function (m) { return m.menuId === menuId; });
             if (!menu) return;
 
-            const viewModalHeader = document.getElementById('viewModalHeader');
-            viewModalHeader.style.backgroundImage = `url('${menu.image}')`;
-            document.getElementById('viewModalIcon').className = `fas ${menu.icon} view-modal-icon`;
-            document.getElementById('viewModalTitle').textContent = menu.name;
-            document.getElementById('viewModalCode').textContent = menu.code;
-            document.getElementById('viewModalDescription').textContent = menu.description;
-            document.getElementById('viewModalItems').textContent = `${menu.itemCount} items`;
-            document.getElementById('viewModalCreated').textContent = formatDate(menu.createdAt);
-            document.getElementById('viewModalColor').textContent = getColorText(menu.color);
+            // Computed display values
+            var code = 'MEN-' + String(menu.menuId).padStart(3, '0');
+            var status = menu.status || 'active';
+            var itemCount = menu.itemCount || 0;
+            var iconCls = (typeof foodTypeIcons !== 'undefined' && foodTypeIcons[menu.foodType]) || 'fa-utensils';
+            var desc = menu.description || (menu.foodType + ' — ₱' + parseFloat(menu.price).toFixed(2));
 
-            const statusElement = document.getElementById('viewModalStatus');
-            statusElement.textContent = getStatusText(menu.status);
-            statusElement.className = `detail-value status ${menu.status === 'active' ? 'status-active' : 'status-hidden'}`;
+            // ── Header: use the photo as a background image (same fix as card) ─
+            var viewModalHeader = document.getElementById('viewModalHeader');
+            var _vmRoot = (window.__appRoot || '').replace(/\/+$/, '');
+            var _vmImg = menu.imagePath ? _vmRoot + '/' + menu.imagePath.replace(/^\//, '') : '';
+            viewModalHeader.style.backgroundImage = _vmImg ? "url('" + _vmImg + "')" : '';
 
+            // ── Populate all the detail fields ────────────────────────────────
+            document.getElementById('viewModalIcon').className = 'fas ' + iconCls + ' view-modal-icon';
+            document.getElementById('viewModalTitle').textContent = menu.foodName;
+            document.getElementById('viewModalCode').textContent = code;
+            document.getElementById('viewModalDescription').textContent = desc;
+            document.getElementById('viewModalItems').textContent = itemCount + ' items';
+            document.getElementById('viewModalCreated').textContent = menu.createdAt ? formatDate(menu.createdAt) : '—';
+            document.getElementById('viewModalColor').textContent = menu.foodType || '—';
+
+            var statusElement = document.getElementById('viewModalStatus');
+            statusElement.textContent = status === 'active' ? 'ACTIVE' : 'HIDDEN';
+            statusElement.className = 'detail-value status ' + (status === 'active' ? 'status-active' : 'status-hidden');
+
+            // Show the modal and move focus to the close button for keyboard users
             document.getElementById('viewModal').style.display = 'flex';
-
-            // Focus first interactive element
-            setTimeout(() => {
-                document.getElementById('closeViewModal').focus();
-            }, 100);
+            setTimeout(function () { document.getElementById('closeViewModal').focus(); }, 100);
         }
 
         function closeViewModal() {
@@ -2379,157 +2771,165 @@
             currentViewMenuId = null;
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // openEditModal(menuId, isNew)
+        //   Opens the Add/Edit modal.
+        //   isNew = true  → Add mode: all fields cleared, no MenuID sent.
+        //   isNew = false → Edit mode: fields pre-filled from menusData.
+        // ─────────────────────────────────────────────────────────────────────
         function openEditModal(menuId = null, isNew = false) {
             const modal = document.getElementById('editModal');
             const modalTitle = document.getElementById('editModalTitle');
-            const statusToggle = document.getElementById('editStatus');
-            const statusText = document.getElementById('statusText');
+
+            // Always start with clean fields to avoid stale values from a previous open
+            document.getElementById('editFoodName').value = '';
+            document.getElementById('editFoodType').value = '';
+            document.getElementById('editPrice').value = '';
+            document.getElementById('editImagePath').value = '';
+            clearImageUpload(); // reset the image picker widget
 
             if (isNew) {
-                modalTitle.textContent = 'Add New Menu ';
+                // ── Add mode ──────────────────────────────────────────────────
+                modalTitle.textContent = 'Add Food Item';
                 currentEditMenuId = null;
+                document.getElementById('editMenuId').value = ''; // empty = server knows it's a new record
 
-                document.getElementById('editName').value = '';
-                document.getElementById('editDescription').value = '';
-                document.getElementById('editColor').value = 'maroon';
-                document.getElementById('editIcon').value = 'fa-layer-group';
-                document.getElementById('editCode').value = 'MEN-001';
-                document.getElementById('editItemCount').value = '0';
-                document.getElementById('editImage').value = '';
-                statusToggle.checked = true;
-                statusText.textContent = 'Active';
             } else {
-                modalTitle.textContent = 'Edit Menu Category';
+                // ── Edit mode — pre-fill fields from the in-memory data ───────
+                modalTitle.textContent = 'Edit Menu';
                 currentEditMenuId = menuId;
+                document.getElementById('editMenuId').value = menuId; // passed to UpdateMenu.ashx
 
-                const menu = menusData.find(m => m.id === menuId);
+                var menu = menusData.find(function (m) { return m.menuId === menuId; });
                 if (!menu) return;
 
-                document.getElementById('editName').value = menu.name;
-                document.getElementById('editDescription').value = menu.description;
-                document.getElementById('editColor').value = menu.color;
-                document.getElementById('editIcon').value = menu.icon;
-                document.getElementById('editCode').value = menu.code;
-                document.getElementById('editItemCount').value = menu.itemCount;
-                document.getElementById('editImage').value = menu.image;
-                statusToggle.checked = menu.status === 'active';
-                statusText.textContent = menu.status === 'active' ? 'Active' : 'Hidden';
+                document.getElementById('editFoodName').value = menu.foodName || '';
+                document.getElementById('editFoodType').value = menu.foodType || '';
+                document.getElementById('editPrice').value = menu.price || '';
+                document.getElementById('editImagePath').value = menu.imagePath || ''; // existing DB path
             }
 
             modal.style.display = 'flex';
-
-            // Focus first input
-            setTimeout(() => {
-                document.getElementById('editName').focus();
-            }, 100);
+            setTimeout(() => { document.getElementById('editFoodName').focus(); }, 100);
         }
 
+        // closeEditModal — hide the modal and clear the tracked MenuID
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editMenuId').value = '';
             currentEditMenuId = null;
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // saveEditChanges()
+        //   Called when the user clicks the Save button in the Add/Edit modal.
+        //   Handles BOTH adding a new menu item AND updating an existing one.
+        //
+        //   Flow:
+        //     1. Read & validate the form fields.
+        //     2. Build a FormData object (supports file upload via multipart).
+        //     3. If a file was picked, attach it as "ImageFile" so the ASHX
+        //        handler can save it to ~/Images/Menus/ on the server.
+        //        Otherwise send the existing "ImagePath" text (no change).
+        //     4. POST to AddMenu.ashx (new) or UpdateMenu.ashx (existing).
+        //     5. On success → reload the page so the Repeater shows fresh DB data.
+        //     6. On error  → show the error message in the notification banner.
+        // ─────────────────────────────────────────────────────────────────────
         async function saveEditChanges() {
             const saveBtn = document.getElementById('saveEdit');
 
-            // Show loading state
-            await simulateLoading(saveBtn, 800);
+            // ── 1. Read form values ──────────────────────────────────────────
+            const foodName = document.getElementById('editFoodName').value.trim();
+            const foodType = document.getElementById('editFoodType').value;
+            const price = document.getElementById('editPrice').value.trim();
+            const imagePath = document.getElementById('editImagePath').value.trim();
 
-            const name = document.getElementById('editName').value.trim();
-            const description = document.getElementById('editDescription').value.trim();
-            const color = document.getElementById('editColor').value;
-            const icon = document.getElementById('editIcon').value;
-            const code = document.getElementById('editCode').value.trim();
-            const itemCount = parseInt(document.getElementById('editItemCount').value);
-            const image = document.getElementById('editImage').value.trim();
-            const status = document.getElementById('editStatus').checked ? 'active' : 'hidden';
-
-            if (!name || !description || !code) {
-                showNotification('Please fill in all required fields!', 'error');
-
-                // Add error animation
+            // ── 2. Validate ──────────────────────────────────────────────────
+            if (!foodName) {
+                showNotification('Food Name is required!', 'error');
+                document.getElementById('editFoodName').focus();
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
+                return;
+            }
+            if (!foodType) {
+                showNotification('Please select a Food Type!', 'error');
+                document.getElementById('editFoodType').focus();
+                saveBtn.classList.add('btn--error');
+                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
+                return;
+            }
+            if (!price || isNaN(parseFloat(price)) || parseFloat(price) < 0) {
+                showNotification('Please enter a valid Price!', 'error');
+                document.getElementById('editPrice').focus();
                 saveBtn.classList.add('btn--error');
                 setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
                 return;
             }
 
-            if (isNaN(itemCount) || itemCount < 0) {
-                showNotification('Please enter a valid item count!', 'error');
+            // ── 3. Show loading ──────────────────────────────────────────────
+            saveBtn.classList.add('btn--loading');
+            saveBtn.disabled = true;
 
-                // Add error animation
-                saveBtn.classList.add('btn--error');
-                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
-                return;
-            }
+            // ── 4. Fill hidden inputs so the code-behind can read them ───────
+            const hiddenMenuId = document.getElementById('editMenuId').value;
+            document.getElementById('hMenuId').value = hiddenMenuId;
+            document.getElementById('hFoodName').value = foodName;
+            document.getElementById('hFoodType').value = foodType;
+            document.getElementById('hPrice').value = parseFloat(price).toFixed(2);
+            document.getElementById('hImagePath').value = imagePath;
 
-            if (!image) {
-                showNotification('Please enter a valid image URL!', 'error');
-                saveBtn.classList.add('btn--error');
-                setTimeout(() => saveBtn.classList.remove('btn--error'), 500);
-                return;
-            }
+            // ── 5. Upload image first via fetch, then postback ───────────────
+            const editFileInput = document.getElementById('editImageFile');
+            const isEditing = hiddenMenuId !== '' && hiddenMenuId !== '0';
 
-            if (currentEditMenuId) {
-                // Update existing menu
-                const menu = menusData.find(m => m.id === currentEditMenuId);
-                if (menu) {
-                    menu.name = name;
-                    menu.description = description;
-                    menu.color = color;
-                    menu.icon = icon;
-                    menu.code = code;
-                    menu.itemCount = itemCount;
-                    menu.image = image;
-                    menu.status = status;
-
-                    showNotification(`${menu.name} updated successfully!`, 'success');
+            if (editFileInput && editFileInput.files && editFileInput.files[0]) {
+                try {
+                    var imgFd = new FormData();
+                    imgFd.append('ImageFile', editFileInput.files[0]);
+                    var upResp = await fetch(window.location.pathname + '?action=upload', { method: 'POST', body: imgFd });
+                    var upRes = await upResp.json();
+                    if (upRes.success && upRes.imagePath) {
+                        document.getElementById('hImagePath').value = upRes.imagePath;
+                    }
+                } catch (upErr) {
+                    console.warn('Image upload failed:', upErr);
                 }
-            } else {
-                // Create new menu
-                const newMenu = {
-                    id: menusData.length > 0 ? Math.max(...menusData.map(m => m.id)) + 1 : 1,
-                    name: name,
-                    description: description,
-                    color: color,
-                    icon: icon,
-                    code: code,
-                    itemCount: itemCount,
-                    image: image,
-                    status: status,
-                    createdAt: new Date().toISOString().split('T')[0]
-                };
-
-                menusData.push(newMenu);
-                showNotification(`${newMenu.name} added successfully!`, 'success');
             }
 
-            updateStats();
-            renderMenus();
-
-            // Add success animation
+            // ── 6. Submit the hidden form via the server button ───────────────
+            const itemLabel = isEditing ? '"' + foodName + '" updated!' : '"' + foodName + '" added!';
+            saveBtn.classList.remove('btn--loading');
             saveBtn.classList.add('btn--success');
-            setTimeout(() => {
-                saveBtn.classList.remove('btn--success');
-                closeEditModal();
-            }, 1000);
+            showNotification(itemLabel, 'success');
+
+            setTimeout(function () {
+                _isDeleting = false; // reset delete guard whenever we save
+                document.getElementById('<%= btnSaveMenu.ClientID %>').click();
+            }, 600);
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // openDeleteModal / closeDeleteModal / confirmDelete
+        //   openDeleteModal  → populates the confirmation modal with the item
+        //                      name and item count, then shows it.
+        //   confirmDelete    → POSTs to DeleteMenu.ashx and reloads on success.
+        // ─────────────────────────────────────────────────────────────────────
         function openDeleteModal(menuId) {
-            const menu = menusData.find(m => m.id === menuId);
+            var menu = menusData.find(function (m) { return m.menuId === menuId; });
             if (!menu) return;
 
+            // Personalise the confirmation message with the food name and item count
             document.getElementById('deleteMessage').innerHTML =
-                `Are you sure you want to delete <strong>"${menu.name}"</strong>?`;
+                'Are you sure you want to delete <strong>"' + menu.foodName + '"</strong>?';
             document.getElementById('deleteWarning').textContent =
-                `This will remove ${menu.itemCount} items from this category. This action cannot be undone.`;
+                'This will remove ' + (menu.itemCount || 0) + ' items from this menu. This action cannot be undone.';
 
-            currentEditMenuId = menuId;
+            currentEditMenuId = menuId; // remember which item we're about to delete
             document.getElementById('deleteModal').style.display = 'flex';
 
-            // Focus cancel button by default (safety)
-            setTimeout(() => {
-                document.getElementById('cancelDelete').focus();
-            }, 100);
+            // Focus the Cancel button by default — prevents accidental delete on Enter
+            setTimeout(() => { document.getElementById('cancelDelete').focus(); }, 100);
         }
 
         function closeDeleteModal() {
@@ -2537,27 +2937,82 @@
             currentEditMenuId = null;
         }
 
+        var _isDeleting = false; // guard against double-clicks / double-fires
+
         async function confirmDelete() {
+            if (_isDeleting) return; // already in-flight — ignore
+            _isDeleting = true;
+
             const deleteBtn = document.getElementById('confirmDelete');
 
-            await simulateLoading(deleteBtn, 1500);
+            var menu = menusData.find(function (m) { return m.menuId === currentEditMenuId; });
+            if (!menu) { _isDeleting = false; return; }
 
-            const menu = menusData.find(m => m.id === currentEditMenuId);
+            deleteBtn.classList.add('btn--loading');
+            deleteBtn.disabled = true;
+
+            try {
+                var fd = new FormData();
+                fd.append('menuId', menu.menuId);
+                var resp = await fetch(window.location.pathname + '?action=delete', { method: 'POST', body: fd });
+                var res = await resp.json();
+                if (res.success) {
+                    showNotification((menu.foodName || 'Menu') + ' deleted successfully!', 'success');
+                    closeDeleteModal();
+                    // Use location.replace() instead of location.reload() so the browser
+                    // does NOT replay the last form POST (which would duplicate the save).
+                    setTimeout(function () { location.replace(window.location.pathname); }, 800);
+                } else {
+                    throw new Error(res.message || 'Delete failed.');
+                }
+            } catch (e) {
+                _isDeleting = false; // allow retry on error
+                deleteBtn.classList.remove('btn--loading');
+                deleteBtn.disabled = false;
+                deleteBtn.classList.add('btn--error');
+                setTimeout(function () { deleteBtn.classList.remove('btn--error'); }, 600);
+                showNotification('Error: ' + e.message, 'error');
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // toggleMenuStatus(menuId)
+        //   Flips a menu item between active ↔ hidden without a full page
+        //   reload.  POSTs to UpdateMenuStatus.ashx, then updates the badge
+        //   button and status dot in-place so the UI feels instant.
+        // ─────────────────────────────────────────────────────────────────────
+        async function toggleMenuStatus(menuId) {
+            var menu = menusData.find(function (m) { return m.menuId === menuId; });
             if (!menu) return;
 
-            const index = menusData.findIndex(m => m.id === currentEditMenuId);
-            menusData.splice(index, 1);
+            var newStatus = (!menu.status || menu.status === 'active') ? 'hidden' : 'active';
 
-            updateStats();
-            renderMenus();
-
-            // Add success animation
-            deleteBtn.classList.add('btn--success');
-            setTimeout(() => {
-                deleteBtn.classList.remove('btn--success');
-                showNotification(`${menu.name} deleted successfully!`, 'success');
-                closeDeleteModal();
-            }, 1000);
+            try {
+                var fd = new FormData();
+                fd.append('menuId', menuId);
+                fd.append('newStatus', newStatus);
+                var resp = await fetch(window.location.pathname + '?action=toggleStatus', { method: 'POST', body: fd });
+                var res = await resp.json();
+                if (res.success) {
+                    menu.status = newStatus;
+                    var badge = document.querySelector('.status-toggle-btn[data-menu-id="' + menuId + '"]');
+                    if (badge) {
+                        badge.textContent = newStatus === 'active' ? 'ACTIVE' : 'HIDDEN';
+                        badge.style.background = newStatus === 'active' ? 'var(--success-green)' : 'var(--warning-orange)';
+                    }
+                    var card = document.querySelector('.menu-card[data-menu-id="' + menuId + '"]');
+                    if (card) {
+                        var dot = card.querySelector('div[style*="border-radius:50%"]');
+                        if (dot) dot.style.background = newStatus === 'active' ? '#2d9d78' : '#d97706';
+                    }
+                    updateStats();
+                    showNotification(menu.foodName + ' is now ' + newStatus + '!', 'success');
+                } else {
+                    showNotification('Error: ' + (res.message || 'Status update failed.'), 'error');
+                }
+            } catch (e) {
+                showNotification('Error updating status. Please try again.', 'error');
+            }
         }
 
         function setupActionButtons() {
@@ -2566,13 +3021,21 @@
                 const deleteBtn = e.target.closest('.action-icon.delete');
                 const viewBtn = e.target.closest('.action-icon.view');
                 const statCard = e.target.closest('.stat-card');
+                const statusBadge = e.target.closest('.status-toggle-btn');
+
+                if (statusBadge) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var menuId = parseInt(statusBadge.dataset.menuId);
+                    toggleMenuStatus(menuId);
+                    return false;
+                }
 
                 if (editBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-
-                    const card = editBtn.closest('.category-card');
-                    const menuId = parseInt(card.dataset.menuId);
+                    var card = editBtn.closest('.menu-card');
+                    var menuId = parseInt(card.dataset.menuId);
                     openEditModal(menuId, false);
                     return false;
                 }
@@ -2580,9 +3043,8 @@
                 if (deleteBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-
-                    const card = deleteBtn.closest('.category-card');
-                    const menuId = parseInt(card.dataset.menuId);
+                    var card = deleteBtn.closest('.menu-card');
+                    var menuId = parseInt(card.dataset.menuId);
                     openDeleteModal(menuId);
                     return false;
                 }
@@ -2590,9 +3052,8 @@
                 if (viewBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-
-                    const card = viewBtn.closest('.category-card');
-                    const menuId = parseInt(card.dataset.menuId);
+                    var card = viewBtn.closest('.menu-card');
+                    var menuId = parseInt(card.dataset.menuId);
                     openViewModal(menuId);
                     return false;
                 }
@@ -2651,9 +3112,6 @@
                 if (e.target === this) closeDeleteModal();
             });
 
-            document.getElementById('editStatus').addEventListener('change', function () {
-                document.getElementById('statusText').textContent = this.checked ? 'Active' : 'Hidden';
-            });
 
             // Modal focus trap
             document.querySelectorAll('.modal-overlay').forEach(modal => {
@@ -2700,7 +3158,7 @@
 
         function initializeAccessibility() {
             // Add ARIA labels and roles
-            document.querySelectorAll('.btn, .action-icon, .stat-card, .category-card').forEach(el => {
+            document.querySelectorAll('.btn, .action-icon, .stat-card, .menu-card').forEach(el => {
                 if (!el.hasAttribute('tabindex')) {
                     el.setAttribute('tabindex', '0');
                 }
@@ -2722,21 +3180,160 @@
             document.body.appendChild(liveRegion);
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // IMAGE UPLOAD WIDGET
+        //   These three functions manage the drag-and-drop / browse image picker
+        //   inside the Add/Edit modal.
+        //
+        //   _selectedFile  → holds the File object the user picked (or null).
+        //   clearImageUpload() → resets everything back to the empty drop zone.
+        //   applyFileToPreview(file) → validates the file, reads it as a data
+        //       URL and shows a preview thumbnail.
+        //   setupImageUploadWidget() → wires up all the click / drag events.
+        // ─────────────────────────────────────────────────────────────────────
+
+        let _selectedFile = null; // the File object chosen by the user (null = none selected)
+
+        // clearImageUpload()
+        // Resets the image picker back to its empty "drop zone" state.
+        // Called when: opening the Add modal, clicking Remove, or cancelling.
+        function clearImageUpload() {
+            _selectedFile = null;
+
+            // Clear the native file input so the same file can be re-selected later
+            var fi = document.getElementById('editImageFile');
+            if (fi) fi.value = '';
+
+            // Hide the preview thumbnail, show the empty drop zone placeholder
+            document.getElementById('imagePreviewWrapper').style.display = 'none';
+            document.getElementById('dropZonePlaceholder').style.display = 'flex';
+        }
+
+        // applyFileToPreview(file)
+        // Validates a File object (size ≤ 5 MB, must be image/*) then shows
+        // a thumbnail preview inside the modal using a FileReader data URL.
+        function applyFileToPreview(file) {
+            if (!file) return;
+            _selectedFile = file;
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                document.getElementById('imagePreview').src = ev.target.result;
+                document.getElementById('imagePreviewName').textContent = file.name;
+                document.getElementById('imagePreviewWrapper').style.display = 'block';
+                document.getElementById('dropZonePlaceholder').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // setupImageUploadWidget()
+        // Wires up all the interactive events for the image drop zone:
+        //   • Browse button     → opens the native file picker
+        //   • Change button     → same as Browse (re-open picker)
+        //   • Remove button     → clears the selection and resets ImagePath
+        //   • File input change → picks the file from the native dialog
+        //   • Drag-over / drop  → allows dragging a file from the desktop
+        //   • Drop zone click   → opens the picker when clicking the empty area
+        function setupImageUploadWidget() {
+            var dropZone = document.getElementById('imageDropZone');
+            var fileInput = document.getElementById('editImageFile');
+            var browseBtn = document.getElementById('browseFileBtn');
+            var changeBtn = document.getElementById('changeImageBtn');
+            var removeBtn = document.getElementById('removeImageBtn');
+
+            // "Browse" and "Change" both just trigger the hidden file input
+            browseBtn.addEventListener('click', function (e) { e.stopPropagation(); fileInput.click(); });
+            changeBtn.addEventListener('click', function (e) { e.stopPropagation(); fileInput.click(); });
+
+            // When the user picks a file through the native dialog
+            fileInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) applyFileToPreview(this.files[0]);
+            });
+
+            // "Remove" clears the preview and also wipes the stored image path
+            // so the server knows to remove the image (or keep null)
+            removeBtn.addEventListener('click', function () {
+                clearImageUpload();
+                document.getElementById('editImagePath').value = ''; // clear stored DB path too
+            });
+
+            // ── Drag-and-drop support ────────────────────────────────────────
+            dropZone.addEventListener('dragover', function (e) {
+                e.preventDefault();                         // required to allow dropping
+                dropZone.classList.add('drag-over');        // highlight the zone
+            });
+            dropZone.addEventListener('dragleave', function () {
+                dropZone.classList.remove('drag-over');     // remove highlight when leaving
+            });
+            dropZone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                var file = e.dataTransfer.files && e.dataTransfer.files[0];
+                if (file) applyFileToPreview(file);         // process the dropped file
+            });
+
+            // Clicking the drop zone background (or its text/icon children) opens the picker.
+            // We check the target so clicks on the Browse button itself don't double-fire.
+            dropZone.addEventListener('click', function (e) {
+                if (e.target === dropZone
+                    || e.target.classList.contains('drop-zone-placeholder')
+                    || e.target.classList.contains('drop-zone-icon')
+                    || e.target.classList.contains('drop-zone-text')
+                    || e.target.classList.contains('drop-zone-hint')) {
+                    fileInput.click();
+                }
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // DOMContentLoaded — page initialisation
+        //   Runs once the HTML is fully parsed (before images/styles finish).
+        //   Boots every feature of the page in the correct order.
+        // ─────────────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', function () {
+
+            // ── 1. Populate stat cards (Total / Active / Hidden / Items) ─────
             updateStats();
+
+            // ── 2. Render all menu cards into the grid ───────────────────────
             renderMenus();
+
+            // ── 3. Attach hover-intent micro-interactions on cards ───────────
             initializeHoverIntent();
+
+            // ── 4. Add ARIA roles / tabindex for keyboard accessibility ──────
             initializeAccessibility();
 
+            // ── 5. Wire up the search box (fires on every keystroke) ─────────
             document.getElementById('searchInput').addEventListener('input', handleSearch);
+
+            // ── 6. Wire up the Status and Sort dropdowns ─────────────────────
             document.getElementById('statusFilter').addEventListener('change', handleStatusFilter);
             document.getElementById('sortFilter').addEventListener('change', handleSortFilter);
 
+            // ── 7. Category tab bar — switch the active tab and re-render ────
+            document.getElementById('categoryTabs').addEventListener('click', function (e) {
+                var tab = e.target.closest('.category-tab');
+                if (!tab) return; // clicked between tabs — ignore
+
+                // Deactivate all tabs, then activate the clicked one
+                document.querySelectorAll('.category-tab').forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+
+                currentFilters.category = tab.dataset.category; // 'all' | 'Silog' | etc.
+                renderMenus();
+            });
+
+            // ── 8. Action buttons (view / edit / delete / status / stat cards)
             setupActionButtons();
+
+            // ── 9. Modal open / close / save / delete handlers ───────────────
             setupModalHandlers();
+
+            // ── 10. Keyboard navigation (Enter / Space to activate cards) ────
             setupKeyboardNavigation();
 
-            document.getElementById('addMenuBtn').addEventListener('click', generateMenuCode);
+            // ── 11. Image drag-and-drop / browse widget inside the modal ─────
+            setupImageUploadWidget();
         });
     </script>
 </asp:Content>
