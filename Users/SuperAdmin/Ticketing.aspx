@@ -242,7 +242,7 @@
     .ticket-title {
         font-size: 14px !important;
         font-weight: 700 !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 6px !important;
         display: flex !important;
         align-items: center !important;
         gap: 6px !important;
@@ -252,8 +252,21 @@
         padding-right: 40px !important;
     }
 
-    .ticket-title i {
-        font-size: 13px !important;
+    .order-number {
+        font-size: 11px !important;
+        opacity: 0.9 !important;
+        font-weight: 400 !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        padding: 2px 8px !important;
+        border-radius: 12px !important;
+        margin-bottom: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+
+    .order-number i {
+        font-size: 9px !important;
     }
 
     .ticket-time {
@@ -355,29 +368,6 @@
         display: flex !important;
         align-items: center !important;
         gap: 5px !important;
-    }
-
-    .delivery-badge {
-        background: var(--accent-blue) !important;
-        color: var(--accent-blue-dark) !important;
-    }
-
-    .table-badge {
-        background: var(--accent-yellow-light) !important;
-        color: var(--accent-yellow-dark) !important;
-    }
-
-    .customer-name {
-        font-weight: 600 !important;
-        font-size: 12px !important;
-        color: var(--text-dark) !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 5px !important;
-    }
-
-    .customer-name i {
-        font-size: 11px !important;
     }
 
     .ticket-items {
@@ -743,6 +733,16 @@
         50% { opacity: 0.7; }
     }
 
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
     @media (max-width: 1200px) {
         .tickets-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -800,15 +800,6 @@
             font-size: 11px !important;
         }
     }
-        @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
 </style>
 
 <asp:ScriptManager ID="ScriptManager1" runat="server" />
@@ -816,33 +807,35 @@
 <div class="ticketing-container">
     <div class="page-header-main">
         <div class="header-title">
-            <h1>Ticket Management</h1>
+            <h1>
+                Ticket Management
+            </h1>
             <p>Manage and track order tickets in real-time</p>
         </div>
         
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
             <button type="button" class="action-btn btn-primary-custom" onclick="openModalDirect()">
-                    Create Ticket
+                Create Ticket
             </button>
             
             <div class="status-tabs-container">
                 <asp:LinkButton ID="btnFilterOpen" runat="server" CssClass="status-tab" OnClick="btnFilterOpen_Click">
-                    Open Tickets
+                     Open Tickets
                     <span class="status-badge"><asp:Literal ID="litOpenCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
                 <asp:LinkButton ID="btnFilterInProgress" runat="server" CssClass="status-tab" OnClick="btnFilterInProgress_Click">
-                    In Progress
+                     In Progress
                     <span class="status-badge"><asp:Literal ID="litInProgressCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
                 <asp:LinkButton ID="btnFilterCompleted" runat="server" CssClass="status-tab" OnClick="btnFilterCompleted_Click">
-                    Completed
+                     Completed
                     <span class="status-badge"><asp:Literal ID="litCompletedCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
                 <asp:LinkButton ID="btnFilterAll" runat="server" CssClass="status-tab" OnClick="btnFilterAll_Click">
-                    All Tickets
+                     All Tickets
                     <span class="status-badge"><asp:Literal ID="litAllCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
             </div>
@@ -856,17 +849,17 @@
                     <ItemTemplate>
                         <div class="ticket-card">
                             <div class="ticket-icon-bg">
-                                <i class="fas fa-ticket-alt"></i>
                             </div>
                             <div class="ticket-header">
                                 <div class="ticket-title">
-                                    <i class="fas fa-receipt"></i>
                                     <%# Eval("TicketNumber") %>
                                     <%# Eval("Priority").ToString() == "Rush" ? "<span class='rush-badge'><i class='fas fa-bolt'></i> RUSH</span>" : "" %>
                                 </div>
+                                <div class="order-number">
+                                    <i class="fas fa-hashtag"></i> Order #: <%# Eval("OrderNumber") %>
+                                </div>
                                 <div class="ticket-time">
                                     <span class='status-dot <%# GetStatusDotClass(Eval("Status").ToString()) %>'></span>
-                                    <i class="far fa-clock"></i>
                                     <%# Eval("CreatedTime") %>
                                     <%# Convert.ToInt32(Eval("MinutesAgo")) > 0 ? $" ({Eval("MinutesAgo")} min ago)" : "" %>
                                 </div>
@@ -881,12 +874,9 @@
                             
                             <div class="ticket-body">
                                 <div class="ticket-info">
-                                    <span class='order-type <%# Eval("OrderType").ToString() == "Delivery" ? "delivery-badge" : "table-badge" %>'>
-                                        <i class='<%# Eval("OrderType").ToString() == "Delivery" ? "fas fa-motorcycle" : "fas fa-utensils" %>'></i>
-                                        <%# Eval("OrderType") %> <%# Eval("TableNumber") != DBNull.Value ? $"Table {Eval("TableNumber")}" : "" %>
-                                    </span>
-                                    <span class="customer-name">
-                                        <i class="fas fa-user"></i> <%# Eval("CustomerName") %>
+                                    <span class="order-type">
+                                        <i class='<%# Eval("OrderType").ToString() == "Dine-In" ? "fas fa-utensils" : "fas fa-box" %>'></i>
+                                        <%# Eval("OrderType") %>
                                     </span>
                                 </div>
                                 
@@ -894,7 +884,10 @@
                                     <asp:Repeater ID="rptItems" runat="server">
                                         <ItemTemplate>
                                             <div class="item-row">
-                                                <span class="item-name"><%# Eval("Quantity") %>x <%# Eval("ItemName") %></span>
+                                                <span class="item-name">
+                                                    <i class="fas fa-utensil-spoon"></i>
+                                                    <%# Eval("Quantity") %>x <%# Eval("ItemName") %>
+                                                </span>
                                                 <span class="item-quantity">₱<%# Convert.ToDecimal(Eval("SubTotal")).ToString("N2") %></span>
                                             </div>
                                         </ItemTemplate>
@@ -902,7 +895,9 @@
                                 </div>
                                 
                                 <div class="ticket-footer">
-                                    <div>Total: ₱<%# Convert.ToDecimal(Eval("TotalAmount")).ToString("N2") %></div>
+                                    <div>
+                                        <i class="fas fa-coins"></i> Total: ₱<%# Convert.ToDecimal(Eval("TotalAmount")).ToString("N2") %>
+                                    </div>
                                     <div class="ticket-actions">
                                         <asp:LinkButton ID="btnStart" runat="server" 
                                             CommandName="Start" 
@@ -927,7 +922,6 @@
                 </asp:Repeater>
                 
                 <asp:Panel ID="pnlNoTickets" runat="server" Visible="false" CssClass="no-tickets">
-                    <i class="fas fa-ticket-alt"></i>
                     <h3>No tickets found</h3>
                     <p>Click "Create Ticket" to create your first ticket</p>
                 </asp:Panel>
@@ -948,68 +942,28 @@
             <ContentTemplate>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Order Type:</label>
-                        <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control" 
-                            AutoPostBack="true" OnSelectedIndexChanged="DdlOrderType_SelectedIndexChanged">
-                            <asp:ListItem Value="Dine-In">Dine-In</asp:ListItem>
-                            <asp:ListItem Value="Delivery">Delivery</asp:ListItem>
-                            <asp:ListItem Value="Takeout">Takeout</asp:ListItem>
+                        <label><i class="fas fa-tag"></i> Order Type:</label>
+                        <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control">
+                            <asp:ListItem Value="Dine-In"> Dine-In</asp:ListItem>
+                            <asp:ListItem Value="Takeout"> Takeout</asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     
-                    <div class="form-group" id="divTableNumber" runat="server" style="display:none;">
-                        <label>Table Number (1-15):</label>
-                        <asp:DropDownList ID="ddlTableNumber" runat="server" CssClass="form-control">
-                            <asp:ListItem Value="">Select Table</asp:ListItem>
-                            <asp:ListItem Value="1">Table 1</asp:ListItem>
-                            <asp:ListItem Value="2">Table 2</asp:ListItem>
-                            <asp:ListItem Value="3">Table 3</asp:ListItem>
-                            <asp:ListItem Value="4">Table 4</asp:ListItem>
-                            <asp:ListItem Value="5">Table 5</asp:ListItem>
-                            <asp:ListItem Value="6">Table 6</asp:ListItem>
-                            <asp:ListItem Value="7">Table 7</asp:ListItem>
-                            <asp:ListItem Value="8">Table 8</asp:ListItem>
-                            <asp:ListItem Value="9">Table 9</asp:ListItem>
-                            <asp:ListItem Value="10">Table 10</asp:ListItem>
-                            <asp:ListItem Value="11">Table 11</asp:ListItem>
-                            <asp:ListItem Value="12">Table 12</asp:ListItem>
-                            <asp:ListItem Value="13">Table 13</asp:ListItem>
-                            <asp:ListItem Value="14">Table 14</asp:ListItem>
-                            <asp:ListItem Value="15">Table 15</asp:ListItem>
-                        </asp:DropDownList>
-                    </div>
-                    
-                    <div class="form-group" id="divDeliveryAddress" runat="server" style="display:none;">
-                        <label>Delivery Address:</label>
-                        <asp:TextBox ID="txtDeliveryAddress" runat="server" CssClass="form-control" 
-                            TextMode="MultiLine" Rows="3" />
-                    </div>
-                    
                     <div class="form-group">
-                        <label>Customer Name <span style="color:red;">*</span>:</label>
-                        <asp:TextBox ID="txtCustomerName" runat="server" CssClass="form-control" />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Customer Phone:</label>
-                        <asp:TextBox ID="txtCustomerPhone" runat="server" CssClass="form-control" />
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Priority:</label>
+                        <label><i class="fas fa-flag"></i> Priority:</label>
                         <asp:DropDownList ID="ddlPriority" runat="server" CssClass="form-control">
-                            <asp:ListItem Value="Normal">Normal</asp:ListItem>
-                            <asp:ListItem Value="Rush">Rush</asp:ListItem>
+                            <asp:ListItem Value="Normal"> Normal</asp:ListItem>
+                            <asp:ListItem Value="Rush"> Rush (Priority)</asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     
                     <div class="form-group">
-                        <label>Add Items:</label>
+                        <label><i class="fas fa-shopping-cart"></i> Add Items:</label>
                         <div class="item-row-modal">
                             <asp:DropDownList ID="ddlMenuItem" runat="server" CssClass="form-control">
                             </asp:DropDownList>
                             <asp:TextBox ID="txtQuantity" runat="server" Text="1" TextMode="Number" 
-                                CssClass="form-control" style="width:80px;" />
+                                CssClass="form-control" style="width:80px;" min="1" />
                             <asp:Button ID="btnAddItem" runat="server" Text="Add Item" 
                                 CssClass="btn-add-item" OnClick="BtnAddItem_Click" UseSubmitBehavior="false" />
                         </div>
@@ -1017,14 +971,15 @@
                         <div class="items-list">
                             <asp:Panel ID="pnlNoItems" runat="server" Visible="true" 
                                 style="text-align:center; padding:20px; color:#999;">
-                                No items added yet
+                                <i class="fas fa-cart-plus fa-2x"></i>
+                                <p style="margin-top:10px;">No items added yet</p>
                             </asp:Panel>
                             
                             <asp:Repeater ID="rptSelectedItems" runat="server" OnItemCommand="RptSelectedItems_ItemCommand">
                                 <ItemTemplate>
                                     <div style="display:flex; gap:10px; align-items:center; margin:8px 0; padding:8px; background:#f9f4ee; border-radius:6px;">
                                         <strong style="flex:2; color:#4a0e0e;">
-                                            <%# Eval("Quantity") %>x <%# Eval("ItemName") %>
+                                            <i class="fas fa-utensils"></i> <%# Eval("Quantity") %>x <%# Eval("ItemName") %>
                                         </strong>
                                         <span style="flex:1; color:#6b0d1e; font-weight:bold;">
                                             ₱<%# Convert.ToDecimal(Eval("SubTotal")).ToString("N2") %>
@@ -1041,7 +996,7 @@
                             
                             <div style="font-weight:bold; margin-top:15px; padding-top:10px; border-top:2px solid #6b0d1e; 
                                         display:flex; justify-content:space-between; color:#4a0e0e;">
-                                <span>Total:</span> 
+                                <span><i class="fas fa-calculator"></i> Total:</span> 
                                 <asp:Literal ID="litModalTotal" runat="server">₱0.00</asp:Literal>
                             </div>
                         </div>
@@ -1051,7 +1006,9 @@
                 <div class="modal-footer">
                     <asp:Button ID="btnCreateTicket" runat="server" Text="Create Ticket" 
                         CssClass="action-btn btn-done" OnClick="BtnCreateTicket_Click" />
-                    <button type="button" class="action-btn btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="action-btn btn-cancel" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
                 </div>
             </ContentTemplate>
         </asp:UpdatePanel>
