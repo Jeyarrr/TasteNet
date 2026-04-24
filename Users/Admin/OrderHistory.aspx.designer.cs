@@ -123,6 +123,15 @@ namespace TasteNet.Users.Admin
         protected global::System.Web.UI.WebControls.Button btnHiddenSearch;
 
         /// <summary>
+        /// btnHiddenStatusUpdate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnHiddenStatusUpdate;
+
+        /// <summary>
         /// rptOrders control.
         /// </summary>
         /// <remarks>
@@ -139,15 +148,6 @@ namespace TasteNet.Users.Admin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlEmptyData;
-
-        /// <summary>
-        /// lblRecordCount control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRecordCount;
 
         /// <summary>
         /// rptPagination control.
