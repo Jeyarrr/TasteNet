@@ -69,7 +69,6 @@ namespace TasteNet.Users.SuperAdmin
                 string insurancePhotoPath = SaveUploadedFile("insurancePhoto", uploadFolder);
                 string nbiClearancePath = SaveUploadedFile("nbiClearancePhoto", uploadFolder);
 
-                string hashedPassword = HashPassword(password);
                 string joinDate = DateTime.Now.ToString("MMM d, yyyy");
                 int newId = 0;
 
@@ -77,16 +76,16 @@ namespace TasteNet.Users.SuperAdmin
                 {
                     con.Open();
                     const string sql = @"
-                        INSERT INTO [DeliverySystem].[dbo].[riders]
-                            (FullName, Username, Email, Password, Contact, Gender,
+                        INSERT INTO [DeliverySystem].[dbo].[Users]
+                            (FullName, Username, Email, Password, Phone, Gender, UserType, IsActive, CreatedAt,
                              LicenseNumber, NBINumber, Vehicle, VehicleModel, VehicleYear,
                              LicensePlate, VehicleColor, ORCRNumber, InsurancePolicy,
                              InsuranceDate, ProfilePhoto, DriverLicensePhoto, ORCRPhoto,
-                             InsurancePhoto, NBIClearancePhoto, Status, DateJoined,
+                             InsurancePhoto, NBIClearancePhoto, RiderStatus, DateJoined,
                              AssignedOrders, CompletedOrders, Ratings)
-                        OUTPUT INSERTED.RiderId
+                        OUTPUT INSERTED.UserID
                         VALUES
-                            (@FullName, @Username, @Email, @Password, @Contact, @Gender,
+                            (@FullName, @Username, @Email, @Password, @Phone, @Gender, 'Rider', 1, GETDATE(),
                              @LicenseNumber, @NBINumber, @Vehicle, @VehicleModel, @VehicleYear,
                              @LicensePlate, @VehicleColor, @ORCRNumber, @InsurancePolicy,
                              @InsuranceDate, @ProfilePhoto, @DriverLicensePhoto, @ORCRPhoto,
@@ -97,8 +96,8 @@ namespace TasteNet.Users.SuperAdmin
                         cmd.Parameters.AddWithValue("@FullName", fullName);
                         cmd.Parameters.AddWithValue("@Username", username);
                         cmd.Parameters.AddWithValue("@Email", email);
-                        cmd.Parameters.AddWithValue("@Password", hashedPassword);
-                        cmd.Parameters.AddWithValue("@Contact", contact);
+                        cmd.Parameters.AddWithValue("@Password", password); // Plain text password
+                        cmd.Parameters.AddWithValue("@Phone", contact);
                         cmd.Parameters.AddWithValue("@Gender", gender);
                         cmd.Parameters.AddWithValue("@LicenseNumber", licenseNumber);
                         cmd.Parameters.AddWithValue("@NBINumber", nbiNumber);
@@ -158,7 +157,7 @@ namespace TasteNet.Users.SuperAdmin
 
                 using (var con = new SqlConnection(ConnStr))
                 using (var cmd = new SqlCommand(
-                    "DELETE FROM [DeliverySystem].[dbo].[riders] WHERE RiderId=@RiderId", con))
+                    "DELETE FROM [DeliverySystem].[dbo].[Users] WHERE UserID=@RiderId AND UserType='Rider'", con))
                 {
                     cmd.Parameters.AddWithValue("@RiderId", riderId);
                     con.Open();
@@ -184,18 +183,6 @@ namespace TasteNet.Users.SuperAdmin
             return path;
         }
 
-        // ── SHA-256 password hash ─────────────────────────────────────────────
-        private static string HashPassword(string password)
-        {
-            using (var sha = System.Security.Cryptography.SHA256.Create())
-            {
-                byte[] bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var sb = new StringBuilder();
-                foreach (byte b in bytes) sb.Append(b.ToString("x2"));
-                return sb.ToString();
-            }
-        }
-
         // ── Safely read a nullable DB column ─────────────────────────────────
         private static string SafeStr(System.Data.IDataRecord dr, string col)
         {
@@ -213,7 +200,7 @@ namespace TasteNet.Users.SuperAdmin
             {
                 using (var con = new SqlConnection(ConnStr))
                 using (var cmd = new SqlCommand(
-                    "SELECT TOP(1000) * FROM [DeliverySystem].[dbo].[riders] ORDER BY RiderId", con))
+                    "SELECT TOP(1000) * FROM [DeliverySystem].[dbo].[Users] WHERE UserType = 'Rider' ORDER BY UserID", con))
                 {
                     con.Open();
                     using (var dr = cmd.ExecuteReader())
@@ -223,7 +210,7 @@ namespace TasteNet.Users.SuperAdmin
                             if (!first) sb.Append(",");
                             first = false;
 
-                            string status = SafeStr(dr, "Status").ToLower().Trim();
+                            string status = SafeStr(dr, "RiderStatus").ToLower().Trim();
                             if (status == "on delivery" || status == "delivering") status = "delivery";
                             else if (status == "active" || status == "online") status = "available";
                             else if (status != "available" && status != "delivery") status = "offline";
@@ -236,17 +223,32 @@ namespace TasteNet.Users.SuperAdmin
                             {
                                 if (dr["DateJoined"] != DBNull.Value)
                                     joinDate = Convert.ToDateTime(dr["DateJoined"]).ToString("MMM d, yyyy");
+                                else if (dr["CreatedAt"] != DBNull.Value)
+                                    joinDate = Convert.ToDateTime(dr["CreatedAt"]).ToString("MMM d, yyyy");
                             }
                             catch { }
 
                             string appRoot = Request.ApplicationPath.TrimEnd('/');
-                            string profilePic = SafeStr(dr, "ProfilePhoto").Replace("~/", appRoot + "/");
+                            string profilePic = SafeStr(dr, "ProfilePhoto");
+                            if (!string.IsNullOrEmpty(profilePic) && !profilePic.StartsWith("http"))
+                                profilePic = appRoot + "/Uploads/Riders/" + Path.GetFileName(profilePic);
 
                             // Resolve photo paths to absolute web URLs
-                            string driverLicensePhoto = SafeStr(dr, "DriverLicensePhoto").Replace("~/", appRoot + "/");
-                            string orcrPhoto = SafeStr(dr, "ORCRPhoto").Replace("~/", appRoot + "/");
-                            string insurancePhoto = SafeStr(dr, "InsurancePhoto").Replace("~/", appRoot + "/");
-                            string nbiClearancePhoto = SafeStr(dr, "NBIClearancePhoto").Replace("~/", appRoot + "/");
+                            string driverLicensePhoto = SafeStr(dr, "DriverLicensePhoto");
+                            if (!string.IsNullOrEmpty(driverLicensePhoto) && !driverLicensePhoto.StartsWith("http"))
+                                driverLicensePhoto = appRoot + "/Uploads/Riders/" + Path.GetFileName(driverLicensePhoto);
+
+                            string orcrPhoto = SafeStr(dr, "ORCRPhoto");
+                            if (!string.IsNullOrEmpty(orcrPhoto) && !orcrPhoto.StartsWith("http"))
+                                orcrPhoto = appRoot + "/Uploads/Riders/" + Path.GetFileName(orcrPhoto);
+
+                            string insurancePhoto = SafeStr(dr, "InsurancePhoto");
+                            if (!string.IsNullOrEmpty(insurancePhoto) && !insurancePhoto.StartsWith("http"))
+                                insurancePhoto = appRoot + "/Uploads/Riders/" + Path.GetFileName(insurancePhoto);
+
+                            string nbiClearancePhoto = SafeStr(dr, "NBIClearancePhoto");
+                            if (!string.IsNullOrEmpty(nbiClearancePhoto) && !nbiClearancePhoto.StartsWith("http"))
+                                nbiClearancePhoto = appRoot + "/Uploads/Riders/" + Path.GetFileName(nbiClearancePhoto);
 
                             string insDate = "";
                             try
@@ -256,16 +258,15 @@ namespace TasteNet.Users.SuperAdmin
                             }
                             catch { }
 
-                            // Emit assigned/completed/rating as bare numbers (not quoted strings)
-                            // so JS can call .toFixed() / .toLocaleString() without type errors
+                            // Emit assigned/completed/rating as bare numbers
                             int assigned = 0; int.TryParse(SafeStr(dr, "AssignedOrders"), out assigned);
                             int completed = 0; int.TryParse(SafeStr(dr, "CompletedOrders"), out completed);
 
                             sb.Append("{");
-                            sb.AppendFormat("\"id\":{0},", JsonStr(SafeStr(dr, "RiderId")));
+                            sb.AppendFormat("\"id\":{0},", JsonStr(SafeStr(dr, "UserID")));
                             sb.AppendFormat("\"name\":{0},", JsonStr(SafeStr(dr, "FullName")));
                             sb.AppendFormat("\"username\":{0},", JsonStr(SafeStr(dr, "Username")));
-                            sb.AppendFormat("\"phone\":{0},", JsonStr(SafeStr(dr, "Contact")));
+                            sb.AppendFormat("\"phone\":{0},", JsonStr(SafeStr(dr, "Phone")));
                             sb.AppendFormat("\"email\":{0},", JsonStr(SafeStr(dr, "Email")));
                             sb.AppendFormat("\"gender\":{0},", JsonStr(SafeStr(dr, "Gender")));
                             sb.AppendFormat("\"joinDate\":{0},", JsonStr(joinDate));
@@ -285,7 +286,7 @@ namespace TasteNet.Users.SuperAdmin
                             sb.AppendFormat("\"insurancePhoto\":{0},", JsonStr(insurancePhoto));
                             sb.AppendFormat("\"nbiClearancePhoto\":{0},", JsonStr(nbiClearancePhoto));
                             sb.AppendFormat("\"status\":{0},", JsonStr(status));
-                            // Numbers — NOT quoted, so JS arithmetic works directly
+                            // Numbers — NOT quoted
                             sb.AppendFormat("\"assigned\":{0},", assigned);
                             sb.AppendFormat("\"completed\":{0},", completed);
                             sb.AppendFormat("\"rating\":{0},", rating.ToString("F1", System.Globalization.CultureInfo.InvariantCulture));
