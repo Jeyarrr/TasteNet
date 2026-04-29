@@ -54,6 +54,13 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #ffc107;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        /* Logo hover effect */
+        .sidebar-header img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .sidebar-header h2 {
