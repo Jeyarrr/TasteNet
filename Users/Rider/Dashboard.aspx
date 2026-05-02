@@ -1129,6 +1129,97 @@
             }
         }
 
+        /* ── Proof of Delivery ─────────────────────────────────── */
+        .completion-modal {
+            max-width: 420px !important;
+        }
+
+        .proof-upload-area {
+            border: 2px dashed var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin: 0 0 20px 0;
+            cursor: pointer;
+            transition: border-color var(--transition-fast), background var(--transition-fast);
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--bg-lighter);
+        }
+
+        .proof-upload-area:hover {
+            border-color: var(--primary-maroon);
+            background: var(--accent-pink);
+        }
+
+        .proof-upload-area.has-photo {
+            border-style: solid;
+            border-color: var(--success-green);
+            background: var(--success-green-light);
+            padding: 10px;
+        }
+
+        .proof-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted-text);
+            pointer-events: none;
+        }
+
+        .proof-placeholder i {
+            font-size: 36px;
+            color: var(--primary-maroon);
+            opacity: 0.5;
+        }
+
+        .proof-placeholder span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .proof-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            display: block;
+        }
+
+        .proof-retake-btn {
+            margin-top: 8px;
+            background: none;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted-text);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all var(--transition-fast);
+        }
+
+        .proof-retake-btn:hover {
+            border-color: var(--primary-maroon);
+            color: var(--primary-maroon);
+        }
+
+        .modal-btn-confirm:disabled {
+            background: var(--bg-light);
+            border-color: var(--border-light);
+            color: var(--muted-text);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none !important;
+        }
+        /* ─────────────────────────────────────────────────────── */
+
         .completion-modal {
             position: fixed !important;
             top: 50% !important;
@@ -1152,21 +1243,36 @@
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <%-- Enable ASP.NET Page WebMethods so JS can call SaveState --%>
     <div class="modal-overlay" id="completionOverlay"></div>
     <div class="completion-modal" id="completionModal">
         <div class="modal-icon">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-camera"></i>
         </div>
-        <h3 class="modal-title">Mark Delivery as Completed?</h3>
-        <p class="modal-message">This will mark the current delivery as delivered and update your earnings.</p>
+        <h3 class="modal-title">Proof of Delivery Required</h3>
+        <p class="modal-message">Please upload a photo as proof before marking this delivery as completed.</p>
+
+        <%-- Photo upload / preview area --%>
+        <div class="proof-upload-area" id="proofUploadArea">
+            <input type="file" id="proofPhotoInput" accept="image/*" capture="environment" style="display:none;" />
+            <div class="proof-placeholder" id="proofPlaceholder">
+                <i class="fas fa-camera-retro"></i>
+                <span>Tap to take or upload a photo</span>
+            </div>
+            <img id="proofPreview" class="proof-preview" src="" alt="Proof of delivery preview" style="display:none;" />
+            <button type="button" class="proof-retake-btn" id="proofRetakeBtn" style="display:none;">
+                <i class="fas fa-redo"></i> Retake Photo
+            </button>
+        </div>
+
         <div class="modal-actions">
             <button type="button" class="modal-btn modal-btn-cancel" id="cancelCompletion">
                 <i class="fas fa-times"></i>
                 Cancel
             </button>
-            <button type="button" class="modal-btn modal-btn-confirm" id="confirmCompletion">
+            <button type="button" class="modal-btn modal-btn-confirm" id="confirmCompletion" disabled>
                 <i class="fas fa-check"></i>
-                Yes, Mark Delivered
+                Confirm Delivered
             </button>
         </div>
     </div>
@@ -1199,77 +1305,87 @@
         </div>
 
         <div class="stats-grid">
+
+            <%-- ── Total Deliveries ── --%>
             <div class="stat-card">
                 <div>
                     <div class="stat-card__content">
                         <div>
                             <div class="stat-label">Total Deliveries</div>
-                            <div class="stat-value">156</div>
+                            <div class="stat-value" id="statTotalDeliveries">
+                                <asp:Literal ID="litTotalDeliveries" runat="server" Text="0" />
+                            </div>
                         </div>
                         <div class="icon-circle">
                             <i class="fas fa-box"></i>
                         </div>
                     </div>
-                    <div class="trend-up">
-                        <i class="fas fa-arrow-up"></i>
-                        +12% from yesterday
+                    <div id="trendTotalDeliveries" class="trend-up">
+                        <asp:Literal ID="litTrendTotalDeliveries" runat="server" />
                     </div>
                 </div>
             </div>
 
+            <%-- ── Earnings Today ── --%>
             <div class="stat-card">
                 <div>
                     <div class="stat-card__content">
                         <div>
                             <div class="stat-label">Earnings Today</div>
-                            <div class="stat-value">₱2,450</div>
+                            <div class="stat-value" id="statEarningsToday">
+                                &#8369;<asp:Literal ID="litEarningsToday" runat="server" Text="0.00" />
+                            </div>
                         </div>
                         <div class="icon-circle">
                             <i class="fas fa-peso-sign"></i>
                         </div>
                     </div>
-                    <div class="trend-up">
-                        <i class="fas fa-arrow-up"></i>
-                        +8% from yesterday
+                    <div id="trendEarningsToday" class="trend-up">
+                        <asp:Literal ID="litTrendEarningsToday" runat="server" />
                     </div>
                 </div>
             </div>
 
+            <%-- ── Completed Today ── --%>
             <div class="stat-card">
                 <div>
                     <div class="stat-card__content">
                         <div>
-                            <div class="stat-label">Completed</div>
-                            <div class="stat-value">148</div>
+                            <div class="stat-label">Completed Today</div>
+                            <div class="stat-value" id="statCompletedToday">
+                                <asp:Literal ID="litCompletedToday" runat="server" Text="0" />
+                            </div>
                         </div>
                         <div class="icon-circle">
                             <i class="fas fa-check-circle"></i>
                         </div>
                     </div>
-                    <div class="trend-up">
-                        <i class="fas fa-arrow-up"></i>
-                        +23 new today
+                    <div id="trendCompletedToday" class="trend-up">
+                        <asp:Literal ID="litTrendCompletedToday" runat="server" />
                     </div>
                 </div>
             </div>
 
+            <%-- ── Pending Deliveries ── --%>
             <div class="stat-card">
                 <div>
                     <div class="stat-card__content">
                         <div>
-                            <div class="stat-label">Avg. Time</div>
-                            <div class="stat-value">18 min</div>
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value" id="statPending">
+                                <asp:Literal ID="litPending" runat="server" Text="0" />
+                            </div>
                         </div>
                         <div class="icon-circle">
                             <i class="fas fa-clock"></i>
                         </div>
                     </div>
-                    <div class="trend-up">
-                        <i class="fas fa-chart-line"></i>
-                        Excellent timing
+                    <div id="trendPending" class="trend-up">
+                        <asp:Literal ID="litTrendPending" runat="server" />
                     </div>
                 </div>
             </div>
+
         </div>
 
         <div class="active-delivery-section" id="activeDeliverySection">
@@ -1279,7 +1395,7 @@
             
             <div class="active-delivery-card">
                 <div class="active-delivery-header">
-                    <span class="active-delivery-id" id="activeDeliveryId">#DL-4567</span>
+                    <span class="active-delivery-id" id="activeDeliveryId">#—</span>
                     <span class="active-delivery-status">On Delivery</span>
                 </div>
                 
@@ -1291,7 +1407,7 @@
                             </div>
                             <div class="location-info">
                                 <div class="location-label">Pickup Location</div>
-                                <div class="location-value" id="pickupLocation">Caballeros, Dasma</div>
+                                <div class="location-value" id="pickupLocation">—</div>
                             </div>
                         </div>
                         
@@ -1301,7 +1417,7 @@
                             </div>
                             <div class="location-info">
                                 <div class="location-label">Drop-off Location</div>
-                                <div class="location-value" id="dropoffLocation">Pala-Pala, Dasma</div>
+                                <div class="location-value" id="dropoffLocation">—</div>
                             </div>
                         </div>
                     </div>
@@ -1309,15 +1425,15 @@
                     <div class="delivery-details-section">
                         <div class="detail-row">
                             <span class="detail-label">Distance</span>
-                            <span class="detail-value" id="deliveryDistance">2.5 km</span>
+                            <span class="detail-value" id="deliveryDistance">—</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Delivery Fee</span>
-                            <span class="detail-value highlight" id="deliveryFee">₱85</span>
+                            <span class="detail-value highlight" id="deliveryFee">—</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Est. Time</span>
-                            <span class="detail-value" id="deliveryTime">15 min</span>
+                            <span class="detail-value" id="deliveryTime">—</span>
                         </div>
                     </div>
                 </div>
@@ -1328,7 +1444,7 @@
                     </div>
                     <div class="contact-info">
                         <div class="contact-label">Customer Contact</div>
-                        <div class="contact-number" id="customerContact">(+63) 917-111-2222</div>
+                        <div class="contact-number" id="customerContact">—</div>
                     </div>
                 </div>
                 
@@ -1371,83 +1487,86 @@
             </div>
             
             <div class="deliveries-grid" id="availableDeliveriesGrid">
-                <div class="delivery-card" data-delivery-id="DL-4567">
-                    <div class="delivery-header">
-                        <span class="delivery-id">#DL-4567</span>
-                        <span class="delivery-status status-pending">Pending</span>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="info-row">
-                            <span class="info-label">Customer:</span>
-                            <span class="info-value">Jester Sion</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Pickup:</span>
-                            <span class="info-value">Caballeros, Dasma</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Drop-off:</span>
-                            <span class="info-value">Pala-Pala, Dasma</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Distance:</span>
-                            <span class="info-value">2.5 km</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Earnings:</span>
-                            <span class="info-value highlight">₱85</span>
-                        </div>
-                    </div>
-                    <div class="delivery-actions">
-                        <button type="button" class="btn-action btn--success accept-btn">
-                            <i class="fas fa-check"></i>
-                            Accept
-                        </button>
-                        <button type="button" class="btn-action btn--danger decline-btn">
-                            <i class="fas fa-times"></i>
-                            Decline
-                        </button>
-                    </div>
-                </div>
 
-                <div class="delivery-card" data-delivery-id="DL-4568">
-                    <div class="delivery-header">
-                        <span class="delivery-id">#DL-4568</span>
-                        <span class="delivery-status status-pending">Pending</span>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="info-row">
-                            <span class="info-label">Customer:</span>
-                            <span class="info-value">Syren Tortal</span>
+                <%-- ── ASP Repeater: pulls Delivery tickets from [Delivery System].[dbo].[Tickets] ── --%>
+                <asp:Repeater ID="rptDeliveries" runat="server">
+                    <ItemTemplate>
+
+                        <div class="delivery-card"
+                             data-delivery-id='<%# Eval("TicketNumber") %>'>
+
+                            <div class="delivery-header">
+                                <span class="delivery-id">
+                                    #<%# Eval("TicketNumber") %>
+                                </span>
+                                <span class='delivery-status <%# GetStatusCss(Eval("Status").ToString()) %>'>
+                                    <%# Eval("Status") %>
+                                </span>
+                            </div>
+
+                            <div class="delivery-info">
+                                <div class="info-row">
+                                    <span class="info-label">Order #:</span>
+                                    <span class="info-value"><%# Eval("OrderNumber") %></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Delivery Address:</span>
+                                    <span class="info-value"><%# Eval("DeliveryAddress") %></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Priority:</span>
+                                    <span class="info-value"><%# Eval("Priority") %></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Created By:</span>
+                                    <span class="info-value"><%# Eval("CreatedBy") %></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Created At:</span>
+                                    <span class="info-value"><%# Eval("CreatedAt", "{0:MMM dd, yyyy hh:mm tt}") %></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Total Amount:</span>
+                                    <span class="info-value highlight">
+                                        ₱<%# Eval("TotalAmount", "{0:N2}") %>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="delivery-actions">
+                                <button type="button" class="btn-action btn--success accept-btn"
+                                        data-ticket='<%# Eval("TicketNumber") %>'
+                                        data-order='<%# Eval("OrderNumber") %>'
+                                        data-address='<%# Eval("DeliveryAddress") %>'
+                                        data-amount='<%# Eval("TotalAmount", "₱{0:N2}") %>'
+                                        data-status='<%# Eval("Status") %>'
+                                        data-priority='<%# Eval("Priority") %>'
+                                        data-created='<%# Eval("CreatedAt", "{0:MMM dd, yyyy hh:mm tt}") %>'>
+                                    <i class="fas fa-check"></i>
+                                    Accept
+                                </button>
+                                <button type="button" class="btn-action btn--danger decline-btn">
+                                    <i class="fas fa-times"></i>
+                                    Decline
+                                </button>
+                            </div>
+
                         </div>
-                        <div class="info-row">
-                            <span class="info-label">Pickup:</span>
-                            <span class="info-value">Caballeros, Dasma</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Drop-off:</span>
-                            <span class="info-value">Salitran, Dasma</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Distance:</span>
-                            <span class="info-value">1.8 km</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Earnings:</span>
-                            <span class="info-value highlight">₱65</span>
-                        </div>
-                    </div>
-                    <div class="delivery-actions">
-                        <button type="button" class="btn-action btn--success accept-btn">
-                            <i class="fas fa-check"></i>
-                            Accept
-                        </button>
-                        <button type="button" class="btn-action btn--danger decline-btn">
-                            <i class="fas fa-times"></i>
-                            Decline
-                        </button>
-                    </div>
-                </div>
+
+                    </ItemTemplate>
+
+                    <FooterTemplate>
+                        <%-- Empty state shown when no rows are returned --%>
+                        <asp:Panel ID="pnlEmpty" runat="server"
+                                   Visible='<%# rptDeliveries.Items.Count == 0 %>'
+                                   style="text-align:center;padding:40px;color:var(--muted-text);grid-column:1/-1;">
+                            <i class="fas fa-inbox" style="font-size:48px;margin-bottom:12px;display:block;"></i>
+                            No delivery tickets available right now.
+                        </asp:Panel>
+                    </FooterTemplate>
+                </asp:Repeater>
+                <%-- ────────────────────────────────────────────────────────────────────────── --%>
+
             </div>
         </div>
     </div>
@@ -1484,40 +1603,33 @@
             const cancelCompletionBtn = document.getElementById('cancelCompletion');
             const confirmCompletionBtn = document.getElementById('confirmCompletion');
 
-            let isOnline = false;
+            // ── Restore state from sessionStorage (persists across refresh) ──────────
+            let isOnline = sessionStorage.getItem('rider_isOnline') === 'true';
+
             let activeDelivery = null;
-            let availableDeliveries = [
-                {
-                    id: 'DL-4567',
-                    customer: 'Jester Sion',
-                    pickup: 'Caballeros, Dasma',
-                    dropoff: 'Pala-Pala, Dasma',
-                    distance: '2.5 km',
-                    fee: '₱85',
-                    time: '15 min',
-                    items: '2 Tapsilog Meals',
-                    contact: '(+63) 917-111-2222'
-                },
-                {
-                    id: 'DL-4568',
-                    customer: 'Syren Tortal',
-                    pickup: 'Caballeros, Dasma',
-                    dropoff: 'Salitran, Dasma',
-                    distance: '1.8 km',
-                    fee: '₱65',
-                    time: '12 min',
-                    items: '2 meals',
-                    contact: '(+63) 918-222-3333'
-                }
-            ];
+            const savedTicket = sessionStorage.getItem('rider_ticketNumber');
+            if (savedTicket) {
+                activeDelivery = {
+                    id: savedTicket,
+                    order: sessionStorage.getItem('rider_orderNumber') || '',
+                    address: sessionStorage.getItem('rider_address') || '',
+                    amount: sessionStorage.getItem('rider_amount') || '',
+                    status: sessionStorage.getItem('rider_status') || '',
+                    priority: sessionStorage.getItem('rider_priority') || '',
+                    created: sessionStorage.getItem('rider_created') || ''
+                };
+            }
+            // ─────────────────────────────────────────────────────────────────────
 
             toggleSwitch.addEventListener('click', function () {
                 isOnline = !isOnline;
+                sessionStorage.setItem('rider_isOnline', isOnline ? 'true' : 'false');
                 updateUI();
             });
 
             goOnlineBtn.addEventListener('click', function () {
-                isOnline = true;
+                isOnline = !isOnline;
+                sessionStorage.setItem('rider_isOnline', isOnline ? 'true' : 'false');
                 updateUI();
             });
 
@@ -1525,9 +1637,19 @@
                 if (e.target.closest('.accept-btn')) {
                     const acceptBtn = e.target.closest('.accept-btn');
                     const deliveryCard = acceptBtn.closest('.delivery-card');
-                    const deliveryId = deliveryCard.dataset.deliveryId;
 
-                    acceptDelivery(deliveryId);
+                    // Read all data directly from the button's data-* attributes (set by Repeater)
+                    const deliveryData = {
+                        id: acceptBtn.dataset.ticket,
+                        order: acceptBtn.dataset.order,
+                        address: acceptBtn.dataset.address,
+                        amount: acceptBtn.dataset.amount,
+                        status: acceptBtn.dataset.status,
+                        priority: acceptBtn.dataset.priority,
+                        created: acceptBtn.dataset.created
+                    };
+
+                    acceptDelivery(deliveryData, deliveryCard);
                 }
 
                 if (e.target.closest('.decline-btn')) {
@@ -1539,7 +1661,14 @@
             });
 
             navigateBtn.addEventListener('click', function () {
-                showNotification('Opening navigation to destination...', 'info');
+                if (!activeDelivery || !activeDelivery.address) {
+                    showNotification('No delivery address found.', 'warning');
+                    return;
+                }
+                const encodedAddress = encodeURIComponent(activeDelivery.address);
+                const googleMapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodedAddress;
+                window.open(googleMapsUrl, '_blank');
+                showNotification('Opening Google Maps...', 'info');
             });
 
             markDeliveredBtn.addEventListener('click', function () {
@@ -1552,20 +1681,63 @@
                 }
             });
 
+            // ── Proof of Delivery setup ─────────────────────────────
+            const proofUploadArea = document.getElementById('proofUploadArea');
+            const proofPhotoInput = document.getElementById('proofPhotoInput');
+            const proofPlaceholder = document.getElementById('proofPlaceholder');
+            const proofPreview = document.getElementById('proofPreview');
+            const proofRetakeBtn = document.getElementById('proofRetakeBtn');
+
+            proofUploadArea.addEventListener('click', function (e) {
+                if (e.target === proofRetakeBtn || proofRetakeBtn.contains(e.target)) return;
+                proofPhotoInput.click();
+            });
+
+            proofRetakeBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                resetProof();
+                proofPhotoInput.click();
+            });
+
+            proofPhotoInput.addEventListener('change', function () {
+                const file = proofPhotoInput.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    proofPreview.src = ev.target.result;
+                    proofPreview.style.display = 'block';
+                    proofPlaceholder.style.display = 'none';
+                    proofRetakeBtn.style.display = 'inline-flex';
+                    proofUploadArea.classList.add('has-photo');
+                    confirmCompletionBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            function resetProof() {
+                proofPhotoInput.value = '';
+                proofPreview.src = '';
+                proofPreview.style.display = 'none';
+                proofPlaceholder.style.display = 'flex';
+                proofRetakeBtn.style.display = 'none';
+                proofUploadArea.classList.remove('has-photo');
+                confirmCompletionBtn.disabled = true;
+            }
+            // ────────────────────────────────────────────────────────
+
             function showDeliveryCompletionModal() {
                 if (!activeDelivery) {
                     showNotification('No active delivery to mark as delivered', 'warning');
                     return;
                 }
 
+                resetProof();
                 document.body.style.overflow = 'hidden';
-
                 completionModal.classList.add('active');
                 completionOverlay.classList.add('active');
 
-                setTimeout(() => {
-                    cancelCompletionBtn.focus();
-                }, 100);
+                setTimeout(() => { cancelCompletionBtn.focus(); }, 100);
             }
 
             function hideDeliveryCompletionModal() {
@@ -1597,40 +1769,41 @@
                 showNotification('Delivery completion cancelled', 'info');
             });
 
-            function acceptDelivery(deliveryId) {
-                const deliveryData = availableDeliveries.find(d => d.id === deliveryId);
-                if (!deliveryData) return;
-
+            function acceptDelivery(deliveryData, deliveryCard) {
                 activeDelivery = deliveryData;
 
-                activeDeliveryId.textContent = `#${deliveryData.id}`;
-                pickupLocation.textContent = deliveryData.pickup;
-                dropoffLocation.textContent = deliveryData.dropoff;
-                deliveryDistance.textContent = deliveryData.distance;
-                deliveryFee.textContent = deliveryData.fee;
-                deliveryTime.textContent = deliveryData.time;
-                customerContact.textContent = deliveryData.contact;
+                // Persist to sessionStorage so a page refresh restores the active delivery
+                sessionStorage.setItem('rider_ticketNumber', deliveryData.id);
+                sessionStorage.setItem('rider_orderNumber', deliveryData.order);
+                sessionStorage.setItem('rider_address', deliveryData.address);
+                sessionStorage.setItem('rider_amount', deliveryData.amount);
+                sessionStorage.setItem('rider_status', deliveryData.status);
+                sessionStorage.setItem('rider_priority', deliveryData.priority);
+                sessionStorage.setItem('rider_created', deliveryData.created);
+                sessionStorage.setItem('rider_isOnline', 'true');
+
+                // Populate the active delivery panel with real DB data
+                activeDeliveryId.textContent = '#' + deliveryData.id;
+                pickupLocation.textContent = 'Order #' + deliveryData.order;
+                dropoffLocation.textContent = deliveryData.address;
+                deliveryDistance.textContent = '—';
+                deliveryFee.textContent = deliveryData.amount;
+                deliveryTime.textContent = '—';
+                customerContact.textContent = deliveryData.priority + ' priority';
 
                 activeDeliverySection.classList.add('active');
-
                 deliveriesSection.style.display = 'none';
 
-                const deliveryCard = document.querySelector(`[data-delivery-id="${deliveryId}"]`);
-                if (deliveryCard) {
-                    deliveryCard.style.opacity = '0.5';
-                    deliveryCard.style.pointerEvents = 'none';
+                // Animate card out
+                deliveryCard.style.opacity = '0.5';
+                deliveryCard.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    deliveryCard.style.transform = 'translateX(100%)';
+                    deliveryCard.style.opacity = '0';
+                    setTimeout(() => { deliveryCard.style.display = 'none'; }, 300);
+                }, 100);
 
-                    setTimeout(() => {
-                        deliveryCard.style.transform = 'translateX(100%)';
-                        deliveryCard.style.opacity = '0';
-
-                        setTimeout(() => {
-                            deliveryCard.style.display = 'none';
-                        }, 300);
-                    }, 100);
-                }
-
-                showNotification(`Delivery ${deliveryId} accepted! You're now heading to ${deliveryData.dropoff}`, 'success');
+                showNotification('Ticket #' + deliveryData.id + ' accepted! Heading to ' + deliveryData.address, 'success');
             }
 
             function declineDelivery(deliveryCard) {
@@ -1655,29 +1828,72 @@
                     return;
                 }
 
-                const totalDeliveries = document.querySelector('.stat-card:nth-child(1) .stat-value');
-                const earningsToday = document.querySelector('.stat-card:nth-child(2) .stat-value');
-                const completedToday = document.querySelector('.stat-card:nth-child(3) .stat-value');
-
-                const currentTotal = parseInt(totalDeliveries.textContent);
-                totalDeliveries.textContent = (currentTotal + 1).toString();
-
-                const currentEarnings = parseInt(earningsToday.textContent.replace('₱', '').replace(',', ''));
-                const deliveryEarnings = parseInt(activeDelivery.fee.replace('₱', '').replace(',', ''));
-                earningsToday.textContent = `₱${(currentEarnings + deliveryEarnings).toLocaleString()}`;
-
-                const currentCompleted = parseInt(completedToday.textContent);
-                completedToday.textContent = (currentCompleted + 1).toString();
-
-                activeDeliverySection.classList.remove('active');
-
-                if (isOnline) {
-                    deliveriesSection.style.display = 'block';
+                const ticketNumber = activeDelivery.id;
+                if (!ticketNumber) {
+                    showNotification('Could not find ticket number.', 'warning');
+                    return;
                 }
 
-                activeDelivery = null;
+                // ── GET request with querystring — most reliable, no ViewState needed ──
+                const completeUrl = window.location.pathname + '?completeTicket=' + encodeURIComponent(ticketNumber);
 
-                showNotification('Delivery marked as completed! Earnings added.', 'success');
+                fetch(completeUrl, {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                })
+                    .then(r => r.text())
+                    .then(response => {
+                        if (response.trim() !== 'OK') {
+                            showNotification('Could not update ticket. Please try again.', 'warning');
+                            return;
+                        }
+
+                        // Clear sessionStorage before reload so panel does not restore
+                        sessionStorage.removeItem('rider_ticketNumber');
+                        sessionStorage.removeItem('rider_orderNumber');
+                        sessionStorage.removeItem('rider_address');
+                        sessionStorage.removeItem('rider_amount');
+                        sessionStorage.removeItem('rider_status');
+                        sessionStorage.removeItem('rider_priority');
+                        sessionStorage.removeItem('rider_created');
+
+                        window.location.reload();
+                    })
+                    .catch(() => {
+                        showNotification('Network error. Please try again.', 'warning');
+                    });
+                // ─────────────────────────────────────────────────────────────
+
+                showNotification('Marking delivery as completed...', 'info');
+            }
+
+            // Flash animation when a stat value updates
+            function animateStat(el) {
+                el.style.transition = 'color 0.2s ease, transform 0.2s ease';
+                el.style.color = 'var(--success-green)';
+                el.style.transform = 'scale(1.15)';
+                setTimeout(() => {
+                    el.style.color = '';
+                    el.style.transform = '';
+                }, 800);
+            }
+
+            // Recompute a trend label from new vs old values
+            function updateTrendLabel(trendId, newVal, oldVal, label) {
+                const el = document.getElementById(trendId);
+                if (!el) return;
+
+                if (oldVal === 0) {
+                    el.className = 'trend-up';
+                    el.innerHTML = '<i class="fas fa-minus"></i> No data yesterday';
+                    return;
+                }
+
+                const pct = ((newVal - oldVal) / oldVal * 100).toFixed(1);
+                const up = parseFloat(pct) >= 0;
+                el.className = up ? 'trend-up' : 'trend-down';
+                el.innerHTML = '<i class="fas ' + (up ? 'fa-arrow-up' : 'fa-arrow-down') + '"></i> '
+                    + (up ? '+' : '') + pct + '% ' + label;
             }
 
             function updateUI() {
@@ -1733,7 +1949,9 @@
                     goOnlineBtn.querySelector('i').className = 'fas fa-power-off';
 
                     deliveriesSection.style.display = 'none';
-                    activeDeliverySection.classList.remove('active');
+                    if (!activeDelivery) {
+                        activeDeliverySection.classList.remove('active');
+                    }
 
                     showNotification('You are now offline', 'info');
                 }
@@ -1804,6 +2022,20 @@
                 }
             `;
             document.head.appendChild(style);
+
+
+
+            // On page load — if there was an active delivery, restore the UI panel
+            if (activeDelivery) {
+                activeDeliveryId.textContent = '#' + activeDelivery.id;
+                pickupLocation.textContent = 'Order #' + activeDelivery.order;
+                dropoffLocation.textContent = activeDelivery.address;
+                deliveryDistance.textContent = '—';
+                deliveryFee.textContent = activeDelivery.amount;
+                deliveryTime.textContent = '—';
+                customerContact.textContent = activeDelivery.priority + ' priority';
+                activeDeliverySection.classList.add('active');
+            }
 
             updateUI();
         });
