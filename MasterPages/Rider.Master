@@ -4,172 +4,562 @@
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
-    <title>TasteNet Rider Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>TasteNet - Rider Portal</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fc;
+            overflow: hidden;
+            position: relative;
+        }
+        
         :root {
             --primary-color: #7b0000;
             --secondary-color: #3b0000;
             --accent-color: #ffc107;
             --text-light: #fff;
-            --bg-dark: #1e1e1e;
             --sidebar-width: 260px;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #1e1e1e;
-            color: #fff;
-            height: 100vh;
-            overflow: hidden;
+            --sidebar-collapsed-width: 70px;
         }
 
         .sidebar {
-            width: var(--sidebar-width);
+            width: var(--sidebar-width) !important;
+            min-width: var(--sidebar-width) !important;
+            max-width: var(--sidebar-width) !important;
             height: 100vh;
-            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(180deg, #7b0000 0%, #3b0000 100%);
+            color: #ffffff;
             position: fixed;
+            top: 0;
+            left: 0;
             overflow-y: auto;
             overflow-x: hidden;
+            z-index: 100;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            will-change: width;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
-
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width) !important;
+            min-width: var(--sidebar-collapsed-width) !important;
+            max-width: var(--sidebar-collapsed-width) !important;
+        }
+        
         .sidebar::-webkit-scrollbar { 
-            width: 6px; 
+            width: 3px; 
         }
-
+        
         .sidebar::-webkit-scrollbar-track { 
             background: rgba(255,255,255,0.1); 
         }
-
+        
         .sidebar::-webkit-scrollbar-thumb { 
             background: var(--accent-color); 
             border-radius: 10px; 
         }
-
+        
         .sidebar-header {
-            text-align: center;
-            padding: 20px 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 18px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
+        
+        .sidebar.collapsed .sidebar-header {
+            padding: 18px 0;
+            justify-content: center;
+        }
+        
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .logo-wrapper {
+            justify-content: center;
+        }
+        
         .sidebar-header img {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 10px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent-color);
+            transition: transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
         }
-
-        .sidebar-header h2 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
+        
+        .sidebar-header img:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 16px;
+            font-weight: 700;
             color: var(--accent-color);
-            font-weight: 600;
-            line-height: 1.2;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
         }
-
-        .sidebar-header span {
-            font-size: 13px;
-            opacity: 0.9;
-            display: block;
-            margin-bottom: 10px;
+        
+        .sidebar.collapsed .logo-text {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
         }
-
-        .menu {
-            list-style: none;
-            padding: 15px 0;
-            margin: 0;
+        
+        .collapse-btn-circle {
+            width: 28px;
+            height: 28px;
+            background: var(--accent-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            color: #3b0000;
+            font-size: 12px;
+            transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
         }
-
+        
+        .sidebar.collapsed .collapse-btn-circle {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-color);
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar.collapsed .collapse-btn-circle:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+        
+        .collapse-btn-circle:hover {
+            background: #ffd700;
+            transform: scale(1.02);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+        }
+        
+        .menu { 
+            padding: 0 12px;
+            padding-bottom: 80px;
+            transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .menu {
+            padding: 0 8px;
+            padding-bottom: 80px;
+        }
+        
         .menu-title {
-            padding: 8px 20px;
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: rgba(255, 255, 255, 0.5);
-            margin-top: 5px;
-        }
-
-        .menu li {
-            margin: 0;
-        }
-
-        .menu a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid transparent;
-            font-size: 14px;
-            position: relative;
-        }
-
-        .menu a i {
-            width: 25px;
-            font-size: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .menu a span {
-            margin-left: 10px;
-            transition: all 0.3s ease;
-        }
-
-        /* Hover Effects */
-        .menu a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--accent-color) !important;
-            border-left: 4px solid var(--accent-color);
-            padding-left: 25px;
-        }
-
-        .menu a:hover i {
-            transform: translateX(3px);
-            color: var(--accent-color);
-        }
-
-        .menu a:hover span {
-            transform: translateX(3px);
-        }
-
-        /* Active State - MUSTARD COLOR */
-        .menu a.active {
-            background: rgba(255, 193, 7, 0.15);
-            color: var(--accent-color) !important;
-            border-left: 4px solid var(--accent-color);
+            padding: 12px 10px 6px 10px;
+            transition: opacity 0.2s ease;
             font-weight: 600;
         }
-
-        .menu a.active i {
-            color: var(--accent-color);
+        
+        .sidebar.collapsed .menu-title {
+            display: none;
         }
-
-        .notification-badge {
-            margin-left: auto;
-            font-size: 10px;
-            padding: 2px 8px;
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            margin-bottom: 2px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border-left: none;
+        }
+        
+        .sidebar.collapsed .menu-item {
+            justify-content: center;
+            padding: 8px 0;
+            gap: 0;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item i {
+            width: 18px;
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            flex-shrink: 0;
+        }
+        
+        .sidebar.collapsed .menu-item i {
+            width: auto;
+            font-size: 18px;
+        }
+        
+        .menu-item span {
+            transition: all 0.2s ease;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 193, 7, 0.15);
+            transform: translateX(4px);
+        }
+        
+        .sidebar.collapsed .menu-item:hover {
+            transform: translateX(0) scale(1.05);
+        }
+        
+        .menu-item:hover i {
+            color: var(--accent-color);
+            transform: translateX(3px) scale(1.1);
+        }
+        
+        .sidebar.collapsed .menu-item:hover i {
+            transform: scale(1.15);
+        }
+        
+        .menu-item:hover span {
+            color: var(--accent-color);
+            letter-spacing: 0.3px;
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 193, 7, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .menu-item:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .menu-item i,
+        .menu-item span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .menu-item.active {
             background: rgba(255, 193, 7, 0.2);
-            color: var(--accent-color);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 193, 7, 0.3);
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
         }
-
+        
+        .menu-item.active i {
+            color: var(--accent-color);
+            filter: drop-shadow(0 0 3px rgba(255, 193, 7, 0.5));
+        }
+        
+        .menu-item.active span {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .menu-item.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background: var(--accent-color);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
+        }
+        
+        .sidebar.collapsed .menu-item.active::after {
+            left: auto;
+            right: 0;
+            width: 3px;
+        }
+        
+        @keyframes menuPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.6);
+                background: rgba(255, 193, 7, 0.2);
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.02);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(255, 193, 7, 0.2);
+                background: rgba(255, 193, 7, 0.35);
+                transform: scale(1.02);
+            }
+            75% {
+                transform: scale(1.01);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+                background: rgba(255, 193, 7, 0.2);
+                transform: scale(1);
+            }
+        }
+        
+        .menu-item.active.pulse-animation {
+            animation: menuPulse 0.7s cubic-bezier(0.4, 0, 0.2, 1) 2;
+        }
+        
+        .menu-item.active:hover {
+            background: rgba(255, 193, 7, 0.3);
+            transform: translateX(4px);
+            box-shadow: 0 2px 12px rgba(255, 193, 7, 0.3);
+        }
+        
+        .sidebar.collapsed .menu-item.active:hover {
+            transform: scale(1.08);
+        }
+        
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 0;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+        
+        .menu-divider:hover {
+            background: rgba(255, 193, 7, 0.3);
+        }
+        
+        .sidebar.collapsed .menu-divider {
+            margin: 8px 0;
+        }
+        
+        .sidebar.collapsed .menu-item {
+            position: relative;
+        }
+        
+        .sidebar.collapsed .menu-item[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 62px;
+            background: linear-gradient(135deg, #ffc107, #ffb300);
+            color: #3b0000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            animation: tooltipFadeIn 0.2s ease;
+        }
+        
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
         .main-content {
-            padding: 0px;
             margin-left: var(--sidebar-width);
-            color: #fff;
+            padding: 20px 28px;
+            background: #f8f9fc;
+            min-height: 100vh;
             height: 100vh;
             overflow-y: auto;
+            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: margin-left;
+            transform: translateZ(0);
         }
-
+        
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+        
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .main-content::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .main-content {
+            animation: contentFadeIn 0.3s ease;
+        }
+        
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .master-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .master-footer {
+            padding: 12px 0;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        
+        .user-info:hover .user-avatar {
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+        }
+        
+        .sidebar.collapsed .user-info {
+            justify-content: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b0000;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            cursor: default;
+        }
+        
+        .user-details {
+            flex: 1;
+            min-width: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .sidebar.collapsed .user-details {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .user-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        
+        .user-role {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+        }
+        
+        .logout-icon {
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .logout-icon:hover {
+            color: var(--accent-color);
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 4px rgba(255, 193, 7, 0.5));
+        }
+        
+        .sidebar.collapsed .logout-icon {
+            display: none;
+        }
+        
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -208,338 +598,538 @@
             font-weight: 600;
             color: #fff;
         }
-
-        @media screen and (max-height: 750px) {
-            .sidebar-header {
-                padding: 15px 15px;
-            }
-            
-            .sidebar-header img {
-                width: 50px;
-                height: 50px;
-                margin-bottom: 8px;
-            }
-            
-            .sidebar-header h2 {
-                font-size: 16px;
-            }
-            
-            .sidebar-header span {
-                font-size: 12px;
-            }
-            
-            .menu-title {
-                padding: 6px 20px;
-                margin-top: 3px;
-                font-size: 10px;
-            }
-            
-            .menu a {
-                padding: 10px 20px;
-                font-size: 13px;
-            }
-            
-            .menu a:hover {
-                padding-left: 22px;
-            }
-            
-            .menu a i {
-                font-size: 15px;
-            }
+        
+        .notification-badge {
+            margin-left: auto;
+            font-size: 10px;
+            padding: 2px 8px;
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--accent-color);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            transition: all 0.2s ease;
         }
-
-        @media screen and (max-height: 600px) {
-            .sidebar-header {
-                padding: 10px 15px;
-            }
-            
-            .sidebar-header img {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 5px;
-            }
-            
-            .sidebar-header h2 {
-                font-size: 14px;
-            }
-            
-            .sidebar-header span {
-                font-size: 11px;
-                margin-bottom: 8px;
-            }
-            
-            .menu-title {
-                padding: 4px 20px;
-                font-size: 9px;
-            }
-            
-            .menu a {
-                padding: 8px 20px;
-                font-size: 12px;
-            }
-            
-            .menu a:hover {
-                padding-left: 20px;
-            }
-            
-            .menu a i {
-                font-size: 14px;
-            }
+        
+        .menu-item:hover .notification-badge {
+            background: var(--accent-color);
+            color: #3b0000;
+            transform: scale(1.05);
         }
-
+        
+        .sidebar.collapsed .notification-badge {
+            display: none;
+        }
+        
+        .availability-status {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .status-online {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .status-offline {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
         @media screen and (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-            
-            .sidebar:hover {
-                width: 260px;
-            }
-            
             .main-content {
-                margin-left: 70px;
-                padding: 15px;
+                padding: 16px;
+                margin-left: var(--sidebar-collapsed-width);
             }
             
-            .sidebar:not(:hover) .sidebar-header h2,
-            .sidebar:not(:hover) .sidebar-header span,
-            .sidebar:not(:hover) .menu a span:not(.notification-badge),
-            .sidebar:not(:hover) .menu-title {
+            .sidebar {
+                width: var(--sidebar-collapsed-width) !important;
+                min-width: var(--sidebar-collapsed-width) !important;
+                max-width: var(--sidebar-collapsed-width) !important;
+            }
+            
+            .sidebar .logo-text,
+            .sidebar .menu-item span,
+            .sidebar .menu-title,
+            .sidebar .user-details {
                 display: none;
             }
             
-            .sidebar:not(:hover) .menu a {
+            .sidebar .menu-item {
                 justify-content: center;
-                padding: 15px 10px;
+                padding: 8px 0;
             }
             
-            .sidebar:not(:hover) .sidebar-header {
-                padding: 15px 5px;
+            .sidebar .sidebar-header {
+                padding: 18px 0;
+                justify-content: center;
             }
             
-            .sidebar:not(:hover) .sidebar-header img {
-                width: 40px;
-                height: 40px;
+            .sidebar .collapse-btn-circle {
+                bottom: 16px;
             }
             
-            .sidebar:not(:hover) .notification-badge {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                margin: 0;
+            .sidebar .master-footer {
+                padding: 12px 0;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 60px;
             }
             
-            .sidebar:hover .menu a {
-                justify-content: flex-start;
-                padding: 10px 20px;
+            .sidebar .user-info {
+                justify-content: center;
             }
             
-            .sidebar:hover .menu a:hover {
-                padding-left: 25px;
+            .sidebar .logout-icon {
+                display: none;
             }
             
-            .sidebar:hover .sidebar-header {
-                padding: 20px 15px;
-            }
-            
-            .sidebar:hover .sidebar-header img {
-                width: 60px;
-                height: 60px;
+            .main-content {
+                margin-left: var(--sidebar-collapsed-width);
             }
             
             .stats-cards {
                 grid-template-columns: 1fr;
             }
         }
+        
+        @media screen and (max-height: 600px) {
+            .sidebar-header {
+                padding: 10px 12px;
+            }
+            .sidebar-header img {
+                width: 30px;
+                height: 30px;
+            }
+            .logo-text {
+                font-size: 14px;
+            }
+            .menu-item {
+                padding: 6px 10px;
+            }
+            .menu-title {
+                padding: 8px 10px 4px 10px;
+            }
+            .user-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            .user-name {
+                font-size: 11px;
+            }
+            .user-role {
+                font-size: 9px;
+            }
+        }
     </style>
-
+    
     <asp:ContentPlaceHolder ID="head" runat="server" />
 </head>
 
 <body>
     <form id="form1" runat="server">
-        <aside class="sidebar">
+        <div class="sidebar" id="masterSidebar">
             <div class="sidebar-header">
-                <img src="/Images/RiderAvatar.png" alt="Rider" onerror="this.src='https://ui-avatars.com/api/?name=Rider&background=7b0000&color=fff&size=80';" />
-                <h2>Caballeros TasteNet</h2>
-                <span style="color: var(--text-light);">Rider Portal</span>
+                <div class="logo-wrapper">
+                    <img src="/Images/LOGO.png" alt="TasteNet Logo" 
+                         onerror="this.src='https://via.placeholder.com/38?text=TN';" loading="lazy" />
+                    <span class="logo-text">TasteNet</span>
+                </div>
+                <button type="button" class="collapse-btn-circle" id="collapseBtn" aria-label="Toggle sidebar">
+                    <i class="fa-solid fa-chevron-left" id="chevronIcon"></i>
+                </button>
             </div>
-
-            <ul class="menu" id="nav-menu">
+            
+            <div class="menu" id="nav-menu">
                 <div class="menu-title">Overview</div>
-                <li>
-                    <a href="/Users/Rider/Dashboard.aspx" id="link-dashboard">
-                        <i class="fa-solid fa-cube"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-
+                <a href="/Users/Rider/Dashboard.aspx" class="menu-item" id="link-dashboard" data-tooltip="Dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <div class="menu-divider"></div>
+                
                 <div class="menu-title">Delivery</div>
-                <li>
-                    <a href="/Users/Rider/DeliveryHistory.aspx" id="link-delivery-history">
-                        <i class="fa-solid fa-motorcycle"></i>
-                        <span>Delivery History</span>
-                    </a>
-                </li>
-              
+                <a href="/Users/Rider/DeliveryHistory.aspx" class="menu-item" id="link-delivery-history" data-tooltip="Delivery History">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <span>Delivery History</span>
+                </a>
+                
+                <div class="menu-divider"></div>
+                
                 <div class="menu-title">Earnings</div>
-                <li>
-                    <a href="/Users/Rider/Earnings.aspx" id="link-earnings">
-                        <i class="fa-solid fa-dollar-sign"></i>
-                        <span>Earnings</span>
-                    </a>
-                </li>
+                <a href="/Users/Rider/Earnings.aspx" class="menu-item" id="link-earnings" data-tooltip="Earnings">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    <span>Earnings</span>
+                </a>
+                
+                <div class="menu-divider"></div>
                 
                 <div class="menu-title">Account</div>
-                <li>
-                    <a href="/Users/Rider/Profile.aspx" id="link-profile">
-                        <i class="fa-solid fa-user"></i>
-                        <span>Profile</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Users/Rider/Settings.aspx" id="link-settings">
-                        <i class="fa-solid fa-gear"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Users/Rider/Notifications.aspx" id="link-notifications">
-                        <i class="fa-solid fa-bell"></i>
-                        <span>Notifications</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/Login.aspx" id="link-logout">
+                <a href="/Users/Rider/Profile.aspx" class="menu-item" id="link-profile" data-tooltip="Profile">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="/Users/Rider/Settings.aspx" class="menu-item" id="link-settings" data-tooltip="Settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="/Users/Rider/Notifications.aspx" class="menu-item" id="link-notifications" data-tooltip="Notifications">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Notifications</span>
+                    <span class="notification-badge" id="notificationBadge">3</span>
+                </a>
+            </div>
+            
+            <div class="master-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Loading...</div>
+                        <div class="user-role" id="userRole">Rider</div>
+                    </div>
+                    <a href="/Login.aspx" class="logout-icon">
                         <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Log Out</span>
                     </a>
-                </li>
-            </ul>
-        </aside>
-
+                </div>
+            </div>
+        </div>
+        
         <main class="main-content" id="mainContent">
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
         </main>
     </form>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get current page URL
-            var currentPath = window.location.pathname;
+        (function () {
+            'use strict';
 
-            // Remove query strings and convert to lowercase for comparison
-            var currentPage = currentPath.split('?')[0].toLowerCase();
+            var savedState = localStorage.getItem('riderSidebarCollapsed');
+            var sidebar = document.getElementById('masterSidebar');
+            var chevronIcon = document.getElementById('chevronIcon');
 
-            // Get all navigation links
-            var navLinks = document.querySelectorAll('#nav-menu a');
-
-            // Remove active class from all links first
-            navLinks.forEach(function (link) {
-                link.classList.remove('active');
-            });
-
-            // Check each link to see if it matches current page
-            navLinks.forEach(function (link) {
-                var linkHref = link.getAttribute('href');
-
-                if (linkHref) {
-                    // Clean up link path
-                    var linkPath = linkHref.split('?')[0].toLowerCase();
-
-                    // Check for exact match first
-                    if (currentPage === linkPath) {
-                        link.classList.add('active');
-                        return;
-                    }
-
-                    // Check if current page contains the link path (for nested pages)
-                    if (currentPage.includes(linkPath) && linkPath !== '/') {
-                        link.classList.add('active');
-                        return;
-                    }
-
-                    // Check for dashboard as default homepage
-                    if ((currentPage === '/' || currentPage === '/users/rider/default.aspx') &&
-                        linkPath.includes('dashboard')) {
-                        link.classList.add('active');
-                        return;
-                    }
+            if (sidebar && chevronIcon) {
+                if (savedState === 'true') {
+                    sidebar.classList.add('collapsed');
+                    chevronIcon.style.transform = 'rotate(180deg)';
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    chevronIcon.style.transform = 'rotate(0deg)';
                 }
-            });
+            }
+        })();
 
-            // If still no active link found, try to match by page name
-            if (!document.querySelector('#nav-menu a.active')) {
-                var pageName = currentPage.split('/').pop(); // Get last part of URL
+        function loadUserData() {
+            if (typeof PageMethods !== 'undefined' && PageMethods.GetCurrentRider) {
+                PageMethods.GetCurrentRider(onUserDataSuccess, onUserDataError);
+            }
+            else {
+                fetch('/api/GetCurrentRider.aspx')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateUserUI(data.rider);
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Using fallback user data');
+                        getRiderFromSession();
+                    });
+            }
+        }
+
+        function getRiderFromSession() {
+            var cachedRider = sessionStorage.getItem('currentRider');
+            if (cachedRider) {
+                try {
+                    var rider = JSON.parse(cachedRider);
+                    updateUserUI(rider);
+                    return;
+                } catch (e) { }
+            }
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/Users/Rider/GetUserInfo.aspx', true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success && response.user) {
+                            updateUserUI(response.user);
+                            sessionStorage.setItem('currentRider', JSON.stringify(response.user));
+                        } else {
+                            setDefaultUser();
+                        }
+                    } catch (e) {
+                        setDefaultUser();
+                    }
+                } else {
+                    setDefaultUser();
+                }
+            };
+            xhr.onerror = function () {
+                setDefaultUser();
+            };
+            xhr.send();
+        }
+
+        function updateUserUI(user) {
+            var userNameSpan = document.getElementById('userName');
+            var userRoleSpan = document.getElementById('userRole');
+            var userAvatarDiv = document.getElementById('userAvatar');
+
+            if (userNameSpan) {
+                var displayName = user.fullName || user.username || user.firstName || 'Rider';
+                if (user.fullName && user.fullName.includes(' ')) {
+                    displayName = user.fullName.split(' ')[0];
+                }
+                userNameSpan.textContent = displayName;
+            }
+
+            if (userRoleSpan) {
+                userRoleSpan.textContent = user.role || 'Delivery Rider';
+            }
+
+            if (userAvatarDiv) {
+                var firstLetter = (user.firstName || user.username || 'R')[0].toUpperCase();
+                userAvatarDiv.innerHTML = firstLetter;
+            }
+
+            sessionStorage.setItem('currentRider', JSON.stringify(user));
+        }
+
+        function setDefaultUser() {
+            var userNameSpan = document.getElementById('userName');
+            if (userNameSpan) {
+                userNameSpan.textContent = 'Rider';
+            }
+
+            var userRoleSpan = document.getElementById('userRole');
+            if (userRoleSpan) {
+                userRoleSpan.textContent = 'Delivery Staff';
+            }
+        }
+
+        function onUserDataSuccess(result) {
+            if (result && result.success) {
+                updateUserUI(result.rider);
+            } else {
+                setDefaultUser();
+            }
+        }
+
+        function onUserDataError(error) {
+            console.log('Error loading user data:', error);
+            setDefaultUser();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            'use strict';
+
+            loadUserData();
+
+            const sidebar = document.getElementById('masterSidebar');
+            const collapseBtn = document.getElementById('collapseBtn');
+            const chevronIcon = document.getElementById('chevronIcon');
+
+            if (!sidebar || !collapseBtn) return;
+
+            function collapseSidebar() {
+                if (sidebar && !sidebar.classList.contains('collapsed')) {
+                    requestAnimationFrame(() => {
+                        sidebar.classList.add('collapsed');
+                        localStorage.setItem('riderSidebarCollapsed', 'true');
+                        if (chevronIcon) {
+                            chevronIcon.style.transform = 'rotate(180deg)';
+                        }
+                    });
+                }
+            }
+
+            function expandSidebar() {
+                if (sidebar && sidebar.classList.contains('collapsed')) {
+                    requestAnimationFrame(() => {
+                        sidebar.classList.remove('collapsed');
+                        localStorage.setItem('riderSidebarCollapsed', 'false');
+                        if (chevronIcon) {
+                            chevronIcon.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                }
+            }
+
+            function toggleSidebar() {
+                if (sidebar.classList.contains('collapsed')) {
+                    expandSidebar();
+                } else {
+                    collapseSidebar();
+                }
+            }
+
+            let isToggling = false;
+            if (collapseBtn) {
+                collapseBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (isToggling) return;
+                    isToggling = true;
+
+                    toggleSidebar();
+
+                    setTimeout(() => {
+                        isToggling = false;
+                    }, 250);
+                });
+            }
+
+            function triggerPulseOnActiveModule() {
+                const activeMenuItem = document.querySelector('.menu-item.active');
+                if (activeMenuItem) {
+                    activeMenuItem.classList.remove('pulse-animation');
+                    void activeMenuItem.offsetWidth;
+                    activeMenuItem.classList.add('pulse-animation');
+
+                    setTimeout(() => {
+                        if (activeMenuItem) {
+                            activeMenuItem.classList.remove('pulse-animation');
+                        }
+                    }, 1500);
+                }
+            }
+
+            function setActiveMenu() {
+                var currentPath = window.location.pathname;
+                var currentPage = currentPath.split('?')[0].toLowerCase();
+                var navLinks = document.querySelectorAll('.menu-item');
+
+                navLinks.forEach(function (link) {
+                    link.classList.remove('active');
+                });
 
                 navLinks.forEach(function (link) {
                     var linkHref = link.getAttribute('href');
+
                     if (linkHref) {
-                        var linkPage = linkHref.split('/').pop().toLowerCase();
+                        var linkPath = linkHref.split('?')[0].toLowerCase();
 
-                        // Remove .aspx extension for comparison
-                        pageName = pageName.replace('.aspx', '');
-                        linkPage = linkPage.replace('.aspx', '');
-
-                        // If page names match
-                        if (pageName === linkPage) {
+                        if (currentPage === linkPath) {
                             link.classList.add('active');
                             return;
                         }
 
-                        // Check for partial match
-                        if (pageName.includes(linkPage) || linkPage.includes(pageName)) {
+                        if (currentPage.includes(linkPath) && linkPath !== '/' && linkPath.length > 1) {
+                            link.classList.add('active');
+                            return;
+                        }
+
+                        if ((currentPage === '/' || currentPage === '/users/rider/default.aspx') &&
+                            linkPath.includes('dashboard')) {
                             link.classList.add('active');
                             return;
                         }
                     }
                 });
-            }
 
-            // Add hover effects for non-active links
-            navLinks.forEach(function (link) {
-                if (!link.classList.contains('active')) {
-                    link.addEventListener('mouseenter', function () {
-                        this.style.transform = 'translateX(3px)';
-                    });
+                if (!document.querySelector('.menu-item.active')) {
+                    var pageName = currentPage.split('/').pop();
 
-                    link.addEventListener('mouseleave', function () {
-                        this.style.transform = 'translateX(0)';
+                    navLinks.forEach(function (link) {
+                        var linkHref = link.getAttribute('href');
+                        if (linkHref) {
+                            var linkPage = linkHref.split('/').pop().toLowerCase();
+                            var cleanPageName = pageName.replace('.aspx', '');
+                            var cleanLinkPage = linkPage.replace('.aspx', '');
+
+                            if (cleanPageName === cleanLinkPage) {
+                                link.classList.add('active');
+                                return;
+                            }
+
+                            if (cleanPageName.includes(cleanLinkPage) && cleanLinkPage.length > 3) {
+                                link.classList.add('active');
+                                return;
+                            }
+                        }
                     });
                 }
 
-                // Handle collapsed sidebar hover behavior
-                link.addEventListener('mouseenter', function () {
-                    if (window.innerWidth <= 768) {
-                        var sidebar = document.querySelector('.sidebar');
-                        if (sidebar && !sidebar.matches(':hover')) {
-                            sidebar.style.width = '260px';
+                triggerPulseOnActiveModule();
+            }
+
+            setActiveMenu();
+
+            const allMenuLinks = document.querySelectorAll('.menu-item');
+            allMenuLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    localStorage.setItem('riderSidebarCollapsed', isCollapsed ? 'true' : 'false');
+
+                    const clickedLink = e.currentTarget;
+                    clickedLink.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        if (clickedLink) {
+                            clickedLink.style.transform = '';
+                        }
+                    }, 150);
+
+                    if (clickedLink.id) {
+                        sessionStorage.setItem('riderLastActiveNav', clickedLink.id);
+                    }
+                });
+            });
+
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    var savedState = localStorage.getItem('riderSidebarCollapsed');
+                    if (sidebar) {
+                        requestAnimationFrame(() => {
+                            if (savedState === 'true') {
+                                sidebar.classList.add('collapsed');
+                                if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
+                            } else {
+                                sidebar.classList.remove('collapsed');
+                                if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
+                            }
+                        });
+                    }
+                    setActiveMenu();
+                    loadUserData(); 
+                }
+            });
+
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.attributeName === 'class') {
+                        const savedState = localStorage.getItem('riderSidebarCollapsed');
+                        const currentState = sidebar.classList.contains('collapsed') ? 'true' : 'false';
+                        if (savedState !== currentState && savedState !== null) {
+                            if (savedState === 'true') {
+                                sidebar.classList.add('collapsed');
+                                if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
+                            } else {
+                                sidebar.classList.remove('collapsed');
+                                if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
+                            }
                         }
                     }
                 });
             });
 
-            // Handle sidebar collapse/expand on mobile
-            var sidebar = document.querySelector('.sidebar');
-            if (sidebar && window.innerWidth <= 768) {
-                sidebar.addEventListener('mouseleave', function () {
-                    this.style.width = '70px';
-                });
-
-                sidebar.addEventListener('mouseenter', function () {
-                    this.style.width = '260px';
-                });
+            if (sidebar) {
+                observer.observe(sidebar, { attributes: true });
             }
 
-            // Store current page in sessionStorage for better navigation experience
-            var activeLink = document.querySelector('#nav-menu a.active');
-            if (activeLink && activeLink.id) {
-                sessionStorage.setItem('riderLastActiveNav', activeLink.id);
-            }
-
-            // Restore active state from sessionStorage if needed
             var lastActiveId = sessionStorage.getItem('riderLastActiveNav');
-            if (lastActiveId && !activeLink) {
+            if (lastActiveId && !document.querySelector('.menu-item.active')) {
                 var lastActiveLink = document.getElementById(lastActiveId);
                 if (lastActiveLink) {
                     lastActiveLink.classList.add('active');
@@ -547,15 +1137,10 @@
             }
         });
 
-        // Adjust sidebar on window resize
         window.addEventListener('resize', function () {
-            var sidebar = document.querySelector('.sidebar');
-            if (sidebar) {
-                if (window.innerWidth > 768) {
-                    sidebar.style.width = '260px';
-                } else {
-                    sidebar.style.width = '70px';
-                }
+            var sidebar = document.getElementById('masterSidebar');
+            if (sidebar && window.innerWidth > 768 && !sidebar.classList.contains('collapsed')) {
+                sidebar.style.width = '260px';
             }
         });
     </script>

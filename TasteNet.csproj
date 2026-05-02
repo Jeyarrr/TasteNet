@@ -375,7 +375,6 @@
     </Compile>
     <Compile Include="Users\Rider\Profile.aspx.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Users\Rider\Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
@@ -474,6 +473,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\UploadedRiders\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

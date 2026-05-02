@@ -128,6 +128,12 @@
             position: relative;
             overflow: hidden;
         }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         .profile-avatar::after {
             content: '';
@@ -137,6 +143,7 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
         }
 
         .profile-info {
@@ -188,11 +195,6 @@
             animation: fadeIn 0.5s ease-out;
         }
 
-        .content-section:nth-child(2) { animation-delay: 0.1s; }
-        .content-section:nth-child(3) { animation-delay: 0.2s; }
-        .content-section:nth-child(4) { animation-delay: 0.3s; }
-        .content-section:nth-child(5) { animation-delay: 0.4s; }
-
         .content-section:hover {
             border-color: var(--border-hover);
             box-shadow: var(--card-shadow-hover);
@@ -227,6 +229,17 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-bottom: 20px;
+        }
+
+        .personal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .full-width {
+            grid-column: span 2;
         }
 
         .form-group {
@@ -278,9 +291,9 @@
             box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.1);
         }
 
-        .form-input::placeholder {
-            color: var(--muted-text);
-            font-weight: 400;
+        .form-input:disabled {
+            background: var(--bg-lighter);
+            cursor: not-allowed;
         }
 
         .section-actions {
@@ -342,8 +355,7 @@
         .documents-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 15px;
         }
 
         .document-item {
@@ -353,21 +365,22 @@
             padding: 16px 20px;
             border-radius: var(--radius-lg);
             background: var(--bg-lighter);
-            border: 1px solid transparent;
+            border: 1px solid var(--border-light);
             transition: all var(--transition-base);
-            animation: slideUp 0.3s ease-out;
-            animation-fill-mode: both;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-
-        .document-item:nth-child(1) { animation-delay: 0.1s; }
-        .document-item:nth-child(2) { animation-delay: 0.2s; }
-        .document-item:nth-child(3) { animation-delay: 0.3s; }
-        .document-item:nth-child(4) { animation-delay: 0.4s; }
 
         .document-item:hover {
             background: var(--bg-hover);
-            border-color: var(--border-light);
-            transform: translateX(5px);
+            border-color: var(--border-hover);
+        }
+
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
         }
 
         .document-name {
@@ -381,11 +394,11 @@
 
         .document-name i {
             color: var(--primary-maroon);
-            font-size: 13px;
+            font-size: 16px;
         }
 
         .document-status {
-            padding: 6px 12px;
+            padding: 5px 12px;
             border-radius: var(--radius-sm);
             font-size: 11px;
             font-weight: 600;
@@ -405,55 +418,101 @@
             border: 1px solid var(--warning-orange);
         }
 
-        .upload-area {
-            border: 2px dashed var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 30px 20px;
-            text-align: center;
-            background: var(--bg-lighter);
+        .document-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-icon {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
             transition: all var(--transition-base);
-            margin-top: 20px;
-        }
-
-        .upload-area:hover {
-            border-color: var(--primary-maroon);
-            background: var(--primary-maroon-light);
-        }
-
-        .upload-content {
-            display: flex;
-            flex-direction: column;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            border: none;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .upload-icon {
-            width: 48px;
-            height: 48px;
+        .btn-view {
+            background: var(--accent-blue);
+            color: var(--accent-blue-dark);
+            border: 1px solid var(--accent-blue-dark);
+        }
+
+        .btn-view:hover {
+            background: var(--accent-blue-dark);
+            color: white;
+        }
+
+        .btn-upload {
             background: var(--primary-maroon);
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
         }
 
-        .upload-text {
-            color: var(--muted-text);
-            font-size: 14px;
+        .btn-upload:hover {
+            background: var(--primary-maroon-dark);
+            transform: translateY(-1px);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn-file {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
             font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .upload-subtext {
-            color: var(--muted-text);
-            font-size: 12px;
+        .btn-file:hover {
+            background: var(--border-light);
         }
 
         .password-form {
             max-width: 400px;
             margin: 0 auto;
+        }
+        
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-wrapper .form-input {
+            flex: 1;
+            padding-right: 45px;
+            width: 100%;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: var(--muted-text);
+            font-size: 16px;
+            transition: all var(--transition-base);
+            z-index: 10;
+        }
+        
+        .toggle-password:hover {
+            color: var(--primary-maroon);
         }
 
         .password-note {
@@ -463,12 +522,72 @@
             font-style: italic;
         }
 
-        .form-section-spacing {
-            margin-bottom: 35px;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease;
         }
 
-        .form-row-spacing {
-            margin-bottom: 8px;
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: var(--muted-text);
+            transition: all var(--transition-base);
+        }
+
+        .close-modal:hover {
+            color: var(--danger-red);
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .modal-body img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: var(--radius-lg);
+        }
+
+        .modal-body iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: var(--radius-lg);
         }
 
         @keyframes fadeIn {
@@ -476,9 +595,37 @@
             to { opacity: 1; }
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
 
         @media (max-width: 992px) {
@@ -490,9 +637,11 @@
                 text-align: center;
                 gap: 15px;
             }
-            .form-grid {
+            .personal-info-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
+            }
+            .full-width {
+                grid-column: span 1;
             }
         }
 
@@ -509,27 +658,13 @@
             .btn-primary, .btn-secondary {
                 width: 100%;
             }
-            .profile-avatar {
-                width: 70px;
-                height: 70px;
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .profile-wrapper {
-                padding: 15px;
-            }
             .document-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
             }
-            .document-status {
-                align-self: flex-end;
-            }
-            .form-grid {
-                gap: 15px;
+            .document-actions {
+                width: 100%;
+                justify-content: flex-start;
             }
         }
     </style>
@@ -544,24 +679,35 @@
             </div>
         </div>
 
-        <div class="profile-header-card">
-            <div class="profile-header-content">
-                <div class="profile-avatar">
-                    BM
-                </div>
-                <div class="profile-info">
-                    <div class="profile-name">Bryle Andre Magallano</div>
-                    <div class="profile-id">
-                        <i class="fas fa-id-card"></i>
-                        Rider ID: RDR-2024-012
+        <asp:Repeater ID="rptPersonalInfo" runat="server">
+            <ItemTemplate>
+                <div class="profile-header-card">
+                    <div class="profile-header-content">
+                        <div class="profile-avatar">
+                            <asp:Image ID="imgProfile" runat="server" 
+                                ImageUrl='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) %>' 
+                                Visible='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) != null %>'
+                                AlternateText="Profile Photo" />
+                            <asp:Label ID="lblInitials" runat="server" 
+                                Text='<%# GetInitials(Eval("FullName")) %>'
+                                Visible='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) == null %>' 
+                                Font-Size="24px" Font-Bold="true" />
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name"><%# Eval("FullName") %></div>
+                            <div class="profile-id">
+                                <i class="fas fa-id-card"></i>
+                                Rider ID: RDR-<%# Eval("UserID").ToString().PadLeft(4, '0') %>
+                            </div>
+                            <span class="profile-status">
+                                <i class="fas fa-check-circle"></i>
+                                <%# (Eval("RiderStatus") as string) == "available" ? "Available Rider" : "Active Rider" %>
+                            </span>
+                        </div>
                     </div>
-                    <span class="profile-status">
-                        <i class="fas fa-check-circle"></i>
-                        Verified Rider
-                    </span>
                 </div>
-            </div>
-        </div>
+            </ItemTemplate>
+        </asp:Repeater>
 
         <div class="content-section">
             <div class="section-header">
@@ -571,54 +717,61 @@
                 </h3>
             </div>
             
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-user-circle"></i>
-                        Full Name
-                    </label>
-                    <input type="text" class="form-input" value="Bryle Andre Magallano" />
-                </div>
+            <asp:Repeater ID="rptPersonalInfoForm" runat="server">
+                <ItemTemplate>
+                    <div class="personal-info-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user-circle"></i>
+                                Full Name
+                            </label>
+                            <asp:TextBox ID="txtFullName" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("FullName") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-envelope"></i>
-                        Email Address
-                    </label>
-                    <input type="email" class="form-input" value="brylem@gmail.com" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address
+                            </label>
+                            <asp:TextBox ID="txtEmail" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("Email") %>' TextMode="Email" />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-phone"></i>
-                        Phone Number
-                    </label>
-                    <input type="tel" class="form-input" value="(+63) 912 345 6789" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <asp:TextBox ID="txtPhone" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("Phone") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-calendar-alt"></i>
-                        Date of Birth
-                    </label>
-                    <input type="date" class="form-input" value="2003-06-15" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Date Joined
+                            </label>
+                            <asp:TextBox ID="txtDateJoined" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("JoinDate") %>' Enabled="false" />
+                        </div>
 
-                <div class="form-group full">
-                    <label class="form-label">
-                        <i class="fas fa-home"></i>
-                        Address
-                    </label>
-                    <input type="text" class="form-input" value="Greenside, Malagasang, Imus, Cavite" />
-                </div>
-            </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fas fa-home"></i>
+                                Address
+                            </label>
+                            <asp:TextBox ID="txtAddress" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("Address") %>' />
+                        </div>
+                    </div>
 
-            <div class="section-actions">
-                <button class="btn-primary">
-                    <i class="fas fa-save"></i>
-                    Save Changes
-                </button>
-            </div>
+                    <div class="section-actions">
+                        <asp:Button ID="btnSavePersonalInfo" runat="server" CssClass="btn-primary" 
+                            Text="Save Changes" OnClick="btnSavePersonalInfo_Click" />
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
         </div>
 
         <div class="content-section">
@@ -629,62 +782,88 @@
                 </h3>
             </div>
             
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-car"></i>
-                        Vehicle Type
-                    </label>
-                    <input type="text" class="form-input" value="Motorcycle" />
-                </div>
+            <asp:Repeater ID="rptVehicleDetails" runat="server">
+                <ItemTemplate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-car"></i>
+                                Vehicle Type
+                            </label>
+                            <asp:TextBox ID="txtVehicle" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("Vehicle") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-industry"></i>
-                        Make & Model
-                    </label>
-                    <input type="text" class="form-input" value="Honda Click 125" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-industry"></i>
+                                Brand & Model
+                            </label>
+                            <asp:TextBox ID="txtVehicleModel" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("VehicleModel") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-id-badge"></i>
-                        License Plate
-                    </label>
-                    <input type="text" class="form-input" value="ABC-1234" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-id-badge"></i>
+                                License Plate
+                            </label>
+                            <asp:TextBox ID="txtLicensePlate" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("LicensePlate") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-calendar"></i>
-                        Year
-                    </label>
-                    <input type="text" class="form-input" value="2022" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar"></i>
+                                Year
+                            </label>
+                            <asp:TextBox ID="txtVehicleYear" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("VehicleYear") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-palette"></i>
-                        Color
-                    </label>
-                    <input type="text" class="form-input" value="Black" />
-                </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-palette"></i>
+                                Color
+                            </label>
+                            <asp:TextBox ID="txtVehicleColor" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("VehicleColor") %>' />
+                        </div>
 
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-shield-alt"></i>
-                        Insurance
-                    </label>
-                    <input type="text" class="form-input" value="INS-987654" />
-                </div>
-            </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-file-contract"></i>
+                                OR/CR Number
+                            </label>
+                            <asp:TextBox ID="txtORCRNumber" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("ORCRNumber") %>' />
+                        </div>
 
-            <div class="section-actions">
-                <button class="btn-primary">
-                    <i class="fas fa-sync-alt"></i>
-                    Update Vehicle Info
-                </button>
-            </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-shield-alt"></i>
+                                Insurance Policy
+                            </label>
+                            <asp:TextBox ID="txtInsurancePolicy" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("InsurancePolicy") %>' />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Insurance Date
+                            </label>
+                            <asp:TextBox ID="txtInsuranceDate" runat="server" CssClass="form-input" 
+                                Text='<%# Eval("InsuranceDate", "{0:yyyy-MM-dd}") %>' TextMode="Date" />
+                        </div>
+                    </div>
+
+                    <div class="section-actions">
+                        <asp:Button ID="btnSaveVehicleInfo" runat="server" CssClass="btn-primary" 
+                            Text="Update Vehicle Info" OnClick="btnSaveVehicleInfo_Click" />
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
         </div>
 
         <div class="content-section">
@@ -696,55 +875,37 @@
             </div>
             
             <div class="documents-list">
-                <div class="document-item">
-                    <div class="document-name">
-                        <i class="fas fa-id-card"></i>
-                        Driver's License
-                    </div>
-                    <span class="document-status status-verified">
-                        Verified
-                    </span>
-                </div>
-
-                <div class="document-item">
-                    <div class="document-name">
-                        <i class="fas fa-file-contract"></i>
-                        Vehicle Registration
-                    </div>
-                    <span class="document-status status-verified">
-                        Verified
-                    </span>
-                </div>
-
-                <div class="document-item">
-                    <div class="document-name">
-                        <i class="fas fa-shield-alt"></i>
-                        Insurance Certificate
-                    </div>
-                    <span class="document-status status-pending">
-                        Pending Review
-                    </span>
-                </div>
-
-                <div class="document-item">
-                    <div class="document-name">
-                        <i class="fas fa-user-check"></i>
-                        Background Check
-                    </div>
-                    <span class="document-status status-verified">
-                        Verified
-                    </span>
-                </div>
-            </div>
-
-            <div class="upload-area">
-                <div class="upload-content">
-                    <div class="upload-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <div class="upload-text">Upload New Document</div>
-                    <div class="upload-subtext">PDF, JPG, or PNG up to 5MB</div>
-                </div>
+                <asp:Repeater ID="rptDocuments" runat="server" OnItemDataBound="rptDocuments_ItemDataBound">
+                    <ItemTemplate>
+                        <div class="document-item">
+                            <div class="document-info">
+                                <div class="document-name">
+                                    <i class="fas <%# GetDocumentIcon(Eval("DocumentName").ToString()) %>"></i>
+                                    <%# Eval("DocumentName") %>
+                                </div>
+                                <span class="document-status <%# GetStatusClass(Eval("Status").ToString()) %>">
+                                    <i class="fas <%# Eval("Status").ToString() == "Verified" ? "fa-check-circle" : "fa-clock" %>"></i>
+                                    <%# Eval("Status") %>
+                                </span>
+                            </div>
+                            <div class="document-actions">
+                                <%# !string.IsNullOrEmpty(Eval("FilePath").ToString()) && Eval("FilePath").ToString() != "Not Uploaded" && Eval("FilePath").ToString() != "" ? 
+                                    $"<button type=\"button\" class=\"btn-icon btn-view\" onclick=\"viewDocument('{Eval("FilePath")}', '{Eval("DocumentName")}')\"><i class=\"fas fa-eye\"></i> View</button>" : 
+                                    "<button class=\"btn-icon btn-view\" disabled style=\"opacity:0.5; cursor:not-allowed;\"><i class=\"fas fa-eye\"></i> View</button>" %>
+                                
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="fileUpload_<%# Eval("DocumentColumn") %>" class="hidden-file-input" style="display:none;" accept=".jpg,.jpeg,.png,.pdf" />
+                                    <button type="button" class="btn-file" onclick="triggerFileUpload('<%# Eval("DocumentColumn") %>')">
+                                        <i class="fas fa-cloud-upload-alt"></i> Choose File
+                                    </button>
+                                </div>
+                                <asp:Button ID="btnUpload" runat="server" Text="Upload" CssClass="btn-icon btn-upload" 
+                                    CommandArgument='<%# Eval("DocumentColumn") %>' OnClick="UploadDocument" 
+                                    UseSubmitBehavior="false" />
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
             </div>
         </div>
 
@@ -762,7 +923,11 @@
                         <i class="fas fa-key"></i>
                         Current Password
                     </label>
-                    <input type="password" class="form-input" placeholder="Enter current password" />
+                    <div class="password-wrapper">
+                        <asp:TextBox ID="txtCurrentPassword" runat="server" CssClass="form-input" 
+                            TextMode="Password" placeholder="Enter current password" ClientIDMode="Static" />
+                        <i class="fas fa-eye toggle-password" data-target="txtCurrentPassword"></i>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -770,8 +935,14 @@
                         <i class="fas fa-key"></i>
                         New Password
                     </label>
-                    <input type="password" class="form-input" placeholder="Enter new password" />
-                    <div class="password-note">Must be at least 8 characters with letters and numbers</div>
+                    <div class="password-wrapper">
+                        <asp:TextBox ID="txtNewPassword" runat="server" CssClass="form-input" 
+                            TextMode="Password" placeholder="Enter new password" ClientIDMode="Static" />
+                        <i class="fas fa-eye toggle-password" data-target="txtNewPassword"></i>
+                    </div>
+                    <div class="password-note">
+                        <i class="fas fa-info-circle"></i> Must be at least 8 characters with letters and numbers
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -779,123 +950,194 @@
                         <i class="fas fa-key"></i>
                         Confirm New Password
                     </label>
-                    <input type="password" class="form-input" placeholder="Confirm new password" />
+                    <div class="password-wrapper">
+                        <asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-input" 
+                            TextMode="Password" placeholder="Confirm new password" ClientIDMode="Static" />
+                        <i class="fas fa-eye toggle-password" data-target="txtConfirmPassword"></i>
+                    </div>
                 </div>
 
                 <div class="section-actions">
-                    <button class="btn-primary">
-                        <i class="fas fa-lock"></i>
-                        Update Password
-                    </button>
+                    <asp:Button ID="btnChangePassword" runat="server" CssClass="btn-primary" 
+                        Text="Update Password" OnClick="btnChangePassword_Click" />
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="documentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Document Viewer</h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const saveButtons = document.querySelectorAll('.btn-primary');
-
-            saveButtons.forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault();
-
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-                    this.disabled = true;
-
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                        this.disabled = false;
-                        showNotification('Changes saved successfully!', 'success');
-                    }, 1500);
-                });
-            });
-
-            const uploadArea = document.querySelector('.upload-area');
-            uploadArea.addEventListener('click', function () {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = '.pdf,.jpg,.jpeg,.png';
-                fileInput.style.display = 'none';
-
-                fileInput.addEventListener('change', function (e) {
-                    if (this.files.length > 0) {
-                        const file = this.files[0];
-                        const fileSize = (file.size / 1024 / 1024).toFixed(2);
-
-                        if (fileSize > 5) {
-                            showNotification('File size must be less than 5MB', 'warning');
-                            return;
-                        }
-
-                        showNotification(`Uploading ${file.name}...`, 'info');
-
-                        setTimeout(() => {
-                            showNotification('Document uploaded successfully! It will be reviewed shortly.', 'success');
-                        }, 2000);
-                    }
-                });
-
-                document.body.appendChild(fileInput);
-                fileInput.click();
-                document.body.removeChild(fileInput);
-            });
-
-            function showNotification(message, type) {
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 15px 20px;
-                    background: ${type === 'success' ? 'var(--success-green)' :
-                        type === 'info' ? 'var(--accent-blue-dark)' :
-                            type === 'warning' ? 'var(--warning-orange)' : 'var(--danger-red)'};
-                    color: white;
-                    border-radius: var(--radius-md);
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 10001;
-                    animation: slideInRight 0.3s ease;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    max-width: 300px;
-                    font-family: 'Poppins', sans-serif;
-                `;
-                notification.innerHTML = `
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' :
-                        type === 'info' ? 'fa-info-circle' :
-                            type === 'warning' ? 'fa-exclamation-triangle' :
-                                'fa-exclamation-circle'}"></i>
-                    <span>${message}</span>
-                `;
-
-                document.body.appendChild(notification);
-
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#2d9d78' :
+                    type === 'info' ? '#3b82f6' :
+                        type === 'warning' ? '#d97706' : '#b91c1c'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10001;
+                animation: slideInRight 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                max-width: 300px;
+                font-family: 'Poppins', sans-serif;
+            `;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' :
+                    type === 'info' ? 'fa-info-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' :
+                            'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
                 setTimeout(() => {
-                    notification.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => {
+                    if (notification.parentNode) {
                         document.body.removeChild(notification);
-                    }, 300);
-                }, 3000);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function initializePasswordToggles() {
+            setTimeout(function () {
+                const toggleIcons = document.querySelectorAll('.toggle-password');
+                toggleIcons.forEach(function (icon) {
+                    const newIcon = icon.cloneNode(true);
+                    if (icon.parentNode) {
+                        icon.parentNode.replaceChild(newIcon, icon);
+                    }
+
+                    newIcon.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const targetId = this.getAttribute('data-target');
+                        const passwordInput = document.getElementById(targetId);
+
+                        if (passwordInput) {
+                            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                            passwordInput.setAttribute('type', type);
+                            this.classList.toggle('fa-eye');
+                            this.classList.toggle('fa-eye-slash');
+                        } else {
+                            console.log('Password input not found:', targetId);
+                        }
+                    });
+                });
+            }, 100);
+        }
+
+        function triggerFileUpload(documentColumn) {
+            const fileInputId = 'fileUpload_' + documentColumn;
+            let fileInput = document.getElementById(fileInputId);
+
+            if (!fileInput) {
+                fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.id = fileInputId;
+                fileInput.className = 'hidden-file-input';
+                fileInput.style.display = 'none';
+                fileInput.accept = '.jpg,.jpeg,.png,.pdf';
+                document.body.appendChild(fileInput);
             }
 
-            if (!document.querySelector('#notification-styles')) {
-                const style = document.createElement('style');
-                style.id = 'notification-styles';
-                style.textContent = `
-                    @keyframes slideInRight {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
+            fileInput.click();
+
+            fileInput.onchange = function () {
+                if (this.files && this.files[0]) {
+                    const fileName = this.files[0].name;
+                    const btn = document.querySelector(`button[onclick="triggerFileUpload('${documentColumn}')"]`);
+                    if (btn) {
+                        btn.innerHTML = `<i class="fas fa-check"></i> ${fileName.substring(0, 20)}${fileName.length > 20 ? '...' : ''}`;
                     }
-                    @keyframes slideOutRight {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
+
+                    window.selectedFiles = window.selectedFiles || {};
+                    window.selectedFiles[documentColumn] = this.files[0];
+
+                    const uploadBtn = btn ? btn.parentElement.querySelector('.btn-upload') : null;
+                    if (uploadBtn) {
+                        uploadBtn.style.opacity = '1';
+                        uploadBtn.style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            if (uploadBtn) uploadBtn.style.transform = 'scale(1)';
+                        }, 200);
                     }
-                `;
-                document.head.appendChild(style);
+                }
+            };
+        }
+
+        function viewDocument(filePath, documentName) {
+            const modal = document.getElementById('documentModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (!modal || !modalBody) {
+                console.error('Modal elements not found');
+                showNotification('Error opening document viewer', 'error');
+                return;
             }
+
+            modalTitle.textContent = documentName || 'Document Viewer';
+
+            // Resolve the correct path
+            let resolvedPath = filePath;
+            if (filePath && !filePath.startsWith('http') && !filePath.startsWith('/') && !filePath.startsWith('~')) {
+                resolvedPath = window.location.origin + '/' + filePath.replace(/^~/, '');
+            } else if (filePath && filePath.startsWith('~')) {
+                resolvedPath = window.location.origin + filePath.substring(1);
+            }
+
+            const fileExtension = filePath.split('.').pop().toLowerCase();
+
+            if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                modalBody.innerHTML = `<img src="${resolvedPath}" alt="${documentName}" style="max-width:100%; max-height:500px;" onerror="this.onerror=null; this.src=''; this.alt='Image not found'; showNotification('Image not found', 'error');" />`;
+            } else if (fileExtension === 'pdf') {
+                modalBody.innerHTML = `<iframe src="${resolvedPath}" style="width:100%; height:500px; border:none;"></iframe>`;
+            } else {
+                modalBody.innerHTML = `<p>Unable to preview this file type. <a href="${resolvedPath}" target="_blank">Click here to download</a></p>`;
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('documentModal');
+            const modalBody = document.getElementById('modalBody');
+            if (modal) modal.style.display = 'none';
+            if (modalBody) modalBody.innerHTML = '<p>Loading...</p>';
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('documentModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializePasswordToggles();
         });
+
+        function pageLoad() {
+            initializePasswordToggles();
+        }
     </script>
 </asp:Content>
