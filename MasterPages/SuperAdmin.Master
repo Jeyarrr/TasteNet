@@ -1,35 +1,64 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="SuperAdmin.master.cs" Inherits="TasteNet.MasterPages.SuperAdmin" %>
+﻿<%@ Master Language="C#" CodeFile="SuperAdmin.master.cs" Inherits="TasteNet.MasterPages.SuperAdmin" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head runat="server">
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>TasteNet Admin</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: #1e1e1e;
-            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fc;
             overflow: hidden;
+            position: relative;
         }
         
         .sidebar {
-            width: 260px;
+            width: 260px !important;
+            min-width: 260px !important;
+            max-width: 260px !important;
             height: 100vh;
-            background: linear-gradient(180deg, #7b0000, #3b0000);
-            color: #fff;
+            background: linear-gradient(180deg, #6b1a1a 0%, #4a0e0e 100%);
+            color: #ffffff;
             position: fixed;
+            top: 0;
+            left: 0;
             overflow-y: auto;
             overflow-x: hidden;
+            z-index: 100;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            will-change: width;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: 70px !important;
+            min-width: 70px !important;
+            max-width: 70px !important;
         }
         
         .sidebar::-webkit-scrollbar { 
-            width: 6px; 
+            width: 3px; 
         }
         
         .sidebar::-webkit-scrollbar-track { 
@@ -42,257 +71,609 @@
         }
         
         .sidebar-header {
-            text-align: center;
-            padding: 20px 15px;
-            border-bottom: 1px solid rgba(255,255,255,.2);
+            padding: 18px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .sidebar-header {
+            padding: 18px 0;
+            justify-content: center;
+        }
+        
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .logo-wrapper {
+            justify-content: center;
         }
         
         .sidebar-header img {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 10px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #ffc107;
+            transition: transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
         }
         
-        .sidebar-header h2 {
-            margin: 0;
-            font-size: 18px;
+        .sidebar-header img:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 14px;
+            font-weight: 700;
             color: #ffc107;
-            line-height: 1.2;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
         }
         
-        .sidebar-header span {
-            font-size: 13px;
-            opacity: .9;
+        .sidebar.collapsed .logo-text {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
         }
         
-        .menu { 
-            padding: 15px 0;
-        }
-        
-        .sidebar .menu-title {
-            padding: 8px 20px;
-            font-size: 11px !important;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.5);
-            margin-top: 5px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            display: block;
-        }
-        
-        .sidebar .menu a {
+        .collapse-btn-circle {
+            width: 28px;
+            height: 28px;
+            background: #ffc107;
+            border-radius: 6px;
             display: flex;
             align-items: center;
-            padding: 12px 20px;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 14px !important;
-            border-left: 4px solid transparent;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .sidebar .menu a i {
-            width: 25px;
-            font-size: 16px !important;
-            text-align: center;
-            transition: all 0.3s ease;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            color: #4a0e0e;
+            font-size: 12px;
+            transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             flex-shrink: 0;
         }
         
-        .sidebar .menu a span {
-            margin-left: 10px;
-            transition: all 0.3s ease;
-            font-size: 14px !important;
-            font-family: 'Poppins', sans-serif;
+        .sidebar.collapsed .collapse-btn-circle {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffc107;
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar.collapsed .collapse-btn-circle:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+        
+        .collapse-btn-circle:hover {
+            background: #ffd700;
+            transform: scale(1.02);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+        }
+        
+        .menu { 
+            padding: 0 12px;
+            padding-bottom: 80px;
+            transition: padding 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .menu {
+            padding: 0 8px;
+            padding-bottom: 80px;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            margin-bottom: 2px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .sidebar.collapsed .menu-item {
+            justify-content: center;
+            padding: 8px 0;
+            gap: 0;
+            margin-bottom: 4px;
+        }
+        
+        .menu-item i {
+            width: 18px;
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            flex-shrink: 0;
+        }
+        
+        .sidebar.collapsed .menu-item i {
+            width: auto;
+            font-size: 18px;
+        }
+        
+        .menu-item span {
+            transition: all 0.2s ease;
+            font-size: 13px;
             white-space: nowrap;
         }
         
-        /* Hover Effects */
-        .sidebar .menu a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffc107 !important;
-            border-left: 4px solid #ffc107;
-            padding-left: 25px;
+        .sidebar.collapsed .menu-item span {
+            display: none;
         }
         
-        .sidebar .menu a:hover i {
-            transform: translateX(3px);
-            color: #ffc107;
-        }
-        
-        .sidebar .menu a:hover span {
-            transform: translateX(3px);
-        }
-        
-        /* Active State - MUSTARD COLOR */
-        .sidebar .menu a.active {
+        .menu-item:hover {
             background: rgba(255, 193, 7, 0.15);
-            color: #ffc107 !important;
-            border-left: 4px solid #ffc107;
+            transform: translateX(4px);
+        }
+        
+        .sidebar.collapsed .menu-item:hover {
+            transform: translateX(0) scale(1.05);
+        }
+        
+        .menu-item:hover i {
+            color: #ffc107;
+            transform: translateX(3px) scale(1.1);
+        }
+        
+        .sidebar.collapsed .menu-item:hover i {
+            transform: scale(1.15);
+        }
+        
+        .menu-item:hover span {
+            color: #ffc107;
+            letter-spacing: 0.3px;
+        }
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 193, 7, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .menu-item:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+        
+        .menu-item i,
+        .menu-item span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .menu-item.active {
+            background: rgba(255, 193, 7, 0.2);
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+        }
+        
+        .menu-item.active i {
+            color: #ffc107;
+            filter: drop-shadow(0 0 3px rgba(255, 193, 7, 0.5));
+        }
+        
+        .menu-item.active span {
+            color: #ffc107;
             font-weight: 600;
         }
         
-        .sidebar .menu a.active i {
+        @keyframes menuPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.6);
+                background: rgba(255, 193, 7, 0.2);
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.02);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(255, 193, 7, 0.2);
+                background: rgba(255, 193, 7, 0.35);
+                transform: scale(1.02);
+            }
+            75% {
+                transform: scale(1.01);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+                background: rgba(255, 193, 7, 0.2);
+                transform: scale(1);
+            }
+        }
+        
+        .menu-item.active.pulse-animation {
+            animation: menuPulse 0.7s cubic-bezier(0.4, 0, 0.2, 1) 2;
+        }
+        
+        .menu-item.active:hover {
+            background: rgba(255, 193, 7, 0.3);
+            transform: translateX(4px);
+            box-shadow: 0 2px 12px rgba(255, 193, 7, 0.3);
+        }
+        
+        .sidebar.collapsed .menu-item.active:hover {
+            transform: scale(1.08);
+        }
+        
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 0;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+        
+        .menu-divider:hover {
+            background: rgba(255, 193, 7, 0.3);
+            transition: background 0.3s;
+        }
+        
+        .sidebar.collapsed .menu-divider {
+            margin: 8px 0;
+        }
+        
+        .sidebar.collapsed .menu-item {
+            position: relative;
+        }
+        
+        .sidebar.collapsed .menu-item:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 62px;
+            background: linear-gradient(135deg, #ffc107, #ffb300);
+            color: #4a0e0e;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+            animation: tooltipFadeIn 0.2s ease;
+        }
+        
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .master-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar.collapsed .master-footer {
+            padding: 12px 0;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        
+        .user-info:hover .user-avatar {
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+        }
+        
+        .sidebar.collapsed .user-info {
+            justify-content: center;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ffc107;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a0e0e;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
+            cursor: default;
+        }
+        
+        .user-details {
+            flex: 1;
+            min-width: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .sidebar.collapsed .user-details {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .user-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        
+        .user-role {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+        }
+        
+        .logout-icon {
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .logout-icon:hover {
             color: #ffc107;
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 4px rgba(255, 193, 7, 0.5));
+        }
+        
+        .sidebar.collapsed .logout-icon {
+            display: none;
         }
         
         .content {
             margin-left: 260px;
-            padding: 20px;
-            color: #fff;
+            padding: 20px 28px;
+            background: #f8f9fc;
+            min-height: 100vh;
             height: 100vh;
             overflow-y: auto;
+            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: margin-left;
+            transform: translateZ(0);
         }
         
-        @media screen and (max-height: 750px) {
-            .sidebar-header {
-                padding: 15px 15px;
+        .sidebar.collapsed ~ .content {
+            margin-left: 70px;
+        }
+        
+        .content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .content::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        
+        .content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+        .content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .content > * {
+            max-width: 100%;
+        }
+        
+        .content {
+            animation: contentFadeIn 0.3s ease;
+        }
+        
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
             }
-            
-            .sidebar-header img {
-                width: 50px;
-                height: 50px;
-                margin-bottom: 8px;
-            }
-            
-            .sidebar-header h2 {
-                font-size: 16px;
-            }
-            
-            .sidebar .menu-title {
-                padding: 6px 20px;
-                margin-top: 3px;
-                font-size: 10px !important;
-            }
-            
-            .sidebar .menu a {
-                padding: 10px 20px;
-                font-size: 13px !important;
-            }
-            
-            .sidebar .menu a:hover {
-                padding-left: 22px;
-            }
-            
-            .sidebar .menu a i {
-                font-size: 15px !important;
-            }
-
-            .sidebar .menu a span {
-                font-size: 13px !important;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
         
-        @media screen and (max-height: 600px) {
-            .sidebar-header {
-                padding: 10px 15px;
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 16px;
+                margin-left: 70px;
             }
             
-            .sidebar-header img {
-                width: 40px;
-                height: 40px;
-                margin-bottom: 5px;
+            .sidebar {
+                width: 70px !important;
+                min-width: 70px !important;
+                max-width: 70px !important;
             }
             
-            .sidebar-header h2 {
-                font-size: 14px;
+            .sidebar .logo-text,
+            .sidebar .menu-item span,
+            .sidebar .user-details,
+            .sidebar .logout-icon {
+                display: none;
             }
             
-            .sidebar-header span {
-                font-size: 11px;
+            .sidebar .menu-item {
+                justify-content: center;
+                padding: 8px 0;
             }
             
-            .sidebar .menu-title {
-                padding: 4px 20px;
-                font-size: 9px !important;
+            .sidebar .sidebar-header {
+                padding: 18px 0;
+                justify-content: center;
             }
             
-            .sidebar .menu a {
-                padding: 8px 20px;
-                font-size: 12px !important;
+            .sidebar.collapsed .collapse-btn-circle {
+                bottom: 16px;
             }
             
-            .sidebar .menu a:hover {
-                padding-left: 20px;
+            .sidebar .master-footer {
+                padding: 12px 0;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 60px;
             }
             
-            .sidebar .menu a i {
-                font-size: 14px !important;
+            .sidebar .user-info {
+                justify-content: center;
             }
-
-            .sidebar .menu a span {
-                font-size: 12px !important;
+            
+            .content {
+                margin-left: 70px;
             }
+        }
+        
+        .sidebar * {
+            box-sizing: border-box;
+        }
+        
+        .menu-item.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background: #ffc107;
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
+        }
+        
+        .sidebar.collapsed .menu-item.active::after {
+            left: auto;
+            right: 0;
+            width: 3px;
+        }
+        
+        .sidebar,
+        .sidebar * {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
 <body>
     <form runat="server">
-        <div class="sidebar">
+        <div class="sidebar" id="masterSidebar">
             <div class="sidebar-header">
-                <img src="/Images/LOGO.png" alt="Logo" onerror="this.src='https://via.placeholder.com/80';" />
-                <h2>Caballeros TasteNet</h2>
-                <span>Super Admin</span>
+                <div class="logo-wrapper">
+                    <img src="/Images/LOGO.png" alt="Logo" onerror="this.src='https://via.placeholder.com/38';" loading="lazy" />
+                    <span class="logo-text">TasteNet</span>
+                </div>
+                <button type="button" class="collapse-btn-circle" id="collapseBtn">
+                    <i class="fa-solid fa-chevron-left" id="chevronIcon"></i>
+                </button>
             </div>
             
             <div class="menu" id="nav-menu">
-                <div class="menu-title">Overview</div>
-                <a href="/Users/SuperAdmin/Dashboard.aspx" id="link-dashboard">
+                <a href="/Users/SuperAdmin/Dashboard.aspx" class="menu-item" id="link-dashboard" data-tooltip="Dashboard">
                     <i class="fa-solid fa-house"></i>
                     <span>Dashboard</span>
                 </a>
                 
-                <div class="menu-title">Menu & Stock</div>
-                <a href="/Users/SuperAdmin/Inventory.aspx" id="link-inventory">
+                <div class="menu-divider"></div>
+                
+                <a href="/Users/SuperAdmin/Inventory.aspx" class="menu-item" id="link-inventory" data-tooltip="Inventory">
                     <i class="fa-solid fa-box"></i>
                     <span>Inventory</span>
                 </a>
-                <a href="/Users/SuperAdmin/Menu.aspx" id="link-menu">
+                <a href="/Users/SuperAdmin/Menu.aspx" class="menu-item" id="link-menu" data-tooltip="Menu">
                     <i class="fa-solid fa-utensils"></i>
                     <span>Menu</span>
                 </a>
-                <a href="/Users/SuperAdmin/Ticketing.aspx" id="link-ticketing">
+                <a href="/Users/SuperAdmin/Ticketing.aspx" class="menu-item" id="link-ticketing" data-tooltip="Ticketing">
                     <i class="fa-solid fa-ticket"></i>
                     <span>Ticketing</span>
                 </a>
                 
-                <div class="menu-title">Payments</div>
-                <a href="/Users/SuperAdmin/Transactions.aspx" id="link-transaction">
-                    <i class="fa-solid fa-dollar-sign"></i>
-                    <span>Transaction</span>
-                </a>
+                <div class="menu-divider"></div>
                 
-                <div class="menu-title">Analytics</div>
-                <a href="/Users/SuperAdmin/Reports.aspx" id="link-reports">
+                <a href="/Users/SuperAdmin/Transactions.aspx" class="menu-item" id="link-transaction" data-tooltip="Transactions">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    <span>Transactions</span>
+                </a>
+                <a href="/Users/SuperAdmin/Reports.aspx" class="menu-item" id="link-reports" data-tooltip="Reports">
                     <i class="fa-solid fa-chart-column"></i>
                     <span>Reports</span>
                 </a>
                 
+                <div class="menu-divider"></div>
                 
-                <div class="menu-title">Users</div>
-                <a href="/Users/SuperAdmin/CustomerManagement.aspx" id="link-customer">
-                    <i class="fa-solid fa-user"></i>
-                    <span>Customer</span>
+                <a href="/Users/SuperAdmin/CustomerManagement.aspx" class="menu-item" id="link-customer" data-tooltip="Customers">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Customers</span>
                 </a>
-                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx" id="link-delivery">
+                <a href="/Users/SuperAdmin/DeliveryPersonnel.aspx" class="menu-item" id="link-delivery" data-tooltip="Delivery">
                     <i class="fa-solid fa-motorcycle"></i>
-                    <span>Delivery Personnel</span>
+                    <span>Delivery</span>
                 </a>
-                
-                <div class="menu-title">Account</div>
-                <a href="/Users/SuperAdmin/Settings.aspx" id="link-settings">
+                <a href="/Users/SuperAdmin/Settings.aspx" class="menu-item" id="link-settings" data-tooltip="Settings">
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
                 </a>
-                <a href="/Login.aspx" id="link-logout">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Log Out</span>
-                </a>
+            </div>
+            
+            <div class="master-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name">Evelyn Caballero</div>
+                        <div class="user-role">Super Admin</div>
+                    </div>
+                    <a href="/Login.aspx" class="logout-icon">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </div>
             </div>
         </div>
         
@@ -302,91 +683,203 @@
     </form>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get current page URL
-            var currentPath = window.location.pathname;
+        (function () {
+            var savedState = localStorage.getItem('sidebarCollapsed');
+            var sidebar = document.getElementById('masterSidebar');
+            var chevronIcon = document.getElementById('chevronIcon');
 
-            // Remove query strings and convert to lowercase for comparison
-            var currentPage = currentPath.split('?')[0].toLowerCase();
-
-            // Get all navigation links
-            var navLinks = document.querySelectorAll('.menu a');
-
-            // Remove active class from all links first
-            navLinks.forEach(function (link) {
-                link.classList.remove('active');
-            });
-
-            // Check each link to see if it matches current page
-            navLinks.forEach(function (link) {
-                var linkHref = link.getAttribute('href');
-
-                if (linkHref) {
-                    // Clean up link path
-                    var linkPath = linkHref.split('?')[0].toLowerCase();
-
-                    // Check for exact match first
-                    if (currentPage === linkPath) {
-                        link.classList.add('active');
-                        return;
+            if (sidebar) {
+                if (savedState === 'true') {
+                    sidebar.classList.add('collapsed');
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(180deg)';
                     }
-
-                    // Check if current page contains the link path (for nested pages)
-                    // Example: /Users/SuperAdmin/TransactionDetails.aspx should highlight Transaction link
-                    if (currentPage.includes(linkPath) && linkPath !== '/') {
-                        link.classList.add('active');
-                        return;
-                    }
-
-                    // Check for dashboard as default homepage
-                    if ((currentPage === '/' || currentPage === '/users/superadmin/default.aspx') &&
-                        linkPath.includes('dashboard')) {
-                        link.classList.add('active');
-                        return;
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(0deg)';
                     }
                 }
-            });
+            }
+        })();
 
-            // If still no active link found, try to match by page name
-            if (!document.querySelector('.menu a.active')) {
-                var pageName = currentPage.split('/').pop(); // Get last part of URL
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById('masterSidebar');
+            const collapseBtn = document.getElementById('collapseBtn');
+            const chevronIcon = document.getElementById('chevronIcon');
+
+            function collapseSidebar() {
+                if (sidebar && !sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.add('collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(180deg)';
+                    }
+                }
+            }
+
+            function expandSidebar() {
+                if (sidebar && sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+
+            function toggleSidebar() {
+                if (sidebar.classList.contains('collapsed')) {
+                    expandSidebar();
+                } else {
+                    collapseSidebar();
+                }
+            }
+
+            if (collapseBtn) {
+                collapseBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSidebar();
+                });
+            }
+
+            function triggerPulseOnActiveModule() {
+                const activeMenuItem = document.querySelector('.menu-item.active');
+                if (activeMenuItem) {
+                    activeMenuItem.classList.remove('pulse-animation');
+                    void activeMenuItem.offsetWidth;
+                    activeMenuItem.classList.add('pulse-animation');
+
+                    setTimeout(() => {
+                        if (activeMenuItem) {
+                            activeMenuItem.classList.remove('pulse-animation');
+                        }
+                    }, 1500);
+                }
+            }
+
+            function setActiveMenu() {
+                var currentPath = window.location.pathname;
+                var currentPage = currentPath.split('?')[0].toLowerCase();
+                var navLinks = document.querySelectorAll('.menu-item');
+
+                navLinks.forEach(function (link) {
+                    link.classList.remove('active');
+                });
 
                 navLinks.forEach(function (link) {
                     var linkHref = link.getAttribute('href');
+
                     if (linkHref) {
-                        var linkPage = linkHref.split('/').pop().toLowerCase();
+                        var linkPath = linkHref.split('?')[0].toLowerCase();
 
-                        // Remove .aspx extension for comparison
-                        pageName = pageName.replace('.aspx', '');
-                        linkPage = linkPage.replace('.aspx', '');
-
-                        // If page names match
-                        if (pageName === linkPage) {
+                        if (currentPage === linkPath) {
                             link.classList.add('active');
                             return;
                         }
 
-                        // Check for partial match (e.g., "transaction" in "transactiondetails")
-                        if (pageName.includes(linkPage) || linkPage.includes(pageName)) {
+                        if (currentPage.includes(linkPath) && linkPath !== '/' && linkPath.length > 1) {
+                            link.classList.add('active');
+                            return;
+                        }
+
+                        if ((currentPage === '/' || currentPage === '/users/superadmin/default.aspx' || currentPage === '/default.aspx') &&
+                            linkPath.includes('dashboard')) {
                             link.classList.add('active');
                             return;
                         }
                     }
                 });
-            }
 
-            // Add hover effects
-            navLinks.forEach(function (link) {
-                if (!link.classList.contains('active')) {
-                    link.addEventListener('mouseenter', function () {
-                        this.style.transform = 'translateX(3px)';
-                    });
+                if (!document.querySelector('.menu-item.active')) {
+                    var pageName = currentPage.split('/').pop();
 
-                    link.addEventListener('mouseleave', function () {
-                        this.style.transform = 'translateX(0)';
+                    navLinks.forEach(function (link) {
+                        var linkHref = link.getAttribute('href');
+                        if (linkHref) {
+                            var linkPage = linkHref.split('/').pop().toLowerCase();
+                            var cleanPageName = pageName.replace('.aspx', '');
+                            var cleanLinkPage = linkPage.replace('.aspx', '');
+
+                            if (cleanPageName === cleanLinkPage) {
+                                link.classList.add('active');
+                                return;
+                            }
+
+                            if (cleanPageName.includes(cleanLinkPage) && cleanLinkPage.length > 3) {
+                                link.classList.add('active');
+                                return;
+                            }
+                        }
                     });
                 }
+
+                triggerPulseOnActiveModule();
+            }
+
+            setActiveMenu();
+
+            const allMenuLinks = document.querySelectorAll('.menu-item');
+            allMenuLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    const currentState = isCollapsed ? 'true' : 'false';
+
+                    localStorage.setItem('sidebarCollapsed', currentState);
+
+                    const clickedLink = e.currentTarget;
+                    clickedLink.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        if (clickedLink) {
+                            clickedLink.style.transform = '';
+                        }
+                    }, 150);
+
+                });
             });
+
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    var savedState = localStorage.getItem('sidebarCollapsed');
+                    if (sidebar) {
+                        if (savedState === 'true') {
+                            sidebar.classList.add('collapsed');
+                            if (chevronIcon) {
+                                chevronIcon.style.transform = 'rotate(180deg)';
+                            }
+                        } else {
+                            sidebar.classList.remove('collapsed');
+                            if (chevronIcon) {
+                                chevronIcon.style.transform = 'rotate(0deg)';
+                            }
+                        }
+                    }
+                    setActiveMenu();
+                }
+            });
+
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.attributeName === 'class') {
+                        const savedState = localStorage.getItem('sidebarCollapsed');
+                        const currentState = sidebar.classList.contains('collapsed') ? 'true' : 'false';
+                        if (savedState !== currentState && savedState !== null) {
+                            if (savedState === 'true') {
+                                sidebar.classList.add('collapsed');
+                                if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
+                            } else {
+                                sidebar.classList.remove('collapsed');
+                                if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
+                            }
+                        }
+                    }
+                });
+            });
+
+            if (sidebar) {
+                observer.observe(sidebar, { attributes: true });
+            }
         });
     </script>
 </body>

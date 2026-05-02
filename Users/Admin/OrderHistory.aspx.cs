@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Newtonsoft.Json;
 
 namespace TasteNet.Users.Admin
 {
@@ -22,6 +24,19 @@ namespace TasteNet.Users.Admin
                 LoadStatistics();
                 LoadOrders();
             }
+            else
+            {
+                if (ViewState["CurrentPage"] != null)
+                {
+                    CurrentPage = (int)ViewState["CurrentPage"];
+                }
+                LoadOrders();
+            }
+        }
+
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            ViewState["CurrentPage"] = CurrentPage;
         }
 
         private void LoadStatistics()
@@ -30,39 +45,27 @@ namespace TasteNet.Users.Admin
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = @"
-                        SELECT 
-                            (SELECT COUNT(*) FROM Tickets) AS TotalOrders,
-                            (SELECT COUNT(*) FROM Tickets WHERE Status = 'Completed') AS CompletedOrders,
-                            (SELECT COUNT(*) FROM Tickets WHERE Status = 'In Progress') AS InProgressOrders,
-                            ISNULL((SELECT SUM(TotalAmount) FROM Tickets WHERE Status = 'Completed'), 0) AS TotalRevenue";
+                    conn.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmdTotal = new SqlCommand("SELECT COUNT(*) FROM Tickets", conn))
                     {
-                        conn.Open();
-                        object result = cmd.ExecuteScalar();
+                        lblTotalOrders.Text = cmdTotal.ExecuteScalar().ToString();
+                    }
 
-                        // Get total orders count
-                        using (SqlCommand cmdTotal = new SqlCommand("SELECT COUNT(*) FROM Tickets", conn))
-                        {
-                            lblTotalOrders.Text = cmdTotal.ExecuteScalar().ToString();
-                        }
+                    using (SqlCommand cmdCompleted = new SqlCommand("SELECT COUNT(*) FROM Tickets WHERE Status = 'Completed'", conn))
+                    {
+                        lblCompletedOrders.Text = cmdCompleted.ExecuteScalar().ToString();
+                    }
 
-                        using (SqlCommand cmdCompleted = new SqlCommand("SELECT COUNT(*) FROM Tickets WHERE Status = 'Completed'", conn))
-                        {
-                            lblCompletedOrders.Text = cmdCompleted.ExecuteScalar().ToString();
-                        }
+                    using (SqlCommand cmdProgress = new SqlCommand("SELECT COUNT(*) FROM Tickets WHERE Status = 'In Progress'", conn))
+                    {
+                        lblInProgressOrders.Text = cmdProgress.ExecuteScalar().ToString();
+                    }
 
-                        using (SqlCommand cmdProgress = new SqlCommand("SELECT COUNT(*) FROM Tickets WHERE Status = 'In Progress'", conn))
-                        {
-                            lblInProgressOrders.Text = cmdProgress.ExecuteScalar().ToString();
-                        }
-
-                        using (SqlCommand cmdRevenue = new SqlCommand("SELECT ISNULL(SUM(TotalAmount), 0) FROM Tickets WHERE Status = 'Completed'", conn))
-                        {
-                            decimal revenue = Convert.ToDecimal(cmdRevenue.ExecuteScalar());
-                            lblTotalRevenue.Text = "₱" + revenue.ToString("N2");
-                        }
+                    using (SqlCommand cmdRevenue = new SqlCommand("SELECT ISNULL(SUM(TotalAmount), 0) FROM Tickets WHERE Status = 'Completed'", conn))
+                    {
+                        decimal revenue = Convert.ToDecimal(cmdRevenue.ExecuteScalar());
+                        lblTotalRevenue.Text = "₱" + revenue.ToString("N2");
                     }
                 }
             }
@@ -85,7 +88,6 @@ namespace TasteNet.Users.Admin
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    // First get total count
                     string countQuery = @"
                         SELECT COUNT(*) 
                         FROM Tickets t
@@ -100,7 +102,6 @@ namespace TasteNet.Users.Admin
                         conn.Close();
                     }
 
-                    // Then get data
                     string query = @"
                         SELECT 
                             t.TicketID,
@@ -158,27 +159,23 @@ namespace TasteNet.Users.Admin
                         }
                     }
 
-                    // Load items for each order
                     foreach (var order in orders)
                     {
                         order.Items = GetOrderItems(order.TicketID);
                     }
                 }
 
-                // Bind data to repeater
                 if (orders.Count > 0)
                 {
                     rptOrders.Visible = true;
                     pnlEmptyData.Visible = false;
                     rptOrders.DataSource = orders;
                     rptOrders.DataBind();
-                    lblRecordCount.Text = orders.Count.ToString();
                 }
                 else
                 {
                     rptOrders.Visible = false;
                     pnlEmptyData.Visible = true;
-                    lblRecordCount.Text = "0";
                 }
 
                 SetupPagination();
@@ -186,7 +183,6 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error loading orders: " + ex.Message);
-                lblRecordCount.Text = "Error: " + ex.Message;
                 rptOrders.Visible = false;
                 pnlEmptyData.Visible = true;
             }
@@ -317,7 +313,6 @@ namespace TasteNet.Users.Admin
             rptPagination.DataSource = pages;
             rptPagination.DataBind();
 
-            // Set active page styling
             foreach (RepeaterItem item in rptPagination.Items)
             {
                 if (item.ItemType == ListItemType.Item || item.ItemType == ListItemType.AlternatingItem)
@@ -336,9 +331,8 @@ namespace TasteNet.Users.Admin
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
                 var order = (OrderViewModel)e.Item.DataItem;
-
-                // Populate items placeholder
                 var phItems = (PlaceHolder)e.Item.FindControl("phItems");
+
                 if (phItems != null && order.Items.Count > 0)
                 {
                     var itemsHtml = new Literal();
@@ -346,11 +340,11 @@ namespace TasteNet.Users.Admin
                         <table class='items-table'>
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Subtotal</th>
-                                    <th>Status</th>
+                                    <th>ITEM</th>
+                                    <th>QUANTITY</th>
+                                    <th>PRICE</th>
+                                    <th>SUBTOTAL</th>
+                                    <th>STATUS</th>
                                 </tr>
                             </thead>
                             <tbody>";
@@ -358,18 +352,18 @@ namespace TasteNet.Users.Admin
                     foreach (var item in order.Items)
                     {
                         html += $@"
-                             <tr>
-                                <td><strong>{item.FoodName}</strong></div>
-                                <td>{item.Quantity}</div>
-                                <td>₱{item.UnitPrice:N2}</div>
-                                <td style='color: var(--primary-maroon); font-weight: 600;'>₱{item.SubTotal:N2}</div>
-                                <td><span class='order-status status-{GetStatusClass(item.Status)}'>{item.Status}</span></div>
-                             <tr>";
+                            <tr>
+                                <td><strong>{item.FoodName}</strong></td>
+                                <td>{item.Quantity}</td>
+                                <td>₱{item.UnitPrice:N2}</td>
+                                <td style='color: #6b0d1e; font-weight: 600;'>₱{item.SubTotal:N2}</td>
+                                <td><span class='order-status status-{GetStatusClass(item.Status)}'>{item.Status}</span></td>
+                            </tr>";
                     }
 
                     html += @"
                             </tbody>
-                         </div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>";
+                        </table>";
 
                     itemsHtml.Text = html;
                     phItems.Controls.Add(itemsHtml);
@@ -383,11 +377,6 @@ namespace TasteNet.Users.Admin
             {
                 string ticketNumber = e.CommandArgument.ToString();
                 ShowOrderDetails(ticketNumber);
-            }
-            else if (e.CommandName == "UpdateStatus")
-            {
-                string ticketNumber = e.CommandArgument.ToString();
-                UpdateOrderStatus(ticketNumber);
             }
         }
 
@@ -427,25 +416,28 @@ namespace TasteNet.Users.Admin
                                 int ticketID = Convert.ToInt32(reader["TicketID"]);
                                 var items = GetOrderItems(ticketID);
 
-                                // Create JSON object for modal
                                 var orderData = new
                                 {
                                     orderNumber = reader["OrderNumber"].ToString(),
                                     orderType = reader["OrderType"].ToString(),
                                     status = reader["Status"].ToString(),
                                     priority = reader["Priority"].ToString(),
-                                    totalAmount = Convert.ToDecimal(reader["TotalAmount"]).ToString("N2"),
+                                    totalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                                     createdAt = Convert.ToDateTime(reader["CreatedAt"]).ToString("MMM dd, yyyy hh:mm tt"),
                                     customerName = reader["CustomerName"].ToString(),
                                     customerPhone = reader["CustomerPhone"]?.ToString() ?? "N/A",
                                     customerEmail = reader["CustomerEmail"]?.ToString() ?? "N/A",
-                                    items = items
+                                    items = items.Select(i => new {
+                                        i.FoodName,
+                                        i.Quantity,
+                                        i.UnitPrice,
+                                        i.SubTotal,
+                                        Status = string.IsNullOrEmpty(i.Status) ? "Pending" : i.Status
+                                    })
                                 };
 
-                                string json = Newtonsoft.Json.JsonConvert.SerializeObject(orderData);
-                                // Escape for JavaScript
-                                json = json.Replace("\\", "\\\\").Replace("'", "\\'");
-                                string script = $"openModal('{json}');";
+                                string json = JsonConvert.SerializeObject(orderData);
+                                string script = $"showOrderDetailsModal({JsonConvert.SerializeObject(json)});";
                                 ScriptManager.RegisterStartupScript(this, GetType(), "showModal", script, true);
                             }
                         }
@@ -455,72 +447,63 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error showing details: " + ex.Message);
-                string script = $"alert('Error loading order details: {ex.Message}');";
+                string script = $"showNotification('Error loading order details: {ex.Message.Replace("'", "\\'")}', 'error');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "modalError", script, true);
             }
         }
 
-        private void UpdateOrderStatus(string ticketNumber)
+        protected void btnUpdateStatus_Click(object sender, EventArgs e)
         {
-            // Prompt for new status via JavaScript
-            string script = @"
-                var newStatus = prompt('Enter new status (Open, In Progress, Completed, Cancelled):', 'In Progress');
-                if (newStatus && (newStatus === 'Open' || newStatus === 'In Progress' || newStatus === 'Completed' || newStatus === 'Cancelled')) {
-                    __doPostBack('UpdateStatusConfirm', newStatus + '|" + ticketNumber + @"');
-                } else if (newStatus) {
-                    alert('Invalid status. Please enter: Open, In Progress, Completed, or Cancelled');
-                }";
-            ScriptManager.RegisterStartupScript(this, GetType(), "promptStatus", script, true);
-        }
-
-        // Add this method to handle the postback from the prompt
-        protected void Page_LoadComplete(object sender, EventArgs e)
-        {
-            string target = Request.Form["__EVENTTARGET"];
-            string argument = Request.Form["__EVENTARGUMENT"];
-
-            if (target == "UpdateStatusConfirm" && !string.IsNullOrEmpty(argument))
+            try
             {
-                string[] parts = argument.Split('|');
-                if (parts.Length == 2)
+                string orderNumber = Request.Form["hiddenOrderNumber"];
+                string newStatus = Request.Form["hiddenNewStatus"];
+
+                if (!string.IsNullOrEmpty(orderNumber) && !string.IsNullOrEmpty(newStatus))
                 {
-                    string newStatus = parts[0];
-                    string ticketNumber = parts[1];
-
-                    try
+                    using (SqlConnection conn = new SqlConnection(connectionString))
                     {
-                        using (SqlConnection conn = new SqlConnection(connectionString))
-                        {
-                            string query = @"
-                                UPDATE Tickets 
-                                SET Status = @Status,
-                                    CompletedAt = CASE WHEN @Status = 'Completed' THEN GETDATE() ELSE CompletedAt END,
-                                    StartedAt = CASE WHEN @Status = 'In Progress' AND Status = 'Open' THEN GETDATE() ELSE StartedAt END
-                                WHERE TicketNumber = @TicketNumber";
+                        string query = @"
+                            UPDATE Tickets 
+                            SET Status = @Status,
+                                CompletedAt = CASE WHEN @Status = 'Completed' THEN GETDATE() ELSE CompletedAt END,
+                                StartedAt = CASE WHEN @Status = 'In Progress' AND Status = 'Open' THEN GETDATE() ELSE StartedAt END
+                            WHERE TicketNumber = @TicketNumber";
 
-                            using (SqlCommand cmd = new SqlCommand(query, conn))
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@TicketNumber", orderNumber);
+                            cmd.Parameters.AddWithValue("@Status", newStatus);
+                            conn.Open();
+                            int rowsAffected = cmd.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
                             {
-                                cmd.Parameters.AddWithValue("@TicketNumber", ticketNumber);
-                                cmd.Parameters.AddWithValue("@Status", newStatus);
-                                conn.Open();
-                                cmd.ExecuteNonQuery();
+                                LoadStatistics();
+                                LoadOrders();
+
+                                string script = "showNotification('Order status updated successfully!', 'success');";
+                                ScriptManager.RegisterStartupScript(this, GetType(), "updateSuccess", script, true);
+                            }
+                            else
+                            {
+                                string script = "showNotification('Order not found!', 'error');";
+                                ScriptManager.RegisterStartupScript(this, GetType(), "updateNotFound", script, true);
                             }
                         }
-
-                        // Refresh the page to show updated status
-                        LoadStatistics();
-                        LoadOrders();
-
-                        string alertScript = "alert('Order status updated successfully!');";
-                        ScriptManager.RegisterStartupScript(this, GetType(), "updateSuccess", alertScript, true);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Error updating status: " + ex.Message);
-                        string alertScript = $"alert('Error updating status: {ex.Message}');";
-                        ScriptManager.RegisterStartupScript(this, GetType(), "updateError", alertScript, true);
                     }
                 }
+                else
+                {
+                    string script = "showNotification('Missing order information!', 'error');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "updateMissing", script, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error updating status: " + ex.Message);
+                string script = $"showNotification('Error updating status: {ex.Message.Replace("'", "\\'")}', 'error');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "updateError", script, true);
             }
         }
 
@@ -537,6 +520,9 @@ namespace TasteNet.Users.Admin
         {
             CurrentPage = 1;
             LoadOrders();
+
+            string script = "var searchBox = document.getElementById('searchBox'); if(searchBox) searchBox.classList.remove('loading');";
+            ScriptManager.RegisterStartupScript(this, GetType(), "removeLoading", script, true);
         }
 
         protected void btnReset_Click(object sender, EventArgs e)
@@ -580,7 +566,6 @@ namespace TasteNet.Users.Admin
                             var dt = new DataTable();
                             dt.Load(reader);
 
-                            // Generate CSV
                             string csv = "";
                             foreach (DataColumn col in dt.Columns)
                             {
@@ -598,7 +583,6 @@ namespace TasteNet.Users.Admin
                                 csv = csv.TrimEnd(',') + "\n";
                             }
 
-                            // Send CSV file to browser
                             Response.Clear();
                             Response.ContentType = "text/csv";
                             Response.AddHeader("Content-Disposition", $"attachment; filename=OrderHistory_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
@@ -611,12 +595,11 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Export error: " + ex.Message);
-                string script = $"alert('Error exporting report: {ex.Message}');";
+                string script = $"alert('Error exporting report: {ex.Message.Replace("'", "\\'")}');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "exportError", script, true);
             }
         }
 
-        // Helper methods for the repeater
         public string GetStatusClass(string status)
         {
             switch (status?.ToLower())
@@ -641,7 +624,6 @@ namespace TasteNet.Users.Admin
         }
     }
 
-    // View Models
     [Serializable]
     public class OrderViewModel
     {
