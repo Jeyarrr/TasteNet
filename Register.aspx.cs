@@ -16,6 +16,9 @@ namespace TasteNet
             if (!IsPostBack)
             {
                 ClearAllMessages();
+                // Set default district value
+                txtDistrict.Text = "Dasmariñas";
+                hfDistrict.Value = "Dasmariñas";
             }
         }
 
@@ -52,7 +55,59 @@ namespace TasteNet
             }
         }
 
-        // Validate Philippine mobile number if ever na may same number sa database
+        // Combine name parts into full name
+        private string GetFullName(string firstName, string middleInitial, string lastName)
+        {
+            string fullName = firstName.Trim();
+
+            if (!string.IsNullOrEmpty(middleInitial))
+            {
+                fullName += " " + middleInitial.Trim().ToUpper();
+            }
+
+            fullName += " " + lastName.Trim();
+
+            return fullName;
+        }
+
+        // Combine address parts into complete address
+        private string GetFullAddress(string houseNo, string street, string barangay, string district)
+        {
+            string address = "";
+
+            if (!string.IsNullOrEmpty(houseNo))
+            {
+                address = houseNo.Trim();
+            }
+
+            if (!string.IsNullOrEmpty(street))
+            {
+                if (!string.IsNullOrEmpty(address))
+                    address += " " + street.Trim();
+                else
+                    address = street.Trim();
+            }
+
+            if (!string.IsNullOrEmpty(barangay))
+            {
+                if (!string.IsNullOrEmpty(address))
+                    address += ", " + barangay.Trim();
+                else
+                    address = barangay.Trim();
+            }
+
+            if (!string.IsNullOrEmpty(district))
+            {
+                if (!string.IsNullOrEmpty(address))
+                    address += ", " + district.Trim();
+                else
+                    address = district.Trim();
+            }
+
+            return address;
+        }
+
+        // Validate Philippine mobile number
         private bool IsValidPhilippineMobile(string mobileNumber)
         {
             if (string.IsNullOrEmpty(mobileNumber))
@@ -62,7 +117,7 @@ namespace TasteNet
             return cleaned.Length == 10 && cleaned.StartsWith("9");
         }
 
-        // 63+ format sa mob num
+        // Format mobile number to +63 format
         private string GetFullMobileNumber(string mobileNumber)
         {
             string cleaned = Regex.Replace(mobileNumber, @"\D", "");
@@ -81,10 +136,13 @@ namespace TasteNet
                 return false;
             }
         }
+
         private void ClearAllMessages()
         {
             lblGeneralError.Visible = false;
-            lblFullNameError.Visible = false;
+            lblFirstNameError.Visible = false;
+            lblMiddleInitialError.Visible = false;
+            lblLastNameError.Visible = false;
             lblUsernameError.Visible = false;
             lblEmailError.Visible = false;
             lblMobileError.Visible = false;
@@ -92,19 +150,32 @@ namespace TasteNet
             lblConfirmPasswordError.Visible = false;
             lblGenderError.Visible = false;
             lblOTPError.Visible = false;
+            lblHouseNoError.Visible = false;
+            lblStreetError.Visible = false;
+            lblBarangayError.Visible = false;
+            lblDistrictError.Visible = false;
             lblSuccess.Visible = false;
         }
+
         private void ClearFormFields()
         {
-            txtFullName.Text = "";
+            txtFirstName.Text = "";
+            txtMiddleInitial.Text = "";
+            txtLastName.Text = "";
             txtUsername.Text = "";
             txtEmail.Text = "";
             txtMobile.Text = "";
             txtPassword.Text = "";
             txtConfirmPassword.Text = "";
             txtOTP.Text = "";
+            txtHouseNo.Text = "";
+            txtStreet.Text = "";
+            txtBarangay.Text = "";
+            txtDistrict.Text = "Dasmariñas";
+            hfDistrict.Value = "Dasmariñas";
             rblGender.ClearSelection();
         }
+
         private bool UserExists(string username, string email)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -118,8 +189,9 @@ namespace TasteNet
                 return count > 0;
             }
         }
+
         private bool RegisterCustomerInDatabase(string fullName, string username, string email,
-            string phone, string password, string gender, string userType)
+            string phone, string password, string gender, string address, string userType)
         {
             try
             {
@@ -135,9 +207,9 @@ namespace TasteNet
                     }
 
                     string insertQuery = @"INSERT INTO [Users] 
-                        (Username, Password, UserType, FullName, Email, Phone, Gender, IsActive, CreatedAt)
+                        (Username, Password, UserType, FullName, Email, Phone, Gender, Address, IsActive, CreatedAt)
                         VALUES 
-                        (@Username, @Password, @UserType, @FullName, @Email, @Phone, @Gender, 1, @CreatedAt)";
+                        (@Username, @Password, @UserType, @FullName, @Email, @Phone, @Gender, @Address, 1, @CreatedAt)";
 
                     SqlCommand insertCmd = new SqlCommand(insertQuery, conn);
                     insertCmd.Parameters.AddWithValue("@Username", username);
@@ -147,6 +219,7 @@ namespace TasteNet
                     insertCmd.Parameters.AddWithValue("@Email", email);
                     insertCmd.Parameters.AddWithValue("@Phone", phone);
                     insertCmd.Parameters.AddWithValue("@Gender", gender);
+                    insertCmd.Parameters.AddWithValue("@Address", address);
                     insertCmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now);
 
                     int rows = insertCmd.ExecuteNonQuery();
@@ -167,12 +240,14 @@ namespace TasteNet
             }
         }
 
-        // Register button click - sends OTP proct lang to
+        // Register button click - sends OTP
         protected void btnCustomerRegister_Click(object sender, EventArgs e)
         {
             ClearAllMessages();
 
-            string fullName = txtFullName.Text.Trim();
+            string firstName = txtFirstName.Text.Trim();
+            string middleInitial = txtMiddleInitial.Text.Trim();
+            string lastName = txtLastName.Text.Trim();
             string username = txtUsername.Text.Trim();
             string email = txtEmail.Text.Trim();
             string mobile = txtMobile.Text.Trim();
@@ -180,14 +255,37 @@ namespace TasteNet
             string password = txtPassword.Text.Trim();
             string confirmPassword = txtConfirmPassword.Text.Trim();
             string gender = rblGender.SelectedValue;
+
+            // Get address parts
+            string houseNo = txtHouseNo.Text.Trim();
+            string street = txtStreet.Text.Trim();
+            string barangay = txtBarangay.Text.Trim();
+            string district = "Dasmariñas"; // Always set to Dasma since system is only for Dasma
+
             string userType = "Customer";
 
             bool isValid = true;
 
-            if (string.IsNullOrEmpty(fullName))
+            // Validate Name fields
+            if (string.IsNullOrEmpty(firstName))
             {
-                lblFullNameError.Text = "Full name is required";
-                lblFullNameError.Visible = true;
+                lblFirstNameError.Text = "First name is required";
+                lblFirstNameError.Visible = true;
+                isValid = false;
+            }
+
+            if (string.IsNullOrEmpty(lastName))
+            {
+                lblLastNameError.Text = "Last name is required";
+                lblLastNameError.Visible = true;
+                isValid = false;
+            }
+
+            // Middle initial is optional, but validate if provided
+            if (!string.IsNullOrEmpty(middleInitial) && middleInitial.Length > 2)
+            {
+                lblMiddleInitialError.Text = "Middle initial must be 1-2 characters";
+                lblMiddleInitialError.Visible = true;
                 isValid = false;
             }
 
@@ -265,6 +363,10 @@ namespace TasteNet
                 return;
             }
 
+            // Combine name and address
+            string fullName = GetFullName(firstName, middleInitial, lastName);
+            string fullAddress = GetFullAddress(houseNo, street, barangay, district);
+
             string otp = GenerateOTP();
 
             Session["RegisterOTP"] = otp;
@@ -274,13 +376,13 @@ namespace TasteNet
             Session["Mobile"] = fullMobile;
             Session["Password"] = password;
             Session["Gender"] = gender;
+            Session["Address"] = fullAddress;
             Session["UserType"] = userType;
 
             SendOTPEmail(email, otp);
 
             string script = "setTimeout(function() { showOTPSection(); }, 100);";
             ClientScript.RegisterStartupScript(this.GetType(), "showOTP", script, true);
-
         }
 
         protected void btnVerifyOTP_Click(object sender, EventArgs e)
@@ -312,9 +414,10 @@ namespace TasteNet
                 string mobile = Session["Mobile"].ToString();
                 string password = Session["Password"].ToString();
                 string gender = Session["Gender"].ToString();
+                string address = Session["Address"]?.ToString() ?? "";
                 string userType = Session["UserType"]?.ToString() ?? "Customer";
 
-                bool success = RegisterCustomerInDatabase(fullName, username, email, mobile, password, gender, userType);
+                bool success = RegisterCustomerInDatabase(fullName, username, email, mobile, password, gender, address, userType);
 
                 if (success)
                 {
@@ -369,7 +472,7 @@ namespace TasteNet
             lblSuccess.Visible = true;
             lblOTPError.Visible = false;
 
-            // eto yung timer pagkasend ng otp
+            // Reset the timer when resending OTP
             string resetTimerScript = "if(timerInterval) clearInterval(timerInterval); startTimer(300);";
             ClientScript.RegisterStartupScript(this.GetType(), "resetTimer", resetTimerScript, true);
         }

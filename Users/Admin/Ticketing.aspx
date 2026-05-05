@@ -4,79 +4,47 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-    body.ticketing-page,
-    body.ticketing-page form,
-    body.ticketing-page .ticketing-container {
-        --primary-maroon: #6b0d1e !important;
-        --primary-maroon-dark: #5a0b19 !important;
-        --primary-maroon-light: rgba(107, 13, 30, 0.1) !important;
-        --soft-cream: #fffaf3 !important;
-        --text-dark: #4a0e0e !important;
-        --muted-text: #8a6d6d !important;
-        --success-green: #2d9d78 !important;
-        --success-green-light: #e6f4f1 !important;
-        --success-green-dark: #1e7d5f !important;
-        --warning-orange: #d97706 !important;
-        --warning-orange-light: #fff3e6 !important;
-        --danger-red: #b91c1c !important;
-        --danger-red-light: #fee2e2 !important;
-        --accent-yellow: #ffcc00 !important;
-        --accent-yellow-dark: #e6b800 !important;
-        --accent-yellow-light: #fff9e6 !important;
-        --accent-pink: #f9ecee !important;
-        --accent-blue: #eff6ff !important;
-        --accent-blue-dark: #3b82f6 !important;
-        --accent-teal: #14b8a6 !important;
-        --accent-teal-light: #f0fdfa !important;
-        --accent-purple: #8b5cf6 !important;
-        --accent-purple-light: #f5f3ff !important;
-        
-        --border-light: #e2d1d1 !important;
-        --border-hover: #d4b8b8 !important;
-        --bg-hover: #fefaf5 !important;
-        --bg-light: #f3ebe0 !important;
-        --bg-lighter: #f9f4ee !important;
-        --bg-column: #f8f3ed !important;
-        
-        --card-shadow: 0 10px 30px rgba(107, 13, 30, 0.05) !important;
-        --card-shadow-hover: 0 15px 40px rgba(107, 13, 30, 0.12) !important;
-        --card-shadow-lifted: 0 20px 50px rgba(107, 13, 30, 0.15) !important;
-        --button-shadow: 0 4px 12px rgba(107, 13, 30, 0.2) !important;
-        --button-shadow-hover: 0 6px 18px rgba(107, 13, 30, 0.3) !important;
-        
-        --radius-sm: 8px !important;
-        --radius-md: 10px !important;
-        --radius-lg: 12px !important;
-        --radius-xl: 16px !important;
-        --radius-2xl: 20px !important;
-        
-        --transition-fast: 0.2s ease !important;
-        --transition-base: 0.3s ease !important;
-        --transition-slow: 0.4s ease !important;
-        
-        background-color: var(--soft-cream) !important;
-        font-family: 'Poppins', sans-serif !important;
-        color: var(--text-dark) !important;
-        scroll-behavior: smooth !important;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    body.ticketing-page,
-    body.ticketing-page form {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        min-height: 100vh !important;
+    :root {
+        --primary-maroon: #6b0d1e;
+        --primary-maroon-dark: #5a0b19;
+        --soft-cream: #fffaf3;
+        --text-dark: #4a0e0e;
+        --muted-text: #8a6d6d;
+        --success-green: #2d9d78;
+        --success-green-light: #e6f4f1;
+        --warning-orange: #d97706;
+        --warning-orange-light: #fff3e6;
+        --danger-red: #b91c1c;
+        --danger-red-light: #fee2e2;
+        --border-light: #e2d1d1;
+        --border-hover: #d4b8b8;
+        --bg-hover: #fefaf5;
+        --bg-light: #f3ebe0;
+        --bg-lighter: #f9f4ee;
+        --card-shadow: 0 10px 30px rgba(107, 13, 30, 0.05);
+        --card-shadow-hover: 0 15px 40px rgba(107, 13, 30, 0.12);
+        --button-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
+        --radius-sm: 8px;
+        --radius-md: 10px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+        --transition-base: 0.3s ease;
     }
 
-    .ticketing-container,
-    .ticketing-container * {
-        box-sizing: border-box !important;
-        font-family: 'Poppins', sans-serif !important;
+    body, form {
+        background: var(--soft-cream) !important;
+        font-family: 'Poppins', sans-serif;
     }
 
     .ticketing-container {
         background: var(--soft-cream) !important;
-        padding: 25px 35px !important;
+        padding: 20px 30px !important;
         max-width: 1600px !important;
         margin: 0 auto !important;
         min-height: 100vh !important;
@@ -89,31 +57,20 @@
         margin-bottom: 30px !important;
         flex-wrap: wrap !important;
         gap: 15px !important;
-        padding-bottom: 20px !important;
-        border-bottom: 1px solid var(--border-light) !important;
     }
 
-    .header-title h1 {
+    .header-title h2 {
         color: var(--text-dark) !important;
         font-weight: 700 !important;
         margin: 0 !important;
         font-size: 28px !important;
         letter-spacing: -0.5px !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 12px !important;
-    }
-
-    .header-title h1 i {
-        color: var(--primary-maroon) !important;
-        font-size: 32px !important;
     }
 
     .header-title p {
         color: var(--muted-text) !important;
-        margin: 6px 0 0 0 !important;
+        margin: 5px 0 0 !important;
         font-size: 14px !important;
-        line-height: 1.5 !important;
     }
 
     .status-tabs-container {
@@ -147,7 +104,6 @@
         background: var(--bg-hover) !important;
         transform: translateY(-2px) !important;
         text-decoration: none !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     .status-tab.active {
@@ -183,13 +139,14 @@
         border-radius: var(--radius-lg) !important;
         overflow: hidden !important;
         box-shadow: var(--card-shadow) !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition: all var(--transition-base) !important;
         position: relative !important;
         border: 1px solid var(--border-light) !important;
         width: 100% !important;
         display: flex !important;
         flex-direction: column !important;
         animation: fadeInUp 0.5s ease-out !important;
+        border-left: 3px solid transparent;
     }
 
     @keyframes fadeInUp {
@@ -206,8 +163,7 @@
     .ticket-card:hover {
         transform: translateY(-5px) !important;
         box-shadow: var(--card-shadow-hover) !important;
-        border-color: var(--primary-maroon-light) !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border-left-color: var(--primary-maroon) !important;
     }
 
     .ticket-icon-bg {
@@ -304,10 +260,6 @@
         box-shadow: 0 0 6px rgba(0, 200, 81, 0.5) !important;
     }
 
-    .ticket-time i {
-        font-size: 9px !important;
-    }
-
     .ticket-action {
         position: absolute !important;
         right: 12px !important;
@@ -321,7 +273,7 @@
         align-items: center !important;
         justify-content: center !important;
         cursor: pointer !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition: all var(--transition-base) !important;
         z-index: 2 !important;
         color: white !important;
         text-decoration: none !important;
@@ -330,13 +282,9 @@
 
     .ticket-action:hover {
         background: rgba(255, 255, 255, 0.4) !important;
-        transform: translateY(-50%) scale(1.15) rotate(90deg) !important;
+        transform: translateY(-50%) scale(1.1) !important;
         text-decoration: none !important;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
-
-    .ticket-action i {
-        font-size: 12px !important;
     }
 
     .ticket-body {
@@ -359,8 +307,8 @@
     }
 
     .order-type {
-        background: var(--accent-purple-light) !important;
-        color: var(--accent-purple) !important;
+        background: white !important;
+        color: var(--primary-maroon) !important;
         padding: 4px 10px !important;
         border-radius: var(--radius-sm) !important;
         font-size: 11px !important;
@@ -368,6 +316,11 @@
         display: flex !important;
         align-items: center !important;
         gap: 5px !important;
+        transition: all var(--transition-base) !important;
+    }
+
+    .order-type:hover {
+        transform: translateX(3px) !important;
     }
 
     .ticket-items {
@@ -390,27 +343,29 @@
     .item-row:hover {
         background: rgba(107, 13, 30, 0.05) !important;
         padding-left: 5px !important;
-        transition: all 0.2s ease !important;
-    }
-
-    .item-row:last-child {
-        border-bottom: none !important;
+        transform: translateX(2px) !important;
     }
 
     .item-name {
         font-weight: 500 !important;
         font-size: 11px !important;
+        transition: all 0.2s ease !important;
     }
 
     .item-quantity {
         color: var(--primary-maroon) !important;
         font-weight: 700 !important;
-        background: var(--accent-pink) !important;
+        background: white !important;
         padding: 2px 6px !important;
         border-radius: 10px !important;
         min-width: 20px !important;
         text-align: center !important;
         font-size: 10px !important;
+        transition: all var(--transition-base) !important;
+    }
+
+    .item-quantity:hover {
+        transform: scale(1.05) !important;
     }
 
     .ticket-footer {
@@ -442,12 +397,10 @@
         font-weight: 600 !important;
         font-size: 11px !important;
         cursor: pointer !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition: all var(--transition-base) !important;
         display: inline-flex !important;
         align-items: center !important;
         gap: 6px !important;
-        min-width: auto !important;
-        justify-content: center !important;
         text-decoration: none !important;
     }
 
@@ -458,17 +411,16 @@
     .action-btn:hover {
         transform: translateY(-2px) scale(1.05) !important;
         text-decoration: none !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     .btn-start {
-        background: var(--accent-teal) !important;
+        background: var(--primary-maroon) !important;
         color: white !important;
     }
 
     .btn-start:hover {
-        background: #0da594 !important;
-        box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3) !important;
+        background: var(--primary-maroon-dark) !important;
+        box-shadow: var(--button-shadow) !important;
     }
 
     .btn-done {
@@ -477,7 +429,7 @@
     }
 
     .btn-done:hover {
-        background: var(--success-green-dark) !important;
+        background: #1e7c5a !important;
         box-shadow: 0 4px 12px rgba(45, 157, 120, 0.3) !important;
     }
 
@@ -486,11 +438,17 @@
         color: white !important;
         padding: 10px 20px !important;
         font-size: 13px !important;
+        border-radius: var(--radius-md) !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: all var(--transition-base) !important;
+        font-weight: 600 !important;
     }
 
     .btn-primary-custom:hover {
         transform: translateY(-2px) !important;
-        box-shadow: var(--button-shadow-hover) !important;
+        box-shadow: var(--button-shadow) !important;
+        background: var(--primary-maroon-dark) !important;
     }
 
     .rush-badge {
@@ -520,7 +478,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
         z-index: 10000;
         justify-content: center;
         align-items: center;
@@ -528,20 +487,31 @@
 
     .modal-container {
         background: white;
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-xl);
         width: 90%;
         max-width: 600px;
         max-height: 85vh;
         overflow-y: auto;
-        box-shadow: var(--card-shadow-lifted);
-        animation: slideInUp 0.3s ease;
+        box-shadow: var(--card-shadow-hover);
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .modal-header {
         background: linear-gradient(135deg, var(--primary-maroon) 0%, var(--primary-maroon-dark) 100%);
         color: white;
         padding: 18px 20px;
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -562,16 +532,17 @@
         background: rgba(255, 255, 255, 0.2);
         border: none;
         color: white;
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         cursor: pointer;
         transition: all var(--transition-base);
+        font-size: 18px;
     }
 
     .modal-close:hover {
         background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1) rotate(90deg);
+        transform: rotate(90deg);
     }
 
     .modal-body {
@@ -592,22 +563,19 @@
 
     .form-control {
         width: 100%;
-        padding: 8px 12px;
-        border: 1px solid var(--border-light);
-        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-md);
         font-family: 'Poppins', sans-serif;
         transition: all var(--transition-base);
         font-size: 13px;
+        background: white;
     }
 
     .form-control:focus {
         outline: none;
         border-color: var(--primary-maroon);
-        box-shadow: 0 0 0 3px var(--primary-maroon-light);
-    }
-
-    select.form-control {
-        cursor: pointer;
+        box-shadow: 0 0 0 3px rgba(107, 13, 30, 0.1);
     }
 
     .item-row-modal {
@@ -626,11 +594,11 @@
     }
 
     .btn-add-item {
-        background: var(--accent-teal);
+        background: var(--primary-maroon);
         color: white;
         border: none;
-        padding: 8px 15px;
-        border-radius: var(--radius-sm);
+        padding: 10px 15px;
+        border-radius: var(--radius-md);
         cursor: pointer;
         font-weight: 600;
         transition: all var(--transition-base);
@@ -638,8 +606,9 @@
     }
 
     .btn-add-item:hover {
-        background: #0da594;
-        transform: translateY(-1px);
+        background: var(--primary-maroon-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--button-shadow);
     }
 
     .items-list {
@@ -647,7 +616,7 @@
         overflow-y: auto;
         margin-top: 10px;
         border: 1px solid var(--border-light);
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius-md);
         padding: 10px;
         background: var(--bg-lighter);
     }
@@ -661,16 +630,23 @@
         position: sticky;
         bottom: 0;
         background: white;
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
     }
 
     .btn-cancel {
-        background: #ccc;
-        color: #333;
+        background: #e0e0e0;
+        color: #666;
+        border: none;
+        padding: 8px 16px;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition-base);
     }
 
     .btn-cancel:hover {
-        background: #bbb;
-        transform: translateY(-1px);
+        background: #ccc;
+        transform: translateY(-2px);
     }
 
     .loading-overlay {
@@ -684,6 +660,7 @@
         z-index: 10001;
         justify-content: center;
         align-items: center;
+        backdrop-filter: blur(3px);
     }
 
     .loading-spinner {
@@ -691,11 +668,12 @@
         padding: 25px;
         border-radius: var(--radius-lg);
         text-align: center;
+        animation: slideUp 0.3s ease;
     }
 
     .no-tickets {
         text-align: center;
-        padding: 50px;
+        padding: 60px;
         color: var(--muted-text);
         grid-column: 1 / -1 !important;
     }
@@ -704,17 +682,7 @@
         font-size: 64px;
         margin-bottom: 20px;
         opacity: 0.5;
-    }
-
-    @keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        color: var(--primary-maroon);
     }
 
     @keyframes slideInRight {
@@ -728,19 +696,9 @@
         }
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
-
     @keyframes pulse {
         0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
+        50% { opacity: 0.6; }
     }
 
     @media (max-width: 1200px) {
@@ -775,6 +733,7 @@
         
         .action-btn {
             width: 100%;
+            justify-content: center;
             padding: 8px 12px !important;
         }
         
@@ -788,6 +747,11 @@
             justify-content: center;
             flex-wrap: wrap;
         }
+        
+        .status-tab {
+            flex: 1;
+            justify-content: center;
+        }
     }
 
     @media (max-width: 480px) {
@@ -799,6 +763,10 @@
             padding: 6px 12px !important;
             font-size: 11px !important;
         }
+        
+        .ticket-title {
+            font-size: 12px !important;
+        }
     }
 </style>
 
@@ -807,35 +775,33 @@
 <div class="ticketing-container">
     <div class="page-header-main">
         <div class="header-title">
-            <h1>
-                Ticket Management
-            </h1>
+            <h2> Ticket Management</h2>
             <p>Manage and track order tickets in real-time</p>
         </div>
         
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-            <button type="button" class="action-btn btn-primary-custom" onclick="openModalDirect()">
-                Create Ticket
+            <button type="button" class="btn-primary-custom" onclick="openModalDirect()">
+                <i class="fas fa-plus-circle"></i> Create Ticket
             </button>
             
             <div class="status-tabs-container">
                 <asp:LinkButton ID="btnFilterOpen" runat="server" CssClass="status-tab" OnClick="btnFilterOpen_Click">
-                     Open Tickets
+                    <i class="fas fa-clock"></i> Open
                     <span class="status-badge"><asp:Literal ID="litOpenCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
                 <asp:LinkButton ID="btnFilterInProgress" runat="server" CssClass="status-tab" OnClick="btnFilterInProgress_Click">
-                     In Progress
+                    <i class="fas fa-spinner"></i> In Progress
                     <span class="status-badge"><asp:Literal ID="litInProgressCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
                 <asp:LinkButton ID="btnFilterCompleted" runat="server" CssClass="status-tab" OnClick="btnFilterCompleted_Click">
-                     Completed
+                    <i class="fas fa-check-circle"></i> Completed
                     <span class="status-badge"><asp:Literal ID="litCompletedCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
                 <asp:LinkButton ID="btnFilterAll" runat="server" CssClass="status-tab" OnClick="btnFilterAll_Click">
-                     All Tickets
+                    <i class="fas fa-list"></i> All
                     <span class="status-badge"><asp:Literal ID="litAllCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
             </div>
@@ -849,10 +815,11 @@
                     <ItemTemplate>
                         <div class="ticket-card">
                             <div class="ticket-icon-bg">
+                                <i class="fas fa-receipt"></i>
                             </div>
                             <div class="ticket-header">
                                 <div class="ticket-title">
-                                    <%# Eval("TicketNumber") %>
+                                    <i class="fas fa-ticket-alt"></i> <%# Eval("TicketNumber") %>
                                     <%# Eval("Priority").ToString() == "Rush" ? "<span class='rush-badge'><i class='fas fa-bolt'></i> RUSH</span>" : "" %>
                                 </div>
                                 <div class="order-number">
@@ -860,15 +827,16 @@
                                 </div>
                                 <div class="ticket-time">
                                     <span class='status-dot <%# GetStatusDotClass(Eval("Status").ToString()) %>'></span>
-                                    <%# Eval("CreatedTime") %>
-                                    <%# Convert.ToInt32(Eval("MinutesAgo")) > 0 ? $" ({Eval("MinutesAgo")} min ago)" : "" %>
+                                    <i class="far fa-clock"></i> <%# Eval("CreatedTime") %>
+                                    <%# Convert.ToInt32(Eval("MinutesAgo")) > 0 ? $" <span style='opacity:0.8;'>({Eval("MinutesAgo")} min ago)</span>" : "" %>
                                 </div>
                                 <asp:LinkButton ID="btnDeleteTicket" runat="server" 
                                     CommandName="DeleteTicket" 
                                     CommandArgument='<%# Eval("TicketID") %>'
                                     CssClass="ticket-action"
+                                    ToolTip="Delete Ticket"
                                     OnClientClick='return confirm("Delete <%# Eval("TicketNumber") %>? This action cannot be undone!");'>
-                                    <i class="fas fa-times"></i>
+                                    <i class="fas fa-trash-alt"></i>
                                 </asp:LinkButton>
                             </div>
                             
@@ -922,6 +890,7 @@
                 </asp:Repeater>
                 
                 <asp:Panel ID="pnlNoTickets" runat="server" Visible="false" CssClass="no-tickets">
+                    <i class="fas fa-ticket-alt"></i>
                     <h3>No tickets found</h3>
                     <p>Click "Create Ticket" to create your first ticket</p>
                 </asp:Panel>
@@ -944,16 +913,16 @@
                     <div class="form-group">
                         <label><i class="fas fa-tag"></i> Order Type:</label>
                         <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control">
-                            <asp:ListItem Value="Dine-In"> Dine-In</asp:ListItem>
-                            <asp:ListItem Value="Takeout"> Takeout</asp:ListItem>
+                            <asp:ListItem Value="Dine-In">Dine-In</asp:ListItem>
+                            <asp:ListItem Value="Takeout">Takeout</asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     
                     <div class="form-group">
                         <label><i class="fas fa-flag"></i> Priority:</label>
                         <asp:DropDownList ID="ddlPriority" runat="server" CssClass="form-control">
-                            <asp:ListItem Value="Normal"> Normal</asp:ListItem>
-                            <asp:ListItem Value="Rush"> Rush (Priority)</asp:ListItem>
+                            <asp:ListItem Value="Normal">Normal</asp:ListItem>
+                            <asp:ListItem Value="Rush">Rush (Priority)</asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     
@@ -964,7 +933,7 @@
                             </asp:DropDownList>
                             <asp:TextBox ID="txtQuantity" runat="server" Text="1" TextMode="Number" 
                                 CssClass="form-control" style="width:80px;" min="1" />
-                            <asp:Button ID="btnAddItem" runat="server" Text="Add Item" 
+                            <asp:Button ID="btnAddItem" runat="server" Text="+ Add Item" 
                                 CssClass="btn-add-item" OnClick="BtnAddItem_Click" UseSubmitBehavior="false" />
                         </div>
                         
@@ -977,7 +946,7 @@
                             
                             <asp:Repeater ID="rptSelectedItems" runat="server" OnItemCommand="RptSelectedItems_ItemCommand">
                                 <ItemTemplate>
-                                    <div style="display:flex; gap:10px; align-items:center; margin:8px 0; padding:8px; background:#f9f4ee; border-radius:6px;">
+                                    <div style="display:flex; gap:10px; align-items:center; margin:8px 0; padding:8px; background:#f9f4ee; border-radius:8px; transition: all 0.3s ease;">
                                         <strong style="flex:2; color:#4a0e0e;">
                                             <i class="fas fa-utensils"></i> <%# Eval("Quantity") %>x <%# Eval("ItemName") %>
                                         </strong>
@@ -986,7 +955,7 @@
                                         </span>
                                         <asp:LinkButton ID="btnRemoveItem" runat="server" CommandName="RemoveItem" 
                                             CommandArgument='<%# Container.ItemIndex %>' 
-                                            style="background:#b91c1c; color:white; padding:4px 12px; border-radius:4px; text-decoration:none;"
+                                            style="background:#b91c1c; color:white; padding:4px 12px; border-radius:6px; text-decoration:none; transition: all 0.3s ease;"
                                             OnClientClick="return confirm('Remove this item?');">
                                             <i class="fas fa-trash"></i> Remove
                                         </asp:LinkButton>
@@ -1006,7 +975,7 @@
                 <div class="modal-footer">
                     <asp:Button ID="btnCreateTicket" runat="server" Text="Create Ticket" 
                         CssClass="action-btn btn-done" OnClick="BtnCreateTicket_Click" />
-                    <button type="button" class="action-btn btn-cancel" onclick="closeModal()">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">
                         <i class="fas fa-times"></i> Cancel
                     </button>
                 </div>
@@ -1017,7 +986,7 @@
 
 <div id="loadingOverlay" class="loading-overlay">
     <div class="loading-spinner">
-        <i class="fas fa-spinner fa-spin fa-3x"></i>
+        <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary-maroon);"></i>
         <p style="margin-top: 15px;">Processing...</p>
     </div>
 </div>
@@ -1026,8 +995,6 @@
     let modalShouldStayOpen = false;
 
     document.addEventListener('DOMContentLoaded', function () {
-        document.body.classList.add('ticketing-page');
-
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1047,7 +1014,6 @@
         if (modal) {
             modal.style.display = 'flex';
             modalShouldStayOpen = true;
-            modal.style.animation = 'fadeIn 0.3s ease-out';
         }
         return false;
     }
@@ -1055,11 +1021,8 @@
     function closeModal() {
         var modal = document.getElementById('ticketModal');
         if (modal) {
-            modal.style.animation = 'fadeOut 0.3s ease-out';
-            setTimeout(() => {
-                modal.style.display = 'none';
-                modalShouldStayOpen = false;
-            }, 300);
+            modal.style.display = 'none';
+            modalShouldStayOpen = false;
         }
     }
 
