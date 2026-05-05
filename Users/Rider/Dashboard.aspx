@@ -2,6 +2,9 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <%-- Leaflet.js — free map (OpenStreetMap), no API key needed --%>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         :root {
@@ -236,7 +239,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -498,17 +501,21 @@
         }
 
         .action-btn {
-            padding: 12px;
+            padding: 13px 12px;
             border-radius: var(--radius-md);
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            min-height: 46px;
             transition: all var(--transition-base);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .action-btn:hover {
@@ -998,11 +1005,11 @@
             }
         }
 
+        /* ── Responsive: Tablet landscape (≤1200px) ─────────────────── */
         @media (max-width: 1200px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
             .deliveries-grid,
             .active-delivery-content,
             .action-buttons {
@@ -1010,125 +1017,490 @@
             }
         }
 
+        /* ── Responsive: Tablet portrait (≤992px) ───────────────────── */
         @media (max-width: 992px) {
             .dashboard-wrapper {
                 padding: 20px;
             }
-            
             .page-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 15px;
             }
-            
             .header-title h1 {
                 font-size: 24px;
             }
-            
             .status-card {
                 flex-direction: column;
                 gap: 20px;
                 text-align: center;
                 padding: 20px;
             }
-
             .toggle-container {
                 width: 100%;
                 justify-content: center;
             }
+
+            /* Map modal: full-width on tablet */
+            .map-modal {
+                width: 96%;
+                max-width: 96%;
+                max-height: 90vh;
+            }
+            #mapFrame {
+                height: calc(90vh - 180px);
+                min-height: 220px;
+                max-height: 380px;
+            }
         }
 
+        /* ── Responsive: Mobile (≤768px) ────────────────────────────── */
         @media (max-width: 768px) {
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
             }
-            
             .hero-section {
                 padding: 30px 20px;
             }
-            
             .icon-lg {
                 width: 70px;
                 height: 70px;
                 font-size: 28px;
             }
-            
             .delivery-card,
             .active-delivery-card {
-                padding: 20px;
+                padding: 18px;
             }
-            
             .delivery-actions {
-                flex-direction: column;
+                flex-direction: row;
+                flex-wrap: wrap;
             }
-            
             .btn-action {
-                width: 100%;
+                flex: 1 1 calc(50% - 5px);
+                min-width: 120px;
             }
-
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .action-buttons .btn-delivered {
+                grid-column: auto;
+            }
+            .action-btn {
+                width: 100%;
+                min-height: 48px;
+                font-size: 14px;
+                padding: 13px 16px;
+            }
             .completion-modal {
                 padding: 20px;
-                max-width: 350px;
+                width: 92%;
+                max-width: 400px;
             }
-
             .modal-icon {
                 width: 60px;
                 height: 60px;
             }
-
             .modal-icon i {
                 font-size: 28px;
             }
-
             .modal-title {
                 font-size: 18px;
             }
+
+            /* Map modal: bottom sheet on mobile */
+            .map-modal {
+                width: 100%;
+                max-width: 100%;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                transform: none;
+                border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+                max-height: 90vh;
+                animation: slideUpModal 0.3s ease;
+            }
+            .map-modal.active {
+                display: flex;
+            }
+            #mapFrame {
+                height: calc(90vh - 195px);
+                min-height: 180px;
+                max-height: 320px;
+            }
+            .map-distance-bar {
+                flex-wrap: wrap;
+            }
+            .map-distance-item {
+                flex: 1 1 33%;
+                padding: 10px 8px;
+            }
+            .map-distance-value {
+                font-size: 14px;
+            }
+            .map-modal-footer {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px 16px;
+            }
+            .map-open-gmaps-btn,
+            .map-close-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
+        /* ── Responsive: Small mobile (≤480px) ──────────────────────── */
         @media (max-width: 480px) {
             .dashboard-wrapper {
-                padding: 15px;
+                padding: 12px;
             }
-            
             .header-title h1 {
                 font-size: 20px;
             }
-            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
             .stat-value {
                 font-size: 28px;
             }
-            
+            .stat-card {
+                padding: 18px;
+            }
             .icon-circle {
                 width: 40px;
                 height: 40px;
                 font-size: 16px;
             }
-            
             .btn {
                 width: 100%;
                 justify-content: center;
             }
-            
             .section-title {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
             }
-            
             .view-all-link {
                 align-self: flex-end;
             }
-
             .modal-actions {
                 grid-template-columns: 1fr;
             }
-
             .completion-modal {
                 padding: 20px 15px;
-                max-width: 320px;
+                width: 96%;
+                max-width: 360px;
+            }
+            .active-delivery-content {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .action-buttons .btn-delivered {
+                grid-column: auto;
+            }
+            .action-btn {
+                width: 100%;
+                min-height: 50px;
+                font-size: 14px;
+                padding: 14px 16px;
+                border-radius: var(--radius-md);
+            }
+            .delivery-actions {
+                flex-direction: column;
+            }
+            .btn-action {
+                width: 100%;
+                flex: none;
+            }
+            .info-label,
+            .info-value {
+                font-size: 12px;
+            }
+            .delivery-card {
+                padding: 15px;
+            }
+
+            /* Map modal: full bottom sheet on small phones */
+            .map-modal {
+                max-height: 92vh;
+            }
+            #mapFrame {
+                height: calc(92vh - 210px);
+                min-height: 150px;
+                max-height: 270px;
+            }
+            .map-distance-item {
+                flex: 1 1 50%;
+                padding: 9px 8px;
+            }
+            .map-distance-label {
+                font-size: 9px;
+            }
+            .map-distance-value {
+                font-size: 13px;
+            }
+            .map-modal-header {
+                padding: 13px 16px;
+            }
+            .map-modal-title {
+                font-size: 14px;
             }
         }
 
+        /* ── Responsive: Extra small (≤360px) ───────────────────────── */
+        @media (max-width: 360px) {
+            .dashboard-wrapper {
+                padding: 10px;
+            }
+            .header-title h1 {
+                font-size: 18px;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
+            #mapFrame {
+                height: calc(92vh - 230px);
+                min-height: 130px;
+                max-height: 230px;
+            }
+            .map-distance-item {
+                flex: 1 1 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.15);
+                padding: 8px 12px;
+            }
+            .map-distance-item:last-child {
+                border-bottom: none;
+            }
+        }
+
+        @keyframes slideUpModal {
+            from { transform: translateY(100%); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+
+        /* ── Map Modal ──────────────────────────────────────────────── */
+        .map-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 10003;
+            display: none;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+        .map-modal-overlay.active { display: block; }
+
+        .map-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+            z-index: 10004;
+            width: 92%;
+            max-width: 560px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+            box-sizing: border-box;
+            max-height: 95vh;
+            -webkit-overflow-scrolling: touch;
+        }
+        .map-modal.active { display: flex; }
+
+        .map-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--soft-cream);
+            flex-shrink: 0;
+        }
+
+        .map-modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .map-modal-title i {
+            color: var(--primary-maroon);
+            font-size: 15px;
+        }
+
+        .map-modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-light);
+            color: var(--muted-text);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            font-family: 'Poppins', sans-serif;
+        }
+        .map-modal-close:hover {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .map-distance-bar {
+            display: flex;
+            gap: 0;
+            padding: 0;
+            background: var(--primary-maroon);
+            flex-shrink: 0;
+        }
+
+        .map-distance-item {
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            border-right: 1px solid rgba(255,255,255,0.15);
+        }
+        .map-distance-item:last-child { border-right: none; }
+
+        .map-distance-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .map-distance-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .map-distance-value.loading {
+            font-size: 12px;
+            opacity: 0.7;
+            animation: pulse 1.5s infinite;
+        }
+
+        #mapFrame {
+            width: 100%;
+            height: 340px;
+            min-height: 200px;
+            border: none;
+            flex-shrink: 1;
+            flex-grow: 1;
+            display: block;
+            touch-action: pan-x pan-y;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .map-modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            background: white;
+        }
+
+        .map-open-gmaps-btn {
+            flex: 1;
+            padding: 11px;
+            background: var(--primary-maroon);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: all var(--transition-fast);
+        }
+        .map-open-gmaps-btn:hover {
+            background: var(--primary-maroon-dark);
+            transform: translateY(-1px);
+        }
+
+        .map-close-btn {
+            padding: 11px 18px;
+            background: var(--bg-lighter);
+            color: var(--muted-text);
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .map-close-btn:hover {
+            background: var(--bg-light);
+            border-color: var(--border-hover);
+        }
+
+        .map-track-btn {
+            padding: 11px 14px;
+            background: var(--accent-blue);
+            color: var(--accent-blue-dark);
+            border: 1.5px solid var(--accent-blue-dark);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        .map-track-btn:hover {
+            background: var(--accent-blue-dark);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .map-track-btn.tracking {
+            background: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+            animation: trackPulse 2s infinite;
+        }
+        .map-track-btn.tracking:hover {
+            background: #248a68;
+            border-color: #248a68;
+        }
+        @keyframes trackPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(45,157,120,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(45,157,120,0); }
+        }
+        /* ─────────────────────────────────────────────────────── */
         /* ── Proof of Delivery ─────────────────────────────────── */
         .completion-modal {
             max-width: 420px !important;
@@ -1244,6 +1616,52 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <%-- Enable ASP.NET Page WebMethods so JS can call SaveState --%>
+    <%-- ── Map / Distance Modal ─────────────────────────────────────────── --%>
+    <div class="map-modal-overlay" id="mapModalOverlay"></div>
+    <div class="map-modal" id="mapModal">
+        <div class="map-modal-header">
+            <span class="map-modal-title">
+                <i class="fas fa-map-marked-alt"></i>
+                Route to Customer
+            </span>
+            <button type="button" class="map-modal-close" id="mapModalCloseX">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="map-distance-bar">
+            <div class="map-distance-item">
+                <div class="map-distance-label">Distance</div>
+                <div class="map-distance-value loading" id="mapDistanceValue">Calculating...</div>
+            </div>
+            <div class="map-distance-item">
+                <div class="map-distance-label">Est. Travel Time</div>
+                <div class="map-distance-value loading" id="mapDurationValue">Calculating...</div>
+            </div>
+            <div class="map-distance-item">
+                <div class="map-distance-label">Origin</div>
+                <div class="map-distance-value" style="font-size:11px;opacity:0.9;line-height:1.4;">TasteNet Store</div>
+            </div>
+        </div>
+
+        <div id="mapFrame" style="width:100%;height:340px;background:var(--bg-lighter);"></div>
+
+        <div class="map-modal-footer">
+            <button type="button" class="map-open-gmaps-btn" id="openGoogleMapsBtn">
+                <i class="fas fa-external-link-alt"></i>
+                Open in Google Maps
+            </button>
+            <button type="button" class="map-track-btn" id="trackLocationBtn">
+                <i class="fas fa-crosshairs"></i>
+                Track My Location
+            </button>
+            <button type="button" class="map-close-btn" id="mapModalCloseBtn">
+                Close
+            </button>
+        </div>
+    </div>
+    <%-- ──────────────────────────────────────────────────────────────────── --%>
+
     <div class="modal-overlay" id="completionOverlay"></div>
     <div class="completion-modal" id="completionModal">
         <div class="modal-icon">
@@ -1322,26 +1740,6 @@
                     </div>
                     <div id="trendTotalDeliveries" class="trend-up">
                         <asp:Literal ID="litTrendTotalDeliveries" runat="server" />
-                    </div>
-                </div>
-            </div>
-
-            <%-- ── Earnings Today ── --%>
-            <div class="stat-card">
-                <div>
-                    <div class="stat-card__content">
-                        <div>
-                            <div class="stat-label">Earnings Today</div>
-                            <div class="stat-value" id="statEarningsToday">
-                                &#8369;<asp:Literal ID="litEarningsToday" runat="server" Text="0.00" />
-                            </div>
-                        </div>
-                        <div class="icon-circle">
-                            <i class="fas fa-peso-sign"></i>
-                        </div>
-                    </div>
-                    <div id="trendEarningsToday" class="trend-up">
-                        <asp:Literal ID="litTrendEarningsToday" runat="server" />
                     </div>
                 </div>
             </div>
@@ -1425,15 +1823,31 @@
                     <div class="delivery-details-section">
                         <div class="detail-row">
                             <span class="detail-label">Distance</span>
-                            <span class="detail-value" id="deliveryDistance">—</span>
+                            <span class="detail-value" style="display:flex;align-items:center;gap:6px;">
+                                <input type="number" id="distanceInput" min="0.1" step="0.1"
+                                       placeholder="0.0"
+                                       style="width:75px;padding:5px 8px;
+                                              border:1.5px solid var(--border-light);
+                                              border-radius:var(--radius-sm);
+                                              font-family:'Poppins',sans-serif;
+                                              font-size:14px;font-weight:600;
+                                              color:var(--text-dark);
+                                              background:#fff;
+                                              text-align:right;
+                                              outline:none;
+                                              box-sizing:border-box;" />
+                                <span style="font-size:13px;font-weight:600;color:var(--muted-text);">km</span>
+                            </span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Delivery Fee</span>
                             <span class="detail-value highlight" id="deliveryFee">—</span>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Est. Time</span>
-                            <span class="detail-value" id="deliveryTime">—</span>
+                        <div class="detail-row" style="border-bottom:none;padding-top:4px;">
+                            <span class="detail-label" style="font-size:11px;font-style:italic;">
+                                Base &#8369;<span id="feeBase">30</span> + &#8369;<span id="feePerKm">10</span>/km
+                            </span>
+                            <span id="feeBreakdown" style="font-size:11px;color:var(--muted-text);">—</span>
                         </div>
                     </div>
                 </div>
@@ -1518,8 +1932,18 @@
                                     <span class="info-value"><%# Eval("Priority") %></span>
                                 </div>
                                 <div class="info-row">
-                                    <span class="info-label">Created By:</span>
-                                    <span class="info-value"><%# Eval("CreatedBy") %></span>
+                                    <span class="info-label">Customer:</span>
+                                    <span class="info-value">
+                                        <i class="fas fa-user" style="color:var(--muted-text);margin-right:4px;font-size:11px;"></i>
+                                        <%# Eval("CustomerUsername") ?? Eval("CreatedBy") %>
+                                    </span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Phone:</span>
+                                    <span class="info-value">
+                                        <i class="fas fa-phone" style="color:var(--muted-text);margin-right:4px;font-size:11px;"></i>
+                                        <%# string.IsNullOrEmpty(Eval("CustomerPhone")?.ToString()) ? "—" : Eval("CustomerPhone").ToString() %>
+                                    </span>
                                 </div>
                                 <div class="info-row">
                                     <span class="info-label">Created At:</span>
@@ -1541,7 +1965,9 @@
                                         data-amount='<%# Eval("TotalAmount", "₱{0:N2}") %>'
                                         data-status='<%# Eval("Status") %>'
                                         data-priority='<%# Eval("Priority") %>'
-                                        data-created='<%# Eval("CreatedAt", "{0:MMM dd, yyyy hh:mm tt}") %>'>
+                                        data-created='<%# Eval("CreatedAt", "{0:MMM dd, yyyy hh:mm tt}") %>'
+                                        data-customer='<%# Eval("CustomerUsername") ?? Eval("CreatedBy") %>'
+                                        data-phone='<%# string.IsNullOrEmpty(Eval("CustomerPhone")?.ToString()) ? "—" : Eval("CustomerPhone").ToString() %>'>
                                     <i class="fas fa-check"></i>
                                     Accept
                                 </button>
@@ -1589,9 +2015,7 @@
             const activeDeliveryId = document.getElementById('activeDeliveryId');
             const pickupLocation = document.getElementById('pickupLocation');
             const dropoffLocation = document.getElementById('dropoffLocation');
-            const deliveryDistance = document.getElementById('deliveryDistance');
             const deliveryFee = document.getElementById('deliveryFee');
-            const deliveryTime = document.getElementById('deliveryTime');
             const customerContact = document.getElementById('customerContact');
 
             const navigateBtn = document.getElementById('navigateBtn');
@@ -1616,7 +2040,9 @@
                     amount: sessionStorage.getItem('rider_amount') || '',
                     status: sessionStorage.getItem('rider_status') || '',
                     priority: sessionStorage.getItem('rider_priority') || '',
-                    created: sessionStorage.getItem('rider_created') || ''
+                    created: sessionStorage.getItem('rider_created') || '',
+                    customer: sessionStorage.getItem('rider_customer') || '—',
+                    phone: sessionStorage.getItem('rider_phone') || '—'
                 };
             }
             // ─────────────────────────────────────────────────────────────────────
@@ -1646,7 +2072,9 @@
                         amount: acceptBtn.dataset.amount,
                         status: acceptBtn.dataset.status,
                         priority: acceptBtn.dataset.priority,
-                        created: acceptBtn.dataset.created
+                        created: acceptBtn.dataset.created,
+                        customer: acceptBtn.dataset.customer || '—',
+                        phone: acceptBtn.dataset.phone || '—'
                     };
 
                     acceptDelivery(deliveryData, deliveryCard);
@@ -1660,16 +2088,353 @@
                 }
             });
 
+            // ── Map Modal (Leaflet + OpenStreetMap + OSRM — 100% free, no API key) ──
+            var STORE_ADDRESS = 'Blk 84, Lot 10 Bautista St, Zone 9, Dasmariñas, 4114 Cavite, Philippines';
+            // Fixed store coordinates (pre-geocoded so no API call needed for origin)
+            var STORE_LAT = 14.3265574, STORE_LNG = 120.9373766;
+
+            var mapModal = document.getElementById('mapModal');
+            var mapModalOverlay = document.getElementById('mapModalOverlay');
+            var mapDistanceVal = document.getElementById('mapDistanceValue');
+            var mapDurationVal = document.getElementById('mapDurationValue');
+            var openGoogleMapsBtn = document.getElementById('openGoogleMapsBtn');
+
+            var leafletMap = null;
+            var routeLayer = null;
+            var markersLayer = null;
+
+            function initLeafletMap() {
+                if (leafletMap) return; // already initialised
+                leafletMap = L.map('mapFrame').setView([STORE_LAT, STORE_LNG], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 19
+                }).addTo(leafletMap);
+                markersLayer = L.layerGroup().addTo(leafletMap);
+            }
+
+            // Geocode an address using Nominatim (free OpenStreetMap geocoder)
+            function geocodeAddress(address) {
+                var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q='
+                    + encodeURIComponent(address);
+                return fetch(url, { headers: { 'Accept-Language': 'en' } })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data || data.length === 0) throw new Error('Address not found');
+                        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                    });
+            }
+
+            // Draw route using OSRM (free routing engine) and return distance + duration
+            function drawRoute(destLat, destLng) {
+                var url = 'https://router.project-osrm.org/route/v1/driving/'
+                    + STORE_LNG + ',' + STORE_LAT + ';'
+                    + destLng + ',' + destLat
+                    + '?overview=full&geometries=geojson';
+
+                return fetch(url)
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data.routes || data.routes.length === 0) throw new Error('No route');
+
+                        var route = data.routes[0];
+                        var distKm = (route.distance / 1000).toFixed(1);
+                        var durMins = Math.round(route.duration / 60);
+                        var durText = durMins >= 60
+                            ? Math.floor(durMins / 60) + ' hr ' + (durMins % 60) + ' min'
+                            : durMins + ' min';
+
+                        // Draw the route polyline
+                        if (routeLayer) leafletMap.removeLayer(routeLayer);
+                        routeLayer = L.geoJSON(route.geometry, {
+                            style: { color: '#6b0d1e', weight: 5, opacity: 0.85 }
+                        }).addTo(leafletMap);
+
+                        // Fit map to the route bounds
+                        leafletMap.fitBounds(routeLayer.getBounds(), { padding: [30, 30] });
+
+                        return { distKm: distKm, durText: durText };
+                    });
+            }
+
+            function openMapModal(destinationAddress) {
+                if (!destinationAddress || destinationAddress === '—') {
+                    showNotification('No delivery address found.', 'warning');
+                    return;
+                }
+
+                // Show modal with loading state
+                mapDistanceVal.textContent = 'Calculating...';
+                mapDistanceVal.className = 'map-distance-value loading';
+                mapDurationVal.textContent = 'Calculating...';
+                mapDurationVal.className = 'map-distance-value loading';
+
+                document.body.style.overflow = 'hidden';
+                mapModal.classList.add('active');
+                mapModalOverlay.classList.add('active');
+
+                // Init map after modal is visible (Leaflet needs visible container)
+                setTimeout(function () {
+                    initLeafletMap();
+                    leafletMap.invalidateSize(); // recalculate map size for current container
+
+                    // Clear old markers
+                    markersLayer.clearLayers();
+
+                    // Add store marker
+                    var storeIcon = L.divIcon({
+                        className: '',
+                        html: '<div style="background:#6b0d1e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">&#x2302;</div>',
+                        iconSize: [32, 32], iconAnchor: [16, 16]
+                    });
+                    L.marker([STORE_LAT, STORE_LNG], { icon: storeIcon })
+                        .bindPopup('<strong>TasteNet Store</strong><br>' + STORE_ADDRESS)
+                        .addTo(markersLayer);
+
+                    // Geocode customer address then draw route
+                    geocodeAddress(destinationAddress)
+                        .then(function (dest) {
+                            var custIcon = L.divIcon({
+                                className: '',
+                                html: '<div style="background:#2d9d78;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">&#x25CF;</div>',
+                                iconSize: [32, 32], iconAnchor: [16, 16]
+                            });
+                            L.marker([dest.lat, dest.lng], { icon: custIcon })
+                                .bindPopup('<strong>Customer</strong><br>' + destinationAddress)
+                                .addTo(markersLayer);
+
+                            // Set up "Open in Google Maps" — always reads live state at click time
+                            openGoogleMapsBtn.onclick = function () {
+                                var originParam;
+                                if (isTracking && riderMarker) {
+                                    var ll = riderMarker.getLatLng();
+                                    originParam = ll.lat + ',' + ll.lng;
+                                } else {
+                                    originParam = '14.3265574,120.9373766';
+                                }
+                                window.open(
+                                    'https://www.google.com/maps/dir/?api=1'
+                                    + '&origin=' + encodeURIComponent(originParam)
+                                    + '&destination=' + dest.lat + ',' + dest.lng
+                                    + '&travelmode=driving',
+                                    '_blank'
+                                );
+                            };
+
+                            return drawRoute(dest.lat, dest.lng);
+                        })
+                        .then(function (info) {
+                            mapDistanceVal.textContent = info.distKm + ' km';
+                            mapDistanceVal.className = 'map-distance-value';
+                            mapDurationVal.textContent = info.durText;
+                            mapDurationVal.className = 'map-distance-value';
+                        })
+                        .catch(function () {
+                            mapDistanceVal.textContent = '—';
+                            mapDistanceVal.className = 'map-distance-value';
+                            mapDurationVal.textContent = '—';
+                            mapDurationVal.className = 'map-distance-value';
+                            showNotification('Could not find the delivery address on the map.', 'warning');
+                        });
+                }, 100);
+            }
+
+            function closeMapModal() {
+                document.body.style.overflow = '';
+                mapModal.classList.remove('active');
+                mapModalOverlay.classList.remove('active');
+            }
+
+            document.getElementById('mapModalCloseX').addEventListener('click', closeMapModal);
+            document.getElementById('mapModalCloseBtn').addEventListener('click', closeMapModal);
+            mapModalOverlay.addEventListener('click', closeMapModal);
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && mapModal.classList.contains('active')) closeMapModal();
+            });
+
+            // Re-render map on orientation change / window resize
+            window.addEventListener('resize', function () {
+                if (leafletMap && mapModal.classList.contains('active')) {
+                    setTimeout(function () { leafletMap.invalidateSize(); }, 200);
+                }
+            });
+
+            // ── Live Rider Location Tracking ──────────────────────────────────
+            var trackLocationBtn = document.getElementById('trackLocationBtn');
+            var riderMarker = null;
+            var riderAccuracyCircle = null;
+            var watchId = null;
+            var isTracking = false;
+            var currentDestLat = null, currentDestLng = null;
+
+            function updateRiderMarker(lat, lng, accuracy) {
+                var riderIcon = L.divIcon({
+                    className: '',
+                    html: '<div style="background:#3b82f6;color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 8px rgba(59,130,246,0.5);border:3px solid white;"><i class=\"fas fa-motorcycle\"></i></div>',
+                    iconSize: [34, 34], iconAnchor: [17, 17]
+                });
+
+                if (riderMarker) {
+                    riderMarker.setLatLng([lat, lng]);
+                } else {
+                    riderMarker = L.marker([lat, lng], { icon: riderIcon, zIndexOffset: 1000 })
+                        .bindPopup('<strong>📍 You (Rider)</strong><br>Live location')
+                        .addTo(markersLayer);
+                }
+
+                if (riderAccuracyCircle) {
+                    riderAccuracyCircle.setLatLng([lat, lng]).setRadius(accuracy);
+                } else {
+                    riderAccuracyCircle = L.circle([lat, lng], {
+                        radius: accuracy,
+                        color: '#3b82f6',
+                        fillColor: '#3b82f6',
+                        fillOpacity: 0.1,
+                        weight: 1
+                    }).addTo(markersLayer);
+                }
+
+                // If a destination is set, re-draw route from rider's position
+                if (currentDestLat !== null) {
+                    var url = 'https://router.project-osrm.org/route/v1/driving/'
+                        + lng + ',' + lat + ';'
+                        + currentDestLng + ',' + currentDestLat
+                        + '?overview=full&geometries=geojson';
+
+                    fetch(url)
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            if (!data.routes || data.routes.length === 0) return;
+                            var route = data.routes[0];
+                            var distKm = (route.distance / 1000).toFixed(1);
+                            var durMins = Math.round(route.duration / 60);
+                            var durText = durMins >= 60
+                                ? Math.floor(durMins / 60) + ' hr ' + (durMins % 60) + ' min'
+                                : durMins + ' min';
+
+                            if (routeLayer) leafletMap.removeLayer(routeLayer);
+                            routeLayer = L.geoJSON(route.geometry, {
+                                style: { color: '#3b82f6', weight: 5, opacity: 0.85 }
+                            }).addTo(leafletMap);
+
+                            mapDistanceVal.textContent = distKm + ' km (from you)';
+                            mapDurationVal.textContent = durText;
+                        })
+                        .catch(function () { /* silent fail — keep old route */ });
+                } else {
+                    leafletMap.setView([lat, lng], 15);
+                }
+            }
+
+            function startTracking() {
+                if (!navigator.geolocation) {
+                    showNotification('Geolocation is not supported by your browser.', 'warning');
+                    return;
+                }
+                isTracking = true;
+                trackLocationBtn.classList.add('tracking');
+                trackLocationBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Tracking...';
+                showNotification('Live location tracking started!', 'success');
+
+                watchId = navigator.geolocation.watchPosition(
+                    function (pos) {
+                        updateRiderMarker(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
+                    },
+                    function (err) {
+                        showNotification('Location error: ' + err.message, 'warning');
+                        stopTracking();
+                    },
+                    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+                );
+            }
+
+            function stopTracking() {
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    watchId = null;
+                }
+                isTracking = false;
+                trackLocationBtn.classList.remove('tracking');
+                trackLocationBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Track My Location';
+                if (riderMarker) { markersLayer.removeLayer(riderMarker); riderMarker = null; }
+                if (riderAccuracyCircle) { markersLayer.removeLayer(riderAccuracyCircle); riderAccuracyCircle = null; }
+                showNotification('Location tracking stopped.', 'info');
+            }
+
+            trackLocationBtn.addEventListener('click', function () {
+                if (isTracking) {
+                    stopTracking();
+                } else {
+                    startTracking();
+                }
+            });
+
+            // Stop tracking when modal is closed
+            var _origClose = closeMapModal;
+            closeMapModal = function () {
+                if (isTracking) stopTracking();
+                currentDestLat = null;
+                currentDestLng = null;
+                _origClose();
+            };
+
+            // Capture destination coords after geocoding so tracker can use them
+            var _origOpenMap = openMapModal;
+            openMapModal = function (destinationAddress) {
+                currentDestLat = null;
+                currentDestLng = null;
+                _origOpenMap(destinationAddress);
+            };
+
+            // Hook into geocodeAddress result to capture dest coords for live routing
+            var _origGeocode = geocodeAddress;
+            geocodeAddress = function (address) {
+                return _origGeocode(address).then(function (dest) {
+                    currentDestLat = dest.lat;
+                    currentDestLng = dest.lng;
+                    return dest;
+                });
+            };
+            // ─────────────────────────────────────────────────────────────────
+
             navigateBtn.addEventListener('click', function () {
                 if (!activeDelivery || !activeDelivery.address) {
                     showNotification('No delivery address found.', 'warning');
                     return;
                 }
-                const encodedAddress = encodeURIComponent(activeDelivery.address);
-                const googleMapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodedAddress;
-                window.open(googleMapsUrl, '_blank');
-                showNotification('Opening Google Maps...', 'info');
+                openMapModal(activeDelivery.address);
             });
+            // ─────────────────────────────────────────────────────────────────────
+
+            // ── Delivery Fee Calculation ─────────────────────────────────────────────
+            // Adjust these two constants to match your pricing structure
+            var FEE_BASE = 30;   // flat base fee in ₱
+            var FEE_PER_KM = 5;    // additional ₱ per km
+
+            // Keep the labels in the UI in sync with the constants
+            document.getElementById('feeBase').textContent = FEE_BASE;
+            document.getElementById('feePerKm').textContent = FEE_PER_KM;
+
+            var distanceInput = document.getElementById('distanceInput');
+            var feeBreakdown = document.getElementById('feeBreakdown');
+
+            function calculateDeliveryFee(km) {
+                if (!km || isNaN(km) || km <= 0) {
+                    deliveryFee.textContent = '—';
+                    feeBreakdown.textContent = '—';
+                    return;
+                }
+                var fee = FEE_BASE + (km * FEE_PER_KM);
+                deliveryFee.textContent = '₱' + fee.toFixed(2);
+                feeBreakdown.textContent = '₱' + FEE_BASE + ' + ₱' + (km * FEE_PER_KM).toFixed(2);
+                sessionStorage.setItem('rider_distance_km', km);
+                sessionStorage.setItem('rider_fee', deliveryFee.textContent);
+            }
+
+            distanceInput.addEventListener('input', function () {
+                calculateDeliveryFee(parseFloat(this.value));
+            });
+            // ─────────────────────────────────────────────────────────────────────
 
             markDeliveredBtn.addEventListener('click', function () {
                 showDeliveryCompletionModal();
@@ -1780,19 +2545,30 @@
                 sessionStorage.setItem('rider_status', deliveryData.status);
                 sessionStorage.setItem('rider_priority', deliveryData.priority);
                 sessionStorage.setItem('rider_created', deliveryData.created);
+                sessionStorage.setItem('rider_customer', deliveryData.customer || '—');
+                sessionStorage.setItem('rider_phone', deliveryData.phone || '—');
                 sessionStorage.setItem('rider_isOnline', 'true');
 
                 // Populate the active delivery panel with real DB data
                 activeDeliveryId.textContent = '#' + deliveryData.id;
                 pickupLocation.textContent = 'Order #' + deliveryData.order;
                 dropoffLocation.textContent = deliveryData.address;
-                deliveryDistance.textContent = '—';
                 deliveryFee.textContent = deliveryData.amount;
-                deliveryTime.textContent = '—';
-                customerContact.textContent = deliveryData.priority + ' priority';
+                customerContact.innerHTML =
+                    '<strong>' + (deliveryData.customer || '—') + '</strong>' +
+                    '<span style="display:block;font-size:12px;color:var(--muted-text);margin-top:2px;">' +
+                    '<i class="fas fa-phone" style="margin-right:4px;font-size:10px;"></i>' +
+                    (deliveryData.phone || '—') + '</span>';
 
                 activeDeliverySection.classList.add('active');
                 deliveriesSection.style.display = 'none';
+
+                // Reset distance input and fee when a new delivery is accepted
+                distanceInput.value = '';
+                deliveryFee.textContent = '—';
+                feeBreakdown.textContent = '—';
+                sessionStorage.removeItem('rider_distance_km');
+                sessionStorage.removeItem('rider_fee');
 
                 // Animate card out
                 deliveryCard.style.opacity = '0.5';
@@ -1856,6 +2632,10 @@
                         sessionStorage.removeItem('rider_status');
                         sessionStorage.removeItem('rider_priority');
                         sessionStorage.removeItem('rider_created');
+                        sessionStorage.removeItem('rider_customer');
+                        sessionStorage.removeItem('rider_phone');
+                        sessionStorage.removeItem('rider_distance_km');
+                        sessionStorage.removeItem('rider_fee');
 
                         window.location.reload();
                     })
@@ -2030,10 +2810,20 @@
                 activeDeliveryId.textContent = '#' + activeDelivery.id;
                 pickupLocation.textContent = 'Order #' + activeDelivery.order;
                 dropoffLocation.textContent = activeDelivery.address;
-                deliveryDistance.textContent = '—';
-                deliveryFee.textContent = activeDelivery.amount;
-                deliveryTime.textContent = '—';
-                customerContact.textContent = activeDelivery.priority + ' priority';
+                var cachedKm = sessionStorage.getItem('rider_distance_km');
+                var cachedFee = sessionStorage.getItem('rider_fee');
+                if (cachedKm) {
+                    distanceInput.value = cachedKm;
+                    calculateDeliveryFee(parseFloat(cachedKm));
+                } else {
+                    deliveryFee.textContent = '—';
+                    feeBreakdown.textContent = '—';
+                }
+                customerContact.innerHTML =
+                    '<strong>' + (activeDelivery.customer || '—') + '</strong>' +
+                    '<span style="display:block;font-size:12px;color:var(--muted-text);margin-top:2px;">' +
+                    '<i class="fas fa-phone" style="margin-right:4px;font-size:10px;"></i>' +
+                    (activeDelivery.phone || '—') + '</span>';
                 activeDeliverySection.classList.add('active');
             }
 

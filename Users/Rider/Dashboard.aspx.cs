@@ -63,8 +63,6 @@ namespace TasteNet.Users.Rider
                 -- All-time totals (used as 'today' display values)
                 SELECT
                     COUNT(*)                                                      AS TotalToday,
-                    ISNULL(SUM(CASE WHEN LTRIM(RTRIM(LOWER(Status))) = 'completed' THEN TotalAmount ELSE 0 END), 0)
-                                                                                  AS EarningsToday,
                     COUNT(CASE WHEN LTRIM(RTRIM(LOWER(Status))) = 'completed' THEN 1 END) AS CompletedToday,
                     COUNT(CASE WHEN LTRIM(RTRIM(LOWER(Status))) = 'pending'   THEN 1 END) AS PendingToday
                 FROM Tickets
@@ -73,8 +71,6 @@ namespace TasteNet.Users.Rider
                 -- Yesterday for trend comparison
                 SELECT
                     COUNT(*)                                                      AS TotalYest,
-                    ISNULL(SUM(CASE WHEN LTRIM(RTRIM(LOWER(Status))) = 'completed' THEN TotalAmount ELSE 0 END), 0)
-                                                                                  AS EarningsYest,
                     COUNT(CASE WHEN LTRIM(RTRIM(LOWER(Status))) = 'completed' THEN 1 END) AS CompletedYest,
                     COUNT(CASE WHEN LTRIM(RTRIM(LOWER(Status))) = 'pending'   THEN 1 END) AS PendingYest
                 FROM Tickets
@@ -91,23 +87,19 @@ namespace TasteNet.Users.Rider
 
                 DataRow today = ds.Tables[0].Rows[0];
                 int totalToday = Convert.ToInt32(today["TotalToday"]);
-                decimal earningsToday = Convert.ToDecimal(today["EarningsToday"]);
                 int completedToday = Convert.ToInt32(today["CompletedToday"]);
                 int pendingToday = Convert.ToInt32(today["PendingToday"]);
 
                 DataRow yest = ds.Tables[1].Rows[0];
                 int totalYest = Convert.ToInt32(yest["TotalYest"]);
-                decimal earningsYest = Convert.ToDecimal(yest["EarningsYest"]);
                 int completedYest = Convert.ToInt32(yest["CompletedYest"]);
                 int pendingYest = Convert.ToInt32(yest["PendingYest"]);
 
                 litTotalDeliveries.Text = totalToday.ToString("N0");
-                litEarningsToday.Text = earningsToday.ToString("N2");
                 litCompletedToday.Text = completedToday.ToString("N0");
                 litPending.Text = pendingToday.ToString("N0");
 
                 litTrendTotalDeliveries.Text = BuildTrendHtml(totalToday, totalYest, "vs yesterday");
-                litTrendEarningsToday.Text = BuildTrendHtml(earningsToday, earningsYest, "vs yesterday");
                 litTrendCompletedToday.Text = BuildTrendHtml(completedToday, completedYest, "vs yesterday");
                 litTrendPending.Text = BuildPendingTrendHtml(pendingToday, pendingYest);
             }
@@ -139,22 +131,27 @@ namespace TasteNet.Users.Rider
         private void LoadDeliveryTickets()
         {
             string sql = @"
-                SELECT  TicketNumber,
-                        OrderNumber,
-                        OrderType,
-                        DeliveryAddress,
-                        Status,
-                        Priority,
-                        TotalAmount,
-                        CreatedAt,
-                        StartedAt,
-                        CompletedAt,
-                        CreatedBy,
-                        UpdatedAt
-                FROM    Tickets
-                WHERE   LTRIM(RTRIM(LOWER(OrderType))) = 'delivery'
-                  AND   LTRIM(RTRIM(LOWER(Status)))   <> 'completed'
-                ORDER BY CreatedAt DESC";
+                SELECT  t.TicketNumber,
+                        t.OrderNumber,
+                        t.OrderType,
+                        t.DeliveryAddress,
+                        t.Status,
+                        t.Priority,
+                        t.TotalAmount,
+                        t.CreatedAt,
+                        t.StartedAt,
+                        t.CompletedAt,
+                        t.CreatedBy,
+                        t.UpdatedAt,
+                        u.Username    AS CustomerUsername,
+                        u.Phone       AS CustomerPhone
+                FROM    Tickets t
+                LEFT JOIN Users u
+                       ON LTRIM(RTRIM(LOWER(u.Username))) = LTRIM(RTRIM(LOWER(t.CreatedBy)))
+                      AND LTRIM(RTRIM(LOWER(u.UserType))) = 'customer'
+                WHERE   LTRIM(RTRIM(LOWER(t.OrderType))) = 'delivery'
+                  AND   LTRIM(RTRIM(LOWER(t.Status)))   <> 'completed'
+                ORDER BY t.CreatedAt DESC";
 
             using (SqlConnection con = new SqlConnection(_connStr))
             using (SqlCommand cmd = new SqlCommand(sql, con))
