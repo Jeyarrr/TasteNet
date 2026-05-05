@@ -5,9 +5,9 @@
 <head runat="server">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>TasteNet - Admin Portal</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>TasteNet Admin</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
     <style>
@@ -31,21 +31,12 @@
             position: relative;
         }
         
-        :root {
-            --primary-color: #7b0000;
-            --secondary-color: #3b0000;
-            --accent-color: #ffc107;
-            --text-light: #fff;
-            --sidebar-width: 260px;
-            --sidebar-collapsed-width: 70px;
-        }
-
         .sidebar {
-            width: var(--sidebar-width) !important;
-            min-width: var(--sidebar-width) !important;
-            max-width: var(--sidebar-width) !important;
+            width: 260px !important;
+            min-width: 260px !important;
+            max-width: 260px !important;
             height: 100vh;
-            background: linear-gradient(180deg, #7b0000 0%, #3b0000 100%);
+            background: linear-gradient(180deg, #6b1a1a 0%, #4a0e0e 100%);
             color: #ffffff;
             position: fixed;
             top: 0;
@@ -61,9 +52,9 @@
         }
         
         .sidebar.collapsed {
-            width: var(--sidebar-collapsed-width) !important;
-            min-width: var(--sidebar-collapsed-width) !important;
-            max-width: var(--sidebar-collapsed-width) !important;
+            width: 70px !important;
+            min-width: 70px !important;
+            max-width: 70px !important;
         }
         
         .sidebar::-webkit-scrollbar { 
@@ -75,7 +66,7 @@
         }
         
         .sidebar::-webkit-scrollbar-thumb { 
-            background: var(--accent-color); 
+            background: #ffc107; 
             border-radius: 10px; 
         }
         
@@ -105,23 +96,23 @@
             justify-content: center;
         }
         
-        .brand-logo {
+        .sidebar-header img {
             width: 38px;
             height: 38px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--accent-color);
+            border: 2px solid #ffc107;
             transition: transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
         }
         
-        .brand-logo:hover {
+        .sidebar-header img:hover {
             transform: scale(1.05);
         }
         
         .logo-text {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
-            color: var(--accent-color);
+            color: #ffc107;
             letter-spacing: -0.3px;
             white-space: nowrap;
             transition: opacity 0.2s ease, visibility 0.2s ease;
@@ -136,14 +127,14 @@
         .collapse-btn-circle {
             width: 28px;
             height: 28px;
-            background: var(--accent-color);
+            background: #ffc107;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             border: none;
-            color: #3b0000;
+            color: #4a0e0e;
             font-size: 12px;
             transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -155,7 +146,7 @@
             bottom: 16px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--accent-color);
+            background: #ffc107;
             width: 32px;
             height: 32px;
             font-size: 14px;
@@ -212,7 +203,6 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            border-left: none;
         }
         
         .sidebar.collapsed .menu-item {
@@ -255,7 +245,7 @@
         }
         
         .menu-item:hover i {
-            color: var(--accent-color);
+            color: #ffc107;
             transform: translateX(3px) scale(1.1);
         }
         
@@ -264,7 +254,7 @@
         }
         
         .menu-item:hover span {
-            color: var(--accent-color);
+            color: #ffc107;
             letter-spacing: 0.3px;
         }
         
@@ -300,31 +290,13 @@
         }
         
         .menu-item.active i {
-            color: var(--accent-color);
+            color: #ffc107;
             filter: drop-shadow(0 0 3px rgba(255, 193, 7, 0.5));
         }
         
         .menu-item.active span {
-            color: var(--accent-color);
+            color: #ffc107;
             font-weight: 600;
-        }
-        
-        .menu-item.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 20%;
-            height: 60%;
-            width: 3px;
-            background: var(--accent-color);
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
-        }
-        
-        .sidebar.collapsed .menu-item.active::after {
-            left: auto;
-            right: 0;
-            width: 3px;
         }
         
         @keyframes menuPulse {
@@ -376,6 +348,7 @@
         
         .menu-divider:hover {
             background: rgba(255, 193, 7, 0.3);
+            transition: background 0.3s;
         }
         
         .sidebar.collapsed .menu-divider {
@@ -386,12 +359,12 @@
             position: relative;
         }
         
-        .sidebar.collapsed .menu-item[data-tooltip]:hover::after {
+        .sidebar.collapsed .menu-item:hover::after {
             content: attr(data-tooltip);
             position: absolute;
             left: 62px;
             background: linear-gradient(135deg, #ffc107, #ffb300);
-            color: #3b0000;
+            color: #4a0e0e;
             padding: 6px 12px;
             border-radius: 8px;
             font-size: 12px;
@@ -412,55 +385,6 @@
             to {
                 opacity: 1;
                 transform: translateX(0);
-            }
-        }
-        
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 20px 28px;
-            background: #f8f9fc;
-            min-height: 100vh;
-            height: 100vh;
-            overflow-y: auto;
-            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: margin-left;
-            transform: translateZ(0);
-        }
-        
-        .sidebar.collapsed ~ .main-content {
-            margin-left: var(--sidebar-collapsed-width);
-        }
-        
-        .main-content::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .main-content::-webkit-scrollbar-track {
-            background: #e2e8f0;
-            border-radius: 10px;
-        }
-        
-        .main-content::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        
-        .main-content::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        .main-content {
-            animation: contentFadeIn 0.3s ease;
-        }
-        
-        @keyframes contentFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
             }
         }
         
@@ -501,12 +425,12 @@
         .user-avatar {
             width: 32px;
             height: 32px;
-            background: var(--accent-color);
+            background: #ffc107;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #3b0000;
+            color: #4a0e0e;
             font-weight: 700;
             font-size: 14px;
             flex-shrink: 0;
@@ -550,7 +474,7 @@
         }
         
         .logout-icon:hover {
-            color: var(--accent-color);
+            color: #ffc107;
             transform: scale(1.1);
             filter: drop-shadow(0 0 4px rgba(255, 193, 7, 0.5));
         }
@@ -559,43 +483,76 @@
             display: none;
         }
         
-        .notification-badge {
-            margin-left: auto;
-            font-size: 10px;
-            padding: 2px 8px;
-            background: rgba(255, 193, 7, 0.2);
-            color: var(--accent-color);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            transition: all 0.2s ease;
+        .content {
+            margin-left: 260px;
+            padding: 0;
+            background: #f8f9fc;
+            min-height: 100vh;
+            height: 100vh;
+            overflow-y: auto;
+            transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: margin-left;
+            transform: translateZ(0);
         }
         
-        .menu-item:hover .notification-badge {
-            background: var(--accent-color);
-            color: #3b0000;
-            transform: scale(1.05);
+        .sidebar.collapsed ~ .content {
+            margin-left: 70px;
         }
         
-        .sidebar.collapsed .notification-badge {
-            display: none;
+        .content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .content::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        
+        .content::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+        .content::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .content > * {
+            max-width: 100%;
+        }
+        
+        .content {
+            animation: contentFadeIn 0.3s ease;
+        }
+        
+        @keyframes contentFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         @media screen and (max-width: 768px) {
-            .main-content {
-                padding: 16px;
-                margin-left: var(--sidebar-collapsed-width);
+            .content {
+                padding: 0;
+                margin-left: 70px;
             }
             
             .sidebar {
-                width: var(--sidebar-collapsed-width) !important;
-                min-width: var(--sidebar-collapsed-width) !important;
-                max-width: var(--sidebar-collapsed-width) !important;
+                width: 70px !important;
+                min-width: 70px !important;
+                max-width: 70px !important;
             }
             
             .sidebar .logo-text,
             .sidebar .menu-item span,
             .sidebar .menu-title,
-            .sidebar .user-details {
+            .sidebar .user-details,
+            .sidebar .logout-icon {
                 display: none;
             }
             
@@ -609,7 +566,7 @@
                 justify-content: center;
             }
             
-            .sidebar .collapse-btn-circle {
+            .sidebar.collapsed .collapse-btn-circle {
                 bottom: 16px;
             }
             
@@ -624,61 +581,55 @@
                 justify-content: center;
             }
             
-            .sidebar .logout-icon {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: var(--sidebar-collapsed-width);
+            .content {
+                margin-left: 70px;
             }
         }
         
-        @media screen and (max-height: 600px) {
-            .sidebar-header {
-                padding: 10px 12px;
-            }
-            .brand-logo {
-                width: 30px;
-                height: 30px;
-            }
-            .logo-text {
-                font-size: 14px;
-            }
-            .menu-item {
-                padding: 6px 10px;
-            }
-            .user-avatar {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
-            }
-            .user-name {
-                font-size: 11px;
-            }
-            .user-role {
-                font-size: 9px;
-            }
+        .sidebar * {
+            box-sizing: border-box;
+        }
+        
+        .menu-item.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background: #ffc107;
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
+        }
+        
+        .sidebar.collapsed .menu-item.active::after {
+            left: auto;
+            right: 0;
+            width: 3px;
+        }
+        
+        .sidebar,
+        .sidebar * {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
     
     <asp:ContentPlaceHolder ID="head" runat="server" />
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form runat="server">
         <div class="sidebar" id="masterSidebar">
             <div class="sidebar-header">
                 <div class="logo-wrapper">
-                    <img class="brand-logo" src="/Images/LOGO.png" alt="TasteNet Logo" 
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/38?text=Logo';" loading="lazy" />
-                    <span class="logo-text">TasteNet</span>
+                    <img src="/Images/LOGO.png" alt="Logo" onerror="this.src='https://via.placeholder.com/38';" loading="lazy" />
+                    <span class="logo-text">Caballeros Tastenet</span>
                 </div>
-                <button type="button" class="collapse-btn-circle" id="collapseBtn" aria-label="Toggle sidebar">
+                <button type="button" class="collapse-btn-circle" id="collapseBtn">
                     <i class="fa-solid fa-chevron-left" id="chevronIcon"></i>
                 </button>
             </div>
             
             <div class="menu" id="nav-menu">
-                <div class="menu-title">Inventory</div>
                 <a href="/Users/Admin/Inventory.aspx" class="menu-item" id="link-inventory" data-tooltip="Inventory">
                     <i class="fa-solid fa-box"></i>
                     <span>Inventory</span>
@@ -686,7 +637,6 @@
                 
                 <div class="menu-divider"></div>
                 
-                <div class="menu-title">Menu</div>
                 <a href="/Users/Admin/Menu.aspx" class="menu-item" id="link-menu" data-tooltip="Menu">
                     <i class="fa-solid fa-utensils"></i>
                     <span>Menu</span>
@@ -694,7 +644,6 @@
                 
                 <div class="menu-divider"></div>
                 
-                <div class="menu-title">Orders</div>
                 <a href="/Users/Admin/Ticketing.aspx" class="menu-item" id="link-ticketing" data-tooltip="Ticketing">
                     <i class="fa-solid fa-ticket"></i>
                     <span>Ticketing</span>
@@ -721,60 +670,54 @@
             </div>
         </div>
         
-        <main class="main-content" id="mainContent">
+        <div class="content">
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
-        </main>
+        </div>
     </form>
 
     <script>
         (function () {
-            'use strict';
-
-            var savedState = localStorage.getItem('adminSidebarCollapsed');
+            var savedState = localStorage.getItem('sidebarCollapsed');
             var sidebar = document.getElementById('masterSidebar');
             var chevronIcon = document.getElementById('chevronIcon');
 
-            if (sidebar && chevronIcon) {
+            if (sidebar) {
                 if (savedState === 'true') {
                     sidebar.classList.add('collapsed');
-                    chevronIcon.style.transform = 'rotate(180deg)';
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(180deg)';
+                    }
                 } else {
                     sidebar.classList.remove('collapsed');
-                    chevronIcon.style.transform = 'rotate(0deg)';
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(0deg)';
+                    }
                 }
             }
         })();
 
         document.addEventListener("DOMContentLoaded", function () {
-            'use strict';
-
             const sidebar = document.getElementById('masterSidebar');
             const collapseBtn = document.getElementById('collapseBtn');
             const chevronIcon = document.getElementById('chevronIcon');
 
-            if (!sidebar || !collapseBtn) return;
-
             function collapseSidebar() {
                 if (sidebar && !sidebar.classList.contains('collapsed')) {
-                    requestAnimationFrame(() => {
-                        sidebar.classList.add('collapsed');
-                        localStorage.setItem('adminSidebarCollapsed', 'true');
-                        if (chevronIcon) {
-                            chevronIcon.style.transform = 'rotate(180deg)';
-                        }
-                    });
+                    sidebar.classList.add('collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'true');
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(180deg)';
+                    }
                 }
             }
 
             function expandSidebar() {
                 if (sidebar && sidebar.classList.contains('collapsed')) {
-                    requestAnimationFrame(() => {
-                        sidebar.classList.remove('collapsed');
-                        localStorage.setItem('adminSidebarCollapsed', 'false');
-                        if (chevronIcon) {
-                            chevronIcon.style.transform = 'rotate(0deg)';
-                        }
-                    });
+                    sidebar.classList.remove('collapsed');
+                    localStorage.setItem('sidebarCollapsed', 'false');
+                    if (chevronIcon) {
+                        chevronIcon.style.transform = 'rotate(0deg)';
+                    }
                 }
             }
 
@@ -786,20 +729,11 @@
                 }
             }
 
-            let isToggling = false;
             if (collapseBtn) {
                 collapseBtn.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-
-                    if (isToggling) return;
-                    isToggling = true;
-
                     toggleSidebar();
-
-                    setTimeout(() => {
-                        isToggling = false;
-                    }, 250);
                 });
             }
 
@@ -842,12 +776,6 @@
                             link.classList.add('active');
                             return;
                         }
-
-                        if ((currentPage === '/' || currentPage === '/users/admin/default.aspx') &&
-                            linkPath.includes('inventory')) {
-                            link.classList.add('active');
-                            return;
-                        }
                     }
                 });
 
@@ -883,7 +811,9 @@
             allMenuLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
                     const isCollapsed = sidebar.classList.contains('collapsed');
-                    localStorage.setItem('adminSidebarCollapsed', isCollapsed ? 'true' : 'false');
+                    const currentState = isCollapsed ? 'true' : 'false';
+
+                    localStorage.setItem('sidebarCollapsed', currentState);
 
                     const clickedLink = e.currentTarget;
                     clickedLink.style.transform = 'scale(0.98)';
@@ -892,22 +822,25 @@
                             clickedLink.style.transform = '';
                         }
                     }, 150);
+
                 });
             });
 
             window.addEventListener('pageshow', function (event) {
                 if (event.persisted) {
-                    var savedState = localStorage.getItem('adminSidebarCollapsed');
+                    var savedState = localStorage.getItem('sidebarCollapsed');
                     if (sidebar) {
-                        requestAnimationFrame(() => {
-                            if (savedState === 'true') {
-                                sidebar.classList.add('collapsed');
-                                if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
-                            } else {
-                                sidebar.classList.remove('collapsed');
-                                if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
+                        if (savedState === 'true') {
+                            sidebar.classList.add('collapsed');
+                            if (chevronIcon) {
+                                chevronIcon.style.transform = 'rotate(180deg)';
                             }
-                        });
+                        } else {
+                            sidebar.classList.remove('collapsed');
+                            if (chevronIcon) {
+                                chevronIcon.style.transform = 'rotate(0deg)';
+                            }
+                        }
                     }
                     setActiveMenu();
                 }
@@ -916,7 +849,7 @@
             const observer = new MutationObserver(function (mutations) {
                 mutations.forEach(function (mutation) {
                     if (mutation.attributeName === 'class') {
-                        const savedState = localStorage.getItem('adminSidebarCollapsed');
+                        const savedState = localStorage.getItem('sidebarCollapsed');
                         const currentState = sidebar.classList.contains('collapsed') ? 'true' : 'false';
                         if (savedState !== currentState && savedState !== null) {
                             if (savedState === 'true') {
