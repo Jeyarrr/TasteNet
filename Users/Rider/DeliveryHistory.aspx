@@ -120,7 +120,7 @@
 
         .stats-summary {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 35px;
             animation: fadeIn 0.5s ease-out;
@@ -144,7 +144,6 @@
 
         .summary-card:nth-child(1) { animation-delay: 0.1s; }
         .summary-card:nth-child(2) { animation-delay: 0.2s; }
-        .summary-card:nth-child(3) { animation-delay: 0.3s; }
 
         .summary-card:hover {
             transform: translateY(-5px);
@@ -159,12 +158,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.7s;
             z-index: 1;
         }
@@ -200,10 +194,6 @@
             color: var(--success-green);
         }
 
-        .summary-value.cancelled {
-            color: var(--danger-red);
-        }
-
         .summary-icon {
             width: 56px;
             height: 56px;
@@ -223,7 +213,7 @@
 
         .summary-card:hover .summary-icon {
             transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .deliveries-container {
@@ -274,11 +264,6 @@
             box-sizing: border-box;
         }
 
-        .delivery-card:nth-child(1) { animation-delay: 0.1s; }
-        .delivery-card:nth-child(2) { animation-delay: 0.2s; }
-        .delivery-card:nth-child(3) { animation-delay: 0.3s; }
-        .delivery-card:nth-child(4) { animation-delay: 0.4s; }
-
         .delivery-card:hover {
             transform: translateY(-3px);
             box-shadow: var(--card-shadow-hover);
@@ -292,12 +277,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.1),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
             transition: left 0.7s;
         }
 
@@ -314,9 +294,7 @@
             z-index: 1;
         }
 
-        .delivery-info {
-            flex: 1;
-        }
+        .delivery-info { flex: 1; }
 
         .delivery-id {
             font-size: 14px;
@@ -339,9 +317,7 @@
             gap: 6px;
         }
 
-        .delivery-time i {
-            font-size: 11px;
-        }
+        .delivery-time i { font-size: 11px; }
 
         .delivery-status {
             padding: 4px 10px;
@@ -360,12 +336,6 @@
             background: var(--success-green-light);
             color: var(--success-green);
             border-color: var(--success-green);
-        }
-
-        .status-cancelled {
-            background: var(--danger-red-light);
-            color: var(--danger-red);
-            border-color: var(--danger-red);
         }
 
         .delivery-content {
@@ -404,9 +374,7 @@
             margin-top: 2px;
         }
 
-        .location-text {
-            flex: 1;
-        }
+        .location-text { flex: 1; }
 
         .location-label {
             font-size: 10px;
@@ -469,14 +437,6 @@
             font-size: 13px;
         }
 
-        .metric-stars {
-            color: var(--warning-orange);
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
         .delivery-actions {
             display: flex;
             gap: 10px;
@@ -510,22 +470,12 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.7s;
         }
 
-        .action-btn:hover::before {
-            left: 100%;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
+        .action-btn:hover::before { left: 100%; }
+        .action-btn:hover { transform: translateY(-2px); }
 
         .btn-view {
             background: var(--primary-maroon);
@@ -538,23 +488,6 @@
             box-shadow: var(--button-shadow-hover);
         }
 
-        .btn-repeat {
-            background: var(--accent-blue);
-            color: var(--accent-blue-dark);
-            border: 1px solid var(--accent-blue-dark);
-        }
-
-        .btn-repeat:hover {
-            background: var(--accent-blue-dark);
-            color: white;
-        }
-
-        .btn-repeat:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
         .pagination {
             display: flex;
             justify-content: center;
@@ -563,8 +496,6 @@
             margin-top: 30px;
             padding-top: 25px;
             border-top: 1px solid var(--border-light);
-            position: relative;
-            z-index: 1;
         }
 
         .page-btn {
@@ -583,32 +514,20 @@
             transition: all var(--transition-base);
         }
 
-        .page-btn:hover {
-            background: var(--primary-maroon);
-            color: white;
-            border-color: var(--primary-maroon);
-            transform: translateY(-2px);
-        }
-
-        .page-btn.active {
+        .page-btn:hover, .page-btn.active {
             background: var(--primary-maroon);
             color: white;
             border-color: var(--primary-maroon);
         }
 
-        .page-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
+        .page-btn:hover { transform: translateY(-2px); }
 
+        /* Modal */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
             display: none;
             justify-content: center;
             align-items: center;
@@ -616,9 +535,7 @@
             animation: fadeIn 0.3s ease;
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .modal-content {
             background: white;
@@ -626,7 +543,7 @@
             padding: 30px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             position: relative;
             animation: slideUp 0.4s ease;
             max-height: 90vh;
@@ -693,9 +610,7 @@
             gap: 10px;
         }
 
-        .modal-section-title i {
-            font-size: 14px;
-        }
+        .modal-section-title i { font-size: 14px; }
 
         .modal-details {
             display: flex;
@@ -711,9 +626,7 @@
             border-bottom: 1px dashed var(--border-light);
         }
 
-        .detail-row:last-child {
-            border-bottom: none;
-        }
+        .detail-row:last-child { border-bottom: none; }
 
         .detail-label {
             color: var(--muted-text);
@@ -728,20 +641,6 @@
             font-size: 14px;
             text-align: right;
             flex: 1;
-        }
-
-        .modal-map {
-            width: 100%;
-            height: 200px;
-            background: var(--accent-blue);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-blue-dark);
-            font-weight: 600;
-            border: 2px dashed var(--accent-blue-dark);
-            margin: 10px 0;
         }
 
         .modal-actions {
@@ -768,17 +667,6 @@
             flex: 1;
         }
 
-        .modal-btn-primary {
-            background: var(--primary-maroon);
-            color: white;
-            box-shadow: var(--button-shadow);
-        }
-
-        .modal-btn-primary:hover {
-            background: var(--primary-maroon-dark);
-            transform: translateY(-2px);
-        }
-
         .modal-btn-secondary {
             background: var(--accent-blue);
             color: var(--accent-blue-dark);
@@ -790,6 +678,21 @@
             color: white;
         }
 
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted-text);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--border-light);
+        }
+
+        .empty-state p { font-size: 16px; margin: 0; }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -800,258 +703,133 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 1200px) {
-            .stats-summary {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .deliveries-grid {
-                gap: 18px;
-            }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
         }
 
         @media (max-width: 992px) {
-            .history-wrapper {
-                padding: 20px;
-            }
-            
-            .page-header-main {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-            
-            .deliveries-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .delivery-actions {
-                flex-direction: column;
-            }
-            
-            .action-btn {
-                width: 100%;
-            }
-            
-            .modal-content {
-                width: 95%;
-                padding: 20px;
-            }
+            .history-wrapper { padding: 20px; }
+            .page-header-main { flex-direction: column; align-items: stretch; gap: 15px; }
+            .deliveries-grid { grid-template-columns: 1fr; }
+            .delivery-actions { flex-direction: column; }
+            .action-btn { width: 100%; }
+            .modal-content { width: 95%; padding: 20px; }
         }
 
         @media (max-width: 768px) {
-            .stats-summary {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .delivery-header {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .delivery-status {
-                align-self: flex-start;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .header-title h1 {
-                font-size: 24px;
-            }
-            
-            .delivery-metrics {
-                grid-template-columns: 1fr;
-            }
-            
-            .metric-row {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                padding-bottom: 10px;
-                border-bottom: 1px dashed var(--border-light);
-            }
-            
-            .metric-row:last-child {
-                border-bottom: none;
-            }
-            
-            .modal-details {
-                gap: 10px;
-            }
-            
-            .detail-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            
-            .detail-value {
-                text-align: left;
-            }
-            
-            .modal-actions {
-                flex-direction: column;
-            }
+            .stats-summary { grid-template-columns: 1fr; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .delivery-header { flex-direction: column; gap: 10px; }
+            .delivery-status { align-self: flex-start; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .header-title h1 { font-size: 24px; }
+            .delivery-metrics { grid-template-columns: 1fr; }
+            .modal-details { gap: 10px; }
+            .detail-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .detail-value { text-align: left; }
+            .modal-actions { flex-direction: column; }
         }
 
         @media (max-width: 480px) {
-            .history-wrapper {
-                padding: 15px;
-            }
-            
-            .summary-value {
-                font-size: 28px;
-            }
-            
-            .summary-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 18px;
-            }
-            
-            .delivery-card {
-                padding: 18px;
-            }
-            
-            .location-row {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .location-icon {
-                align-self: flex-start;
-            }
+            .history-wrapper { padding: 15px; }
+            .summary-value { font-size: 28px; }
+            .summary-icon { width: 48px; height: 48px; font-size: 18px; }
+            .delivery-card { padding: 18px; }
         }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
+    <%-- Detail Modal (populated via JS from hidden fields in Repeater) --%>
     <div class="modal-overlay" id="deliveryModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalDeliveryId">#DL-0000</h2>
-                <button class="close-modal" id="closeModal">
-                    <i class="fas fa-times"></i>
-                </button>
+                <h2 class="modal-title" id="modalTicketNumber">#TK-0000</h2>
+                <button class="close-modal" id="closeModal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div class="modal-section">
-                    <h3 class="modal-section-title">
-                        <i class="fas fa-info-circle"></i>
-                        Delivery Information
-                    </h3>
+                    <h3 class="modal-section-title"><i class="fas fa-info-circle"></i> Delivery Information</h3>
                     <div class="modal-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Ticket #:</span>
+                            <span class="detail-value" id="modalTicketNum"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Order #:</span>
+                            <span class="detail-value" id="modalOrderNum"></span>
+                        </div>
                         <div class="detail-row">
                             <span class="detail-label">Status:</span>
-                            <span class="detail-value" id="modalStatus">Completed</span>
+                            <span class="detail-value" id="modalStatus" style="color: var(--success-green); font-weight: 700;">Completed</span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Date & Time:</span>
-                            <span class="detail-value" id="modalDateTime">Jan 26, 2026 at 14:30</span>
+                            <span class="detail-label">Priority:</span>
+                            <span class="detail-value" id="modalPriority"></span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Delivery ID:</span>
-                            <span class="detail-value" id="modalFullId">DL-4567</span>
+                            <span class="detail-label">Created:</span>
+                            <span class="detail-value" id="modalCreatedAt"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Started:</span>
+                            <span class="detail-value" id="modalStartedAt"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Completed:</span>
+                            <span class="detail-value" id="modalCompletedAt"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-section">
-                    <h3 class="modal-section-title">
-                        <i class="fas fa-route"></i>
-                        Delivery Route
-                    </h3>
+                    <h3 class="modal-section-title"><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
                     <div class="modal-details">
                         <div class="detail-row">
-                            <span class="detail-label">Pickup Location:</span>
-                            <span class="detail-value" id="modalPickup">Caballeros Restaurants</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Drop-off Location:</span>
-                            <span class="detail-value" id="modalDropoff">123 Main Street, Dasma</span>
-                        </div>
-                        <div class="modal-map">
-                            <i class="fas fa-map-marked-alt"></i>
-                            <span>Delivery Route Map</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Distance:</span>
-                            <span class="detail-value" id="modalDistance">3.2 km</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Delivery Time:</span>
-                            <span class="detail-value" id="modalDeliveryTime">18 minutes</span>
+                            <span class="detail-label">Address:</span>
+                            <span class="detail-value" id="modalAddress"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-section">
-                    <h3 class="modal-section-title">
-                        <i class="fas fa-chart-line"></i>
-                        Performance Metrics
-                    </h3>
+                    <h3 class="modal-section-title"><i class="fas fa-receipt"></i> Order Summary</h3>
                     <div class="modal-details">
                         <div class="detail-row">
-                            <span class="detail-label">Earnings:</span>
-                            <span class="detail-value" id="modalEarnings">₱85.00</span>
+                            <span class="detail-label">Total Amount:</span>
+                            <span class="detail-value" id="modalTotal" style="color: var(--success-green); font-weight: 700;"></span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Rating:</span>
-                            <span class="detail-value" id="modalRating">4.8/5</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Customer Tip:</span>
-                            <span class="detail-value" id="modalTip">₱15.00</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Platform Fee:</span>
-                            <span class="detail-value" id="modalFee">₱10.00</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Net Earnings:</span>
-                            <span class="detail-value" style="color: var(--success-green); font-weight: 700;" id="modalNetEarnings">₱90.00</span>
+                            <span class="detail-label">Created By:</span>
+                            <span class="detail-value" id="modalCreatedBy"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-section">
-                    <h3 class="modal-section-title">
-                        <i class="fas fa-user"></i>
-                        Customer Information
-                    </h3>
+                    <h3 class="modal-section-title"><i class="fas fa-user"></i> Customer Information</h3>
                     <div class="modal-details">
                         <div class="detail-row">
-                            <span class="detail-label">Customer Name:</span>
-                            <span class="detail-value" id="modalCustomer">Jayr Casano</span>
+                            <span class="detail-label">Username:</span>
+                            <span class="detail-value" id="modalUsername"></span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Contact Number:</span>
-                            <span class="detail-value" id="modalContact">0917-123-4567</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Special Instructions:</span>
-                            <span class="detail-value" id="modalInstructions">Leave at the gate</span>
+                            <span class="detail-label">Phone:</span>
+                            <span class="detail-value" id="modalPhone"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-actions">
-                    <button class="modal-btn modal-btn-primary" id="modalRepeatBtn">
-                        <i class="fas fa-redo"></i>
-                        Repeat Delivery
-                    </button>
                     <button class="modal-btn modal-btn-secondary" id="modalReportBtn">
-                        <i class="fas fa-flag"></i>
-                        Report Issue
+                        <i class="fas fa-flag"></i> Report Issue
                     </button>
                 </div>
             </div>
@@ -1062,625 +840,195 @@
         <div class="page-header-main">
             <div class="header-title">
                 <h1>Delivery History</h1>
-                <p>Review your past deliveries and track your performance</p>
-            </div>
-            
-            <div class="filter-bar">
-                <select class="filter-select" id="statusFilter">
-                    <option value="all">All Status</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
+                <p>Review your completed deliveries</p>
             </div>
         </div>
 
+        <%-- Summary Stats --%>
         <div class="stats-summary">
             <div class="summary-card">
                 <div class="summary-content">
                     <div class="summary-label">Total Deliveries</div>
-                    <div class="summary-value">156</div>
+                    <div class="summary-value">
+                        <asp:Label ID="lblTotalDeliveries" runat="server" Text="0" />
+                    </div>
                 </div>
                 <div class="summary-icon">
                     <i class="fas fa-box"></i>
                 </div>
             </div>
-            
+
             <div class="summary-card">
                 <div class="summary-content">
-                    <div class="summary-label">Completed</div>
-                    <div class="summary-value completed">152</div>
+                    <div class="summary-label">Total Amount Delivered</div>
+                    <div class="summary-value completed">
+                        <asp:Label ID="lblTotalAmount" runat="server" Text="₱0.00" />
+                    </div>
                 </div>
                 <div class="summary-icon" style="background: var(--success-green-light); color: var(--success-green);">
                     <i class="fas fa-check-circle"></i>
-                </div>
-            </div>
-            
-            <div class="summary-card">
-                <div class="summary-content">
-                    <div class="summary-label">Cancelled</div>
-                    <div class="summary-value cancelled">4</div>
-                </div>
-                <div class="summary-icon" style="background: var(--danger-red-light); color: var(--danger-red);">
-                    <i class="fas fa-times-circle"></i>
                 </div>
             </div>
         </div>
 
         <div class="deliveries-container">
             <div class="section-header">
-                <h2 class="section-title">Recent Deliveries</h2>
-                <span class="results-count" id="resultsCount">Showing 4 of 156 deliveries</span>
+                <h2 class="section-title">Completed Deliveries</h2>
+                <span class="results-count" id="resultsCount">
+                    Showing <asp:Label ID="lblResultsCount" runat="server" Text="0" /> deliveries
+                </span>
             </div>
-            
+
             <div class="deliveries-grid" id="deliveriesGrid">
-                <div class="delivery-card" data-status="completed">
-                    <div class="delivery-header">
-                        <div class="delivery-info">
-                            <span class="delivery-id">#DL-4567</span>
-                            <div class="delivery-time">
-                                <i class="far fa-calendar"></i>
-                                Jan 26, 2026 at 14:30
-                            </div>
-                        </div>
-                        <span class="delivery-status status-completed">Completed</span>
-                    </div>
-                    
-                    <div class="delivery-content">
-                        <div class="location-info">
-                            <div class="location-row">
-                                <div class="location-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="location-text">
-                                    <div class="location-label">PICKUP LOCATION</div>
-                                    <div class="location-address">Caballeros Restaurants</div>
-                                </div>
-                            </div>
-                            
-                            <div class="location-row">
-                                <div class="location-icon" style="background: var(--success-green-light); color: var(--success-green);">
-                                    <i class="fas fa-flag-checkered"></i>
-                                </div>
-                                <div class="location-text">
-                                    <div class="location-label">DROP-OFF LOCATION</div>
-                                    <div class="location-address">123 Main Street, Dasma</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="delivery-metrics">
-                            <div class="metric-row">
-                                <span class="metric-label">Distance</span>
-                                <span class="metric-value">3.2 km</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Time</span>
-                                <span class="metric-value">18 min</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Earnings</span>
-                                <span class="metric-value highlight">₱85</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Rating</span>
-                                <span class="metric-value">
-                                    <span class="metric-stars">
-                                        <i class="fas fa-star"></i>
-                                        4.8/5
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="delivery-actions">
-                        <button type="button" class="action-btn btn-view" data-delivery-id="DL-4567">
-                            <i class="fas fa-eye"></i>
-                            View Details
-                        </button>
-                        <button type="button" class="action-btn btn-repeat">
-                            <i class="fas fa-redo"></i>
-                            Repeat Route
-                        </button>
-                    </div>
-                </div>
+                <asp:Repeater ID="rptDeliveries" runat="server">
+                    <ItemTemplate>
+                        <%-- Hidden fields for modal data --%>
+                        <div class="delivery-card"
+                             data-ticket-id='<%# Eval("TicketID") %>'
+                             data-ticket-number='<%# Eval("TicketNumber") %>'
+                             data-order-number='<%# Eval("OrderNumber") %>'
+                             data-address='<%# Eval("DeliveryAddress") %>'
+                             data-status='<%# Eval("Status") %>'
+                             data-priority='<%# Eval("Priority") %>'
+                             data-total='<%# String.Format("₱{0:N2}", Eval("TotalAmount")) %>'
+                             data-created-at='<%# Eval("CreatedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CreatedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>'
+                             data-started-at='<%# Eval("StartedAt") != DBNull.Value ? Convert.ToDateTime(Eval("StartedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>'
+                             data-completed-at='<%# Eval("CompletedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CompletedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>'
+                             data-created-by='<%# Eval("CreatedBy") %>'
+                             data-username='<%# Eval("Username") %>'
+                             data-phone='<%# Eval("Phone") %>'>
 
-                <div class="delivery-card" data-status="completed">
-                    <div class="delivery-header">
-                        <div class="delivery-info">
-                            <span class="delivery-id">#DL-4568</span>
-                            <div class="delivery-time">
-                                <i class="far fa-calendar"></i>
-                                Jan 29, 2026 at 12:15
-                            </div>
-                        </div>
-                        <span class="delivery-status status-completed">Completed</span>
-                    </div>
-                    
-                    <div class="delivery-content">
-                        <div class="location-info">
-                            <div class="location-row">
-                                <div class="location-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
+                            <div class="delivery-header">
+                                <div class="delivery-info">
+                                    <span class="delivery-id">#<%# Eval("TicketNumber") %></span>
+                                    <div class="delivery-time">
+                                        <i class="far fa-calendar"></i>
+                                        <%# Eval("CompletedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CompletedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>
+                                    </div>
                                 </div>
-                                <div class="location-text">
-                                    <div class="location-label">PICKUP LOCATION</div>
-                                    <div class="location-address">Caballeros Restaurants</div>
-                                </div>
+                                <span class="delivery-status status-completed">Completed</span>
                             </div>
-                            
-                            <div class="location-row">
-                                <div class="location-icon" style="background: var(--success-green-light); color: var(--success-green);">
-                                    <i class="fas fa-flag-checkered"></i>
-                                </div>
-                                <div class="location-text">
-                                    <div class="location-label">DROP-OFF LOCATION</div>
-                                    <div class="location-address">456 Oak Street, Dasma</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="delivery-metrics">
-                            <div class="metric-row">
-                                <span class="metric-label">Distance</span>
-                                <span class="metric-value">2.8 km</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Time</span>
-                                <span class="metric-value">15 min</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Earnings</span>
-                                <span class="metric-value highlight">₱75</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Rating</span>
-                                <span class="metric-value">
-                                    <span class="metric-stars">
-                                        <i class="fas fa-star"></i>
-                                        5.0/5
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="delivery-actions">
-                        <button type="button" class="action-btn btn-view" data-delivery-id="DL-4568">
-                            <i class="fas fa-eye"></i>
-                            View Details
-                        </button>
-                        <button type="button" class="action-btn btn-repeat">
-                            <i class="fas fa-redo"></i>
-                            Repeat Route
-                        </button>
-                    </div>
-                </div>
 
-                <div class="delivery-card" data-status="cancelled">
-                    <div class="delivery-header">
-                        <div class="delivery-info">
-                            <span class="delivery-id">#DL-4569</span>
-                            <div class="delivery-time">
-                                <i class="far fa-calendar"></i>
-                                Jan 28, 2026 at 19:45
-                            </div>
-                        </div>
-                        <span class="delivery-status status-cancelled">Cancelled</span>
-                    </div>
-                    
-                    <div class="delivery-content">
-                        <div class="location-info">
-                            <div class="location-row">
-                                <div class="location-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
+                            <div class="delivery-content">
+                                <div class="location-info">
+                                    <div class="location-row">
+                                        <div class="location-icon" style="background: var(--success-green-light); color: var(--success-green);">
+                                            <i class="fas fa-flag-checkered"></i>
+                                        </div>
+                                        <div class="location-text">
+                                            <div class="location-label">DELIVERY ADDRESS</div>
+                                            <div class="location-address"><%# Eval("DeliveryAddress") %></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="location-text">
-                                    <div class="location-label">PICKUP LOCATION</div>
-                                    <div class="location-address">Caballeros Restaurants</div>
-                                </div>
-                            </div>
-                            
-                            <div class="location-row">
-                                <div class="location-icon" style="background: var(--danger-red-light); color: var(--danger-red);">
-                                    <i class="fas fa-flag-checkered"></i>
-                                </div>
-                                <div class="location-text">
-                                    <div class="location-label">DROP-OFF LOCATION</div>
-                                    <div class="location-address">789 Pine Street, Dasma</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="delivery-metrics">
-                            <div class="metric-row">
-                                <span class="metric-label">Distance</span>
-                                <span class="metric-value">1.5 km</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Status</span>
-                                <span class="metric-value" style="color: var(--danger-red);">Cancelled</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Earnings</span>
-                                <span class="metric-value" style="color: var(--muted-text);">₱0</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Reason</span>
-                                <span class="metric-value">Customer</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="delivery-actions">
-                        <button type="button" class="action-btn btn-view" data-delivery-id="DL-4569">
-                            <i class="fas fa-eye"></i>
-                            View Details
-                        </button>
-                        <button type="button" class="action-btn btn-repeat" disabled>
-                            <i class="fas fa-redo"></i>
-                            Repeat Route
-                        </button>
-                    </div>
-                </div>
 
-                <div class="delivery-card" data-status="completed">
-                    <div class="delivery-header">
-                        <div class="delivery-info">
-                            <span class="delivery-id">#DL-4570</span>
-                            <div class="delivery-time">
-                                <i class="far fa-calendar"></i>
-                                Jan 28, 2026 at 16:20
-                            </div>
-                        </div>
-                        <span class="delivery-status status-completed">Completed</span>
-                    </div>
-                    
-                    <div class="delivery-content">
-                        <div class="location-info">
-                            <div class="location-row">
-                                <div class="location-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <div class="location-text">
-                                    <div class="location-label">PICKUP LOCATION</div>
-                                    <div class="location-address">Caballeros Restaurants</div>
-                                </div>
-                            </div>
-                            
-                            <div class="location-row">
-                                <div class="location-icon" style="background: var(--success-green-light); color: var(--success-green);">
-                                    <i class="fas fa-flag-checkered"></i>
-                                </div>
-                                <div class="location-text">
-                                    <div class="location-label">DROP-OFF LOCATION</div>
-                                    <div class="location-address">101 Maple Street, Dasma</div>
+                                <div class="delivery-metrics">
+                                    <div class="metric-row">
+                                        <span class="metric-label">Order #</span>
+                                        <span class="metric-value"><%# Eval("OrderNumber") %></span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Priority</span>
+                                        <span class="metric-value"><%# Eval("Priority") %></span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Total Amount</span>
+                                        <span class="metric-value highlight"><%# String.Format("₱{0:N2}", Eval("TotalAmount")) %></span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Order Type</span>
+                                        <span class="metric-value"><%# Eval("OrderType") %></span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Customer</span>
+                                        <span class="metric-value"><%# Eval("Username") %></span>
+                                    </div>
+                                    <div class="metric-row">
+                                        <span class="metric-label">Phone</span>
+                                        <span class="metric-value"><%# Eval("Phone") %></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="delivery-metrics">
-                            <div class="metric-row">
-                                <span class="metric-label">Distance</span>
-                                <span class="metric-value">3.5 km</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Time</span>
-                                <span class="metric-value">22 min</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Earnings</span>
-                                <span class="metric-value highlight">₱95</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-label">Rating</span>
-                                <span class="metric-value">
-                                    <span class="metric-stars">
-                                        <i class="fas fa-star"></i>
-                                        4.5/5
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="delivery-actions">
-                        <button type="button" class="action-btn btn-view" data-delivery-id="DL-4570">
-                            <i class="fas fa-eye"></i>
-                            View Details
-                        </button>
-                        <button type="button" class="action-btn btn-repeat">
-                            <i class="fas fa-redo"></i>
-                            Repeat Route
-                        </button>
-                    </div>
-                </div>
-            </div>
 
-            <div class="pagination">
-                <button class="page-btn disabled">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <span style="color: var(--muted-text); padding: 0 8px;">...</span>
-                <button class="page-btn">12</button>
-                <button class="page-btn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+                            <div class="delivery-actions">
+                                <button type="button" class="action-btn btn-view"
+                                        onclick="openModal(this.closest('.delivery-card'))">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+
+                <%-- Empty state shown when no records --%>
+                <asp:Panel ID="pnlEmpty" runat="server" Visible="false" style="grid-column: 1 / -1;">
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <p>No completed deliveries found.</p>
+                    </div>
+                </asp:Panel>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const statusFilter = document.getElementById('statusFilter');
-            const deliveryCards = document.querySelectorAll('.delivery-card');
-            const resultsCount = document.getElementById('resultsCount');
-            const modal = document.getElementById('deliveryModal');
-            const closeModalBtn = document.getElementById('closeModal');
-            const modalRepeatBtn = document.getElementById('modalRepeatBtn');
-            const modalReportBtn = document.getElementById('modalReportBtn');
+        const modal = document.getElementById('deliveryModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const modalReportBtn = document.getElementById('modalReportBtn');
 
-            const deliveryData = {
-                'DL-4567': {
-                    id: 'DL-4567',
-                    status: 'Completed',
-                    dateTime: 'Jan 26, 2026 at 14:30',
-                    pickup: 'Caballeros Restaurants',
-                    dropoff: '123 Main Street, Dasma',
-                    distance: '3.2 km',
-                    deliveryTime: '18 minutes',
-                    earnings: '₱85.00',
-                    rating: '4.8/5',
-                    tip: '₱15.00',
-                    fee: '₱10.00',
-                    netEarnings: '₱90.00',
-                    customer: 'Jayr Casano',
-                    contact: '0917-123-4567',
-                    instructions: 'Leave at the gate'
-                },
-                'DL-4568': {
-                    id: 'DL-4568',
-                    status: 'Completed',
-                    dateTime: 'Jan 29, 2026 at 12:15',
-                    pickup: 'Caballeros Restaurants',
-                    dropoff: '456 Oak Street, Dasma',
-                    distance: '2.8 km',
-                    deliveryTime: '15 minutes',
-                    earnings: '₱75.00',
-                    rating: '5.0/5',
-                    tip: '₱10.00',
-                    fee: '₱8.00',
-                    netEarnings: '₱77.00',
-                    customer: 'George Gonzaga',
-                    contact: '0918-987-6543',
-                    instructions: 'Call upon arrival'
-                },
-                'DL-4569': {
-                    id: 'DL-4569',
-                    status: 'Cancelled',
-                    dateTime: 'Jan 28, 2026 at 19:45',
-                    pickup: 'Caballeros Restaurants',
-                    dropoff: '789 Pine Street, Dasma',
-                    distance: '1.5 km',
-                    deliveryTime: 'N/A',
-                    earnings: '₱0.00',
-                    rating: 'N/A',
-                    tip: '₱0.00',
-                    fee: '₱0.00',
-                    netEarnings: '₱0.00',
-                    customer: 'Zea May Sulit',
-                    contact: '0919-555-1234',
-                    instructions: 'Customer cancelled order'
-                },
-                'DL-4570': {
-                    id: 'DL-4570',
-                    status: 'Completed',
-                    dateTime: 'Jan 28, 2026 at 16:20',
-                    pickup: 'Caballeros Restaurants',
-                    dropoff: '101 Maple Street, Dasma',
-                    distance: '3.5 km',
-                    deliveryTime: '22 minutes',
-                    earnings: '₱95.00',
-                    rating: '4.5/5',
-                    tip: '₱20.00',
-                    fee: '₱12.00',
-                    netEarnings: '₱103.00',
-                    customer: 'Lalaine Reyes',
-                    contact: '0916-777-8888',
-                    instructions: 'Ring doorbell twice'
-                }
-            };
+        function openModal(card) {
+            document.getElementById('modalTicketNumber').textContent = '#' + card.dataset.ticketNumber;
+            document.getElementById('modalTicketNum').textContent = card.dataset.ticketNumber;
+            document.getElementById('modalOrderNum').textContent = card.dataset.orderNumber;
+            document.getElementById('modalStatus').textContent = card.dataset.status;
+            document.getElementById('modalPriority').textContent = card.dataset.priority;
+            document.getElementById('modalAddress').textContent = card.dataset.address;
+            document.getElementById('modalTotal').textContent = card.dataset.total;
+            document.getElementById('modalCreatedAt').textContent = card.dataset.createdAt;
+            document.getElementById('modalStartedAt').textContent = card.dataset.startedAt;
+            document.getElementById('modalCompletedAt').textContent = card.dataset.completedAt;
+            document.getElementById('modalCreatedBy').textContent = card.dataset.createdBy;
+            document.getElementById('modalUsername').textContent = card.dataset.username;
+            document.getElementById('modalPhone').textContent = card.dataset.phone;
 
-            function filterDeliveries() {
-                const status = statusFilter.value;
-                let visibleCount = 0;
-                let totalCount = 0;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-                deliveryCards.forEach(card => {
-                    const cardStatus = card.dataset.status;
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
-                    if (status === 'all' || cardStatus === status) {
-                        card.style.display = 'flex';
-                        visibleCount++;
-                        setTimeout(() => {
-                            card.style.opacity = '1';
-                            card.style.transform = 'translateY(0)';
-                        }, 10);
-                    } else {
-                        card.style.opacity = '0';
-                        card.style.transform = 'translateY(10px)';
-                        setTimeout(() => {
-                            card.style.display = 'none';
-                        }, 300);
-                    }
-                });
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
-                if (status === 'all') {
-                    totalCount = 156;
-                    visibleCount = 4;
-                } else if (status === 'completed') {
-                    totalCount = 152;
-                    visibleCount = Math.min(visibleCount, 4);
-                } else if (status === 'cancelled') {
-                    totalCount = 4;
-                    visibleCount = Math.min(visibleCount, 4);
-                }
-
-                resultsCount.textContent = `Showing ${visibleCount} of ${totalCount} deliveries`;
-            }
-
-            function openModal(deliveryId) {
-                const data = deliveryData[deliveryId];
-                if (!data) return;
-
-                document.getElementById('modalDeliveryId').textContent = '#' + data.id;
-                document.getElementById('modalStatus').textContent = data.status;
-                document.getElementById('modalDateTime').textContent = data.dateTime;
-                document.getElementById('modalFullId').textContent = data.id;
-                document.getElementById('modalPickup').textContent = data.pickup;
-                document.getElementById('modalDropoff').textContent = data.dropoff;
-                document.getElementById('modalDistance').textContent = data.distance;
-                document.getElementById('modalDeliveryTime').textContent = data.deliveryTime;
-                document.getElementById('modalEarnings').textContent = data.earnings;
-                document.getElementById('modalRating').textContent = data.rating;
-                document.getElementById('modalTip').textContent = data.tip;
-                document.getElementById('modalFee').textContent = data.fee;
-                document.getElementById('modalNetEarnings').textContent = data.netEarnings;
-                document.getElementById('modalCustomer').textContent = data.customer;
-                document.getElementById('modalContact').textContent = data.contact;
-                document.getElementById('modalInstructions').textContent = data.instructions;
-
-                const statusElement = document.getElementById('modalStatus');
-                if (data.status === 'Completed') {
-                    statusElement.style.color = 'var(--success-green)';
-                    statusElement.style.fontWeight = '700';
-                } else {
-                    statusElement.style.color = 'var(--danger-red)';
-                    statusElement.style.fontWeight = '700';
-                }
-
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function closeModal() {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-
-            statusFilter.addEventListener('change', filterDeliveries);
-
-            document.addEventListener('click', function (e) {
-                if (e.target.closest('.btn-view')) {
-                    const btn = e.target.closest('.btn-view');
-                    const deliveryId = btn.dataset.deliveryId;
-                    openModal(deliveryId);
-                }
-
-                if (e.target.closest('.btn-repeat')) {
-                    const btn = e.target.closest('.btn-repeat');
-                    if (!btn.disabled) {
-                        const card = btn.closest('.delivery-card');
-                        const pickup = card.querySelector('.location-row:nth-child(1) .location-address').textContent;
-                        const dropoff = card.querySelector('.location-row:nth-child(2) .location-address').textContent;
-                        showNotification(`Repeating route from ${pickup} to ${dropoff}`, 'info');
-                    }
-                }
-
-                if (e.target.closest('.page-btn') && !e.target.closest('.page-btn.disabled')) {
-                    const pageBtn = e.target.closest('.page-btn');
-                    const allPageBtns = document.querySelectorAll('.page-btn');
-
-                    allPageBtns.forEach(btn => btn.classList.remove('active'));
-                    pageBtn.classList.add('active');
-
-                    showNotification('Loading page ' + pageBtn.textContent.trim() + '...', 'info');
-                }
-            });
-
-            closeModalBtn.addEventListener('click', closeModal);
-
-            modalRepeatBtn.addEventListener('click', function () {
-                const deliveryId = document.getElementById('modalFullId').textContent;
-                const pickup = document.getElementById('modalPickup').textContent;
-                const dropoff = document.getElementById('modalDropoff').textContent;
-                showNotification(`Repeating delivery ${deliveryId} from ${pickup} to ${dropoff}`, 'success');
-                closeModal();
-            });
-
-            modalReportBtn.addEventListener('click', function () {
-                const deliveryId = document.getElementById('modalFullId').textContent;
-                showNotification(`Reporting issue with delivery ${deliveryId}`, 'info');
-                closeModal();
-            });
-
-            modal.addEventListener('click', function (e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && modal.classList.contains('active')) {
-                    closeModal();
-                }
-            });
-
-            function showNotification(message, type) {
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 15px 20px;
-                    background: ${type === 'success' ? 'var(--success-green)' :
-                        type === 'info' ? 'var(--accent-blue-dark)' :
-                            'var(--warning-orange)'};
-                    color: white;
-                    border-radius: var(--radius-md);
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    z-index: 10001;
-                    animation: slideInRight 0.3s ease;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    max-width: 300px;
-                    font-family: 'Poppins', sans-serif;
-                `;
-                notification.innerHTML = `
-                    <i class="fas ${type === 'success' ? 'fa-check-circle' :
-                        type === 'info' ? 'fa-info-circle' :
-                            'fa-exclamation-circle'}"></i>
-                    <span>${message}</span>
-                `;
-
-                document.body.appendChild(notification);
-
-                setTimeout(() => {
-                    notification.style.animation = 'slideOutRight 0.3s ease';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
-                }, 3000);
-            }
-
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOutRight {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-
-            filterDeliveries();
+        modalReportBtn.addEventListener('click', function () {
+            const ticketNum = document.getElementById('modalTicketNum').textContent;
+            showNotification('Reporting issue with ticket ' + ticketNum, 'info');
+            closeModal();
         });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; padding: 15px 20px;
+                background: ${type === 'success' ? 'var(--success-green)' : type === 'info' ? 'var(--accent-blue-dark)' : 'var(--warning-orange)'};
+                color: white; border-radius: var(--radius-md);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10001;
+                animation: slideInRight 0.3s ease; display: flex; align-items: center;
+                gap: 10px; max-width: 300px; font-family: 'Poppins', sans-serif;
+            `;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'info' ? 'fa-info-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
     </script>
 </asp:Content>

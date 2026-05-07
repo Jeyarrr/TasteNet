@@ -33,24 +33,6 @@ namespace TasteNet.Users.Rider
         protected global::System.Web.UI.WebControls.Literal litTrendTotalDeliveries;
 
         /// <summary>
-        /// litEarningsToday control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litEarningsToday;
-
-        /// <summary>
-        /// litTrendEarningsToday control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litTrendEarningsToday;
-
-        /// <summary>
         /// litCompletedToday control.
         /// </summary>
         /// <remarks>
