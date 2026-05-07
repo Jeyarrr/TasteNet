@@ -27,850 +27,220 @@
             --bg-hover: #fefaf5;
             --bg-light: #f3ebe0;
             --bg-lighter: #f9f4ee;
-            
             --card-shadow: 0 10px 30px rgba(107, 13, 30, 0.05);
             --card-shadow-hover: 0 15px 40px rgba(107, 13, 30, 0.12);
             --button-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
             --button-shadow-hover: 0 6px 18px rgba(107, 13, 30, 0.3);
-            
             --radius-sm: 8px;
             --radius-md: 10px;
             --radius-lg: 12px;
             --radius-xl: 16px;
             --radius-2xl: 20px;
             --radius-3xl: 30px;
-            
             --transition-fast: 0.2s ease;
             --transition-base: 0.3s ease;
             --transition-slow: 0.4s ease;
         }
-
         body {
-            background-color: var(--soft-cream) !important;
-            font-family: 'Poppins', sans-serif !important;
-            color: var(--text-dark);
+         background-color: #fffaf3 !important;
+         font-family: 'Poppins', sans-serif !important;
+         color: var(--text-dark);
         }
 
-        .reports-container {
-            padding: 25px 35px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        .reports-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 35px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .header-info h2 {
-            color: var(--text-dark);
-            font-weight: 700;
-            margin: 0;
-            font-size: 32px;
-            letter-spacing: -0.5px;
-        }
-
-        .header-info p {
-            color: var(--muted-text);
-            margin: 8px 0 0 0;
-            font-size: 16px;
-        }
-
-        .kpi-row {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 1400px) {
-            .kpi-row {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .kpi-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .kpi-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 18px;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 125px;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(107, 13, 30, 0.12);
-        }
-
-        .stat-card__header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .stat-card__label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--muted-text);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-card__icon {
-            width: 45px;
-            height: 45px;
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-            transition: all var(--transition-base);
-            transform-origin: center;
-            color: white;
-        }
-
-        .stat-card:hover .stat-card__icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-card__icon--orders { background: var(--accent-yellow); }
-        .stat-card__icon--revenue { background: var(--primary-maroon); }
-        .stat-card__icon--average { background: var(--success-green); }
-        .stat-card__icon--customers { background: var(--accent-blue-dark); }
-        .stat-card__icon--retention { background: #e67e22; }
-
-        .stat-card__value {
-            font-size: 34px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin: 10px 0;
-            line-height: 1;
-            position: relative;
-            z-index: 2;
-            transition: all var(--transition-fast);
-        }
-
-        .stat-card:hover .stat-card__value {
-            color: var(--primary-maroon);
-        }
-
-        .stat-card__trend {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .trend-badge {
-            font-size: 13px;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: var(--radius-sm);
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all var(--transition-fast);
-        }
-
-        .trend-badge--positive {
-            background: var(--success-green-light);
-            color: #800000;
-        }
-
-        .trend-badge--positive i {
-            font-size: 12px;
-        }
-
-        .trend-text {
-            font-size: 12px;
-            color: var(--muted-text);
-            font-weight: 500;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: nowrap;
-        }
-
-        .simple-date-filter {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 8px 16px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-light);
-            box-shadow: 0 2px 6px rgba(107, 13, 30, 0.05);
-            transition: all var(--transition-base);
-        }
-
-        .simple-date-filter:hover {
-            border-color: var(--primary-maroon);
-            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.1);
-        }
-
-        .simple-date-filter i {
-            color: var(--muted-text);
-            font-size: 16px;
-        }
-
-        .simple-date-filter select {
-            border: none;
-            background: transparent;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-dark);
-            outline: none;
-            cursor: pointer;
-            min-width: 120px;
-            appearance: none;
-            padding: 2px 5px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-border-radius: var(--radius-md);
-font-weight: 600;
-font-size: 13px;
-cursor: pointer;
-transition: all var(--transition-base);
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-border: 2px solid transparent;
-font-family: 'Poppins', sans-serif;
-text-decoration: none;
-white-space: nowrap;
-min-height: 36px;
-line-height: 1.2;
-position: relative;
-overflow: hidden;
-z-index: 1;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
-            transition: left 0.7s;
-            z-index: -1;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn--primary {
-            background: var(--primary-maroon);
-            color: white;
-            box-shadow: var(--button-shadow);
-        }
-
-        .btn--primary:hover {
-            background: var(--primary-maroon-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--button-shadow-hover);
-        }
         
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding: 14px 16px;
-            border-radius: var(--radius-md);
-            background: var(--bg-lighter);
-            transition: all var(--transition-base);
-            border: 2px solid transparent;
-            gap: 20px;
-        }
+        .reports-container { padding: 16px; max-width: 1600px; margin: 0 auto; }
+        @media (min-width: 576px)  { .reports-container { padding: 20px; } }
+        @media (min-width: 992px)  { .reports-container { padding: 25px 35px; } }
 
-        .status-item i {
-            margin-right: 12px;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
+        /* ── Header ─────────────────────────────────────────────────────────── */
+        .reports-header { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+        @media (min-width: 768px)  { .reports-header { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 35px; } }
+        .header-info h2 { color: var(--text-dark); font-weight: 700; margin: 0; font-size: 22px; letter-spacing: -0.5px; }
+        .header-info p  { color: var(--muted-text); margin: 4px 0 0 0; font-size: 13px; }
+        @media (min-width: 576px)  { .header-info h2 { font-size: 26px; } .header-info p { font-size: 14px; } }
+        @media (min-width: 992px)  { .header-info h2 { font-size: 32px; } .header-info p { font-size: 16px; } }
 
-        .status-item span {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            gap: 8px;
-            color: var(--text-dark);
-            font-weight: 600;
-        }
+        /* ── Header actions ─────────────────────────────────────────────────── */
+        .header-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        @media (min-width: 576px)  { .header-actions { flex-direction: row; align-items: center; width: auto; gap: 12px; } }
+        @media (min-width: 768px)  { .header-actions { flex-wrap: nowrap; gap: 16px; } }
+        .simple-date-filter { display: flex; align-items: center; gap: 8px; background: white; padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-light); box-shadow: 0 2px 6px rgba(107,13,30,0.05); transition: all var(--transition-base); width: 100%; }
+        @media (min-width: 576px)  { .simple-date-filter { width: auto; } }
+        .simple-date-filter:hover { border-color: var(--primary-maroon); box-shadow: 0 4px 12px rgba(107,13,30,0.1); }
+        .simple-date-filter i  { color: var(--muted-text); font-size: 15px; flex-shrink: 0; }
+        .simple-date-filter select { border: none; background: transparent; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-dark); outline: none; cursor: pointer; width: 100%; appearance: none; padding: 2px 4px; }
+        @media (min-width: 576px)  { .simple-date-filter select { min-width: 120px; width: auto; } }
 
-        .status-item b {
-            color: #800000 !important;
-            font-weight: 700;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
+        /* ── Buttons ────────────────────────────────────────────────────────── */
+        .btn { padding: 8px 14px; border-radius: var(--radius-md); font-weight: 600; font-size: 13px; cursor: pointer; transition: all var(--transition-base); display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 2px solid transparent; font-family: 'Poppins', sans-serif; text-decoration: none; white-space: nowrap; min-height: 36px; line-height: 1.2; position: relative; overflow: hidden; z-index: 1; width: 100%; }
+        @media (min-width: 576px)  { .btn { width: auto; padding: 8px 16px; } }
+        .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.7s; z-index: -1; }
+        .btn:hover::before { left: 100%; }
+        .btn--primary { background: var(--primary-maroon); color: white; box-shadow: var(--button-shadow); }
+        .btn--primary:hover { background: var(--primary-maroon-dark); transform: translateY(-2px); box-shadow: var(--button-shadow-hover); }
+        .btn--danger { background: #1a7a4a; color: white; box-shadow: 0 4px 12px rgba(26,122,74,0.25); }
+        .btn--danger:hover { background: #155f39; transform: translateY(-2px); }
 
-        .res-info b {
-            color: var(--text-dark) !important;
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            display: block;
-        }
+        /* ── KPI Cards ──────────────────────────────────────────────────────── */
+        .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        @media (min-width: 768px)  { .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px; } }
+        @media (min-width: 992px)  { .kpi-row { grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; } }
 
-        .res-info {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
+        .stat-card { background: white; padding: 14px; border-radius: 14px; box-shadow: var(--card-shadow); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+        @media (min-width: 576px)  { .stat-card { padding: 16px 18px; } }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(107,13,30,0.12); }
+        .stat-card__header { display: flex; justify-content: space-between; align-items: center; }
+        .stat-card__label { font-size: 10px; font-weight: 600; color: var(--muted-text); text-transform: uppercase; letter-spacing: 0.6px; }
+        @media (min-width: 576px)  { .stat-card__label { font-size: 11px; } }
+        .stat-card__icon { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; color: white; transition: all var(--transition-base); }
+        @media (min-width: 576px)  { .stat-card__icon { width: 36px; height: 36px; font-size: 14px; border-radius: 10px; } }
+        .stat-card:hover .stat-card__icon { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .stat-card__icon--orders   { background: var(--accent-yellow); }
+        .stat-card__icon--revenue  { background: var(--primary-maroon); }
+        .stat-card__icon--average  { background: var(--success-green); }
+        .stat-card__icon--customers{ background: var(--accent-blue-dark); }
+        .stat-card__value { font-size: 22px; font-weight: 800; color: var(--text-dark); line-height: 1; transition: all var(--transition-fast); }
+        @media (min-width: 576px)  { .stat-card__value { font-size: 26px; } }
+        @media (min-width: 992px)  { .stat-card__value { font-size: 28px; } }
+        .stat-card:hover .stat-card__value { color: var(--primary-maroon); }
+        .stat-card__trend { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
+        .trend-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 4px; }
+        @media (min-width: 576px)  { .trend-badge { font-size: 11px; padding: 4px 10px; } }
+        .trend-badge--positive { background: var(--success-green-light); color: #800000; }
+        .trend-text { font-size: 10px; color: var(--muted-text); font-weight: 500; }
+        @media (min-width: 576px)  { .trend-text { font-size: 11px; } }
 
-        .res-bar-container {
-            width: 100%;
-            height: 8px;
-            background-color: var(--bg-light);
-            border-radius: 4px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
+        /* ── Dashboard Grid (charts) ─────────────────────────────────────────── */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (min-width: 992px)  { .dashboard-grid { grid-template-columns: 1.8fr 1fr; gap: 24px; margin-bottom: 24px; } }
+        @media (min-width: 1200px) { .dashboard-grid { gap: 30px; margin-bottom: 30px; } }
 
-        .res-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-maroon), #8a1f35);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
+        /* ── Chart boxes ─────────────────────────────────────────────────────── */
+        .chart-box { background: white; border-radius: var(--radius-xl); padding: 16px; box-shadow: var(--card-shadow); transition: all var(--transition-base); border: 2px solid transparent; overflow: hidden; }
+        @media (min-width: 576px)  { .chart-box { padding: 20px; } }
+        @media (min-width: 992px)  { .chart-box { padding: 25px; } }
+        .chart-box:hover { transform: translateY(-4px); box-shadow: var(--card-shadow-hover); }
+        .chart-title { color: var(--text-dark); font-weight: 700; font-size: 15px; margin-bottom: 16px; display: block; }
+        @media (min-width: 576px)  { .chart-title { font-size: 17px; } }
+        @media (min-width: 992px)  { .chart-title { font-size: 18px; margin-bottom: 20px; } }
 
-        .res-value {
-            color: var(--primary-maroon) !important;
-            font-weight: 800 !important;
-            font-size: 16px !important;
-            flex-shrink: 0;
-            min-width: 70px;
-            text-align: right;
-        }
+        /* ── Chart toggle buttons ─────────────────────────────────────────────── */
+        .btn-group { display: flex; gap: 6px; flex-shrink: 0; }
+        .btn-chart { padding: 7px 14px; border-radius: var(--radius-md); font-weight: 600; font-size: 12px; cursor: pointer; transition: all var(--transition-base); border: 2px solid; font-family: 'Poppins', sans-serif; white-space: nowrap; }
+        @media (min-width: 576px)  { .btn-chart { padding: 8px 18px; font-size: 13px; } }
+        @media (min-width: 992px)  { .btn-chart { padding: 10px 24px; font-size: 14px; } }
+        .btn-chart-active   { background: var(--primary-maroon); color: white; border-color: var(--primary-maroon); }
+        .btn-chart-inactive { background: white; color: var(--text-dark); border-color: var(--border-light); }
+        .btn-chart-inactive:hover { background: var(--soft-cream); color: var(--primary-maroon); border-color: var(--primary-maroon); }
 
-        .restaurant-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            gap: 15px;
-            padding: 16px;
-            border-radius: var(--radius-md);
-            transition: all var(--transition-base);
-            border: 2px solid transparent;
-            background: var(--bg-lighter);
-        }
+        /* ── Status items ───────────────────────────────────────────────────── */
+        .status-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--bg-lighter); transition: all var(--transition-base); border: 2px solid transparent; gap: 10px; }
+        @media (min-width: 576px)  { .status-item { padding: 12px 14px; gap: 16px; } }
+        @media (min-width: 992px)  { .status-item { padding: 14px 16px; gap: 20px; margin-bottom: 12px; } }
+        .status-item i   { margin-right: 8px; font-size: 13px; flex-shrink: 0; }
+        .status-item span{ display: flex; align-items: center; flex-grow: 1; gap: 6px; color: var(--text-dark); font-weight: 600; font-size: 13px; }
+        .status-item b   { color: #800000 !important; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+        @media (min-width: 576px)  { .status-item span { font-size: 14px; } .status-item b { font-size: 15px; } }
+        .status-item:hover { transform: translateX(4px); background: var(--bg-hover); }
 
-        .restaurant-item:hover {
-            background: var(--bg-hover);
-            transform: translateX(5px);
-            border-color: var(--primary-maroon);
-        }
+        /* ── Top Selling / Restaurant items ─────────────────────────────────── */
+        .res-info { display: flex; flex-direction: column; width: 100%; }
+        .res-info b { color: var(--text-dark) !important; font-size: 13px; font-weight: 700; margin-bottom: 4px; display: block; }
+        @media (min-width: 576px)  { .res-info b { font-size: 15px; } }
+        .res-bar-container { width: 100%; height: 7px; background-color: var(--bg-light); border-radius: 4px; margin-top: 4px; overflow: hidden; }
+        .res-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-maroon), #8a1f35); border-radius: 4px; transition: width 0.5s ease; }
+        .res-value { color: var(--primary-maroon) !important; font-weight: 800 !important; font-size: 13px !important; flex-shrink: 0; min-width: 55px; text-align: right; }
+        @media (min-width: 576px)  { .res-value { font-size: 15px !important; min-width: 70px; } }
 
-        .restaurant-item:hover .res-info b {
-            color: var(--primary-maroon) !important;
-        }
+        .restaurant-item { display: flex; align-items: center; margin-bottom: 10px; gap: 10px; padding: 10px 12px; border-radius: var(--radius-md); transition: all var(--transition-base); border: 2px solid transparent; background: var(--bg-lighter); }
+        @media (min-width: 576px)  { .restaurant-item { padding: 14px; gap: 14px; margin-bottom: 14px; } }
+        .restaurant-item:hover { background: var(--bg-hover); transform: translateX(4px); border-color: var(--primary-maroon); }
+        .rank-circle { width: 30px; height: 30px; background: linear-gradient(135deg, var(--primary-maroon), #8a1f35); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; box-shadow: 0 4px 8px rgba(107,13,30,0.2); }
+        @media (min-width: 576px)  { .rank-circle { width: 35px; height: 35px; font-size: 14px; } }
 
-        .restaurant-item:hover .res-value {
-            color: var(--primary-maroon-dark) !important;
-            transform: scale(1.05);
-        }
+        /* ── Menu table ─────────────────────────────────────────────────────── */
+        .menu-table-box { background: white; border-radius: var(--radius-xl); padding: 16px; box-shadow: var(--card-shadow); margin-top: 16px; overflow-x: auto; }
+        @media (min-width: 576px)  { .menu-table-box { padding: 20px; margin-top: 20px; } }
+        @media (min-width: 992px)  { .menu-table-box { padding: 25px; } }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+        .table-title { color: var(--text-dark); font-weight: 700; font-size: 15px; margin: 0; }
+        @media (min-width: 576px)  { .table-title { font-size: 17px; } }
+        @media (min-width: 992px)  { .table-title { font-size: 18px; } }
+        .table-header-actions { flex-shrink: 0; }
+        .view-all-link { color: var(--primary-maroon); text-decoration: none; font-weight: 700; font-size: 12px; padding: 8px 14px; border-radius: var(--radius-md); background: var(--bg-lighter); transition: all var(--transition-base); display: inline-flex; align-items: center; gap: 6px; border: 2px solid transparent; white-space: nowrap; }
+        @media (min-width: 576px)  { .view-all-link { font-size: 13px; padding: 10px 18px; } }
+        .view-all-link:hover { background: var(--primary-maroon); color: white; border-color: var(--primary-maroon); }
 
-        .rank-circle {
-            width: 35px;
-            height: 35px;
-            background: linear-gradient(135deg, var(--primary-maroon), #8a1f35);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            flex-shrink: 0;
-            box-shadow: 0 4px 8px rgba(107, 13, 30, 0.2);
-            transition: transform var(--transition-base);
-        }
+        .menu-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+        .menu-table th { color: var(--muted-text); font-size: 11px; text-align: left; padding: 12px 10px; border-bottom: 2px solid var(--bg-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; }
+        .menu-table td { padding: 14px 10px; border-bottom: 1px solid var(--bg-lighter); color: var(--text-dark); font-size: 13px; transition: all var(--transition-fast); }
+        @media (min-width: 768px)  { .menu-table th { font-size: 12px; padding: 14px 12px; } .menu-table td { font-size: 14px; padding: 18px 12px; } }
+        @media (min-width: 992px)  { .menu-table th { padding: 16px 15px; } .menu-table td { padding: 20px 15px; } }
+        .menu-table tbody tr:hover { background: var(--bg-hover); }
 
-        .restaurant-item:hover .rank-circle {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 6px 12px rgba(107, 13, 30, 0.3);
-        }
+        .rank-badge { width: 28px; height: 28px; background: var(--accent-yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: var(--text-dark); }
+        @media (min-width: 576px)  { .rank-badge { width: 32px; height: 32px; font-size: 14px; } }
+        .cat-badge { background: var(--accent-yellow-light); color: #D48C70; padding: 5px 10px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; display: inline-block; }
+        @media (min-width: 576px)  { .cat-badge { padding: 6px 12px; font-size: 12px; } }
 
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
+        /* ── Notifications ──────────────────────────────────────────────────── */
+        .notification { position: fixed; top: 16px; right: 16px; left: 16px; padding: 14px 18px; border-radius: var(--radius-md); color: white; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 10px; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideInRight 0.3s ease; }
+        @media (min-width: 576px)  { .notification { left: auto; min-width: 280px; } }
+        .notification-success { background: var(--success-green); }
+        .notification-error   { background: var(--danger-red); }
 
-        .table-title {
-            color: var(--text-dark);
-            font-weight: 700;
-            font-size: 18px;
-            margin: 0;
-            flex-grow: 1;
-        }
-
-        .table-header-actions {
-            flex-shrink: 0;
-            margin-left: 20px;
-        }
-
-        .view-all-link {
-            color: var(--primary-maroon);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            background: var(--bg-lighter);
-            transition: all var(--transition-base);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: 2px solid transparent;
-            white-space: nowrap;
-        }
-
-        .view-all-link:hover {
-            background: var(--primary-maroon);
-            color: white;
-            transform: translateY(-2px);
-            border-color: var(--primary-maroon);
-            box-shadow: 0 4px 12px rgba(107, 13, 30, 0.2);
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1.8fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chart-box {
-            background: white;
-            border-radius: var(--radius-xl);
-            padding: 25px;
-            box-shadow: var(--card-shadow);
-            transition: all var(--transition-base);
-            border: 2px solid transparent;
-        }
-
-        .chart-box:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-shadow-hover);
-        }
-
-        .chart-title {
-            color: var(--text-dark);
-            font-weight: 700;
-            font-size: 18px;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .menu-table-box {
-            background: white;
-            border-radius: var(--radius-xl);
-            padding: 25px;
-            box-shadow: var(--card-shadow);
-            margin-top: 20px;
-            transition: all var(--transition-base);
-            border: 2px solid transparent;
-        }
-
-        .menu-table-box:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-shadow-hover);
-        }
-
-        .menu-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 0;
-        }
-
-        .menu-table th {
-            color: var(--muted-text);
-            font-size: 13px;
-            text-align: left;
-            padding: 16px 15px;
-            border-bottom: 2px solid var(--bg-light);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        .menu-table td {
-            padding: 20px 15px;
-            border-bottom: 1px solid var(--bg-lighter);
-            color: var(--text-dark);
-            font-size: 14px;
-            transition: all var(--transition-fast);
-        }
-
-        .menu-table tbody tr {
-            transition: all var(--transition-base);
-        }
-
-        .menu-table tbody tr:hover {
-            background: var(--bg-hover);
-        }
-
-        .menu-table tbody tr:hover td {
-            transform: scale(1.005);
-            border-color: transparent;
-        }
-
-        .rank-badge {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-yellow);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 14px;
-            color: var(--text-dark);
-            box-shadow: 0 4px 8px rgba(255, 204, 0, 0.2);
-            transition: transform var(--transition-base);
-        }
-
-        .menu-table tbody tr:hover .rank-badge {
-            transform: scale(1.1) rotate(10deg);
-        }
-
-        .cat-badge {
-            background: var(--accent-yellow-light);
-            color: #D48C70;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-weight: 700;
-            display: inline-block;
-            transition: all var(--transition-fast);
-        }
-
-        .menu-table tbody tr:hover .cat-badge {
-            background: var(--accent-yellow);
-            color: var(--text-dark);
-            transform: translateY(-2px);
-        }
-
-        .status-item:hover {
-            transform: translateX(5px);
-            background: var(--bg-hover);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-chart {
-            padding: 10px 24px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            border: 2px solid;
-        }
-
-        .btn-chart-active {
-            background: var(--primary-maroon);
-            color: white;
-            border-color: var(--primary-maroon);
-        }
-
-        .btn-chart-inactive {
-            background: white;
-            color: var(--text-dark);
-            border-color: var(--border-light);
-        }
-
-        .btn-chart-inactive:hover {
-            background: var(--soft-cream);
-            color: var(--primary-maroon);
-            border-color: var(--primary-maroon);
-            transform: translateY(-2px);
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 16px 24px;
-            border-radius: var(--radius-md);
-            color: white;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 10000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            animation: slideInRight 0.3s ease;
-        }
-
-        .notification-success {
-            background: var(--success-green);
-        }
-
-        .notification-error {
-            background: var(--danger-red);
-        }
-
-        .notification-warning {
-            background: var(--warning-orange);
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-
-        @keyframes gentlePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .stat-card__value {
-            animation: gentlePulse 3s infinite;
-        }
-
-        @media (max-width: 992px) {
-            .reports-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 20px;
-            }
-            
-            .header-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .reports-container {
-                padding: 15px;
-            }
-            
-            .stat-card {
-                padding: 20px;
-            }
-            
-            .stat-card__value {
-                font-size: 28px;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .chart-box {
-                padding: 20px;
-            }
-            
-            .header-actions {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
-            
-            .simple-date-filter {
-                width: 100%;
-                justify-content: space-between;
-                height: 25px;
-            }
-            
-            .btn--primary {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .restaurant-item {
-                padding: 12px;
-                gap: 10px;
-            }
-            
-            .res-info b {
-                font-size: 14px;
-            }
-            
-            .res-value {
-                font-size: 14px !important;
-                min-width: 60px;
-            }
-            
-            .rank-circle {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
-            }
-
-            .table-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .table-header-actions {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .view-all-link {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .header-info h2 {
-                font-size: 24px;
-            }
-            
-            .header-info p {
-                font-size: 14px;
-            }
-            
-            .stat-card__value {
-                font-size: 24px;
-            }
-            
-            .menu-table th,
-            .menu-table td {
-                padding: 12px 8px;
-                font-size: 12px;
-            }
-            
-            .simple-date-filter {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .simple-date-filter select {
-                width: 100%;
-            }
-
-            .status-item {
-                gap: 10px;
-                padding: 12px 14px;
-            }
-            
-            .status-item b {
-                font-size: 14px;
-            }
-
-            .restaurant-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .restaurant-item .rank-circle {
-                align-self: flex-start;
-            }
-            
-            .res-value {
-                align-self: flex-end;
-                margin-top: 8px;
-            }
-        }
+        @keyframes slideInRight  { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        @media (max-width: 576px) { .header-info h2 { font-size: 24px; } .header-info p { font-size: 14px; } .stat-card__value { font-size: 24px; } .menu-table th, .menu-table td { padding: 12px 8px; font-size: 12px; } .simple-date-filter { flex-direction: column; align-items: flex-start; gap: 8px; } .simple-date-filter select { width: 100%; } .status-item { gap: 10px; padding: 12px 14px; } .status-item b { font-size: 14px; } .restaurant-item { flex-direction: column; align-items: flex-start; gap: 8px; } .restaurant-item .rank-circle { align-self: flex-start; } .res-value { align-self: flex-end; margin-top: 8px; } }
     </style>
+
+    <%-- Hidden fields to pass server-side data to JavaScript --%>
+    <asp:HiddenField ID="hfRevenueTrendLabels"  runat="server" />
+    <asp:HiddenField ID="hfRevenueTrendData"    runat="server" />
+    <asp:HiddenField ID="hfOrdersTrendData"     runat="server" />
+    <asp:HiddenField ID="hfWeeklyRevenueLabels" runat="server" />
+    <asp:HiddenField ID="hfWeeklyRevenueData"   runat="server" />
+    <asp:HiddenField ID="hfWeeklyOrdersData"    runat="server" />
+    <asp:HiddenField ID="hfYearlyRevenueLabels" runat="server" />
+    <asp:HiddenField ID="hfYearlyRevenueData"   runat="server" />
+    <asp:HiddenField ID="hfYearlyOrdersData"    runat="server" />
+    <asp:HiddenField ID="hfTimeLabels"          runat="server" />
+    <asp:HiddenField ID="hfTimeData"            runat="server" />
+    <asp:HiddenField ID="hfStatusCompleted"     runat="server" />
+    <asp:HiddenField ID="hfStatusActive"        runat="server" />
+    <asp:HiddenField ID="hfStatusCancelled"     runat="server" />
+    <asp:HiddenField ID="hfStatusTotal"         runat="server" />
+    <asp:HiddenField ID="hfTopRevenueMax"       runat="server" />
 
     <div class="reports-container">
         <div class="reports-header">
             <div class="header-info">
-                <h2>Analytics & Reports</h2>
+                <h2>Analytics &amp; Reports</h2>
                 <p>Comprehensive insights into your platform's performance</p>
             </div>
-            
             <div class="header-actions">
                 <div class="simple-date-filter">
                     <i class="far fa-calendar-alt"></i>
-                    <asp:DropDownList ID="ddlDateRange" runat="server">
-                        <asp:ListItem Text="Last 7 days" Value="7" Selected="True" />
+                    <asp:DropDownList ID="ddlDateRange" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlDateRange_SelectedIndexChanged">
+                        <asp:ListItem Text="Last 7 days"  Value="7"   Selected="True" />
                         <asp:ListItem Text="Last 30 days" Value="30" />
                         <asp:ListItem Text="Last 90 days" Value="90" />
-                        <asp:ListItem Text="This Year" Value="365" />
+                        <asp:ListItem Text="This Year"    Value="365" />
                     </asp:DropDownList>
                 </div>
-                <button type="button" class="btn btn--primary" id="exportBtn">
-                    <i class="fas fa-download"></i>Export All Reports
-                </button>
+                <asp:Button ID="btnExportExcel" runat="server"
+                    CssClass="btn btn--primary"
+                    Text="⬇ Export All Reports"
+                    OnClick="btnExportExcel_Click"
+                    OnClientClick="this.blur();" />
             </div>
         </div>
 
+        <%-- ══════════════════════════════════════════════
+             KPI CARDS
+             ══════════════════════════════════════════════ --%>
         <div class="kpi-row">
+            <%-- Total Orders --%>
             <div class="stat-card" data-type="orders">
                 <div class="stat-card__header">
                     <span class="stat-card__label">Total Orders</span>
@@ -878,15 +248,18 @@ z-index: 1;
                         <i class="fas fa-shopping-bag"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="totalOrders">1,245</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblTotalOrders" runat="server" Text="0" />
+                </div>
                 <div class="stat-card__trend">
                     <span class="trend-badge trend-badge--positive">
-                        <i class="fas fa-arrow-up"></i> +18%
+                        <i class="fas fa-shopping-cart"></i> Orders
                     </span>
-                    <span class="trend-text">vs last month</span>
+                    <span class="trend-text">selected period</span>
                 </div>
             </div>
-            
+
+            <%-- Total Revenue --%>
             <div class="stat-card" data-type="revenue">
                 <div class="stat-card__header">
                     <span class="stat-card__label">Total Revenue</span>
@@ -894,15 +267,18 @@ z-index: 1;
                         <i class="fas fa-peso-sign"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="totalRevenue">₱542K</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblTotalRevenue" runat="server" Text="₱0" />
+                </div>
                 <div class="stat-card__trend">
                     <span class="trend-badge trend-badge--positive">
-                        <i class="fas fa-arrow-up"></i> +23%
+                        <i class="fas fa-peso-sign"></i> Revenue
                     </span>
-                    <span class="trend-text">vs last month</span>
+                    <span class="trend-text">selected period</span>
                 </div>
             </div>
-            
+
+            <%-- Average Order Value --%>
             <div class="stat-card" data-type="average">
                 <div class="stat-card__header">
                     <span class="stat-card__label">Avg Order Value</span>
@@ -910,15 +286,18 @@ z-index: 1;
                         <i class="fas fa-chart-line"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="avgOrderValue">₱435</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblAvgOrderValue" runat="server" Text="₱0" />
+                </div>
                 <div class="stat-card__trend">
                     <span class="trend-badge trend-badge--positive">
-                        <i class="fas fa-arrow-up"></i> +5%
+                        <i class="fas fa-chart-bar"></i> Average
                     </span>
-                    <span class="trend-text">vs last month</span>
+                    <span class="trend-text">per ticket</span>
                 </div>
             </div>
-            
+
+            <%-- New Customers --%>
             <div class="stat-card" data-type="customers">
                 <div class="stat-card__header">
                     <span class="stat-card__label">New Customers</span>
@@ -926,118 +305,98 @@ z-index: 1;
                         <i class="fas fa-users"></i>
                     </div>
                 </div>
-                <div class="stat-card__value" id="newCustomers">234</div>
+                <div class="stat-card__value">
+                    <asp:Label ID="lblNewCustomers" runat="server" Text="0" />
+                </div>
                 <div class="stat-card__trend">
                     <span class="trend-badge trend-badge--positive">
-                        <i class="fas fa-arrow-up"></i> +15%
+                        <i class="fas fa-user-plus"></i> Customers
                     </span>
-                    <span class="trend-text">vs last month</span>
+                    <span class="trend-text">selected period</span>
                 </div>
             </div>
-            
-            <div class="stat-card" data-type="retention">
-                <div class="stat-card__header">
-                    <span class="stat-card__label">Retention Rate</span>
-                    <div class="stat-card__icon stat-card__icon--retention">
-                        <i class="fas fa-sync"></i>
-                    </div>
-                </div>
-                <div class="stat-card__value" id="retentionRate">68%</div>
-                <div class="stat-card__trend">
-                    <span class="trend-badge trend-badge--positive">
-                        <i class="fas fa-arrow-up"></i> +3%
-                    </span>
-                    <span class="trend-text">vs last month</span>
-                </div>
-            </div>
+
+
         </div>
 
+        <%-- ══════════════════════════════════════════════
+             ROW 1 — Revenue/Orders Trend  +  Order Status
+             ══════════════════════════════════════════════ --%>
         <div class="dashboard-grid">
+            <%-- Revenue & Orders Trend chart --%>
             <div class="chart-box">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <span class="chart-title m-0">Revenue & Orders Trend</span>
+                <div class="d-flex justify-content-between align-items-center mb-3" style="flex-wrap:wrap; gap:10px;">
+                    <span class="chart-title m-0">Revenue &amp; Orders Trend</span>
                     <div class="btn-group">
-                        <button class="btn-chart btn-chart-active" onclick="toggleChartType('revenue')">Revenue</button>
-                        <button class="btn-chart btn-chart-inactive" onclick="toggleChartType('orders')">Orders</button>
+                        <button type="button" class="btn-chart btn-chart-active"   onclick="toggleChartType('revenue')">Revenue</button>
+                        <button type="button" class="btn-chart btn-chart-inactive" onclick="toggleChartType('orders')">Orders</button>
                     </div>
                 </div>
-                <div style="height: 300px;"><canvas id="revenueChart"></canvas></div>
+                <div style="height:300px;"><canvas id="revenueChart"></canvas></div>
             </div>
+
+            <%-- Order Status Distribution --%>
             <div class="chart-box">
                 <span class="chart-title">Order Status Distribution</span>
-                <div style="height: 200px;"><canvas id="statusChart"></canvas></div>
+                <div style="height:200px;"><canvas id="statusChart"></canvas></div>
                 <div class="mt-4">
-                    <div class="status-item">
-                        <span><i class="fas fa-circle me-2" style="color:var(--success-green)"></i>Completed</span>
-                        <b>1198 (96%)</b>
-                    </div>
-                    <div class="status-item">
-                        <span><i class="fas fa-circle me-2" style="color:var(--accent-yellow)"></i>Active</span>
-                        <b>23 (2%)</b>
-                    </div>
-                    <div class="status-item">
-                        <span><i class="fas fa-circle me-2" style="color:#B22222"></i>Cancelled</span>
-                        <b>24 (2%)</b>
-                    </div>
+                    <%-- Repeater: Status breakdown list --%>
+                    <asp:Repeater ID="rptStatusList" runat="server">
+                        <ItemTemplate>
+                            <div class="status-item">
+                                <span>
+                                    <i class="fas fa-circle me-2" style="color:<%# Container.ItemIndex == 0 ? "var(--success-green)" : Container.ItemIndex == 1 ? "var(--accent-yellow)" : "#B22222" %>"></i>
+                                    <%# Eval("Status") %>
+                                </span>
+                                <b><%# Eval("Count") %> (<%# Eval("Pct") %>%)</b>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </div>
             </div>
         </div>
 
+        <%-- ══════════════════════════════════════════════
+             ROW 2 — Orders by Time of Day  +  Top Selling Meals
+             ══════════════════════════════════════════════ --%>
         <div class="dashboard-grid">
+            <%-- Orders by Time of Day chart --%>
             <div class="chart-box">
                 <span class="chart-title">Orders by Time of Day</span>
-                <div style="height: 280px;"><canvas id="timeChart"></canvas></div>
+                <div style="height:280px;"><canvas id="timeChart"></canvas></div>
                 <div class="text-center mt-3">
-                    <span class="trend-badge trend-badge--positive">
-                        <i class="fas fa-clock"></i> Peak hours: 12PM-1PM and 7PM-8PM
-                    </span>
+                    <asp:Label ID="lblPeakHours" runat="server"
+                        CssClass="trend-badge trend-badge--positive"
+                        Text='<i class="fas fa-clock"></i> Peak hours: —' />
                 </div>
             </div>
+
+            <%-- Top Selling Meals — Repeater --%>
             <div class="chart-box">
                 <span class="chart-title">Top Selling Meals</span>
-                <div class="restaurant-item">
-                    <div class="rank-circle">1</div>
-                    <div class="res-info flex-grow-1">
-                        <b>Tapsilog</b>
-                        <div class="res-bar-container"><div class="res-bar-fill" style="width: 85%;"></div></div>
-                    </div>
-                    <div class="res-value">₱45.6K</div>
-                </div>
-                <div class="restaurant-item">
-                    <div class="rank-circle">2</div>
-                    <div class="res-info flex-grow-1">
-                        <b>Pork Sisig</b>
-                        <div class="res-bar-container"><div class="res-bar-fill" style="width: 95%;"></div></div>
-                    </div>
-                    <div class="res-value">₱52.3K</div>
-                </div>
-                <div class="restaurant-item">
-                    <div class="rank-circle">3</div>
-                    <div class="res-info flex-grow-1">
-                        <b>Arrozcaldo</b>
-                        <div class="res-bar-container"><div class="res-bar-fill" style="width: 70%;"></div></div>
-                    </div>
-                    <div class="res-value">₱38.4K</div>
-                </div>
-                <div class="restaurant-item">
-                    <div class="rank-circle">4</div>
-                    <div class="res-info flex-grow-1">
-                        <b>Tofu Sisig</b>
-                        <div class="res-bar-container"><div class="res-bar-fill" style="width: 60%;"></div></div>
-                    </div>
-                    <div class="res-value">₱29.8K</div>
-                </div>
+                <asp:Repeater ID="rptTopMeals" runat="server">
+                    <ItemTemplate>
+                        <div class="restaurant-item">
+                            <div class="rank-circle"><%# Container.ItemIndex + 1 %></div>
+                            <div class="res-info flex-grow-1">
+                                <b><%# Eval("FoodName") %></b>
+                                <div class="res-bar-container">
+                                    <div class="res-bar-fill" style="width:<%# Eval("BarPct") %>%;"></div>
+                                </div>
+                            </div>
+                            <div class="res-value">₱<%# Eval("Revenue", "{0:N0}") %></div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
             </div>
         </div>
 
+        <%-- ══════════════════════════════════════════════
+             Popular Menu Items Table — Repeater
+             ══════════════════════════════════════════════ --%>
         <div class="menu-table-box">
             <div class="table-header">
-                <h3 class="table-title">Popular Menu Items - Focus on Sizzling & Silog Meals</h3>
-                <div class="table-header-actions">
-                    <a href="#" class="view-all-link">
-                        View All <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
+                <h3 class="table-title">Popular Menu Items</h3>
             </div>
             <table class="menu-table">
                 <thead>
@@ -1050,172 +409,174 @@ z-index: 1;
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><div class="rank-badge">1</div></td>
-                        <td><b>Sizzling Sisig</b></td>
-                        <td><span class="cat-badge">Sizzling Plates</span></td>
-                        <td style="color:#800000; font-weight:700;">456</td>
-                        <td style="color:var(--text-dark); font-weight:800;">₱68,400</td>
-                    </tr>
-                    <tr>
-                        <td><div class="rank-badge">2</div></td>
-                        <td><b>Tapsilog</b></td>
-                        <td><span class="cat-badge">Silog Meals</span></td>
-                        <td style="color:#800000; font-weight:700;">423</td>
-                        <td style="color:var(--text-dark); font-weight:800;">₱63,450</td>
-                    </tr>
-                    <tr>
-                        <td><div class="rank-badge">3</div></td>
-                        <td><b>Longsilog</b></td>
-                        <td><span class="cat-badge">Silog Meals</span></td>
-                        <td style="color:#800000; font-weight:700;">389</td>
-                        <td style="color:var(--text-dark); font-weight:800;">₱58,350</td>
-                    </tr>
-                    <tr>
-                        <td><div class="rank-badge">4</div></td>
-                        <td><b>Sizzling Bangus</b></td>
-                        <td><span class="cat-badge">Sizzling Plates</span></td>
-                        <td style="color:#800000; font-weight:700;">345</td>
-                        <td style="color:var(--text-dark); font-weight:800;">₱51,750</td>
-                    </tr>
+                    <asp:Repeater ID="rptMenuItems" runat="server">
+                        <ItemTemplate>
+                            <tr>
+                                <td><div class="rank-badge"><%# Container.ItemIndex + 1 %></div></td>
+                                <td><b><%# Eval("FoodName") %></b></td>
+                                <td><span class="cat-badge"><%# Eval("FoodType") %></span></td>
+                                <td style="color:#800000; font-weight:700;"><%# Eval("TotalOrders") %></td>
+                                <td style="color:var(--text-dark); font-weight:800;">₱<%# Eval("Revenue", "{0:N2}") %></td>
+                            </tr>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </tbody>
             </table>
         </div>
-    </div>
+    </div><%-- /reports-container --%>
 
     <script>
+        /* ── Common Chart.js options ────────────────────────── */
         const commonOptions = {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(107, 13, 30, 0.95)',
-                    titleFont: {
-                        family: 'Poppins',
-                        size: 14,
-                        weight: '600'
-                    },
-                    bodyFont: {
-                        family: 'Poppins',
-                        size: 13,
-                        weight: '500'
-                    },
-                    padding: 12,
-                    cornerRadius: 8,
-                    titleColor: '#ffffff',
-                    bodyColor: '#ffffff',
-                    borderColor: 'rgba(255, 255, 255, 0.2)',
-                    borderWidth: 1,
+                    backgroundColor: 'rgba(107,13,30,0.95)',
+                    titleFont: { family: 'Poppins', size: 14, weight: '600' },
+                    bodyFont: { family: 'Poppins', size: 13, weight: '500' },
+                    padding: 12, cornerRadius: 8,
+                    titleColor: '#ffffff', bodyColor: '#ffffff',
+                    borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1,
                     callbacks: {
-                        label: function (context) {
-                            if (context.dataset.label) {
-                                return `${context.dataset.label}: ₱${context.parsed.y.toLocaleString()}`;
-                            }
-                            return `₱${context.parsed.y.toLocaleString()}`;
+                        label: function (ctx) {
+                            if (ctx.dataset.label === 'Revenue')
+                                return 'Revenue: ₱' + ctx.parsed.y.toLocaleString();
+                            return ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString();
                         }
                     }
                 }
             },
             scales: {
-                x: {
-                    grid: {
-                        color: 'rgba(234, 226, 226, 0.3)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        font: {
-                            family: 'Poppins',
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#8a6d6d'
-                    }
-                },
-                y: {
-                    grid: {
-                        color: 'rgba(234, 226, 226, 0.3)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        font: {
-                            family: 'Poppins',
-                            size: 12,
-                            weight: '500'
-                        },
-                        color: '#8a6d6d',
-                        callback: function (value) {
-                            return '₱' + value.toLocaleString();
-                        }
-                    }
-                }
+                x: { grid: { color: 'rgba(234,226,226,0.3)', drawBorder: false }, ticks: { font: { family: 'Poppins', size: 12, weight: '500' }, color: '#8a6d6d' } },
+                y: { grid: { color: 'rgba(234,226,226,0.3)', drawBorder: false }, ticks: { font: { family: 'Poppins', size: 12, weight: '500' }, color: '#8a6d6d', callback: v => '₱' + v.toLocaleString() } }
             },
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
-            animations: {
-                tension: {
-                    duration: 1000,
-                    easing: 'linear'
-                }
-            }
+            interaction: { intersect: false, mode: 'index' },
+            animations: { tension: { duration: 1000, easing: 'linear' } }
         };
 
+        /* ── Data from server ───────────────────────────────── */
+        const trendLabels = JSON.parse(document.getElementById('<%= hfRevenueTrendLabels.ClientID %>').value || '[]');
+        const revenueData = JSON.parse(document.getElementById('<%= hfRevenueTrendData.ClientID %>').value   || '[]');
+        const ordersData    = JSON.parse(document.getElementById('<%= hfOrdersTrendData.ClientID %>').value    || '[]');
+
+        const weeklyLabels  = JSON.parse(document.getElementById('<%= hfWeeklyRevenueLabels.ClientID %>').value || '[]');
+        const weeklyRev     = JSON.parse(document.getElementById('<%= hfWeeklyRevenueData.ClientID %>').value   || '[]');
+        const weeklyOrd     = JSON.parse(document.getElementById('<%= hfWeeklyOrdersData.ClientID %>').value    || '[]');
+
+        const yearlyLabels  = JSON.parse(document.getElementById('<%= hfYearlyRevenueLabels.ClientID %>').value || '[]');
+        const yearlyRev     = JSON.parse(document.getElementById('<%= hfYearlyRevenueData.ClientID %>').value   || '[]');
+        const yearlyOrd     = JSON.parse(document.getElementById('<%= hfYearlyOrdersData.ClientID %>').value    || '[]');
+
+        const timeLabels    = JSON.parse(document.getElementById('<%= hfTimeLabels.ClientID %>').value         || '[]');
+        const timeData      = JSON.parse(document.getElementById('<%= hfTimeData.ClientID %>').value           || '[]');
+
+        const statusCompleted = parseFloat(document.getElementById('<%= hfStatusCompleted.ClientID %>').value || '0');
+        const statusActive    = parseFloat(document.getElementById('<%= hfStatusActive.ClientID %>').value    || '0');
+        const statusCancelled = parseFloat(document.getElementById('<%= hfStatusCancelled.ClientID %>').value || '0');
+
+        /* ── State ──────────────────────────────────────────── */
         let revenueChart, statusChart, timeChart;
         let currentChartType = 'revenue';
+        let currentPeriodType = 'monthly';
+
+        /* ── Get labels+data for current period ─────────────── */
+        function getPeriodData() {
+            if (currentPeriodType === 'weekly')
+                return { labels: weeklyLabels, rev: weeklyRev, ord: weeklyOrd };
+            if (currentPeriodType === 'yearly')
+                return { labels: yearlyLabels, rev: yearlyRev, ord: yearlyOrd };
+            return { labels: trendLabels, rev: revenueData, ord: ordersData };
+        }
+
+        /* Builds a fresh isolated options object for the trend chart */
+        function buildTrendOptions(isRevenue) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(107,13,30,0.95)',
+                        titleFont: { family: 'Poppins', size: 14, weight: '600' },
+                        bodyFont: { family: 'Poppins', size: 13, weight: '500' },
+                        padding: 12, cornerRadius: 8,
+                        titleColor: '#ffffff', bodyColor: '#ffffff',
+                        borderColor: 'rgba(255,255,255,0.2)', borderWidth: 1,
+                        callbacks: {
+                            label: function (ctx) {
+                                return isRevenue
+                                    ? 'Revenue: ₱' + ctx.parsed.y.toLocaleString()
+                                    : 'Orders: ' + ctx.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(234,226,226,0.3)', drawBorder: false },
+                        ticks: { font: { family: 'Poppins', size: 12, weight: '500' }, color: '#8a6d6d' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(234,226,226,0.3)', drawBorder: false },
+                        ticks: {
+                            font: { family: 'Poppins', size: 12, weight: '500' },
+                            color: '#8a6d6d',
+                            callback: isRevenue ? v => '₱' + v.toLocaleString() : v => v
+                        }
+                    }
+                },
+                interaction: { intersect: false, mode: 'index' },
+                animations: { tension: { duration: 1000, easing: 'linear' } }
+            };
+        }
 
         function initializeCharts() {
+            const pd = getPeriodData();
+
+            /* Revenue / Orders Trend — own options object */
             const revenueCtx = document.getElementById('revenueChart').getContext('2d');
             revenueChart = new Chart(revenueCtx, {
                 type: 'line',
                 data: {
-                    labels: ['Nov 1', 'Nov 5', 'Nov 10', 'Nov 15', 'Nov 20', 'Nov 22'],
+                    labels: pd.labels,
                     datasets: [{
                         label: 'Revenue',
-                        data: [38000, 42000, 45000, 48000, 52000, 54000],
+                        data: pd.rev,
                         borderColor: '#6b0d1e',
-                        backgroundColor: 'rgba(107, 13, 30, 0.05)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#6b0d1e',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8,
+                        backgroundColor: 'rgba(107,13,30,0.05)',
+                        fill: true, tension: 0.4, borderWidth: 3,
+                        pointBackgroundColor: '#6b0d1e', pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2, pointRadius: 6, pointHoverRadius: 8,
                         pointHoverBackgroundColor: '#5a0b19'
                     }]
                 },
-                options: commonOptions
+                options: buildTrendOptions(true)
             });
 
+            /* Order Status Doughnut */
             const statusCtx = document.getElementById('statusChart').getContext('2d');
             statusChart = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
                     datasets: [{
-                        data: [96, 2, 2],
+                        data: [statusCompleted, statusActive, statusCancelled],
                         backgroundColor: ['#2d9d78', '#ffcc00', '#B22222'],
-                        borderWidth: 0,
-                        borderRadius: 8,
-                        hoverOffset: 20,
-                        hoverBackgroundColor: ['#2d9d78', '#ffcc00', '#B22222'].map(color => color + 'CC')
+                        borderWidth: 0, borderRadius: 8, hoverOffset: 20,
+                        hoverBackgroundColor: ['#2d9d78CC', '#ffcc00CC', '#B22222CC']
                     }]
                 },
                 options: {
-                    ...commonOptions,
-                    cutout: '65%',
+                    ...commonOptions, cutout: '65%',
                     plugins: {
                         ...commonOptions.plugins,
                         tooltip: {
                             ...commonOptions.plugins.tooltip,
                             callbacks: {
-                                label: function (context) {
-                                    const labels = ['Completed', 'Active', 'Cancelled'];
-                                    return `${labels[context.dataIndex]}: ${context.raw}%`;
+                                label: function (ctx) {
+                                    const l = ['Completed', 'Active', 'Cancelled'];
+                                    return l[ctx.dataIndex] + ': ' + ctx.raw + '%';
                                 }
                             }
                         }
@@ -1223,93 +584,80 @@ z-index: 1;
                 }
             });
 
+            /* Orders by Time of Day */
             const timeCtx = document.getElementById('timeChart').getContext('2d');
+            const peakIdxs = timeData.map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).slice(0, 2).map(x => x[1]);
+
             timeChart = new Chart(timeCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['6AM', '7AM', '8AM', '9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM'],
+                    labels: timeLabels,
                     datasets: [{
                         label: 'Orders',
-                        data: [15, 30, 45, 60, 75, 95, 115, 100, 75, 55, 48, 65, 90, 105, 88, 62],
-                        backgroundColor: (ctx) => {
-                            return [6, 7, 13, 14].includes(ctx.dataIndex) ?
-                                '#ffcc00' :
-                                'rgba(107, 13, 30, 0.8)';
-                        },
-                        borderRadius: 8,
-                        borderSkipped: false,
-                        hoverBackgroundColor: (ctx) => {
-                            return [6, 7, 13, 14].includes(ctx.dataIndex) ?
-                                '#e6b800' :
-                                '#5a0b19';
-                        }
+                        data: timeData,
+                        backgroundColor: ctx => peakIdxs.includes(ctx.dataIndex) ? '#ffcc00' : 'rgba(107,13,30,0.8)',
+                        borderRadius: 8, borderSkipped: false,
+                        hoverBackgroundColor: ctx => peakIdxs.includes(ctx.dataIndex) ? '#e6b800' : '#5a0b19'
                     }]
                 },
-                options: commonOptions
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        x: commonOptions.scales.x,
+                        y: { ...commonOptions.scales.y, ticks: { ...commonOptions.scales.y.ticks, callback: v => v } }
+                    }
+                }
+            });
+        }
+
+        /* ── Rebuild trend chart with current type + period ─── */
+        function rebuildTrendChart() {
+            const pd = getPeriodData();
+            const isRevenue = currentChartType === 'revenue';
+
+            revenueChart.destroy();
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: pd.labels,
+                    datasets: [{
+                        label: isRevenue ? 'Revenue' : 'Orders',
+                        data: isRevenue ? pd.rev : pd.ord,
+                        borderColor: '#6b0d1e',
+                        backgroundColor: 'rgba(107,13,30,0.05)',
+                        fill: true, tension: 0.4, borderWidth: 3,
+                        pointBackgroundColor: '#6b0d1e', pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2, pointRadius: 6, pointHoverRadius: 8,
+                        pointHoverBackgroundColor: '#5a0b19'
+                    }]
+                },
+                options: buildTrendOptions(isRevenue)
             });
         }
 
         function toggleChartType(type) {
-            const revenueBtn = document.querySelector('.btn-chart:nth-child(1)');
-            const ordersBtn = document.querySelector('.btn-chart:nth-child(2)');
-
-            if (type === 'revenue') {
-                revenueBtn.className = 'btn-chart btn-chart-active';
-                ordersBtn.className = 'btn-chart btn-chart-inactive';
-                currentChartType = 'revenue';
-                updateChartData();
-            } else {
-                revenueBtn.className = 'btn-chart btn-chart-inactive';
-                ordersBtn.className = 'btn-chart btn-chart-active';
-                currentChartType = 'orders';
-                updateChartData();
-            }
+            currentChartType = type;
+            const isRevenue = type === 'revenue';
+            document.querySelectorAll('.btn-chart').forEach((b, i) => {
+                b.className = (i === 0 && isRevenue) || (i === 1 && !isRevenue)
+                    ? 'btn-chart btn-chart-active'
+                    : 'btn-chart btn-chart-inactive';
+            });
+            rebuildTrendChart();
         }
 
-        function updateChartData() {
-            if (currentChartType === 'revenue') {
-                revenueChart.data.datasets[0].data = [38000, 42000, 45000, 48000, 52000, 54000];
-                revenueChart.data.datasets[0].label = 'Revenue';
-            } else {
-                revenueChart.data.datasets[0].data = [85, 92, 98, 104, 112, 124];
-                revenueChart.data.datasets[0].label = 'Orders';
-            }
-            revenueChart.update();
-        }
-
-        function exportReports() {
-            const notification = document.createElement('div');
-            notification.className = 'notification notification-success';
-            notification.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                <span>Reports exported successfully!</span>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
+        function togglePeriod(period) {
+            currentPeriodType = period;
+            document.querySelectorAll('.btn-period').forEach(b => {
+                const p = b.getAttribute('onclick').match(/'(\w+)'/)[1];
+                b.className = p === period ? 'btn-period btn-period-active' : 'btn-period btn-period-inactive';
+            });
+            rebuildTrendChart();
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('Reports page initialized');
-
             initializeCharts();
-
-            document.getElementById('exportBtn').addEventListener('click', exportReports);
-
-            const dateRangeSelect = document.getElementById('<%= ddlDateRange.ClientID %>');
-            if (dateRangeSelect) {
-                dateRangeSelect.addEventListener('change', function () {
-                    console.log('Date range changed to:', this.value);
-                });
-            }
         });
     </script>
 </asp:Content>
