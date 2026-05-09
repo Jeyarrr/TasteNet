@@ -2113,16 +2113,54 @@
                 markersLayer = L.layerGroup().addTo(leafletMap);
             }
 
-            // Geocode an address using Nominatim (free OpenStreetMap geocoder)
+            // Geocode using Nominatim with progressive address simplification.
+            // Philippine subdivision addresses (e.g. "Blk 11 Lot 10, Isaiah St, Dexterville Classic, Sabang, Dasmariñas")
+            // are too granular for Nominatim — we strip from the front until we get a hit.
             function geocodeAddress(address) {
-                var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q='
-                    + encodeURIComponent(address);
-                return fetch(url, { headers: { 'Accept-Language': 'en' } })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (!data || data.length === 0) throw new Error('Address not found');
-                        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-                    });
+
+                // Split by comma into parts, e.g.:
+                // ["Blk 11 lot 10", "Isaiah st dexterville classic", "Sabang", "Dasmariñas"]
+                var parts = address.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
+
+                // Build candidate list from most-specific to least-specific:
+                // Each candidate drops one leading part and appends ", Philippines"
+                // e.g.:
+                //   "Blk 11 lot 10, Isaiah st dexterville classic, Sabang, Dasmariñas, Philippines"
+                //   "Isaiah st dexterville classic, Sabang, Dasmariñas, Philippines"
+                //   "Sabang, Dasmariñas, Philippines"
+                //   "Dasmariñas, Philippines"
+                //   "Dasmariñas, Cavite, Philippines"
+                var candidates = [];
+                for (var i = 0; i < parts.length; i++) {
+                    var slice = parts.slice(i).join(', ');
+                    var lc = slice.toLowerCase();
+                    if (lc.indexOf('philippines') === -1) slice += ', Philippines';
+                    candidates.push(slice);
+                }
+                // Final safety fallback: just the last part + Cavite
+                var lastPart = parts[parts.length - 1];
+                if (lastPart.toLowerCase().indexOf('cavite') === -1) {
+                    candidates.push(lastPart + ', Cavite, Philippines');
+                }
+
+                function tryNext(index) {
+                    if (index >= candidates.length) {
+                        throw new Error('Address not found after all attempts');
+                    }
+                    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1'
+                        + '&countrycodes=ph'
+                        + '&q=' + encodeURIComponent(candidates[index]);
+                    return fetch(url, { headers: { 'Accept-Language': 'en' } })
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            if (data && data.length > 0) {
+                                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+                            }
+                            return tryNext(index + 1);
+                        });
+                }
+
+                return tryNext(0);
             }
 
             // Draw route using OSRM (free routing engine) and return distance + duration
@@ -2212,10 +2250,13 @@
                                 } else {
                                     originParam = '14.3265574,120.9373766';
                                 }
+                                // Use the original address string as destination so Google Maps
+                                // resolves it with its own geocoder — not the simplified coords
+                                // from Nominatim which may have snapped to barangay/city level.
                                 window.open(
                                     'https://www.google.com/maps/dir/?api=1'
                                     + '&origin=' + encodeURIComponent(originParam)
-                                    + '&destination=' + dest.lat + ',' + dest.lng
+                                    + '&destination=' + encodeURIComponent(destinationAddress)
                                     + '&travelmode=driving',
                                     '_blank'
                                 );
@@ -2563,12 +2604,33 @@
                 activeDeliverySection.classList.add('active');
                 deliveriesSection.style.display = 'none';
 
-                // Reset distance input and fee when a new delivery is accepted
+                // Auto-calculate distance from store to delivery address
                 distanceInput.value = '';
-                deliveryFee.textContent = '—';
+                deliveryFee.textContent = '⏳ Calculating...';
                 feeBreakdown.textContent = '—';
                 sessionStorage.removeItem('rider_distance_km');
                 sessionStorage.removeItem('rider_fee');
+
+                geocodeAddress(deliveryData.address)
+                    .then(function (dest) {
+                        var routeUrl = 'https://router.project-osrm.org/route/v1/driving/'
+                            + STORE_LNG + ',' + STORE_LAT + ';'
+                            + dest.lng + ',' + dest.lat
+                            + '?overview=false';
+                        return fetch(routeUrl)
+                            .then(function (r) { return r.json(); })
+                            .then(function (data) {
+                                if (!data.routes || data.routes.length === 0) throw new Error('No route');
+                                var km = parseFloat((data.routes[0].distance / 1000).toFixed(1));
+                                distanceInput.value = km;
+                                calculateDeliveryFee(km);
+                            });
+                    })
+                    .catch(function () {
+                        deliveryFee.textContent = '—';
+                        feeBreakdown.textContent = '—';
+                        showNotification('Could not auto-calculate distance. Please enter it manually.', 'warning');
+                    });
 
                 // Animate card out
                 deliveryCard.style.opacity = '0.5';
@@ -2811,13 +2873,34 @@
                 pickupLocation.textContent = 'Order #' + activeDelivery.order;
                 dropoffLocation.textContent = activeDelivery.address;
                 var cachedKm = sessionStorage.getItem('rider_distance_km');
-                var cachedFee = sessionStorage.getItem('rider_fee');
                 if (cachedKm) {
+                    // Use cached distance if already calculated
                     distanceInput.value = cachedKm;
                     calculateDeliveryFee(parseFloat(cachedKm));
                 } else {
-                    deliveryFee.textContent = '—';
+                    // No cached distance — auto-calculate on restore
+                    distanceInput.value = '';
+                    deliveryFee.textContent = '⏳ Calculating...';
                     feeBreakdown.textContent = '—';
+                    geocodeAddress(activeDelivery.address)
+                        .then(function (dest) {
+                            var routeUrl = 'https://router.project-osrm.org/route/v1/driving/'
+                                + STORE_LNG + ',' + STORE_LAT + ';'
+                                + dest.lng + ',' + dest.lat
+                                + '?overview=false';
+                            return fetch(routeUrl)
+                                .then(function (r) { return r.json(); })
+                                .then(function (data) {
+                                    if (!data.routes || data.routes.length === 0) throw new Error('No route');
+                                    var km = parseFloat((data.routes[0].distance / 1000).toFixed(1));
+                                    distanceInput.value = km;
+                                    calculateDeliveryFee(km);
+                                });
+                        })
+                        .catch(function () {
+                            deliveryFee.textContent = '—';
+                            feeBreakdown.textContent = '—';
+                        });
                 }
                 customerContact.innerHTML =
                     '<strong>' + (activeDelivery.customer || '—') + '</strong>' +

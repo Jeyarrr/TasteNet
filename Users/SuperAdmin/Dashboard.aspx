@@ -44,12 +44,7 @@
         .stat-card:hover::before { opacity:1; }
 
         /* Left accent bar */
-        .stat-card::after {
-            content:''; position:absolute; left:0; top:18%; bottom:18%;
-            width:3px; border-radius:0 3px 3px 0;
-            background:var(--accent-color, var(--primary-maroon)); opacity:.5;
-        }
-
+        
         .stat-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
         .stat-meta { display:flex; flex-direction:column; gap:2px; }
         .stat-label { font-size:11px; font-weight:600; color:var(--muted-text); letter-spacing:.5px; text-transform:uppercase; }

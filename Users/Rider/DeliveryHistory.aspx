@@ -678,6 +678,30 @@
             color: white;
         }
 
+        .modal-btn-reroute {
+            background: var(--success-green-light);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .modal-btn-reroute:hover {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .btn-reroute {
+            background: var(--success-green-light);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .btn-reroute:hover {
+            background: var(--success-green);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45, 157, 120, 0.3);
+        }
+
         /* Empty state */
         .empty-state {
             text-align: center;
@@ -817,8 +841,8 @@
                     <h3 class="modal-section-title"><i class="fas fa-user"></i> Customer Information</h3>
                     <div class="modal-details">
                         <div class="detail-row">
-                            <span class="detail-label">Username:</span>
-                            <span class="detail-value" id="modalUsername"></span>
+                            <span class="detail-label">Full Name:</span>
+                            <span class="detail-value" id="modalFullName"></span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Phone:</span>
@@ -828,6 +852,9 @@
                 </div>
 
                 <div class="modal-actions">
+                    <button class="modal-btn modal-btn-reroute" id="modalRerouteBtn">
+                        <i class="fas fa-map-marked-alt"></i> Reroute
+                    </button>
                     <button class="modal-btn modal-btn-secondary" id="modalReportBtn">
                         <i class="fas fa-flag"></i> Report Issue
                     </button>
@@ -895,7 +922,7 @@
                              data-started-at='<%# Eval("StartedAt") != DBNull.Value ? Convert.ToDateTime(Eval("StartedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>'
                              data-completed-at='<%# Eval("CompletedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CompletedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>'
                              data-created-by='<%# Eval("CreatedBy") %>'
-                             data-username='<%# Eval("Username") %>'
+                             data-fullname='<%# Eval("FullName") %>'
                              data-phone='<%# Eval("Phone") %>'>
 
                             <div class="delivery-header">
@@ -941,7 +968,7 @@
                                     </div>
                                     <div class="metric-row">
                                         <span class="metric-label">Customer</span>
-                                        <span class="metric-value"><%# Eval("Username") %></span>
+                                        <span class="metric-value"><%# Eval("FullName") %></span>
                                     </div>
                                     <div class="metric-row">
                                         <span class="metric-label">Phone</span>
@@ -954,6 +981,10 @@
                                 <button type="button" class="action-btn btn-view"
                                         onclick="openModal(this.closest('.delivery-card'))">
                                     <i class="fas fa-eye"></i> View Details
+                                </button>
+                                <button type="button" class="action-btn btn-reroute"
+                                        onclick="rerouteToGoogleMaps(this.closest('.delivery-card').dataset.address)">
+                                    <i class="fas fa-map-marked-alt"></i> Reroute
                                 </button>
                             </div>
                         </div>
@@ -988,7 +1019,7 @@
             document.getElementById('modalStartedAt').textContent = card.dataset.startedAt;
             document.getElementById('modalCompletedAt').textContent = card.dataset.completedAt;
             document.getElementById('modalCreatedBy').textContent = card.dataset.createdBy;
-            document.getElementById('modalUsername').textContent = card.dataset.username;
+            document.getElementById('modalFullName').textContent = card.dataset.fullname;
             document.getElementById('modalPhone').textContent = card.dataset.phone;
 
             modal.classList.add('active');
@@ -1000,9 +1031,25 @@
             document.body.style.overflow = 'auto';
         }
 
+        function rerouteToGoogleMaps(address) {
+            if (!address) {
+                showNotification('No address available for this delivery.', 'warning');
+                return;
+            }
+            const encoded = encodeURIComponent(address);
+            window.open('https://www.google.com/maps/dir/?api=1&destination=' + encoded, '_blank');
+        }
+
         closeModalBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+        const modalRerouteBtn = document.getElementById('modalRerouteBtn');
+
+        modalRerouteBtn.addEventListener('click', function () {
+            const address = document.getElementById('modalAddress').textContent;
+            rerouteToGoogleMaps(address);
+        });
 
         modalReportBtn.addEventListener('click', function () {
             const ticketNum = document.getElementById('modalTicketNum').textContent;

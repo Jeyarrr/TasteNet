@@ -214,7 +214,7 @@ namespace TasteNet.Users.SuperAdmin
                     t.TicketID,
                     t.TicketNumber,
                     t.OrderType                         AS PaymentMethod,
-                    ISNULL(u.FullName, t.CreatedBy)     AS CustomerName,
+                    ISNULL(u.FullName, 'Unknown')       AS CustomerName,
                     t.TotalAmount,
                     t.Status,
                     t.Priority,
@@ -223,7 +223,7 @@ namespace TasteNet.Users.SuperAdmin
                      FROM TicketItems ti WHERE ti.TicketID = t.TicketID) AS FirstItem,
                     (SELECT COUNT(*) FROM TicketItems ti WHERE ti.TicketID = t.TicketID) AS ItemCount
                 FROM Tickets t
-                LEFT JOIN Users u ON CAST(u.Username AS NVARCHAR) = CAST(t.CreatedBy AS NVARCHAR)
+                LEFT JOIN Users u ON u.UserID = TRY_CAST(t.CreatedBy AS INT)
                 WHERE 1=1 " + dateFilter + @"
                 ORDER BY t.CreatedAt DESC";
 

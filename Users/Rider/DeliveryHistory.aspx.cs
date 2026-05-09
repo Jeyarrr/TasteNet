@@ -37,11 +37,11 @@ namespace TasteNet.Users.Rider
                         t.[CompletedAt],
                         t.[CreatedBy],
                         t.[UpdatedAt],
-                        u.[Username],
+                        u.[FullName],
                         u.[Phone]
                     FROM [DeliverySystem].[dbo].[Tickets] t
                     INNER JOIN [DeliverySystem].[dbo].[Users] u
-                        ON t.[CreatedBy] = u.[Username]
+                        ON t.[CreatedBy] = u.[UserID]
                     WHERE t.[Status] = 'Completed'
                       AND t.[OrderType] = 'Delivery'
                       AND u.[UserType] = 'Customer'

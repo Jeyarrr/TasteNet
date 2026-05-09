@@ -143,11 +143,11 @@ namespace TasteNet.Users.Rider
                         t.CompletedAt,
                         t.CreatedBy,
                         t.UpdatedAt,
-                        u.Username    AS CustomerUsername,
+                        u.FullName    AS CustomerUsername,
                         u.Phone       AS CustomerPhone
                 FROM    Tickets t
                 LEFT JOIN Users u
-                       ON LTRIM(RTRIM(LOWER(u.Username))) = LTRIM(RTRIM(LOWER(t.CreatedBy)))
+                       ON t.CreatedBy = u.UserID
                       AND LTRIM(RTRIM(LOWER(u.UserType))) = 'customer'
                 WHERE   LTRIM(RTRIM(LOWER(t.OrderType))) = 'delivery'
                   AND   LTRIM(RTRIM(LOWER(t.Status)))   <> 'completed'
