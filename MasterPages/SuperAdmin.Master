@@ -625,6 +625,10 @@
                     <i class="fa-solid fa-box"></i>
                     <span>Inventory</span>
                 </a>
+                <a href="/Users/SuperAdmin/RecipeManager.aspx" class="menu-item" id="link-recipemanager" data-tooltip="RecipeManager">
+                    <i class="fa-solid fa-box"></i>
+                   <span>RecipeManager</span>
+               </a>
                 <a href="/Users/SuperAdmin/Menu.aspx" class="menu-item" id="link-menu" data-tooltip="Menu">
                     <i class="fa-solid fa-utensils"></i>
                     <span>Menu</span>

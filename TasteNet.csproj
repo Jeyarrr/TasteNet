@@ -160,6 +160,7 @@
     <Content Include="Users\Admin\Inventory.aspx" />
     <Content Include="Users\Admin\Menu.aspx" />
     <Content Include="Users\Admin\OrderHistory.aspx" />
+    <Content Include="Users\Admin\RecipeManager.aspx" />
     <Content Include="Users\Admin\Ticketing.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
@@ -236,6 +237,7 @@
     <Content Include="Users\SuperAdmin\Inventory.aspx" />
     <Content Include="Users\SuperAdmin\Menu.aspx" />
     <Content Include="Users\SuperAdmin\PromoCodes.aspx" />
+    <Content Include="Users\SuperAdmin\RecipeManager.aspx" />
     <Content Include="Users\SuperAdmin\Reports.aspx" />
     <Content Include="Users\SuperAdmin\Settings.aspx" />
     <Content Include="Users\SuperAdmin\Ticketing.aspx" />
@@ -301,6 +303,13 @@
     </Compile>
     <Compile Include="Users\Admin\OrderHistory.aspx.designer.cs">
       <DependentUpon>OrderHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\Admin\RecipeManager.aspx.cs">
+      <DependentUpon>RecipeManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\Admin\RecipeManager.aspx.designer.cs">
+      <DependentUpon>RecipeManager.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\Admin\Ticketing.aspx.cs">
       <DependentUpon>Ticketing.aspx</DependentUpon>
@@ -434,6 +443,13 @@
     </Compile>
     <Compile Include="Users\SuperAdmin\PromoCodes.aspx.designer.cs">
       <DependentUpon>PromoCodes.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\RecipeManager.aspx.cs">
+      <DependentUpon>RecipeManager.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users\SuperAdmin\RecipeManager.aspx.designer.cs">
+      <DependentUpon>RecipeManager.aspx</DependentUpon>
     </Compile>
     <Compile Include="Users\SuperAdmin\Reports.aspx.cs">
       <DependentUpon>Reports.aspx</DependentUpon>

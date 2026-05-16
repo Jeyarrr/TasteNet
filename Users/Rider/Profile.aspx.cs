@@ -156,19 +156,46 @@ namespace TasteNet.Users.Rider
                     dt.Load(reader);
                     conn.Close();
 
-                    // Create a list to hold the document items with fixed paths
+                    // Resolve photo paths to absolute web URLs
+                    // Handles both folders: ~/Uploads/Riders/ (DeliveryPersonnel) and ~/UploadedRiders/ (Profile upload)
+                    string appRoot = Request.ApplicationPath.TrimEnd('/');
                     List<DocumentItem> documents = new List<DocumentItem>();
 
                     foreach (DataRow row in dt.Rows)
                     {
                         string filePath = row["FilePath"].ToString();
-                        string webPath = filePath;
+                        string webPath = "";
 
                         if (!string.IsNullOrEmpty(filePath) && filePath != "Not Uploaded")
                         {
-                            // Convert relative path to web path
-                            webPath = filePath.Replace("~", "");
-                            webPath = ResolveUrl(webPath);
+                            if (filePath.StartsWith("http"))
+                            {
+                                // Already an absolute URL - use as-is
+                                webPath = filePath;
+                            }
+                            else
+                            {
+                                // DB may store any of:
+                                //   Full Windows path : "C:\Users\georg\...\Uploads\Riders\abc.jpg"
+                                //   Tilde-relative    : "~/Uploads/Riders/abc.jpg"
+                                //   Old tilde path    : "~/UploadedRiders/abc.jpg"
+                                // In all cases, extract just the filename and search known web folders.
+                                string fileName = System.IO.Path.GetFileName(
+                                    filePath.Replace("/", "\\"));
+
+                                string physicalUploadsRiders = Server.MapPath("~/Uploads/Riders/" + fileName);
+                                string physicalUploadedRiders = Server.MapPath("~/UploadedRiders/" + fileName);
+
+                                if (System.IO.File.Exists(physicalUploadsRiders))
+                                    webPath = appRoot + "/Uploads/Riders/" + fileName;
+                                else if (System.IO.File.Exists(physicalUploadedRiders))
+                                    webPath = appRoot + "/UploadedRiders/" + fileName;
+                                else
+                                    // File recorded in DB but not present on this server
+                                    // (e.g. uploaded on a different developer machine).
+                                    // Leave webPath empty so the View button is disabled.
+                                    webPath = "";
+                            }
                         }
 
                         documents.Add(new DocumentItem
@@ -191,11 +218,35 @@ namespace TasteNet.Users.Rider
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
                 DocumentItem doc = (DocumentItem)e.Item.DataItem;
-                Button btnUpload = (Button)e.Item.FindControl("btnUpload");
 
+                // Wire up Upload button
+                Button btnUpload = (Button)e.Item.FindControl("btnUpload");
                 if (btnUpload != null)
                 {
                     btnUpload.CommandArgument = doc.DocumentColumn;
+                }
+
+                // Wire up View button — plain HTML via Literal, no postback
+                Literal litViewBtn = (Literal)e.Item.FindControl("litViewBtn");
+                if (litViewBtn != null)
+                {
+                    bool hasFile = !string.IsNullOrEmpty(doc.FilePath)
+                                   && doc.FilePath != "Not Uploaded";
+
+                    if (hasFile)
+                    {
+                        string safePath = doc.FilePath.Replace("\\", "/").Replace("'", "\'");
+                        string safeName = doc.DocumentName.Replace("'", "\'");
+                        litViewBtn.Text = "<button type=\"button\" class=\"btn-icon btn-view\" " +
+                                          "onclick=\"viewDocument(\'" + safePath + "\', \'" + safeName + "\');\"> " +
+                                          "<i class=\"fas fa-eye\"></i> View</button>";
+                    }
+                    else
+                    {
+                        litViewBtn.Text = "<button type=\"button\" class=\"btn-icon btn-view\" " +
+                                          "disabled style=\"opacity:0.5;cursor:not-allowed;\">" +
+                                          "<i class=\"fas fa-eye\"></i> View</button>";
+                    }
                 }
             }
         }
@@ -330,94 +381,67 @@ namespace TasteNet.Users.Rider
             Button btn = (Button)sender;
             string documentColumn = btn.CommandArgument;
 
-            // Get the file from the hidden input using Request.Files
-            HttpPostedFile uploadedFile = null;
+            // Find the asp:FileUpload in the same repeater item as the clicked button
+            RepeaterItem item = (RepeaterItem)btn.NamingContainer;
+            FileUpload fuDocument = (FileUpload)item.FindControl("fuDocument");
 
-            // Look for the file in Request.Files
-            for (int i = 0; i < Request.Files.Count; i++)
-            {
-                var file = Request.Files[i];
-                if (file.FileName.Length > 0)
-                {
-                    uploadedFile = file;
-                    break;
-                }
-            }
-
-            // Alternative: Try to find by the file input ID
-            if (uploadedFile == null)
-            {
-                string fileInputId = $"fileUpload_{documentColumn}";
-                if (Request.Files[fileInputId] != null)
-                {
-                    uploadedFile = Request.Files[fileInputId];
-                }
-            }
-
-            if (uploadedFile != null && uploadedFile.ContentLength > 0)
-            {
-                try
-                {
-                    string extension = Path.GetExtension(uploadedFile.FileName).ToLower();
-                    if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".pdf")
-                    {
-                        ShowNotification("Only JPG, PNG, and PDF files are allowed!", "error");
-                        return;
-                    }
-
-                    if (uploadedFile.ContentLength > 5 * 1024 * 1024)
-                    {
-                        ShowNotification("File size must be less than 5MB!", "error");
-                        return;
-                    }
-
-                    string fileName = Guid.NewGuid().ToString() + extension;
-                    string folderPath = Server.MapPath("~/UploadedRiders/");
-
-                    if (!Directory.Exists(folderPath))
-                    {
-                        Directory.CreateDirectory(folderPath);
-                    }
-
-                    string fullPhysicalPath = Path.Combine(folderPath, fileName);
-                    uploadedFile.SaveAs(fullPhysicalPath);
-
-                    // Store relative path for database
-                    string relativePath = "~/UploadedRiders/" + fileName;
-
-                    string query = $"UPDATE Users SET {documentColumn} = @FilePath WHERE UserID = @UserID";
-
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    {
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@FilePath", relativePath);
-                            cmd.Parameters.AddWithValue("@UserID", currentUserID);
-                            conn.Open();
-                            int rowsAffected = cmd.ExecuteNonQuery();
-                            conn.Close();
-
-                            if (rowsAffected > 0)
-                            {
-                                ShowNotification("Document uploaded successfully!", "success");
-                                LoadDocuments(); // Refresh the documents list
-                            }
-                            else
-                            {
-                                ShowNotification("Error uploading document.", "error");
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Upload Error: " + ex.Message);
-                    ShowNotification("Error: " + ex.Message, "error");
-                }
-            }
-            else
+            if (fuDocument == null || !fuDocument.HasFile)
             {
                 ShowNotification("Please select a file to upload.", "error");
+                return;
+            }
+
+            try
+            {
+                string extension = Path.GetExtension(fuDocument.FileName).ToLower();
+                if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".pdf")
+                {
+                    ShowNotification("Only JPG, PNG, and PDF files are allowed!", "error");
+                    return;
+                }
+
+                if (fuDocument.PostedFile.ContentLength > 5 * 1024 * 1024)
+                {
+                    ShowNotification("File size must be less than 5MB!", "error");
+                    return;
+                }
+
+                string fileName = Guid.NewGuid().ToString() + extension;
+                string folderPath = Server.MapPath("~/Uploads/Riders/");
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                string fullPhysicalPath = Path.Combine(folderPath, fileName);
+                fuDocument.SaveAs(fullPhysicalPath);
+
+                string relativePath = "~/Uploads/Riders/" + fileName;
+
+                string query = $"UPDATE Users SET {documentColumn} = @FilePath WHERE UserID = @UserID";
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@FilePath", relativePath);
+                    cmd.Parameters.AddWithValue("@UserID", currentUserID);
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        ShowNotification("Document uploaded successfully!", "success");
+                        LoadDocuments();
+                    }
+                    else
+                    {
+                        ShowNotification("Error uploading document.", "error");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Upload Error: " + ex.Message);
+                ShowNotification("Error: " + ex.Message, "error");
             }
         }
 

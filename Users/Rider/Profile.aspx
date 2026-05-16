@@ -904,19 +904,18 @@
                                 </span>
                             </div>
                             <div class="document-actions">
-                                <%# !string.IsNullOrEmpty(Eval("FilePath").ToString()) && Eval("FilePath").ToString() != "Not Uploaded" && Eval("FilePath").ToString() != "" ? 
-                                    $"<button type=\"button\" class=\"btn-icon btn-view\" onclick=\"viewDocument('{Eval("FilePath")}', '{Eval("DocumentName")}')\"><i class=\"fas fa-eye\"></i> View</button>" : 
-                                    "<button class=\"btn-icon btn-view\" disabled style=\"opacity:0.5; cursor:not-allowed;\"><i class=\"fas fa-eye\"></i> View</button>" %>
+                                <asp:Literal ID="litViewBtn" runat="server" />
                                 
                                 <div class="file-input-wrapper">
-                                    <input type="file" id="fileUpload_<%# Eval("DocumentColumn") %>" class="hidden-file-input" style="display:none;" accept=".jpg,.jpeg,.png,.pdf" />
-                                    <button type="button" class="btn-file" onclick="triggerFileUpload('<%# Eval("DocumentColumn") %>')">
+                                    <asp:FileUpload ID="fuDocument" runat="server" CssClass="hidden-file-input"
+                                        Style="display:none;" accept=".jpg,.jpeg,.png,.pdf" />
+                                    <button type="button" class="btn-file"
+                                        onclick="triggerAspFileUpload('<%# Eval("DocumentColumn") %>', this)">
                                         <i class="fas fa-cloud-upload-alt"></i> Choose File
                                     </button>
                                 </div>
                                 <asp:Button ID="btnUpload" runat="server" Text="Upload" CssClass="btn-icon btn-upload" 
-                                    CommandArgument='<%# Eval("DocumentColumn") %>' OnClick="UploadDocument" 
-                                    UseSubmitBehavior="false" />
+                                    CommandArgument='<%# Eval("DocumentColumn") %>' OnClick="UploadDocument" />
                             </div>
                         </div>
                     </ItemTemplate>
@@ -1060,43 +1059,29 @@
             }, 100);
         }
 
-        function triggerFileUpload(documentColumn) {
-            const fileInputId = 'fileUpload_' + documentColumn;
-            let fileInput = document.getElementById(fileInputId);
-
-            if (!fileInput) {
-                fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.id = fileInputId;
-                fileInput.className = 'hidden-file-input';
-                fileInput.style.display = 'none';
-                fileInput.accept = '.jpg,.jpeg,.png,.pdf';
-                document.body.appendChild(fileInput);
-            }
-
-            fileInput.click();
+        function triggerAspFileUpload(documentColumn, chooseBtn) {
+            // Find the asp:FileUpload input inside the same file-input-wrapper div
+            const wrapper = chooseBtn.closest('.file-input-wrapper');
+            const fileInput = wrapper ? wrapper.querySelector('input[type="file"]') : null;
+            if (!fileInput) return;
 
             fileInput.onchange = function () {
                 if (this.files && this.files[0]) {
                     const fileName = this.files[0].name;
-                    const btn = document.querySelector(`button[onclick="triggerFileUpload('${documentColumn}')"]`);
-                    if (btn) {
-                        btn.innerHTML = `<i class="fas fa-check"></i> ${fileName.substring(0, 20)}${fileName.length > 20 ? '...' : ''}`;
-                    }
+                    chooseBtn.innerHTML = '<i class="fas fa-check"></i> ' +
+                        fileName.substring(0, 20) + (fileName.length > 20 ? '...' : '');
 
-                    window.selectedFiles = window.selectedFiles || {};
-                    window.selectedFiles[documentColumn] = this.files[0];
-
-                    const uploadBtn = btn ? btn.parentElement.querySelector('.btn-upload') : null;
+                    // Highlight the Upload button
+                    const uploadBtn = wrapper.parentElement.querySelector('.btn-upload');
                     if (uploadBtn) {
                         uploadBtn.style.opacity = '1';
                         uploadBtn.style.transform = 'scale(1.05)';
-                        setTimeout(() => {
-                            if (uploadBtn) uploadBtn.style.transform = 'scale(1)';
-                        }, 200);
+                        setTimeout(() => { uploadBtn.style.transform = 'scale(1)'; }, 200);
                     }
                 }
             };
+
+            fileInput.click();
         }
 
         function viewDocument(filePath, documentName) {
@@ -1111,21 +1096,27 @@
 
             modalTitle.textContent = documentName || 'Document Viewer';
 
-            let resolvedPath = filePath;
-            if (filePath && !filePath.startsWith('http') && !filePath.startsWith('/') && !filePath.startsWith('~')) {
-                resolvedPath = window.location.origin + '/' + filePath.replace(/^~/, '');
-            } else if (filePath && filePath.startsWith('~')) {
-                resolvedPath = window.location.origin + filePath.substring(1);
+            if (!filePath) {
+                modalBody.innerHTML = '<div style="padding:40px;text-align:center;color:#8a6d6d;">' +
+                    '<i class="fas fa-exclamation-triangle" style="font-size:48px;color:#d97706;margin-bottom:15px;display:block;"></i>' +
+                    '<p style="font-size:15px;font-weight:600;">File not available</p>' +
+                    '<p style="font-size:13px;">This document was uploaded on another device and is not accessible here.</p></div>';
+                modal.style.display = 'block';
+                return;
             }
 
             const fileExtension = filePath.split('.').pop().toLowerCase();
 
             if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                modalBody.innerHTML = `<img src="${resolvedPath}" alt="${documentName}" style="max-width:100%; max-height:500px; border-radius:12px;" onerror="this.onerror=null; this.src=''; this.alt='Image not found'; showNotification('Image not found', 'error');" />`;
+                modalBody.innerHTML = `<img src="${filePath}" alt="${documentName}" style="max-width:100%; max-height:500px; border-radius:12px;"
+                    onerror="this.outerHTML='<div style=\'padding:40px;text-align:center;color:#8a6d6d;\'>' +
+                        '<i class=\'fas fa-exclamation-triangle\' style=\'font-size:48px;color:#d97706;margin-bottom:15px;display:block;\'></i>' +
+                        '<p style=\'font-size:15px;font-weight:600;\'>Image not found</p>' +
+                        '<p style=\'font-size:13px;\'>The file may have been uploaded on another machine.</p></div>'" />`;
             } else if (fileExtension === 'pdf') {
-                modalBody.innerHTML = `<iframe src="${resolvedPath}" style="width:100%; height:500px; border:none; border-radius:12px;"></iframe>`;
+                modalBody.innerHTML = `<iframe src="${filePath}" style="width:100%; height:500px; border:none; border-radius:12px;"></iframe>`;
             } else {
-                modalBody.innerHTML = `<p>Unable to preview this file type. <a href="${resolvedPath}" target="_blank" style="color:var(--primary-maroon);">Click here to download</a></p>`;
+                modalBody.innerHTML = `<p>Unable to preview this file type. <a href="${filePath}" target="_blank" style="color:var(--primary-maroon);">Click here to download</a></p>`;
             }
 
             modal.style.display = 'block';

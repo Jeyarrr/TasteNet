@@ -1,6 +1,8 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/SuperAdmin.Master" AutoEventWireup="true" CodeBehind="DeliveryPersonnel.aspx.cs" Inherits="TasteNet.Users.SuperAdmin.DeliveryPersonnel" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
+    <asp:HiddenField ID="hdnRiderIdForOrders" runat="server" Value="" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -632,6 +634,68 @@
             background: var(--danger-red);
             color: white;
         }
+
+        .action-icon.edit { color: var(--accent-blue-dark); }
+        .action-icon.edit:hover { background: var(--accent-blue-dark); color: white; }
+
+        .edit-rider-modal {
+            background: white; border-radius: var(--radius-xl);
+            max-width: 820px; width: 90%; max-height: 92vh; overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1); position: relative;
+        }
+        .edit-info-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:8px 0; border-bottom:1px dashed var(--border-light); gap:12px;
+        }
+        .edit-info-row:last-child { border-bottom:none; }
+        .edit-info-row .info-label { flex-shrink:0; white-space:nowrap; }
+        .edit-info-row .edit-input {
+            flex:1; text-align:right; padding:5px 10px;
+            border:1px solid var(--border-light); border-radius:var(--radius-sm);
+            font-size:13px; font-family:'Poppins',sans-serif; color:var(--text-dark);
+            font-weight:600; background:white; outline:none; min-width:0; max-width:220px;
+            transition:border-color var(--transition-fast),box-shadow var(--transition-fast);
+        }
+        .edit-info-row .edit-input:focus { border-color:var(--primary-maroon); box-shadow:0 0 0 3px rgba(107,13,30,0.1); }
+        .edit-info-row select.edit-input {
+            cursor:pointer; appearance:none;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a6d6d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat:no-repeat; background-position:right 8px center; padding-right:26px;
+        }
+        .edit-profile-wrap { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
+        .edit-profile-circle {
+            width:88px; height:88px; border-radius:50%; overflow:hidden;
+            border:3px solid var(--border-light); background:var(--bg-light);
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; position:relative; transition:border-color var(--transition-base);
+        }
+        .edit-profile-circle:hover { border-color:var(--primary-maroon); }
+        .edit-profile-circle .edit-cam-overlay {
+            position:absolute; inset:0; background:rgba(107,13,30,0.45);
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; transition:opacity var(--transition-fast);
+        }
+        .edit-profile-circle:hover .edit-cam-overlay { opacity:1; }
+        .edit-profile-circle .edit-cam-overlay i { color:white; font-size:20px; }
+        .edit-doc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin-top:14px; }
+        .edit-doc-card {
+            border-radius:10px; overflow:hidden; border:2px solid var(--border-light);
+            background:var(--bg-lighter); cursor:pointer;
+            transition:box-shadow var(--transition-fast),transform var(--transition-fast);
+        }
+        .edit-doc-card:hover { box-shadow:0 6px 20px rgba(107,13,30,0.15); transform:translateY(-3px); border-color:var(--primary-maroon); }
+        .edit-doc-card__img { height:100px; overflow:hidden; background:var(--bg-light); position:relative; }
+        .edit-doc-card__img img { width:100%; height:100%; object-fit:cover; }
+        .edit-doc-card__img .no-photo { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--muted-text); font-size:28px; }
+        .edit-doc-card__img .change-overlay {
+            position:absolute; inset:0; background:rgba(107,13,30,0.5);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            opacity:0; transition:opacity var(--transition-fast); color:white; font-size:12px; gap:4px;
+        }
+        .edit-doc-card:hover .change-overlay { opacity:1; }
+        .edit-doc-card__label { padding:7px 10px; font-size:11px; font-weight:600; color:var(--text-dark); text-align:center; }
+        .edit-doc-card__label span { display:block; font-size:10px; color:var(--muted-text); font-weight:400; margin-top:2px; }
 
         .action-icon[title]:hover::after {
             content: attr(title);
@@ -1512,6 +1576,12 @@
                 font-size: 14px;
             }
         }
+        /* ── Order status badges (rptRiderOrders) ── */
+        .badge-completed { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#e6f4f1; color:#2d9d78; display:inline-block; }
+        .badge-cancelled { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#fdecea; color:#b91c1c; display:inline-block; }
+        .badge-active    { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#fff3e6; color:#d97706; display:inline-block; }
+        .badge-pending   { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#fff3e6; color:#d97706; display:inline-block; }
+        .badge-default   { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#f0f0f0;  color:#666;    display:inline-block; }
     </style>
 
     <div id="delivery-mgmt-wrapper">
@@ -1712,12 +1782,79 @@
                 </div>
 
                 <div class="rider-activity" style="margin-top: 20px;">
-                    <h4><i class="fas fa-history"></i> Recent Deliveries</h4>
-                    <div id="recentDeliveries">
-                        <p style="text-align: center; color: var(--muted-text); padding: 20px;">
-                            Loading delivery history...
-                        </p>
-                    </div>
+                    <asp:UpdatePanel ID="upOrders" runat="server" UpdateMode="Conditional">
+                        <ContentTemplate>
+                            <asp:Button ID="btnLoadOrders" runat="server" Text="" 
+                                OnClick="btnLoadOrders_Click"
+                                style="display:none;" />
+                            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                                <h4 style="margin:0;"><i class="fas fa-history"></i> Recent Deliveries</h4>
+                                <asp:DropDownList ID="ddlOrderPeriod" runat="server" AutoPostBack="true"
+                                    OnSelectedIndexChanged="ddlOrderPeriod_SelectedIndexChanged"
+                                    style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:500;
+                                           padding:6px 12px;border-radius:8px;border:1.5px solid var(--border-light);
+                                           background:white;color:var(--text-dark);cursor:pointer;outline:none;">
+                                    <asp:ListItem Value="today">Today</asp:ListItem>
+                                    <asp:ListItem Value="weekly">This Week</asp:ListItem>
+                                    <asp:ListItem Value="monthly" Selected="True">This Month</asp:ListItem>
+                                </asp:DropDownList>
+                            </div>
+
+                            <asp:Repeater ID="rptRiderOrders" runat="server">
+                                <HeaderTemplate>
+                                    <div style="overflow-x:auto;margin-top:4px;">
+                                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                                        <thead>
+                                            <tr style="background:var(--bg-lighter);">
+                                                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted-text);text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid var(--border-light);white-space:nowrap;">Ticket No.</th>
+                                                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted-text);text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid var(--border-light);white-space:nowrap;">Delivery Address</th>
+                                                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted-text);text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid var(--border-light);white-space:nowrap;">Status</th>
+                                                <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted-text);text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid var(--border-light);white-space:nowrap;">Date</th>
+                                                <th style="padding:10px 14px;text-align:right;font-size:11px;font-weight:600;color:var(--muted-text);text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid var(--border-light);white-space:nowrap;">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <tr style="background:white;" onmouseover="this.style.background='#fefaf5'" onmouseout="this.style.background='white'">
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;font-family:'Courier New',monospace;font-weight:700;font-size:12px;color:#6b0d1e;"><%# Eval("TicketNumber") %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title='<%# Eval("DeliveryAddress") %>'><%# string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) ? "—" : Eval("DeliveryAddress").ToString() %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;">
+                                            <span class='<%# GetStatusClass(Eval("Status")?.ToString()) %>'><%# Eval("Status") %></span>
+                                        </td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;white-space:nowrap;"><%# Eval("CreatedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CreatedAt")).ToString("MMM d, yyyy h:mm tt") : "—" %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;text-align:right;font-weight:700;color:#2d9d78;"><%# Eval("TotalAmount") != DBNull.Value ? "₱" + Convert.ToDecimal(Eval("TotalAmount")).ToString("N2") : "—" %></td>
+                                    </tr>
+                                </ItemTemplate>
+                                <AlternatingItemTemplate>
+                                    <tr style="background:#f9f4ee;" onmouseover="this.style.background='#fefaf5'" onmouseout="this.style.background='#f9f4ee'">
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;font-family:'Courier New',monospace;font-weight:700;font-size:12px;color:#6b0d1e;"><%# Eval("TicketNumber") %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title='<%# Eval("DeliveryAddress") %>'><%# string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) ? "—" : Eval("DeliveryAddress").ToString() %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;">
+                                            <span class='<%# GetStatusClass(Eval("Status")?.ToString()) %>'><%# Eval("Status") %></span>
+                                        </td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;white-space:nowrap;"><%# Eval("CreatedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CreatedAt")).ToString("MMM d, yyyy h:mm tt") : "—" %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;text-align:right;font-weight:700;color:#2d9d78;"><%# Eval("TotalAmount") != DBNull.Value ? "₱" + Convert.ToDecimal(Eval("TotalAmount")).ToString("N2") : "—" %></td>
+                                    </tr>
+                                </AlternatingItemTemplate>
+                                <FooterTemplate>
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </FooterTemplate>
+                            </asp:Repeater>
+                            <asp:Panel ID="pnlNoOrders" runat="server" Visible="false">
+                                <div style="text-align:center;padding:30px;color:var(--muted-text);">
+                                    <i class="fas fa-box-open" style="font-size:36px;margin-bottom:10px;color:var(--border-light);display:block;"></i>
+                                    <p style="margin:0;font-size:13px;">No orders found for this period.</p>
+                                </div>
+                            </asp:Panel>
+                        </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger ControlID="btnLoadOrders" EventName="Click" />
+                            <asp:AsyncPostBackTrigger ControlID="ddlOrderPeriod" EventName="SelectedIndexChanged" />
+                        </Triggers>
+                    </asp:UpdatePanel>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2048,6 +2185,9 @@
                             <button type="button" class="action-icon view" title="View Profile">
                                 <i class="fas fa-eye"></i>
                             </button>
+                            <button type="button" class="action-icon edit" title="Edit Rider">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
                             <button type="button" class="action-icon delete" title="Remove Rider">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -2122,30 +2262,32 @@
                 const target = e.target;
                 const deleteBtn = target.closest('.action-icon.delete');
                 const viewBtn = target.closest('.action-icon.view');
+                const editBtn = target.closest('.action-icon.edit');
 
                 if (deleteBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-
                     const row = deleteBtn.closest('tr');
                     const riderId = row.getAttribute('data-rider-id');
-
-                    if (riderId) {
-                        showDeleteConfirmation(riderId);
-                    }
+                    if (riderId) showDeleteConfirmation(riderId);
                     return false;
                 }
 
                 if (viewBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-
                     const row = viewBtn.closest('tr');
                     const riderId = row.getAttribute('data-rider-id');
+                    if (riderId) viewRider(riderId);
+                    return false;
+                }
 
-                    if (riderId) {
-                        viewRider(riderId);
-                    }
+                if (editBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const row = editBtn.closest('tr');
+                    const riderId = row.getAttribute('data-rider-id');
+                    if (riderId) openEditModal(riderId);
                     return false;
                 }
             });
@@ -2285,7 +2427,11 @@
                 actionButton.innerHTML = '<i class="fas fa-check"></i> Set to Available';
             }
 
-            loadRecentDeliveries(rider.recentDeliveries);
+            // Set rider ID into hidden field then trigger UpdatePanel postback
+            document.getElementById('<%= hdnRiderIdForOrders.ClientID %>').value = rider.id;
+            // Reset dropdown to monthly then trigger the hidden button to load orders
+            document.getElementById('<%= ddlOrderPeriod.ClientID %>').value = 'monthly';
+            document.getElementById('<%= btnLoadOrders.ClientID %>').click();
             renderDocumentPhotos(rider);
 
             const modal = document.getElementById('riderModal');
@@ -2361,29 +2507,163 @@
             updateStats();
         }
 
-        function loadRecentDeliveries(deliveries) {
-            const recentDeliveriesDiv = document.getElementById('recentDeliveries');
 
-            let html = '<div style="overflow-x: auto;">';
-            html += '<table style="width: 100%; border-collapse: collapse; margin-top: 15px;">';
-            html += '<thead><tr>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Order ID</th>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Time</th>';
-            html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--border-light); color: var(--muted-text);">Status</th>';
-            html += '</tr></thead>';
-            html += '<tbody>';
+        // ── Edit Modal ────────────────────────────────────────────────────────
+        const editDocFiles = { driverLicense: null, orcr: null, insurance: null, nbi: null, profile: null };
 
-            deliveries.forEach(delivery => {
-                const statusClass = delivery.status === 'Delivered' ? 'status-available' : 'status-delivery';
-                html += `<tr style="border-bottom: 1px solid var(--border-light);">`;
-                html += `<td style="padding: 12px;"><strong>${delivery.orderId}</strong></td>`;
-                html += `<td style="padding: 12px;">${delivery.time}</td>`;
-                html += `<td style="padding: 12px;"><span class="info-value status ${statusClass}" style="display: inline-block;">${delivery.status}</span></td>`;
-                html += `</tr>`;
+        function openEditModal(riderId) {
+            const rider = ridersData.find(r => r.id === riderId);
+            if (!rider) return;
+            Object.keys(editDocFiles).forEach(k => editDocFiles[k] = null);
+            document.getElementById('editRiderId').value = rider.id;
+            const profImg = document.getElementById('editProfileImg');
+            const profIcon = document.getElementById('editProfileIcon');
+            if (rider.profilePicture) { profImg.src = rider.profilePicture; profImg.style.display = 'block'; profIcon.style.display = 'none'; }
+            else { profImg.style.display = 'none'; profIcon.style.display = 'block'; }
+            document.getElementById('editFullName').value = rider.name || '';
+            document.getElementById('editUsername').value = rider.username || '';
+            document.getElementById('editEmail').value = rider.email || '';
+            document.getElementById('editPhone').value = rider.phone || '';
+            document.getElementById('editGender').value = (rider.gender || '').toLowerCase();
+            document.getElementById('editLicenseNumber').value = rider.licenseNumber || '';
+            document.getElementById('editNBINumber').value = rider.nbiNumber || '';
+            document.getElementById('editVehicleType').value = rider.vehicle || '';
+            document.getElementById('editVehicleModel').value = rider.vehicleModel || '';
+            document.getElementById('editVehicleYear').value = rider.vehicleYear || '';
+            document.getElementById('editLicensePlate').value = rider.licensePlate || '';
+            document.getElementById('editVehicleColor').value = rider.vehicleColor || '';
+            document.getElementById('editORCRNumber').value = rider.orcrNumber || '';
+            document.getElementById('editInsurancePolicy').value = rider.insurancePolicy || '';
+            document.getElementById('editInsuranceDate').value = rider.insuranceDate || '';
+            document.getElementById('editAssignedOrders').textContent = rider.assigned;
+            document.getElementById('editCompletedDeliveries').textContent = rider.completed.toLocaleString();
+            document.getElementById('editModalRating').textContent = rider.rating.toFixed(1);
+            const sb = document.getElementById('editModalStatus');
+            sb.textContent = getStatusText(rider.status);
+            sb.className = 'info-value status ' + (rider.status === 'available' ? 'status-available' : rider.status === 'delivery' ? 'status-delivery' : 'status-offline');
+            document.getElementById('editModalRiderId').textContent = `RDR-${rider.id.padStart(3, '0')}`;
+            document.getElementById('editModalRiderId2').textContent = `RDR-${rider.id.padStart(3, '0')}`;
+            renderEditDocPhotos(rider);
+            document.getElementById('editRiderModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editRiderModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderEditDocPhotos(rider) {
+            const docs = [
+                { key: 'driverLicensePhoto', fileKey: 'driverLicense', label: "Driver's License", inputId: 'editLicenseFile' },
+                { key: 'orcrPhoto', fileKey: 'orcr', label: 'OR/CR', inputId: 'editORCRFile' },
+                { key: 'insurancePhoto', fileKey: 'insurance', label: 'Insurance', inputId: 'editInsuranceFile' },
+                { key: 'nbiClearancePhoto', fileKey: 'nbi', label: 'NBI Clearance', inputId: 'editNBIFile' }
+            ];
+            const container = document.getElementById('editDocPhotos');
+            container.innerHTML = '';
+            docs.forEach(doc => {
+                const src = rider[doc.key];
+                const card = document.createElement('div');
+                card.className = 'edit-doc-card';
+                card.onclick = () => document.getElementById(doc.inputId).click();
+                const imgArea = document.createElement('div');
+                imgArea.className = 'edit-doc-card__img';
+                imgArea.id = 'editDocImgArea_' + doc.fileKey;
+                imgArea.innerHTML = src
+                    ? `<img src="${src}" alt="${doc.label}"><div class="change-overlay"><i class="fas fa-camera" style="font-size:20px;"></i><span>Change</span></div>`
+                    : `<div class="no-photo"><i class="fas fa-file-image"></i></div><div class="change-overlay"><i class="fas fa-camera" style="font-size:20px;"></i><span>Upload</span></div>`;
+                const lbl = document.createElement('div');
+                lbl.className = 'edit-doc-card__label';
+                lbl.innerHTML = doc.label + '<span>Click to change</span>';
+                const inp = document.createElement('input');
+                inp.type = 'file'; inp.accept = 'image/*,.pdf'; inp.id = doc.inputId; inp.style.display = 'none';
+                inp.addEventListener('change', function () {
+                    const file = this.files[0]; if (!file) return;
+                    editDocFiles[doc.fileKey] = file;
+                    const reader = new FileReader();
+                    reader.onload = e2 => {
+                        document.getElementById('editDocImgArea_' + doc.fileKey).innerHTML =
+                            `<img src="${e2.target.result}" alt="${doc.label}"><div class="change-overlay"><i class="fas fa-camera" style="font-size:20px;"></i><span>Change</span></div>`;
+                    };
+                    reader.readAsDataURL(file);
+                });
+                card.appendChild(imgArea); card.appendChild(lbl); card.appendChild(inp);
+                container.appendChild(card);
             });
+        }
 
-            html += '</tbody></table></div>';
-            recentDeliveriesDiv.innerHTML = html;
+        function saveEditRider() {
+            const riderId = document.getElementById('editRiderId').value;
+            const fullName = document.getElementById('editFullName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
+            if (!fullName || !email || !phone) { showNotification('Full name, email, and phone are required.', 'error'); return; }
+            const saveBtn = document.getElementById('editSaveBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            const fd = new FormData();
+            fd.append('fullName', fullName);
+            fd.append('username', document.getElementById('editUsername').value.trim());
+            fd.append('email', email);
+            fd.append('contact', phone);
+            fd.append('gender', document.getElementById('editGender').value);
+            fd.append('licenseNumber', document.getElementById('editLicenseNumber').value.trim());
+            fd.append('nbiNumber', document.getElementById('editNBINumber').value.trim());
+            fd.append('vehicle', document.getElementById('editVehicleType').value);
+            fd.append('vehicleModel', document.getElementById('editVehicleModel').value.trim());
+            fd.append('vehicleYear', document.getElementById('editVehicleYear').value.trim());
+            fd.append('licensePlate', document.getElementById('editLicensePlate').value.trim());
+            fd.append('vehicleColor', document.getElementById('editVehicleColor').value.trim());
+            fd.append('orcrNumber', document.getElementById('editORCRNumber').value.trim());
+            fd.append('insurancePolicy', document.getElementById('editInsurancePolicy').value.trim());
+            fd.append('insuranceDate', document.getElementById('editInsuranceDate').value);
+            if (editDocFiles.profile) fd.append('profilePhoto', editDocFiles.profile);
+            if (editDocFiles.driverLicense) fd.append('driverLicensePhoto', editDocFiles.driverLicense);
+            if (editDocFiles.orcr) fd.append('orcrPhoto', editDocFiles.orcr);
+            if (editDocFiles.insurance) fd.append('insurancePhoto', editDocFiles.insurance);
+            if (editDocFiles.nbi) fd.append('nbiClearancePhoto', editDocFiles.nbi);
+            fetch(pageUrl + '?action=updateRider&id=' + encodeURIComponent(riderId), { method: 'POST', body: fd })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const rider = ridersData.find(r => r.id === riderId);
+                        if (rider) {
+                            rider.name = fullName; rider.username = document.getElementById('editUsername').value.trim();
+                            rider.email = email; rider.phone = phone; rider.gender = document.getElementById('editGender').value;
+                            rider.licenseNumber = document.getElementById('editLicenseNumber').value.trim();
+                            rider.nbiNumber = document.getElementById('editNBINumber').value.trim();
+                            rider.vehicle = document.getElementById('editVehicleType').value;
+                            rider.vehicleModel = document.getElementById('editVehicleModel').value.trim();
+                            rider.vehicleYear = document.getElementById('editVehicleYear').value.trim();
+                            rider.licensePlate = document.getElementById('editLicensePlate').value.trim();
+                            rider.vehicleColor = document.getElementById('editVehicleColor').value.trim();
+                            rider.orcrNumber = document.getElementById('editORCRNumber').value.trim();
+                            rider.insurancePolicy = document.getElementById('editInsurancePolicy').value.trim();
+                            rider.insuranceDate = document.getElementById('editInsuranceDate').value;
+                            if (data.profilePicture) rider.profilePicture = data.profilePicture;
+                            if (data.driverLicensePhoto) rider.driverLicensePhoto = data.driverLicensePhoto;
+                            if (data.orcrPhoto) rider.orcrPhoto = data.orcrPhoto;
+                            if (data.insurancePhoto) rider.insurancePhoto = data.insurancePhoto;
+                            if (data.nbiClearancePhoto) rider.nbiClearancePhoto = data.nbiClearancePhoto;
+                        }
+                        const row = document.querySelector(`tr[data-rider-id="${riderId}"]`);
+                        if (row) {
+                            row.querySelector('.rider-name').textContent = fullName;
+                            row.querySelector('.contact-phone').textContent = phone;
+                            row.querySelector('.contact-email').textContent = email;
+                            row.querySelector('.vehicle-badge').textContent = document.getElementById('editVehicleType').value;
+                            row.setAttribute('data-vehicle', document.getElementById('editVehicleType').value.toLowerCase());
+                            if (data.profilePicture) { const img = row.querySelector('img'); if (img) img.src = data.profilePicture; }
+                        }
+                        closeEditModal();
+                        showNotification('Rider updated successfully!', 'success');
+                    } else {
+                        showNotification(data.message || 'Update failed.', 'error');
+                    }
+                })
+                .catch(() => showNotification('Network error. Please try again.', 'error'))
+                .finally(() => { saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes'; });
         }
 
         function showDeleteConfirmation(riderId) {
@@ -2843,9 +3123,95 @@
                 }
             });
 
+            document.getElementById('editRiderModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('editRiderModal')) closeEditModal();
+            });
+
 
         });
     </script>
+
+    <!-- Edit Rider Modal -->
+    <div id="editRiderModal" class="modal-overlay" style="display:none;">
+        <div class="edit-rider-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-pencil-alt"></i> Edit Rider <span class="rider-id" id="editModalRiderId">RDR-000</span></h3>
+                <button class="close-modal" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editRiderId">
+                <div class="edit-profile-wrap">
+                    <div class="edit-profile-circle" onclick="document.getElementById('editProfileFileInput').click()">
+                        <img id="editProfileImg" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
+                        <i id="editProfileIcon" class="fas fa-user" style="font-size:30px;color:var(--muted-text);"></i>
+                        <div class="edit-cam-overlay"><i class="fas fa-camera"></i></div>
+                    </div>
+                    <input type="file" id="editProfileFileInput" accept="image/*" style="display:none;"
+                           onchange="(function(f){if(!f)return;editDocFiles.profile=f;var r=new FileReader();r.onload=function(e){var img=document.getElementById('editProfileImg');img.src=e.target.result;img.style.display='block';document.getElementById('editProfileIcon').style.display='none';};r.readAsDataURL(f);})(this.files[0])">
+                    <small style="color:var(--muted-text);font-size:11px;margin-top:6px;">Click to change photo</small>
+                </div>
+                <div class="rider-info-grid">
+                    <div class="info-section">
+                        <h4><i class="fas fa-id-card"></i> Personal Information</h4>
+                        <div class="edit-info-row"><span class="info-label">Full Name:</span><input id="editFullName" class="edit-input" type="text" placeholder="Full name"></div>
+                        <div class="edit-info-row"><span class="info-label">Username:</span><input id="editUsername" class="edit-input" type="text" placeholder="Username"></div>
+                        <div class="edit-info-row"><span class="info-label">Email Address:</span><input id="editEmail" class="edit-input" type="email" placeholder="Email"></div>
+                        <div class="edit-info-row"><span class="info-label">Phone Number:</span><input id="editPhone" class="edit-input" type="text" placeholder="Phone"></div>
+                        <div class="edit-info-row"><span class="info-label">Gender:</span>
+                            <select id="editGender" class="edit-input">
+                                <option value="">Select</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="prefer-not-to-say">Rather not say</option>
+                            </select>
+                        </div>
+                        <div class="edit-info-row"><span class="info-label">License No.:</span><input id="editLicenseNumber" class="edit-input" type="text" placeholder="License number"></div>
+                        <div class="edit-info-row"><span class="info-label">NBI No.:</span><input id="editNBINumber" class="edit-input" type="text" placeholder="NBI number"></div>
+                    </div>
+                    <div class="info-section">
+                        <h4><i class="fas fa-chart-line"></i> Account Status</h4>
+                        <div class="info-row"><span class="info-label">Rider ID:</span><span class="info-value" id="editModalRiderId2">—</span></div>
+                        <div class="info-row"><span class="info-label">Status:</span><span class="info-value status" id="editModalStatus">—</span></div>
+                        <div class="info-row"><span class="info-label">Account Type:</span><span class="info-value">Delivery Rider</span></div>
+                        <h4 style="margin-top:18px;"><i class="fas fa-motorcycle"></i> Vehicle</h4>
+                        <div class="edit-info-row"><span class="info-label">Type:</span>
+                            <select id="editVehicleType" class="edit-input">
+                                <option value="">Select</option>
+                                <option value="Motorcycle">Motorcycle</option>
+                                <option value="Bicycle">Bicycle</option>
+                                <option value="Car">Car</option>
+                                <option value="Scooter">Scooter</option>
+                            </select>
+                        </div>
+                        <div class="edit-info-row"><span class="info-label">Model:</span><input id="editVehicleModel" class="edit-input" type="text" placeholder="Model"></div>
+                        <div class="edit-info-row"><span class="info-label">Year:</span><input id="editVehicleYear" class="edit-input" type="number" min="2000" max="2027" placeholder="Year"></div>
+                        <div class="edit-info-row"><span class="info-label">Plate No.:</span><input id="editLicensePlate" class="edit-input" type="text" placeholder="Plate"></div>
+                        <div class="edit-info-row"><span class="info-label">Color:</span><input id="editVehicleColor" class="edit-input" type="text" placeholder="Color"></div>
+                        <div class="edit-info-row"><span class="info-label">OR/CR No.:</span><input id="editORCRNumber" class="edit-input" type="text" placeholder="OR/CR"></div>
+                        <h4 style="margin-top:18px;"><i class="fas fa-shield-alt"></i> Insurance</h4>
+                        <div class="edit-info-row"><span class="info-label">Policy No.:</span><input id="editInsurancePolicy" class="edit-input" type="text" placeholder="Policy"></div>
+                        <div class="edit-info-row"><span class="info-label">Date:</span><input id="editInsuranceDate" class="edit-input" type="date"></div>
+                    </div>
+                </div>
+                <div class="rider-activity">
+                    <h4><i class="fas fa-shipping-fast"></i> Delivery Activity</h4>
+                    <div class="activity-grid">
+                        <div class="activity-stat"><div class="activity-stat__value" id="editAssignedOrders">0</div><div class="activity-stat__label">Assigned Orders</div></div>
+                        <div class="activity-stat"><div class="activity-stat__value" id="editCompletedDeliveries">0</div><div class="activity-stat__label">Completed Deliveries</div></div>
+                        <div class="activity-stat"><div class="activity-stat__value" id="editModalRating">0.0</div><div class="activity-stat__label">Rating</div></div>
+                    </div>
+                </div>
+                <div class="rider-activity" style="margin-top:20px;">
+                    <h4><i class="fas fa-file-alt"></i> Requirement Documents <small style="font-weight:400;font-size:12px;color:var(--muted-text);margin-left:6px;">— click a card to replace</small></h4>
+                    <div class="edit-doc-grid" id="editDocPhotos"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn--outline" onclick="closeEditModal()"><i class="fas fa-times"></i> Cancel</button>
+                <button class="btn btn--primary" id="editSaveBtn" onclick="saveEditRider()"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Photo lightbox overlay -->
     <div id="photoLightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:20000;align-items:center;justify-content:center;flex-direction:column;gap:16px;">

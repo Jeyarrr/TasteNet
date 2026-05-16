@@ -384,35 +384,6 @@
             color: var(--danger-red);
         }
 
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .qty-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-lighter);
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--primary-maroon);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .qty-btn:hover {
-            background: var(--primary-maroon);
-            color: white;
-            transform: translateY(-2px);
-        }
-
         .quantity-value {
             font-weight: 700;
             color: var(--primary-maroon);
@@ -432,23 +403,6 @@
 
         .total-price {
             color: var(--success-green);
-        }
-
-        .supplier-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .supplier-name {
-            font-size: 12px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .supplier-contact {
-            font-size: 10px;
-            color: var(--muted-text);
         }
 
         .switch {
@@ -826,11 +780,6 @@
                 font-size: 13px;
                 min-width: 25px;
             }
-            .qty-btn {
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
-            }
         }
     </style>
 
@@ -838,7 +787,7 @@
         <div class="page-header">
             <div class="header-title">
                 <h2>Inventory Management</h2>
-                <p>Manage ingredient stock and suppliers</p>
+                <p>Manage ingredient stock</p>
             </div>
             <div class="header-actions">
                 <asp:Button ID="btnAddIngredient" runat="server" Text="Add New Ingredient" CssClass="btn btn--secondary" OnClick="btnAddIngredient_Click" />
@@ -923,7 +872,6 @@
                                     <th>Quantity</th>
                                     <th>Unit Price</th>
                                     <th>Total Price</th>
-                                    <th>Supplier</th>
                                     <th>Available</th>
                                     <th>Actions</th>
                                 </tr>
@@ -943,25 +891,13 @@
                                 </span>
                             </span>
                             <td>
-                                <div class="quantity-controls">
-                                    <asp:LinkButton ID="btnMinus" runat="server" CssClass="qty-btn" CommandName="DecreaseQuantity" 
-                                        CommandArgument='<%# Eval("InventoryID") %>' Text="-" />
-                                    <span class="quantity-value"><%# Eval("Quantity") %></span>
-                                    <asp:LinkButton ID="btnPlus" runat="server" CssClass="qty-btn" CommandName="IncreaseQuantity" 
-                                        CommandArgument='<%# Eval("InventoryID") %>' Text="+" />
-                                </div>
+                                <span class="quantity-value"><%# Eval("Quantity") %></span>
                             </span>
                             <td>
                                 <span class="unit-price">₱<%# string.Format("{0:N2}", Eval("UnitPrice")) %></span>
                             </span>
                             <td>
                                 <span class="total-price">₱<%# string.Format("{0:N2}", Convert.ToDecimal(Eval("Quantity")) * Convert.ToDecimal(Eval("UnitPrice"))) %></span>
-                            </span>
-                            <td>
-                                <div class="supplier-info">
-                                    <span class="supplier-name"><%# Eval("SupplierName") %></span>
-                                    <span class="supplier-contact"><%# Eval("SupplierContact") %></span>
-                                </div>
                             </span>
                             <td>
                                 <label class="switch">
@@ -997,25 +933,13 @@
                                 </span>
                             </span>
                             <td>
-                                <div class="quantity-controls">
-                                    <asp:LinkButton ID="btnMinus" runat="server" CssClass="qty-btn" CommandName="DecreaseQuantity" 
-                                        CommandArgument='<%# Eval("InventoryID") %>' Text="-" />
-                                    <span class="quantity-value"><%# Eval("Quantity") %></span>
-                                    <asp:LinkButton ID="btnPlus" runat="server" CssClass="qty-btn" CommandName="IncreaseQuantity" 
-                                        CommandArgument='<%# Eval("InventoryID") %>' Text="+" />
-                                </div>
+                                <span class="quantity-value"><%# Eval("Quantity") %></span>
                             </span>
                             <td>
                                 <span class="unit-price">₱<%# string.Format("{0:N2}", Eval("UnitPrice")) %></span>
                             </span>
                             <td>
                                 <span class="total-price">₱<%# string.Format("{0:N2}", Convert.ToDecimal(Eval("Quantity")) * Convert.ToDecimal(Eval("UnitPrice"))) %></span>
-                            </span>
-                            <td>
-                                <div class="supplier-info">
-                                    <span class="supplier-name"><%# Eval("SupplierName") %></span>
-                                    <span class="supplier-contact"><%# Eval("SupplierContact") %></span>
-                                </div>
                             </span>
                             <td>
                                 <label class="switch">
@@ -1102,10 +1026,6 @@
                         <label>Unit Price (₱)</label>
                         <asp:TextBox ID="txtUnitPrice" runat="server" CssClass="form-control" TextMode="Number" Step="0.01" />
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>Supplier</label>
-                    <asp:DropDownList ID="ddlSupplier" runat="server" CssClass="form-control" />
                 </div>
                 <div class="form-group">
                     <label><asp:CheckBox ID="chkIsAvailable" runat="server" /> Available</label>

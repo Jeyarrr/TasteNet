@@ -262,7 +262,6 @@
         .custom-table tbody tr:hover {
             background: var(--bg-hover);
             border-left-color: var(--primary-maroon);
-            transform: translateX(2px);
         }
 
         .customer-id {
@@ -920,7 +919,7 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
 
-                                    <asp:LinkButton ID="btnBlock" runat="server" CssClass="action-icon" 
+                                    <asp:LinkButton ID="LinkButton1" runat="server" CssClass="action-icon" 
                                         CommandName='<%# Eval("Status").ToString() == "ACTIVE" ? "BLOCK" : "UNBLOCK" %>'
                                         CommandArgument='<%# Eval("RawUserID") %>'
                                         ToolTip='<%# Eval("Status").ToString() == "ACTIVE" ? "Block Customer" : "Unblock Customer" %>'
@@ -929,7 +928,7 @@
                                         <i class='<%# "fas " + (Eval("Status").ToString() == "ACTIVE" ? "fa-ban" : "fa-check") %>'></i>
                                     </asp:LinkButton>
 
-                                    <asp:LinkButton ID="btnDelete" runat="server" CssClass="action-icon" 
+                                    <asp:LinkButton ID="LinkButton2" runat="server" CssClass="action-icon" 
                                         CommandArgument='<%# Eval("RawUserID") %>'
                                         ToolTip="Delete Customer"
                                         OnClick="btnDelete_Click"

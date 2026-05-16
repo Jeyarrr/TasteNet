@@ -71,8 +71,38 @@ namespace TasteNet.Users.SuperAdmin
             }
         }
 
+        private void EnsureRiderIDColumn()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string sql = @"
+                        IF NOT EXISTS (
+                            SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS 
+                            WHERE TABLE_NAME = 'Tickets' AND COLUMN_NAME = 'RiderID'
+                        )
+                        BEGIN
+                            ALTER TABLE Tickets ADD RiderID INT NULL 
+                            REFERENCES Users(UserID);
+                        END";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("EnsureRiderIDColumn ERROR: " + ex.Message);
+            }
+        }
+
         private void LoadTickets()
         {
+            EnsureRiderIDColumn();
+
             try
             {
                 string status = string.IsNullOrEmpty(hfSelectedStatus.Value) ? "Open" : hfSelectedStatus.Value;
@@ -82,23 +112,27 @@ namespace TasteNet.Users.SuperAdmin
                 {
                     string query = @"
                         SELECT 
-                            TicketID, 
-                            TicketNumber, 
-                            OrderNumber,
-                            OrderType, 
-                            DeliveryAddress,
-                            Priority, 
-                            Status, 
-                            TotalAmount, 
-                            CreatedAt,
-                            FORMAT(CreatedAt, 'hh:mm tt') as CreatedTime,
-                            DATEDIFF(MINUTE, CreatedAt, GETDATE()) as MinutesAgo
-                        FROM Tickets 
-                        WHERE (@Status = 'All' OR Status = @Status)
+                            t.TicketID, 
+                            t.TicketNumber, 
+                            t.OrderNumber,
+                            t.OrderType, 
+                            t.DeliveryAddress,
+                            t.Priority, 
+                            t.Status, 
+                            t.TotalAmount, 
+                            t.CreatedAt,
+                            t.RiderID,
+                            r.FullName AS RiderName,
+                            r.Phone    AS RiderPhone,
+                            FORMAT(t.CreatedAt, 'hh:mm tt') as CreatedTime,
+                            DATEDIFF(MINUTE, t.CreatedAt, GETDATE()) as MinutesAgo
+                        FROM Tickets t
+                        LEFT JOIN Users r ON r.UserID = t.RiderID AND r.UserType = 'Rider'
+                        WHERE (@Status = 'All' OR t.Status = @Status)
                         ORDER BY 
-                            CASE WHEN Priority = 'Rush' THEN 0 ELSE 1 END, 
-                            CASE WHEN Status = 'Open' THEN 0 WHEN Status = 'In Progress' THEN 1 ELSE 2 END,
-                            CreatedAt DESC";
+                            CASE WHEN t.Priority = 'Rush' THEN 0 ELSE 1 END, 
+                            CASE WHEN t.Status = 'Open' THEN 0 WHEN t.Status = 'In Progress' THEN 1 ELSE 2 END,
+                            t.CreatedAt DESC";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -222,7 +256,8 @@ namespace TasteNet.Users.SuperAdmin
             if (e.CommandName == "Start")
             {
                 UpdateTicketStatus(ticketId, "In Progress");
-                ShowClientNotification("Ticket started successfully!", "success");
+                DeductIngredientsByTicket(ticketId);
+                ShowClientNotification("Ticket started! Inventory updated.", "success");
                 LoadTickets();
             }
             else if (e.CommandName == "Complete")
@@ -236,6 +271,13 @@ namespace TasteNet.Users.SuperAdmin
                 DeleteTicketById(ticketId);
                 ShowClientNotification("Ticket deleted successfully!", "success");
                 LoadTickets();
+            }
+            else if (e.CommandName == "AssignRider")
+            {
+                hfAssignTicketID.Value = ticketId.ToString();
+                LoadRiders();
+                ScriptManager.RegisterStartupScript(this, GetType(), "openRiderModal", "openRiderModal();", true);
+                upRiderModal.Update();
             }
         }
 
@@ -508,7 +550,7 @@ namespace TasteNet.Users.SuperAdmin
                                 cmd.Parameters.AddWithValue("@num", ticketNumber);
                                 cmd.Parameters.AddWithValue("@ordernum", orderNumber);
                                 cmd.Parameters.AddWithValue("@type", ddlOrderType.SelectedValue);
-                                cmd.Parameters.AddWithValue("@addr", DBNull.Value);
+                                cmd.Parameters.AddWithValue("@addr", string.IsNullOrWhiteSpace(txtDeliveryAddress.Text) ? (object)DBNull.Value : txtDeliveryAddress.Text.Trim());
                                 cmd.Parameters.AddWithValue("@priority", ddlPriority.SelectedValue);
                                 cmd.Parameters.AddWithValue("@total", total);
 
@@ -549,6 +591,8 @@ namespace TasteNet.Users.SuperAdmin
 
                                 ddlPriority.SelectedIndex = 0;
                                 ddlOrderType.SelectedIndex = 0;
+                                txtDeliveryAddress.Text = "";
+                                pnlDeliveryAddress.Visible = false;
 
                                 string script = $@"
                                     closeModal();
@@ -598,6 +642,87 @@ namespace TasteNet.Users.SuperAdmin
             }
         }
 
+        protected void DdlOrderType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pnlDeliveryAddress.Visible = (ddlOrderType.SelectedValue == "Delivery");
+            upModal.Update();
+        }
+
+        private void LoadRiders()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string query = "SELECT UserID AS RiderID, FullName, Phone FROM Users WHERE UserType = 'Rider' AND IsActive = 1 ORDER BY FullName";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        conn.Open();
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        ddlRider.Items.Clear();
+                        ddlRider.Items.Add(new ListItem("-- Select Rider --", ""));
+                        bool hasRiders = false;
+                        while (reader.Read())
+                        {
+                            hasRiders = true;
+                            string phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : "";
+                            string label = reader["FullName"].ToString() + (string.IsNullOrEmpty(phone) ? "" : $" ({phone})");
+                            ddlRider.Items.Add(new ListItem(label, reader["RiderID"].ToString()));
+                        }
+                        noRidersMsg.Visible = !hasRiders;
+                        btnConfirmRider.Visible = hasRiders;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("LoadRiders ERROR: " + ex.Message);
+                ShowClientNotification("Error loading riders: " + ex.Message, "error");
+            }
+        }
+
+        protected void BtnConfirmRider_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(ddlRider.SelectedValue))
+            {
+                ShowClientNotification("Please select a rider.", "warning");
+                upRiderModal.Update();
+                return;
+            }
+
+            int ticketId = Convert.ToInt32(hfAssignTicketID.Value);
+            int riderId = Convert.ToInt32(ddlRider.SelectedValue);
+            string riderName = ddlRider.SelectedItem.Text;
+
+            try
+            {
+                EnsureRiderIDColumn();
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string sql = "UPDATE Tickets SET RiderID = @riderID WHERE TicketID = @ticketID";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@riderID", riderId);
+                        cmd.Parameters.AddWithValue("@ticketID", ticketId);
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                ScriptManager.RegisterStartupScript(this, GetType(), "closeRiderModal", "closeRiderModal();", true);
+                ShowClientNotification($"Rider {riderName} assigned successfully!", "success");
+                LoadTickets();
+                upTickets.Update();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("BtnConfirmRider_Click ERROR: " + ex.Message);
+                ShowClientNotification("Error assigning rider: " + ex.Message, "error");
+            }
+
+            upRiderModal.Update();
+        }
+
         protected void btnFilterOpen_Click(object sender, EventArgs e)
         {
             hfSelectedStatus.Value = "Open";
@@ -620,6 +745,56 @@ namespace TasteNet.Users.SuperAdmin
         {
             hfSelectedStatus.Value = "All";
             LoadTickets();
+        }
+
+        // ── Deduct inventory ingredients when a ticket is started ─────────────────
+        private void DeductIngredientsByTicket(int ticketId)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Get all items in this ticket (MenuID + Quantity ordered)
+                    string getItemsSql = "SELECT MenuID, Quantity FROM TicketItems WHERE TicketID = @TicketID";
+                    DataTable ticketItems = new DataTable();
+                    using (SqlCommand cmd = new SqlCommand(getItemsSql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@TicketID", ticketId);
+                        new SqlDataAdapter(cmd).Fill(ticketItems);
+                    }
+
+                    // For each ordered item, deduct its recipe ingredients from inventory
+                    string deductSql = @"
+                        UPDATE inv
+                        SET    inv.CurrentStock = inv.CurrentStock - (r.QuantityRequired * @PortionQty)
+                        FROM   Inventory inv
+                        INNER JOIN MenuRecipeIngredients r ON inv.InventoryID = r.InventoryID
+                        WHERE  r.MenuID = @MenuID
+                          AND  inv.IsActive = 1";
+
+                    foreach (DataRow row in ticketItems.Rows)
+                    {
+                        int menuId = Convert.ToInt32(row["MenuID"]);
+                        decimal portionQty = Convert.ToDecimal(row["Quantity"]);
+
+                        using (SqlCommand deductCmd = new SqlCommand(deductSql, conn))
+                        {
+                            deductCmd.Parameters.AddWithValue("@MenuID", menuId);
+                            deductCmd.Parameters.AddWithValue("@PortionQty", portionQty);
+                            deductCmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"Ingredients deducted for TicketID: {ticketId}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"DeductIngredientsByTicket ERROR: {ex.Message}");
+                ShowClientNotification("Warning: Inventory deduction failed. " + ex.Message, "error");
+            }
         }
 
         private void ShowClientNotification(string msg, string type)

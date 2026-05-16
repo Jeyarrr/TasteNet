@@ -2645,17 +2645,30 @@
             }
 
             function declineDelivery(deliveryCard) {
-                deliveryCard.style.opacity = '0.5';
+                // Disable interactions immediately
                 deliveryCard.style.pointerEvents = 'none';
 
+                // Fade + shrink out (works inside CSS grid unlike translateX)
+                deliveryCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                deliveryCard.style.opacity = '0';
+                deliveryCard.style.transform = 'scale(0.92)';
+
                 setTimeout(() => {
-                    deliveryCard.style.transform = 'translateX(100%)';
-                    deliveryCard.style.opacity = '0';
+                    // Collapse height so grid reflows smoothly
+                    deliveryCard.style.transition = 'all 0.25s ease';
+                    deliveryCard.style.overflow = 'hidden';
+                    deliveryCard.style.maxHeight = deliveryCard.offsetHeight + 'px';
+                    // Force reflow
+                    deliveryCard.offsetHeight;
+                    deliveryCard.style.maxHeight = '0';
+                    deliveryCard.style.padding = '0';
+                    deliveryCard.style.margin = '0';
+                    deliveryCard.style.border = 'none';
 
                     setTimeout(() => {
-                        deliveryCard.style.display = 'none';
-                    }, 300);
-                }, 100);
+                        deliveryCard.remove();
+                    }, 250);
+                }, 300);
 
                 showNotification('Delivery declined', 'info');
             }

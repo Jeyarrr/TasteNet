@@ -16,7 +16,6 @@ namespace TasteNet.Users.Admin
             if (!IsPostBack)
             {
                 LoadInventoryData();
-                LoadSuppliers();
                 LoadCategories();
                 UpdateStatistics();
             }
@@ -40,9 +39,6 @@ namespace TasteNet.Users.Admin
                         i.UnitPrice,
                         i.IsAvailable AS Available,
                         i.UnitOfMeasure,
-                        s.SupplierID,
-                        s.SupplierName,
-                        s.Phone AS SupplierContact,
                         CASE 
                             WHEN i.CurrentStock = 0 THEN 'out-of-stock'
                             WHEN i.CurrentStock <= i.MinimumStock THEN 'low-stock'
@@ -50,7 +46,6 @@ namespace TasteNet.Users.Admin
                         END AS StockStatus
                     FROM Inventory i
                     LEFT JOIN InventoryCategories c ON i.CategoryID = c.CategoryID
-                    LEFT JOIN Suppliers s ON i.SupplierID = s.SupplierID
                     WHERE i.IsActive = 1";
 
                 string searchText = txtSearch.Text.Trim();
@@ -96,23 +91,6 @@ namespace TasteNet.Users.Admin
 
                     noResultsMessage.Visible = dt.Rows.Count == 0;
                 }
-            }
-        }
-
-        private void LoadSuppliers()
-        {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                string query = "SELECT SupplierID, SupplierName FROM Suppliers WHERE IsActive = 1 ORDER BY SupplierName";
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                ddlSupplier.DataSource = dt;
-                ddlSupplier.DataTextField = "SupplierName";
-                ddlSupplier.DataValueField = "SupplierID";
-                ddlSupplier.DataBind();
-                ddlSupplier.Items.Insert(0, new ListItem("-- Select Supplier --", ""));
             }
         }
 
@@ -165,12 +143,6 @@ namespace TasteNet.Users.Admin
 
             switch (e.CommandName)
             {
-                case "IncreaseQuantity":
-                    UpdateQuantity(inventoryId, 1);
-                    break;
-                case "DecreaseQuantity":
-                    UpdateQuantity(inventoryId, -1);
-                    break;
                 case "EditItem":
                     LoadItemForEdit(inventoryId);
                     ScriptManager.RegisterStartupScript(this, GetType(), "ShowModal", "showModal('editModal');", true);
@@ -181,51 +153,13 @@ namespace TasteNet.Users.Admin
             }
         }
 
-        private void UpdateQuantity(int inventoryId, int change)
-        {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                string getStockQuery = "SELECT CurrentStock FROM Inventory WHERE InventoryID = @InventoryID";
-                SqlCommand cmd = new SqlCommand(getStockQuery, conn);
-                cmd.Parameters.AddWithValue("@InventoryID", inventoryId);
-                conn.Open();
-                decimal currentStock = Convert.ToDecimal(cmd.ExecuteScalar());
-                decimal newStock = currentStock + change;
-                if (newStock < 0) newStock = 0;
-
-                string updateQuery = "UPDATE Inventory SET CurrentStock = @NewStock, UpdatedAt = GETDATE() WHERE InventoryID = @InventoryID";
-                cmd.CommandText = updateQuery;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@NewStock", newStock);
-                cmd.Parameters.AddWithValue("@InventoryID", inventoryId);
-                cmd.ExecuteNonQuery();
-
-                string logQuery = @"
-                    INSERT INTO InventoryTransactions (InventoryID, TransactionType, Quantity, PreviousStock, NewStock, Notes, TransactionDate)
-                    VALUES (@InventoryID, 'Adjustment', @Quantity, @PreviousStock, @NewStock, 'Manual quantity adjustment', GETDATE())";
-                cmd.CommandText = logQuery;
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@InventoryID", inventoryId);
-                cmd.Parameters.AddWithValue("@Quantity", change);
-                cmd.Parameters.AddWithValue("@PreviousStock", currentStock);
-                cmd.Parameters.AddWithValue("@NewStock", newStock);
-                cmd.ExecuteNonQuery();
-
-                conn.Close();
-            }
-
-            LoadInventoryData();
-            UpdateStatistics();
-            ShowMessage("Quantity updated successfully!", "success");
-        }
-
         private void LoadItemForEdit(int inventoryId)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string query = @"
                     SELECT InventoryID, ItemName, Description, CategoryID, CurrentStock, 
-                           MinimumStock, IsAvailable, SupplierID, UnitCost, UnitPrice, UnitOfMeasure
+                           MinimumStock, IsAvailable, UnitCost, UnitPrice, UnitOfMeasure
                     FROM Inventory 
                     WHERE InventoryID = @InventoryID";
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -241,8 +175,6 @@ namespace TasteNet.Users.Admin
                     txtQuantity.Text = reader["CurrentStock"].ToString();
                     txtLowStockThreshold.Text = reader["MinimumStock"].ToString();
                     chkIsAvailable.Checked = Convert.ToBoolean(reader["IsAvailable"]);
-                    if (reader["SupplierID"] != DBNull.Value)
-                        ddlSupplier.SelectedValue = reader["SupplierID"].ToString();
                     txtUnitCost.Text = Convert.ToDecimal(reader["UnitCost"]).ToString("F2");
                     txtUnitPrice.Text = Convert.ToDecimal(reader["UnitPrice"]).ToString("F2");
                     ddlUnitOfMeasure.SelectedValue = reader["UnitOfMeasure"].ToString();
@@ -289,10 +221,10 @@ namespace TasteNet.Users.Admin
 
                 string query = @"
                     INSERT INTO Inventory (ItemCode, ItemName, Description, CategoryID, CurrentStock, 
-                                          MinimumStock, IsAvailable, SupplierID, UnitCost, UnitPrice, 
+                                          MinimumStock, IsAvailable, UnitCost, UnitPrice, 
                                           UnitOfMeasure, ReorderLevel, IsActive, CreatedAt, UpdatedAt)
                     VALUES (@ItemCode, @ItemName, @Description, @CategoryID, @Quantity,
-                            @LowStockThreshold, @IsAvailable, @SupplierID, @UnitCost, @UnitPrice,
+                            @LowStockThreshold, @IsAvailable, @UnitCost, @UnitPrice,
                             @UnitOfMeasure, @LowStockThreshold, 1, GETDATE(), GETDATE());
                     SELECT SCOPE_IDENTITY();";
 
@@ -304,7 +236,6 @@ namespace TasteNet.Users.Admin
                 cmd.Parameters.AddWithValue("@Quantity", Convert.ToDecimal(txtQuantity.Text));
                 cmd.Parameters.AddWithValue("@LowStockThreshold", Convert.ToDecimal(txtLowStockThreshold.Text));
                 cmd.Parameters.AddWithValue("@IsAvailable", chkIsAvailable.Checked);
-                cmd.Parameters.AddWithValue("@SupplierID", string.IsNullOrEmpty(ddlSupplier.SelectedValue) ? DBNull.Value : (object)Convert.ToInt32(ddlSupplier.SelectedValue));
                 cmd.Parameters.AddWithValue("@UnitCost", Convert.ToDecimal(txtUnitCost.Text));
                 cmd.Parameters.AddWithValue("@UnitPrice", Convert.ToDecimal(txtUnitPrice.Text));
                 cmd.Parameters.AddWithValue("@UnitOfMeasure", ddlUnitOfMeasure.SelectedValue);
@@ -346,7 +277,7 @@ namespace TasteNet.Users.Admin
                     UPDATE Inventory 
                     SET ItemName = @ItemName, Description = @Description, CategoryID = @CategoryID,
                         CurrentStock = @Quantity, MinimumStock = @LowStockThreshold, IsAvailable = @IsAvailable,
-                        SupplierID = @SupplierID, UnitCost = @UnitCost, UnitPrice = @UnitPrice,
+                        UnitCost = @UnitCost, UnitPrice = @UnitPrice,
                         UnitOfMeasure = @UnitOfMeasure, UpdatedAt = GETDATE()
                     WHERE InventoryID = @InventoryID";
 
@@ -359,7 +290,6 @@ namespace TasteNet.Users.Admin
                 cmd.Parameters.AddWithValue("@Quantity", newStock);
                 cmd.Parameters.AddWithValue("@LowStockThreshold", Convert.ToDecimal(txtLowStockThreshold.Text));
                 cmd.Parameters.AddWithValue("@IsAvailable", chkIsAvailable.Checked);
-                cmd.Parameters.AddWithValue("@SupplierID", string.IsNullOrEmpty(ddlSupplier.SelectedValue) ? DBNull.Value : (object)Convert.ToInt32(ddlSupplier.SelectedValue));
                 cmd.Parameters.AddWithValue("@UnitCost", Convert.ToDecimal(txtUnitCost.Text));
                 cmd.Parameters.AddWithValue("@UnitPrice", Convert.ToDecimal(txtUnitPrice.Text));
                 cmd.Parameters.AddWithValue("@UnitOfMeasure", ddlUnitOfMeasure.SelectedValue);

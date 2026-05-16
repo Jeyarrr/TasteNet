@@ -394,7 +394,7 @@
                                             </tr>
                                         </ItemTemplate>
                                         <FooterTemplate>
-                                            <%# rptRecentOrders.Items.Count == 0 ? "<tr><td colspan='8' class='no-data'>No orders for this period.</td></tr>" : "" %>
+                                            <%# rptRecentOrders.Items.Count == 0 ? "<tr><td colspan='8' class='no-data'>No completed orders for this period.</td></tr>" : "" %>
                                         </FooterTemplate>
                                     </asp:Repeater>
                                 </tbody>

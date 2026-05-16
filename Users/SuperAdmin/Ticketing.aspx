@@ -696,6 +696,64 @@
         }
     }
 
+    .btn-rider {
+        background: linear-gradient(135deg, #680D1E, #4f0a17) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 12px rgba(104, 13, 30, 0.3) !important;
+    }
+
+    .btn-rider:hover {
+        background: linear-gradient(135deg, #4f0a17, #380712) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(104, 13, 30, 0.4) !important;
+        color: #FFFFFF !important;
+        text-decoration: none !important;
+    }
+
+    .rider-info-strip {
+        margin: 8px 0 10px !important;
+        padding: 7px 10px !important;
+        border-radius: var(--radius-sm) !important;
+        font-size: 11px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .rider-info-strip.assigned {
+        background: #e8f4fd !important;
+        color: #1a6fb5 !important;
+        border: 1px solid #b3d7f5 !important;
+    }
+
+    .rider-info-strip.unassigned {
+        background: #fff8e6 !important;
+        color: #FFC107 !important;
+        border: 1px dashed #FFC107 !important;
+    }
+
+    .rider-phone {
+        color: #555 !important;
+        font-size: 10px !important;
+    }
+
+    .delivery-address-tag {
+        font-size: 10px !important;
+        color: var(--muted-text) !important;
+        background: white !important;
+        border: 1px solid var(--border-light) !important;
+        padding: 3px 8px !important;
+        border-radius: var(--radius-sm) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        max-width: 200px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
     @keyframes pulse {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.6; }
@@ -843,10 +901,20 @@
                             <div class="ticket-body">
                                 <div class="ticket-info">
                                     <span class="order-type">
-                                        <i class='<%# Eval("OrderType").ToString() == "Dine-In" ? "fas fa-utensils" : "fas fa-box" %>'></i>
+                                        <i class='<%# Eval("OrderType").ToString() == "Dine-In" ? "fas fa-utensils" : Eval("OrderType").ToString() == "Delivery" ? "fas fa-motorcycle" : "fas fa-box" %>'></i>
                                         <%# Eval("OrderType") %>
                                     </span>
+                                    <%# !string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) 
+                                        ? $"<span class='delivery-address-tag'><i class='fas fa-map-marker-alt'></i> {Eval("DeliveryAddress")}</span>" 
+                                        : "" %>
                                 </div>
+
+                                <%-- Rider info strip (only for Delivery) --%>
+                                <%# Eval("OrderType").ToString() == "Delivery" ? 
+                                    (Eval("RiderID") != DBNull.Value && Eval("RiderID") != null 
+                                        ? $"<div class='rider-info-strip assigned'><i class='fas fa-motorcycle'></i> Rider: <strong>{Eval("RiderName")}</strong> &nbsp;<span class='rider-phone'><i class='fas fa-phone'></i> {Eval("RiderPhone")}</span></div>"
+                                        : "<div class='rider-info-strip unassigned'><i class='fas fa-motorcycle'></i> No rider assigned yet</div>") 
+                                    : "" %>
                                 
                                 <div class="ticket-items">
                                     <asp:Repeater ID="rptItems" runat="server">
@@ -879,7 +947,25 @@
                                             CommandName="Complete" 
                                             CommandArgument='<%# Eval("TicketID") %>'
                                             CssClass="action-btn btn-done"
-                                            Visible='<%# Eval("Status").ToString() == "In Progress" %>'>
+                                            Visible='<%# Eval("Status").ToString() == "In Progress" && Eval("OrderType").ToString() != "Delivery" %>'>
+                                            <i class="fas fa-check-double"></i> Complete
+                                        </asp:LinkButton>
+
+                                        <%-- Delivery: show Assign Rider when In Progress and no rider yet --%>
+                                        <asp:LinkButton ID="btnAssignRider" runat="server"
+                                            CommandName="AssignRider"
+                                            CommandArgument='<%# Eval("TicketID") %>'
+                                            CssClass="action-btn btn-rider"
+                                            Visible='<%# Eval("OrderType").ToString() == "Delivery" && Eval("Status").ToString() == "In Progress" && (Eval("RiderID") == DBNull.Value || Eval("RiderID") == null) %>'>
+                                            <i class="fas fa-motorcycle"></i> Assign Rider
+                                        </asp:LinkButton>
+
+                                        <%-- Delivery: Complete only after rider is assigned --%>
+                                        <asp:LinkButton ID="btnCompleteDelivery" runat="server" 
+                                            CommandName="Complete" 
+                                            CommandArgument='<%# Eval("TicketID") %>'
+                                            CssClass="action-btn btn-done"
+                                            Visible='<%# Eval("OrderType").ToString() == "Delivery" && Eval("Status").ToString() == "In Progress" && Eval("RiderID") != DBNull.Value && Eval("RiderID") != null %>'>
                                             <i class="fas fa-check-double"></i> Complete
                                         </asp:LinkButton>
                                     </div>
@@ -912,12 +998,19 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label><i class="fas fa-tag"></i> Order Type:</label>
-                        <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control">
+                        <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="DdlOrderType_SelectedIndexChanged">
                             <asp:ListItem Value="Dine-In">Dine-In</asp:ListItem>
                             <asp:ListItem Value="Takeout">Takeout</asp:ListItem>
+                            <asp:ListItem Value="Delivery">Delivery</asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     
+                    <asp:Panel ID="pnlDeliveryAddress" runat="server" Visible="false" CssClass="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Delivery Address:</label>
+                        <asp:TextBox ID="txtDeliveryAddress" runat="server" CssClass="form-control" 
+                            placeholder="Enter delivery address..." TextMode="MultiLine" Rows="2" />
+                    </asp:Panel>
+
                     <div class="form-group">
                         <label><i class="fas fa-flag"></i> Priority:</label>
                         <asp:DropDownList ID="ddlPriority" runat="server" CssClass="form-control">
@@ -976,6 +1069,40 @@
                     <asp:Button ID="btnCreateTicket" runat="server" Text="Create Ticket" 
                         CssClass="action-btn btn-done" OnClick="BtnCreateTicket_Click" />
                     <button type="button" class="btn-cancel" onclick="closeModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+    </div>
+</div>
+
+<%-- ══ Assign Rider Modal ══════════════════════════════════════════════ --%>
+<div id="riderModal" class="modal-overlay">
+    <div class="modal-container" style="max-width:480px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-motorcycle"></i> Assign Rider</h3>
+            <button type="button" class="modal-close" onclick="closeRiderModal()">✕</button>
+        </div>
+        <asp:UpdatePanel ID="upRiderModal" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:HiddenField ID="hfAssignTicketID" runat="server" Value="0" />
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Select Rider:</label>
+                        <asp:DropDownList ID="ddlRider" runat="server" CssClass="form-control">
+                        </asp:DropDownList>
+                    </div>
+                    <div id="noRidersMsg" runat="server" visible="false"
+                         style="text-align:center; padding:20px; color:#8a6d6d;">
+                        <i class="fas fa-motorcycle fa-2x" style="color:#ccc;"></i>
+                        <p style="margin-top:10px;">No available riders found.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <asp:Button ID="btnConfirmRider" runat="server" Text="Assign Rider"
+                        CssClass="action-btn btn-rider" OnClick="BtnConfirmRider_Click" />
+                    <button type="button" class="btn-cancel" onclick="closeRiderModal()">
                         <i class="fas fa-times"></i> Cancel
                     </button>
                 </div>
@@ -1065,11 +1192,21 @@
         }, 4000);
     }
 
+    function openRiderModal() {
+        var modal = document.getElementById('riderModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeRiderModal() {
+        var modal = document.getElementById('riderModal');
+        if (modal) modal.style.display = 'none';
+    }
+
     window.onclick = function (event) {
         var modal = document.getElementById('ticketModal');
-        if (event.target === modal) {
-            closeModal();
-        }
+        if (event.target === modal) { closeModal(); }
+        var rModal = document.getElementById('riderModal');
+        if (event.target === rModal) { closeRiderModal(); }
     }
 
     Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (sender, args) {

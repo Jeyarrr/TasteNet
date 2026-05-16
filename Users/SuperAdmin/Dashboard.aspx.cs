@@ -225,6 +225,7 @@ namespace TasteNet.Users.SuperAdmin
                 FROM Tickets t
                 LEFT JOIN Users u ON u.UserID = TRY_CAST(t.CreatedBy AS INT)
                 WHERE 1=1 " + dateFilter + @"
+                AND t.Status = 'Completed'
                 ORDER BY t.CreatedAt DESC";
 
             DataTable dt = GetDataTable(sql);

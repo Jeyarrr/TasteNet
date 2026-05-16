@@ -195,15 +195,6 @@ namespace TasteNet.Users.SuperAdmin
         protected global::System.Web.UI.WebControls.TextBox txtUnitPrice;
 
         /// <summary>
-        /// ddlSupplier control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSupplier;
-
-        /// <summary>
         /// chkIsAvailable control.
         /// </summary>
         /// <remarks>
