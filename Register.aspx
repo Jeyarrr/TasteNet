@@ -102,7 +102,7 @@
 
         h2 {
             margin-top: 5px;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             font-weight: 600;
             font-size: 1.4em;
             font-family: 'Poppins', sans-serif;
@@ -110,11 +110,71 @@
             color: #FFE6A3;
         }
 
+        /* Privacy Notice - beautifully integrated */
+        .privacy-notice-card {
+            background: rgba(255, 193, 7, 0.08);
+            border-radius: 20px;
+            padding: 10px 14px;
+            margin: 8px 0 12px 0;
+            text-align: left;
+            font-size: 11px;
+            color: #f5e6c4;
+            border-left: 3px solid #ffc107;
+            backdrop-filter: blur(2px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .privacy-notice-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .privacy-notice-card:hover::before {
+            left: 100%;
+        }
+
+        .privacy-notice-card i {
+            color: #ffc107;
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 3px rgba(255, 193, 7, 0.5));
+        }
+
+        .privacy-notice-card span {
+            line-height: 1.45;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+            font-size: 11px;
+        }
+
+        .privacy-notice-card strong {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .privacy-notice-card:hover {
+            background: rgba(255, 193, 7, 0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
         .form-container {
-            max-height: 480px;
+            max-height: 440px;
             overflow-y: auto;
             padding-right: 6px;
-            margin: 8px 0 10px 0;
+            margin: 6px 0 10px 0;
             overflow-x: hidden;
         }
 
@@ -584,7 +644,7 @@
             
             h2 {
                 font-size: 1.3em;
-                margin-bottom: 12px;
+                margin-bottom: 8px;
             }
             
             .logo img {
@@ -618,6 +678,14 @@
             .form-container {
                 max-height: 420px;
             }
+            
+            .privacy-notice-card {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+            .privacy-notice-card i {
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -639,6 +707,10 @@
                 padding: 6px 8px;
                 font-size: 12px;
             }
+            
+            .privacy-notice-card span {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -654,6 +726,14 @@
                 </div>
             </div>
             <h2>Create Customer Account</h2>
+            
+            <!-- PRIVACY NOTICE: Placed beautifully below the heading, compliments the design -->
+            <div class="privacy-notice-card">
+                <i class="fas fa-shield-alt"></i>
+                <span>
+                    <strong>Data Privacy Notice:</strong> The information/data you provided will strictly be used to provide, maintain, and improve our services, and to communicate with you regarding your account.
+                </span>
+            </div>
             
             <div class="form-container">
                 <asp:Label ID="lblGeneralError" runat="server" CssClass="general-error" Visible="false"></asp:Label>

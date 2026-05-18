@@ -41,6 +41,13 @@
             scroll-behavior: smooth;
         }
 
+        a, a:hover, a:visited, a:active,
+        .add-to-cart-btn-text, .btn-browse-menu, .btn-order, .btn-cta-large,
+        .footer-link, .nav-links a, .profile-dropdown-item,
+        .btn-received, .remove-item-btn {
+            text-decoration: none !important;
+        }
+
         a, button, .logo-container, .nav-link, 
         .btn-order, .btn-search, .btn-cta-large, 
         .footer-link, .feature-card, .step-card, 
@@ -256,25 +263,31 @@
             border-radius: 50%;
             transition: var(--transition-default);
             color: var(--text-white);
-            text-decoration: none;
+            text-decoration: none !important;
+            overflow: visible !important;
+            z-index: 1100;
         }
-
+        
         .cart-badge {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: -6px;
+            right: -6px;
             background: var(--accent-yellow);
             color: var(--primary-maroon);
-            font-size: 0.7rem;
-            font-weight: 800;
-            width: 20px;
+            font-size: 0.68rem;
+            font-weight: 900;
+            min-width: 20px;
             height: 20px;
-            border-radius: 50%;
-            display: flex;
+            padding: 0 4px;
+            border-radius: 50px;
+            display: none;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 2px solid rgba(0,0,0,0.15);
+            z-index: 1200;
+            pointer-events: none;
         }
         
         .cart-badge.pulse {
@@ -454,6 +467,11 @@
         @keyframes slideInModal {
             from { transform: translateY(-50px) scale(0.95); opacity: 0; }
             to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeScaleIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.93); }
+            to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
         
         .profile-modal-header {
@@ -1197,7 +1215,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            animation: slideInModal 0.3s;
+            animation: fadeScaleIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
         }
 
         .meal-modal-header {
@@ -1460,7 +1478,7 @@
             border-radius: 20px;
             border: 3px solid var(--accent-yellow);
             overflow: hidden;
-            animation: slideInModal 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            animation: fadeScaleIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
         }
         .rating-modal-header {
             background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
@@ -1600,7 +1618,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            animation: slideInModal 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            animation: fadeScaleIn 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
         }
         .policy-modal-header {
             background: linear-gradient(135deg, var(--primary-maroon) 0%, #5a0819 100%);
@@ -1667,6 +1685,40 @@
             display: flex;
             justify-content: flex-end;
         }
+
+        /* ===== CUSTOM TOAST NOTIFICATIONS ===== */
+        @keyframes tnSlideIn {
+            from { opacity: 0; transform: translateX(120px) scale(0.92); }
+            to   { opacity: 1; transform: translateX(0)     scale(1); }
+        }
+        @keyframes tnSlideOut {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to   { opacity: 0; transform: translateX(120px) scale(0.88); }
+        }
+        @keyframes tnBar {
+            from { width: 100%; }
+            to   { width: 0%; }
+        }
+        .tn-hide { animation: tnSlideOut 0.35s ease forwards !important; }
+        .tn-toast-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            opacity: 0.92;
+        }
+        .tn-toast-body { flex: 1; }
+        .tn-toast-message { line-height: 1.4; }
+        .tn-toast-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.75);
+            font-size: 1.2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 2px;
+            flex-shrink: 0;
+            transition: color 0.2s;
+        }
+        .tn-toast-close:hover { color: #fff; }
 
         @keyframes confettiFall {
             0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
@@ -2113,7 +2165,13 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            text-decoration: none;
+            text-decoration: none !important;
+        }
+
+        .view-btn:hover, .add-to-cart-btn-text:hover,
+        .view-btn:focus, .add-to-cart-btn-text:focus,
+        .view-btn:visited, .add-to-cart-btn-text:visited {
+            text-decoration: none !important;
         }
 
         .view-btn:hover, .add-to-cart-btn-text:hover {
@@ -3528,15 +3586,51 @@
                 setupPasswordToggles();
             }
 
-            function showNotification(message, isError) {
+            function showNotification(message, isError, type) {
                 if (isError === undefined) isError = false;
+
+                // type can be: 'success' | 'error' | 'info' | 'warning'
+                if (!type) type = isError ? 'error' : 'success';
+
+                const configs = {
+                    success: { bg: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)', icon: 'fa-check-circle',  accent: '#d4edda' },
+                    error:   { bg: 'linear-gradient(135deg, #7D0A22 0%, #a01030 100%)', icon: 'fa-times-circle',   accent: '#f8d7da' },
+                    warning: { bg: 'linear-gradient(135deg, #e67e22 0%, #f39c12 100%)', icon: 'fa-exclamation-triangle', accent: '#fff3cd' },
+                    info:    { bg: 'linear-gradient(135deg, #2980b9 0%, #3498db 100%)', icon: 'fa-info-circle',   accent: '#d1ecf1' },
+                    cart:    { bg: 'linear-gradient(135deg, #7D0A22 0%, #5a0819 100%)', icon: 'fa-cart-plus',     accent: '#FFD700' },
+                };
+                const cfg = configs[type] || configs.success;
+
+                // Remove any existing toast
+                document.querySelectorAll('.tn-toast').forEach(t => t.remove());
+
                 const toast = document.createElement('div');
-                toast.className = 'notification-toast';
-                toast.style.background = isError ? '#dc3545' : '#28a745';
-                toast.style.color = 'white';
-                toast.innerHTML = '<i class="fas ' + (isError ? 'fa-exclamation-triangle' : 'fa-check-circle') + '"></i> ' + message;
+                toast.className = 'tn-toast';
+                toast.innerHTML =
+                    '<div class="tn-toast-icon"><i class="fas ' + cfg.icon + '"></i></div>' +
+                    '<div class="tn-toast-body">' +
+                        '<div class="tn-toast-message">' + message + '</div>' +
+                    '</div>' +
+                    '<button class="tn-toast-close" onclick="this.parentElement.classList.add(\'tn-hide\');setTimeout(()=>this.parentElement.remove(),350);">&times;</button>' +
+                    '<div class="tn-toast-bar"></div>';
+
+                toast.style.cssText = 'position:fixed;bottom:28px;right:22px;z-index:99999;display:flex;align-items:center;gap:12px;' +
+                    'background:' + cfg.bg + ';color:#fff;padding:14px 16px 16px 16px;border-radius:14px;' +
+                    'box-shadow:0 8px 32px rgba(0,0,0,0.25),0 2px 8px rgba(0,0,0,0.15);' +
+                    'min-width:280px;max-width:360px;font-family:\'Quicksand\',sans-serif;font-size:0.93rem;font-weight:600;' +
+                    'border-left:4px solid rgba(255,255,255,0.35);' +
+                    'animation:tnSlideIn 0.35s cubic-bezier(0.2,0.9,0.4,1.1) forwards;overflow:hidden;';
+
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
+
+                // Progress bar animation
+                const bar = toast.querySelector('.tn-toast-bar');
+                bar.style.cssText = 'position:absolute;bottom:0;left:0;height:3px;width:100%;background:rgba(255,255,255,0.45);border-radius:0 0 14px 14px;animation:tnBar 3s linear forwards;';
+
+                setTimeout(() => {
+                    toast.style.animation = 'tnSlideOut 0.35s ease forwards';
+                    setTimeout(() => toast.remove(), 380);
+                }, 3000);
             }
 
             function updateCartBadge(count) {
@@ -3561,6 +3655,70 @@
             }
 
             let currentPanel = 'personal';
+            let _ordersPollingTimer = null;
+
+            // ===== REAL-TIME ORDERS POLLING =====
+            // Polls every 15s while the Orders panel is open by triggering
+            // a hidden __doPostBack that refreshes the UpdatePanel containing orders.
+            // Falls back gracefully if UpdatePanel is not present.
+            function startOrdersPolling() {
+                stopOrdersPolling();
+                _ordersPollingTimer = setInterval(function() {
+                    const panelOrders = document.getElementById('panelOrders');
+                    const modal = document.getElementById('profileModal');
+                    // Only poll if modal is open and Orders tab is showing
+                    if (!modal || !modal.classList.contains('open')) { stopOrdersPolling(); return; }
+                    if (!panelOrders || panelOrders.style.display === 'none') { stopOrdersPolling(); return; }
+
+                    // Try UpdatePanel refresh first; fall back to a lightweight fetch trick
+                    try {
+                        if (typeof __doPostBack === 'function') {
+                            const upOrders = document.getElementById('UpdatePanelOrders');
+                            if (upOrders) {
+                                __doPostBack(upOrders.id, '');
+                                return;
+                            }
+                        }
+                    } catch(e) {}
+
+                    // Fallback: silent fetch of the page, parse out the orders panel HTML and inject it
+                    fetch(window.location.href, { method: 'GET', credentials: 'same-origin' })
+                        .then(r => r.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newOrders = doc.getElementById('panelOrders');
+                            const curOrders = document.getElementById('panelOrders');
+                            if (newOrders && curOrders) {
+                                // Preserve display state
+                                const disp = curOrders.style.display;
+                                curOrders.innerHTML = newOrders.innerHTML;
+                                curOrders.style.display = disp;
+                                // Re-attach button ripple effects
+                                curOrders.querySelectorAll('.btn-cancel, .btn-reorder, .btn-received').forEach(btn => {
+                                    btn.addEventListener('click', createRipple);
+                                    btn.addEventListener('click', function() { savePageState('orders'); });
+                                });
+                                // Refresh cart badge from new page state too
+                                const newBadge = doc.getElementById('cartBadge');
+                                const curBadge = document.getElementById('cartBadge');
+                                if (newBadge && curBadge) {
+                                    const cnt = parseInt(newBadge.textContent) || 0;
+                                    curBadge.textContent = cnt;
+                                    curBadge.style.display = cnt > 0 ? 'flex' : 'none';
+                                }
+                            }
+                        })
+                        .catch(function() {}); // silent fail
+                }, 15000); // poll every 15 seconds
+            }
+
+            function stopOrdersPolling() {
+                if (_ordersPollingTimer) {
+                    clearInterval(_ordersPollingTimer);
+                    _ordersPollingTimer = null;
+                }
+            }
             
             function openProfileModal(panel) {
                 const modal = document.getElementById('profileModal');
@@ -3577,15 +3735,18 @@
                     if (panelPersonal) panelPersonal.style.display = 'block';
                     if (modalTitle) modalTitle.innerHTML = '<i class="fas fa-user-circle"></i> My Profile';
                     currentPanel = 'personal';
+                    stopOrdersPolling();
                 } else if (panel === 'security') {
                     if (panelSecurity) panelSecurity.style.display = 'block';
                     if (modalTitle) modalTitle.innerHTML = '<i class="fas fa-shield-alt"></i> Security';
                     currentPanel = 'security';
+                    stopOrdersPolling();
                     setTimeout(setupPasswordToggles, 100);
                 } else if (panel === 'orders') {
                     if (panelOrders) panelOrders.style.display = 'block';
                     if (modalTitle) modalTitle.innerHTML = '<i class="fas fa-clipboard-list"></i> My Orders';
                     currentPanel = 'orders';
+                    startOrdersPolling();
                 }
 
                 if (modal) {
@@ -3600,6 +3761,7 @@
                     modal.classList.remove('open');
                     setTimeout(() => { document.body.style.overflow = 'auto'; }, 300);
                 }
+                stopOrdersPolling();
             }
             
             function openCartModal() {
@@ -3823,72 +3985,71 @@
             function showOrderConfirmedAnimation(ticketNumber, total, paymentMethod) {
                 launchConfetti();
 
+                // Create overlay - FIXED: no top-to-middle animation, just pops up in center
                 const overlay = document.createElement('div');
-                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.78);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeInBg 0.3s ease;';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.78);z-index:99999;display:flex;align-items:center;justify-content:center;';
 
                 overlay.innerHTML =
-                    '<div style="background:white;border-radius:24px;padding:40px 35px;max-width:440px;width:90%;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,0.5);border:3px solid #FFD700;animation:slideInModal 0.4s cubic-bezier(0.2,0.9,0.4,1.1);">' +
-
-                        // Success icon
-                        '<div style="position:relative;width:90px;height:90px;margin:0 auto 22px;">' +
-                            '<div style="width:90px;height:90px;background:linear-gradient(135deg,#28a745,#20c997);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(40,167,69,0.4);">' +
-                                '<i class="fas fa-check" style="color:white;font-size:2.5rem;"></i>' +
-                            '</div>' +
-                            '<div style="position:absolute;top:-5px;right:-5px;width:28px;height:28px;background:#FFD700;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;">🎉</div>' +
-                        '</div>' +
-
-                        '<h2 style="color:#7D0A22;font-size:1.8rem;font-weight:800;margin-bottom:6px;">Order Confirmed!</h2>' +
-                        '<p style="color:#6D6D6D;font-size:0.95rem;margin-bottom:22px;">Your delicious meal is now being prepared 🍳</p>' +
-
-                        // Order details card
-                        '<div style="background:#fdfaf5;border-radius:14px;padding:16px 20px;margin-bottom:18px;border:2px solid #FFD700;text-align:left;">' +
-                            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed #ddd;">' +
-                                '<i class="fas fa-receipt" style="color:#7D0A22;"></i>' +
-                                '<span style="font-weight:800;color:#7D0A22;font-size:0.95rem;">Order Summary</span>' +
-                            '</div>' +
-                            '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
-                                '<span style="color:#6D6D6D;font-size:0.85rem;"><i class="fas fa-hashtag" style="width:14px;"></i> Ticket</span>' +
-                                '<span style="color:#7D0A22;font-weight:700;font-size:0.85rem;">' + ticketNumber + '</span>' +
-                            '</div>' +
-                            '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
-                                '<span style="color:#6D6D6D;font-size:0.85rem;"><i class="fas fa-peso-sign" style="width:14px;"></i> Total</span>' +
-                                '<span style="color:#7D0A22;font-weight:700;font-size:0.85rem;">₱' + total + '</span>' +
-                            '</div>' +
-                            '<div style="display:flex;justify-content:space-between;">' +
-                                '<span style="color:#6D6D6D;font-size:0.85rem;"><i class="fas fa-credit-card" style="width:14px;"></i> Payment</span>' +
-                                '<span style="color:#7D0A22;font-weight:700;font-size:0.85rem;">' + paymentMethod + '</span>' +
-                            '</div>' +
-                        '</div>' +
-
-                        // Status indicator
-                        '<div style="display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e8f8ef,#d4f1e3);border-radius:12px;padding:13px 15px;margin-bottom:22px;border:1px solid #b2dfca;">' +
-                            '<div style="width:12px;height:12px;background:#28a745;border-radius:50%;animation:badgePulse 1s infinite;flex-shrink:0;"></div>' +
-                            '<span style="color:#155724;font-size:0.85rem;font-weight:600;">Your order is now in the kitchen! 🍽️</span>' +
-                        '</div>' +
-
-                        // Estimated time row
-                        '<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:22px;color:#6D6D6D;font-size:0.82rem;">' +
-                            '<i class="fas fa-clock" style="color:#FFD700;"></i>' +
-                            '<span>Estimated delivery: <strong style="color:#7D0A22;">30–45 minutes</strong></span>' +
-                        '</div>' +
-
-                        // Buttons
-                        '<div style="display:flex;gap:10px;">' +
-                            '<button onclick="this.closest(\'[style*=fixed]\').remove(); openProfileModal(\'orders\');" ' +
-                                'style="flex:1;background:#f8f9fa;color:#7D0A22;border:2px solid var(--accent-yellow);padding:12px;border-radius:50px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;" ' +
-                                'onmouseover="this.style.background=\'#FFD700\'" onmouseout="this.style.background=\'#f8f9fa\'">' +
-                                '<i class="fas fa-clipboard-list"></i> My Orders' +
-                            '</button>' +
-                            '<button onclick="this.closest(\'[style*=fixed]\').remove();" ' +
-                                'style="flex:1;background:linear-gradient(135deg,#7D0A22,#5a0819);color:white;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;" ' +
-                                'onmouseover="this.style.opacity=\'0.9\'" onmouseout="this.style.opacity=\'1\'">' +
-                                '<i class="fas fa-utensils"></i> Order More' +
-                            '</button>' +
-                        '</div>' +
+                    '<div style="background:white;border-radius:24px;padding:40px 35px;max-width:440px;width:90%;text-align:center;box-shadow:0 25px 70px rgba(0,0,0,0.5);border:3px solid #FFD700;position:relative;">' +
+                    '<button onclick="this.closest(\'[style*=fixed]\').remove();" ' +
+                    'style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.5rem;color:#aaa;cursor:pointer;line-height:1;transition:color 0.2s;" ' +
+                    'onmouseover="this.style.color=\'#7D0A22\'" onmouseout="this.style.color=\'#aaa\'">' +
+                    '&times;' +
+                    '</button>' +
+                    '<div style="position:relative;width:90px;height:90px;margin:0 auto 22px;">' +
+                    '<div style="width:90px;height:90px;background:linear-gradient(135deg,#28a745,#20c997);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(40,167,69,0.4);">' +
+                    '<i class="fas fa-check" style="color:white;font-size:2.5rem;"></i>' +
+                    '</div>' +
+                    '<div style="position:absolute;top:-5px;right:-5px;width:28px;height:28px;background:#FFD700;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;">🎉</div>' +
+                    '</div>' +
+                    '<h2 style="color:#7D0A22;font-size:1.8rem;font-weight:800;margin-bottom:6px;">Order Confirmed!</h2>' +
+                    '<p style="color:#6D6D6D;font-size:0.95rem;margin-bottom:22px;">Your delicious meal is now being prepared 🍳</p>' +
+                    '<div style="background:#fdfaf5;border-radius:14px;padding:16px 20px;margin-bottom:18px;border:2px solid #FFD700;text-align:left;">' +
+                    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed #ddd;">' +
+                    '<i class="fas fa-receipt" style="color:#7D0A22;"></i>' +
+                    '<span style="font-weight:800;color:#7D0A22;font-size:0.95rem;">Order Summary</span>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
+                    '<span style="color:#6D6D6D;font-size:0.85rem;"><i class="fas fa-hashtag" style="width:14px;"></i> Ticket</span>' +
+                    '<span style="color:#7D0A22;font-weight:700;font-size:0.85rem;">' + ticketNumber + '</span>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
+                    '<span style="color:#6D6D6D;font-size:0.85rem;"><i class="fas fa-peso-sign" style="width:14px;"></i> Total</span>' +
+                    '<span style="color:#7D0A22;font-weight:700;font-size:0.85rem;">₱' + total + '</span>' +
+                    '</div>' +
+                    '<div style="display:flex;justify-content:space-between;">' +
+                    '<span style="color:#6D6D6D;font-size:0.85rem;"><i class="fas fa-credit-card" style="width:14px;"></i> Payment</span>' +
+                    '<span style="color:#7D0A22;font-weight:700;font-size:0.85rem;">' + paymentMethod + '</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div style="display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#e8f8ef,#d4f1e3);border-radius:12px;padding:13px 15px;margin-bottom:22px;border:1px solid #b2dfca;">' +
+                    '<div style="width:12px;height:12px;background:#28a745;border-radius:50%;animation:badgePulse 1s infinite;flex-shrink:0;"></div>' +
+                    '<span style="color:#155724;font-size:0.85rem;font-weight:600;">Your order is now in the kitchen! 🍽️</span>' +
+                    '</div>' +
+                    '<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:22px;color:#6D6D6D;font-size:0.82rem;">' +
+                    '<i class="fas fa-clock" style="color:#FFD700;"></i>' +
+                    '<span>Estimated delivery: <strong style="color:#7D0A22;">30–45 minutes</strong></span>' +
+                    '</div>' +
+                    '<div style="display:flex;gap:10px;">' +
+                    '<button onclick="this.closest(\'[style*=fixed]\').remove(); if(typeof openProfileModal === \'function\') openProfileModal(\'orders\');" ' +
+                    'style="flex:1;background:#f8f9fa;color:#7D0A22;border:2px solid var(--accent-yellow);padding:12px;border-radius:50px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;" ' +
+                    'onmouseover="this.style.background=\'#FFD700\'" onmouseout="this.style.background=\'#f8f9fa\'">' +
+                    '<i class="fas fa-clipboard-list"></i> My Orders' +
+                    '</button>' +
+                    '<button onclick="this.closest(\'[style*=fixed]\').remove();" ' +
+                    'style="flex:1;background:linear-gradient(135deg,#7D0A22,#5a0819);color:white;border:none;padding:12px;border-radius:50px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.3s;" ' +
+                    'onmouseover="this.style.opacity=\'0.9\'" onmouseout="this.style.opacity=\'1\'">' +
+                    '<i class="fas fa-utensils"></i> Order More' +
+                    '</button>' +
+                    '</div>' +
                     '</div>';
 
                 document.body.appendChild(overlay);
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) overlay.remove();
+                });
             }
+           
 
             const profileDropdown = document.getElementById('profileDropdown');
             const profileDropdownOverlay = document.getElementById('profileDropdownOverlay');
@@ -4086,8 +4247,20 @@
                     if (modal === 'cart') openCartModal();
                     else if (modal === 'profile_personal') openProfileModal('personal');
                     else if (modal === 'profile_security') openProfileModal('security');
-                    else if (modal === 'orders') openProfileModal('orders');
+                    else if (modal === 'orders') { openProfileModal('orders'); }
+                    else if (modal === 'checkout') openCheckoutModal();
                 }
+            })();
+
+            // Prevent double-click postback on server buttons
+            (function preventDoubleSubmit() {
+                document.querySelectorAll('input[type=submit], asp\\:Button').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        if (this.dataset.submitting) return false;
+                        this.dataset.submitting = '1';
+                        setTimeout(() => { delete this.dataset.submitting; }, 3000);
+                    });
+                });
             })();
 
             const searchBtn = document.getElementById('heroSearchBtn');
@@ -4157,6 +4330,29 @@
                     }
                 }
             })();
+
+            // Re-sync badge after any ASP.NET UpdatePanel partial postback
+            if (typeof Sys !== 'undefined' && Sys.WebForms && Sys.WebForms.PageRequestManager) {
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function() {
+                    const badge = document.getElementById('cartBadge');
+                    if (badge) {
+                        const count = parseInt(badge.textContent) || 0;
+                        badge.style.display = count > 0 ? 'flex' : 'none';
+                    }
+                    // Re-run page state restore after postback
+                    (function() {
+                        const modal = sessionStorage.getItem('openModal');
+                        if (modal) {
+                            sessionStorage.removeItem('openModal');
+                            if (modal === 'cart') openCartModal();
+                            else if (modal === 'profile_personal') openProfileModal('personal');
+                            else if (modal === 'profile_security') openProfileModal('security');
+                            else if (modal === 'orders') { openProfileModal('orders'); startOrdersPolling(); }
+                            else if (modal === 'checkout') openCheckoutModal();
+                        }
+                    })();
+                });
+            }
 
 
         </script>
