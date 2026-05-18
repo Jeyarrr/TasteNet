@@ -3433,8 +3433,8 @@
                         <div class="map-wrapper-large">
                            <iframe 
                                 src="https://www.google.com/maps/embed?pb=!4v1770383773979!6m8!1m7!1s2PuvajbO79-J0wNyBbZLUg!2m2!1d14.32649854666237!2d120.9372845304983!3f91.56107397260273!4f3.452054794520592!5f0.4000000000000002" 
-                                width="100%" 
-                                height="100%" 
+                                width="100" 
+                                height="100" 
                                 style="border:0;" 
                                 allowfullscreen="" 
                                 loading="lazy" 
