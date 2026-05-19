@@ -2063,6 +2063,13 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 25px;
             margin: 0 auto;
+            justify-content: center;
+        }
+
+        /* When fewer than 6 items exist, auto-fit centers them */
+        .menu-grid-container:has(.menu-container:first-child:nth-last-child(-n+5)) {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 210px));
+            justify-content: center;
         }
         
         .menu-container {
@@ -2425,43 +2432,54 @@
 
         .contact-map-content {
             display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0;
         }
 
         .map-container-large {
-            flex: 2;
-            min-width: 300px;
-            border-radius: 15px;
+            width: 100%;
+            border-radius: 15px 15px 0 0;
             overflow: hidden;
             border: 3px solid var(--accent-yellow);
+            border-bottom: none;
             transition: all 0.3s;
         }
         
         .map-container-large:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            border-color: #ffed4e;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.3);
         }
 
         .map-wrapper-large {
             width: 100%;
-            height: 400px;
+            height: 520px;
         }
 
         .contact-info-sidebar {
-            flex: 1;
+            width: 100%;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid var(--accent-yellow);
+            border-radius: 0 0 15px 15px;
+            padding: 30px 40px;
+            border: 3px solid var(--accent-yellow);
+            border-top: none;
+            display: flex;
+            flex-direction: row;
+            gap: 60px;
+            align-items: flex-start;
             transition: all 0.3s;
         }
         
         .contact-info-sidebar:hover {
             background: rgba(0, 0, 0, 0.3);
-            transform: translateY(-5px);
-            border-color: #ffed4e;
+        }
+
+        .contact-info-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .contact-info-group + .contact-info-group {
+            border-left: 1px solid rgba(255, 215, 0, 0.3);
+            padding-left: 40px;
         }
 
         .phone-large {
@@ -2903,6 +2921,151 @@
             .menu-grid-container { grid-template-columns: 1fr; }
             .menu-container { max-width: 280px; margin: 0 auto; }
         }
+
+        /* ========== CUSTOM CONFIRM MODALS ========== */
+        .custom-confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .custom-confirm-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .custom-confirm-box {
+            background: linear-gradient(145deg, #7D0A22 0%, #5a0819 100%);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 20px;
+            padding: 36px 40px 30px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.15);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .custom-confirm-overlay.show .custom-confirm-box {
+            transform: scale(1) translateY(0);
+        }
+        .custom-confirm-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-yellow), transparent);
+        }
+        .custom-confirm-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 1.7rem;
+        }
+        .custom-confirm-icon.icon-warning {
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            color: var(--accent-yellow);
+        }
+        .custom-confirm-icon.icon-danger {
+            background: rgba(220, 53, 69, 0.15);
+            border: 2px solid rgba(220, 53, 69, 0.4);
+            color: #ff6b7a;
+        }
+        .custom-confirm-icon.icon-success {
+            background: rgba(40, 167, 69, 0.15);
+            border: 2px solid rgba(40, 167, 69, 0.4);
+            color: #5dd879;
+        }
+        .custom-confirm-box h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--accent-yellow);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .custom-confirm-box p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .custom-confirm-box p strong {
+            color: white;
+        }
+        .custom-confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .custom-confirm-actions .btn-confirm-cancel {
+            flex: 1;
+            padding: 11px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.85);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .custom-confirm-actions .btn-confirm-cancel:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.5);
+            color: white;
+        }
+        .custom-confirm-actions .btn-confirm-ok {
+            flex: 1;
+            padding: 11px 20px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-yellow {
+            background: var(--accent-yellow);
+            color: var(--primary-maroon);
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-yellow:hover {
+            background: #ffed4e;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+            transform: translateY(-1px);
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-danger:hover {
+            background: linear-gradient(135deg, #e84050, #dc3545);
+            box-shadow: 0 4px 15px rgba(220,53,69,0.4);
+            transform: translateY(-1px);
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-success {
+            background: linear-gradient(135deg, #28a745, #20883a);
+            color: white;
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-success:hover {
+            background: linear-gradient(135deg, #34c759, #28a745);
+            box-shadow: 0 4px 15px rgba(40,167,69,0.4);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -3049,8 +3212,8 @@
                                             <strong>Delivery to:</strong> <%# Eval("DeliveryAddress") %>
                                         </div>
                                         <div>
-                                            <asp:LinkButton ID="btnOrderReceived" runat="server" CommandName="Received" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-received" OnClientClick="return confirm('Mark this order as received? You will be asked to rate your meal.');"><i class="fas fa-check-circle"></i> Order Received</asp:LinkButton>
-                                            <asp:LinkButton ID="btnCancelOrder" runat="server" CommandName="Cancel" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-cancel" OnClientClick="return confirm('Cancel this order?');"><i class="fas fa-times"></i> Cancel</asp:LinkButton>
+                                            <asp:LinkButton ID="btnOrderReceived" runat="server" CommandName="Received" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-received" OnClientClick="return showCustomConfirm(event, 'confirmReceivedModal');"><i class="fas fa-check-circle"></i> Order Received</asp:LinkButton>
+                                            <asp:LinkButton ID="btnCancelOrder" runat="server" CommandName="Cancel" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-cancel" OnClientClick="return showCustomConfirm(event, 'confirmCancelModal');"><i class="fas fa-times"></i> Cancel</asp:LinkButton>
                                         </div>
                                     </div>
                                 </div>
@@ -3136,7 +3299,7 @@
                         <div class="cart-summary-row cart-total"><span>Total</span><span>₱<asp:Literal ID="litTotal" runat="server" /></span></div>
                     </div>
                     <div class="cart-actions">
-                        <asp:Button ID="btnClearCart" runat="server" Text="Clear Cart" CssClass="btn-clear-cart" OnClick="btnClearCart_Click" OnClientClick="return confirm('Clear your entire cart?');" />
+                        <asp:Button ID="btnClearCart" runat="server" Text="Clear Cart" CssClass="btn-clear-cart" OnClick="btnClearCart_Click" OnClientClick="return showCustomConfirm(event, 'confirmClearCartModal');" />
                         <asp:Button ID="btnCheckout" runat="server" Text="Checkout" CssClass="btn-checkout" OnClick="btnCheckout_Click" />
                     </div>
                     <div class="cart-delivery-info">
@@ -3433,8 +3596,8 @@
                         <div class="map-wrapper-large">
                            <iframe 
                                 src="https://www.google.com/maps/embed?pb=!4v1770383773979!6m8!1m7!1s2PuvajbO79-J0wNyBbZLUg!2m2!1d14.32649854666237!2d120.9372845304983!3f91.56107397260273!4f3.452054794520592!5f0.4000000000000002" 
-                                width="100" 
-                                height="100" 
+                                width="100%" 
+                                height="100%" 
                                 style="border:0;" 
                                 allowfullscreen="" 
                                 loading="lazy" 
@@ -3457,6 +3620,13 @@
                             <div class="contact-details-large">
                                 <p>Blk 84, Lot 10 Bautista St, Zone 9</p>
                                 <p>Dasmariñas, 4114 Cavite</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-group">
+                            <h3><i class="fas fa-clock"></i> Operating Hours</h3>
+                            <div class="contact-details-large">
+                                <p>Monday – Sunday</p>
+                                <p>10:00 AM – 9:00 PM</p>
                             </div>
                         </div>
                     </div>
@@ -3985,7 +4155,6 @@
             function showOrderConfirmedAnimation(ticketNumber, total, paymentMethod) {
                 launchConfetti();
 
-                // Create overlay - FIXED: no top-to-middle animation, just pops up in center
                 const overlay = document.createElement('div');
                 overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.78);z-index:99999;display:flex;align-items:center;justify-content:center;';
 
@@ -4624,7 +4793,93 @@
                 }
             }
 
+            // ========== CUSTOM CONFIRM MODAL ENGINE ==========
+            let _pendingTriggerElement = null;
+
+            function showCustomConfirm(event, modalId) {
+                event.preventDefault();
+                _pendingTriggerElement = event.currentTarget || event.target;
+                const modal = document.getElementById(modalId);
+                if (!modal) return false;
+                modal.style.display = 'flex';
+                requestAnimationFrame(() => modal.classList.add('show'));
+                document.body.style.overflow = 'hidden';
+                return false;
+            }
+
+            function closeCustomConfirm(modalId, confirmed) {
+                const modal = document.getElementById(modalId);
+                if (!modal) return;
+                modal.classList.remove('show');
+                setTimeout(() => { modal.style.display = 'none'; }, 280);
+                document.body.style.overflow = '';
+                if (confirmed && _pendingTriggerElement) {
+                    const el = _pendingTriggerElement;
+                    _pendingTriggerElement = null;
+                    el.onclick = null;
+                    el.click();
+                } else {
+                    _pendingTriggerElement = null;
+                }
+            }
+
+            document.querySelectorAll('.custom-confirm-overlay').forEach(function (overlay) {
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) closeCustomConfirm(overlay.id, false);
+                });
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.custom-confirm-overlay.show').forEach(function (m) {
+                        closeCustomConfirm(m.id, false);
+                    });
+                }
+            });
+
         </script>
+
+        <div id="confirmClearCartModal" class="custom-confirm-overlay" role="dialog" aria-modal="true">
+            <div class="custom-confirm-box">
+                <div class="custom-confirm-icon icon-warning">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3>Clear Your Cart?</h3>
+                <p>All items in your cart will be <strong>removed</strong>. This action cannot be undone.</p>
+                <div class="custom-confirm-actions">
+                    <button class="btn-confirm-cancel" onclick="closeCustomConfirm('confirmClearCartModal', false)">Keep Items</button>
+                    <button class="btn-confirm-ok ok-danger" onclick="closeCustomConfirm('confirmClearCartModal', true)"><i class="fas fa-trash-alt"></i> Clear Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmReceivedModal" class="custom-confirm-overlay" role="dialog" aria-modal="true">
+            <div class="custom-confirm-box">
+                <div class="custom-confirm-icon icon-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Order Received?</h3>
+                <p>Confirm that you've received your order. You'll be asked to <strong>rate your meal</strong> — your feedback helps us improve!</p>
+                <div class="custom-confirm-actions">
+                    <button class="btn-confirm-cancel" onclick="closeCustomConfirm('confirmReceivedModal', false)">Not Yet</button>
+                    <button class="btn-confirm-ok ok-success" onclick="closeCustomConfirm('confirmReceivedModal', true)"><i class="fas fa-check"></i> Yes, Received!</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmCancelModal" class="custom-confirm-overlay" role="dialog" aria-modal="true">
+            <div class="custom-confirm-box">
+                <div class="custom-confirm-icon icon-danger">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h3>Cancel This Order?</h3>
+                <p>Are you sure you want to <strong>cancel</strong> this order? This cannot be undone once confirmed.</p>
+                <div class="custom-confirm-actions">
+                    <button class="btn-confirm-cancel" onclick="closeCustomConfirm('confirmCancelModal', false)">Keep Order</button>
+                    <button class="btn-confirm-ok ok-danger" onclick="closeCustomConfirm('confirmCancelModal', true)"><i class="fas fa-times"></i> Cancel Order</button>
+                </div>
+            </div>
+        </div>
 
     </form>
 </body>
