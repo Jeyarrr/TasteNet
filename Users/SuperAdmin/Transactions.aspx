@@ -632,9 +632,7 @@
                 <p>Track and monitor all inventory transactions</p>
             </div>
             <div class="export-section">
-                <button type="button" id="exportSelectedBtn" class="export-btn pdf" onclick="exportSelected()" disabled>
-                    <i class="fas fa-file-pdf"></i> Export Selected
-                </button>
+               
                 <button type="button" id="exportAllBtn" class="export-btn excel" onclick="exportAll()">
                     <i class="fas fa-file-excel"></i> Export All
                 </button>
@@ -728,7 +726,6 @@
                                         <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll(this)" class="transaction-checkbox">
                                     </th>
                                     <th>Transaction ID</th>
-                                    <th>Reference #</th>
                                     <th>Item Name</th>
                                     <th>Type</th>
                                     <th>Date & Time</th>
@@ -746,7 +743,6 @@
                                 <input type="checkbox" class="transaction-checkbox row-checkbox" data-id='<%# Eval("TransactionID") %>' onclick="updateSelectedCount()">
                             </td>
                             <td><strong>TXN-<%# Eval("TransactionID").ToString().PadLeft(6, '0') %></strong></td>
-                            <td><%# Eval("ReferenceNumber") ?? "N/A" %></td>
                             <td><%# Eval("ItemName") %></td>
                             <td><span class="type-badge"><%# Eval("TransactionType") %></span></td>
                             <td><%# Convert.ToDateTime(Eval("TransactionDate")).ToString("MMM dd, yyyy HH:mm:ss") %></td>
@@ -768,7 +764,6 @@
                                 <input type="checkbox" class="transaction-checkbox row-checkbox" data-id='<%# Eval("TransactionID") %>' onclick="updateSelectedCount()">
                             </td>
                             <td><strong>TXN-<%# Eval("TransactionID").ToString().PadLeft(6, '0') %></strong></td>
-                            <td><%# Eval("ReferenceNumber") ?? "N/A" %></td>
                             <td><%# Eval("ItemName") %></td>
                             <td><span class="type-badge"><%# Eval("TransactionType") %></span></td>
                             <td><%# Convert.ToDateTime(Eval("TransactionDate")).ToString("MMM dd, yyyy HH:mm:ss") %></td>

@@ -831,7 +831,7 @@
                             <span class="detail-value" id="modalTotal" style="color: var(--success-green); font-weight: 700;"></span>
                         </div>
                         <div class="detail-row">
-                            <span class="detail-label">Created By:</span>
+                            <span class="detail-label">Delivered By:</span>
                             <span class="detail-value" id="modalCreatedBy"></span>
                         </div>
                     </div>
@@ -923,7 +923,8 @@
                              data-completed-at='<%# Eval("CompletedAt") != DBNull.Value ? Convert.ToDateTime(Eval("CompletedAt")).ToString("MMM dd, yyyy hh:mm tt") : "—" %>'
                              data-created-by='<%# Eval("CreatedBy") %>'
                              data-fullname='<%# Eval("FullName") %>'
-                             data-phone='<%# Eval("Phone") %>'>
+                             data-phone='<%# Eval("Phone") %>'
+                             data-rider-name='<%# Eval("RiderName") %>'>
 
                             <div class="delivery-header">
                                 <div class="delivery-info">
@@ -1018,7 +1019,7 @@
             document.getElementById('modalCreatedAt').textContent = card.dataset.createdAt;
             document.getElementById('modalStartedAt').textContent = card.dataset.startedAt;
             document.getElementById('modalCompletedAt').textContent = card.dataset.completedAt;
-            document.getElementById('modalCreatedBy').textContent = card.dataset.createdBy;
+            document.getElementById('modalCreatedBy').textContent = card.dataset.riderName;
             document.getElementById('modalFullName').textContent = card.dataset.fullname;
             document.getElementById('modalPhone').textContent = card.dataset.phone;
 

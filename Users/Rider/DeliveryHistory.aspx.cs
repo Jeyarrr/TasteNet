@@ -12,6 +12,13 @@ namespace TasteNet.Users.Rider
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Redirect to login if the rider is not authenticated
+            if (Session["UserID"] == null)
+            {
+                Response.Redirect("~/Login.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 LoadDeliveryHistory();
@@ -20,8 +27,13 @@ namespace TasteNet.Users.Rider
 
         private void LoadDeliveryHistory()
         {
+            // Get the currently logged-in rider's ID from session
+            int riderID = Convert.ToInt32(Session["UserID"]);
+
             using (SqlConnection conn = new SqlConnection(_connStr))
             {
+                // JOIN against the customer (CreatedBy) for name/phone display,
+                // and JOIN again against the rider (RiderID) to get the rider's FullName.
                 string query = @"
                     SELECT
                         t.[TicketID],
@@ -38,17 +50,23 @@ namespace TasteNet.Users.Rider
                         t.[CreatedBy],
                         t.[UpdatedAt],
                         u.[FullName],
-                        u.[Phone]
+                        u.[Phone],
+                        r.[FullName] AS RiderName
                     FROM [DeliverySystem].[dbo].[Tickets] t
                     INNER JOIN [DeliverySystem].[dbo].[Users] u
                         ON t.[CreatedBy] = u.[UserID]
-                    WHERE t.[Status] = 'Completed'
+                    INNER JOIN [DeliverySystem].[dbo].[Users] r
+                        ON t.[RiderID] = r.[UserID]
+                    WHERE t.[Status]    = 'Completed'
                       AND t.[OrderType] = 'Delivery'
-                      AND u.[UserType] = 'Customer'
+                      AND u.[UserType]  = 'Customer'
+                      AND t.[RiderID]   = @RiderID
                     ORDER BY t.[CompletedAt] DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    cmd.Parameters.AddWithValue("@RiderID", riderID);
+
                     conn.Open();
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();

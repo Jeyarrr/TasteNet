@@ -137,9 +137,9 @@
     .ticket-card {
         background: white !important;
         border-radius: var(--radius-lg) !important;
-        overflow: hidden !important;
+        overflow: visible !important;
         box-shadow: var(--card-shadow) !important;
-        transition: all var(--transition-base) !important;
+        transition: box-shadow var(--transition-base), border-left-color var(--transition-base) !important;
         position: relative !important;
         border: 1px solid var(--border-light) !important;
         width: 100% !important;
@@ -161,7 +161,6 @@
     }
 
     .ticket-card:hover {
-        transform: translateY(-5px) !important;
         box-shadow: var(--card-shadow-hover) !important;
         border-left-color: var(--primary-maroon) !important;
     }
@@ -193,6 +192,7 @@
         padding: 14px 16px !important;
         position: relative !important;
         z-index: 1;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
     }
 
     .ticket-title {
@@ -258,6 +258,12 @@
     .status-dot.completed {
         background-color: #00c851 !important;
         box-shadow: 0 0 6px rgba(0, 200, 81, 0.5) !important;
+    }
+
+    .status-dot.cancelled {
+        background-color: #9ca3af !important;
+        box-shadow: 0 0 6px rgba(156, 163, 175, 0.5) !important;
+        animation: none !important;
     }
 
     .ticket-action {
@@ -329,7 +335,7 @@
         color: var(--text-dark) !important;
         line-height: 1.5 !important;
         max-height: 100px;
-        overflow-y: auto;
+        overflow-y: scroll;
     }
 
     .item-row {
@@ -337,13 +343,11 @@
         justify-content: space-between !important;
         padding: 5px 0 !important;
         border-bottom: 1px dashed var(--border-light) !important;
-        transition: all 0.2s ease !important;
+        transition: background 0.2s ease !important;
     }
 
     .item-row:hover {
         background: rgba(107, 13, 30, 0.05) !important;
-        padding-left: 5px !important;
-        transform: translateX(2px) !important;
     }
 
     .item-name {
@@ -696,6 +700,18 @@
         }
     }
 
+    .btn-cancel-ticket {
+        background: #fff0f0 !important;
+        color: var(--danger-red) !important;
+        border: 1px solid #f5c6cb !important;
+    }
+
+    .btn-cancel-ticket:hover {
+        background: var(--danger-red) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3) !important;
+    }
+
     .btn-rider {
         background: linear-gradient(135deg, #680D1E, #4f0a17) !important;
         color: #FFFFFF !important;
@@ -858,6 +874,11 @@
                     <span class="status-badge"><asp:Literal ID="litCompletedCount" runat="server">0</asp:Literal></span>
                 </asp:LinkButton>
                 
+                <asp:LinkButton ID="btnFilterCancelled" runat="server" CssClass="status-tab" OnClick="btnFilterCancelled_Click">
+                    <i class="fas fa-ban"></i> Cancelled
+                    <span class="status-badge"><asp:Literal ID="litCancelledCount" runat="server">0</asp:Literal></span>
+                </asp:LinkButton>
+                
                 <asp:LinkButton ID="btnFilterAll" runat="server" CssClass="status-tab" OnClick="btnFilterAll_Click">
                     <i class="fas fa-list"></i> All
                     <span class="status-badge"><asp:Literal ID="litAllCount" runat="server">0</asp:Literal></span>
@@ -951,6 +972,16 @@
                                             <i class="fas fa-check-double"></i> Complete
                                         </asp:LinkButton>
 
+                                        <%-- Cancel button: only on Open tickets --%>
+                                        <asp:LinkButton ID="btnCancelTicket" runat="server"
+                                            CommandName="CancelTicket"
+                                            CommandArgument='<%# Eval("TicketID") %>'
+                                            CssClass="action-btn btn-cancel-ticket"
+                                            Visible='<%# Eval("Status").ToString() == "Open" %>'
+                                            OnClientClick='<%# "return confirm(\"Cancel ticket " + Eval("TicketNumber") + "? This will mark it as Cancelled.\");" %>'>
+                                            <i class="fas fa-ban"></i> Cancel
+                                        </asp:LinkButton>
+
                                         <%-- Delivery: show Assign Rider when In Progress and no rider yet --%>
                                         <asp:LinkButton ID="btnAssignRider" runat="server"
                                             CommandName="AssignRider"
@@ -1001,7 +1032,6 @@
                         <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="DdlOrderType_SelectedIndexChanged">
                             <asp:ListItem Value="Dine-In">Dine-In</asp:ListItem>
                             <asp:ListItem Value="Takeout">Takeout</asp:ListItem>
-                            <asp:ListItem Value="Delivery">Delivery</asp:ListItem>
                         </asp:DropDownList>
                     </div>
                     

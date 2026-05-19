@@ -33,11 +33,40 @@ namespace TasteNet.Users.Rider
 
             currentUserID = Convert.ToInt32(Session["UserID"]);
 
+            // Prevent browser from caching this page so approval status is always fresh
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.Cache.SetNoStore();
+            Response.Cache.SetExpires(DateTime.UtcNow.AddDays(-1));
+
             if (!IsPostBack)
             {
                 LoadRiderProfile();
                 LoadVehicleDetails();
                 LoadDocuments();
+            }
+            else
+            {
+                // On postback, only reload documents if it was NOT triggered by the
+                // Upload button — re-binding the repeater during upload causes event
+                // validation to fail because the button tokens are regenerated mid-request.
+                // UploadDocument() calls LoadDocuments() itself after a successful save.
+                string eventTarget = Request.Form["__EVENTTARGET"] ?? "";
+                string eventArg = Request.Form["__EVENTARGUMENT"] ?? "";
+                bool isUploadPostback = false;
+
+                // Check if any btnUpload in the repeater triggered this postback
+                foreach (RepeaterItem item in rptDocuments.Items)
+                {
+                    Button btnUpload = (Button)item.FindControl("btnUpload");
+                    if (btnUpload != null && Request.Form[btnUpload.UniqueID] != null)
+                    {
+                        isUploadPostback = true;
+                        break;
+                    }
+                }
+
+                if (!isUploadPostback)
+                    LoadDocuments();
             }
         }
 
@@ -112,37 +141,45 @@ namespace TasteNet.Users.Rider
         private void LoadDocuments()
         {
             string query = @"
-                SELECT 
-                    'Drivers License' as DocumentName,
-                    'DriverLicensePhoto' as DocumentColumn,
-                    CASE WHEN DriverLicensePhoto IS NOT NULL AND DriverLicensePhoto != '' 
-                         THEN 'Verified' ELSE 'Not Uploaded' END as Status,
-                    ISNULL(DriverLicensePhoto, '') as FilePath
-                FROM Users WHERE UserID = @UserID
-                UNION ALL
-                SELECT 
-                    'OR/CR' as DocumentName,
-                    'ORCRPhoto' as DocumentColumn,
-                    CASE WHEN ORCRPhoto IS NOT NULL AND ORCRPhoto != '' 
-                         THEN 'Verified' ELSE 'Not Uploaded' END as Status,
-                    ISNULL(ORCRPhoto, '') as FilePath
-                FROM Users WHERE UserID = @UserID
-                UNION ALL
-                SELECT 
-                    'Insurance Certificate' as DocumentName,
-                    'InsurancePhoto' as DocumentColumn,
-                    CASE WHEN InsurancePhoto IS NOT NULL AND InsurancePhoto != '' 
-                         THEN 'Pending Review' ELSE 'Not Uploaded' END as Status,
-                    ISNULL(InsurancePhoto, '') as FilePath
-                FROM Users WHERE UserID = @UserID
-                UNION ALL
-                SELECT 
-                    'NBI Clearance' as DocumentName,
-                    'NBIClearancePhoto' as DocumentColumn,
-                    CASE WHEN NBIClearancePhoto IS NOT NULL AND NBIClearancePhoto != '' 
-                         THEN 'Verified' ELSE 'Not Uploaded' END as Status,
-                    ISNULL(NBIClearancePhoto, '') as FilePath
-                FROM Users WHERE UserID = @UserID";
+                SELECT
+                    docs.DocumentName,
+                    docs.DocumentColumn,
+                    CASE
+                        WHEN docs.RawPath IS NULL OR docs.RawPath = '' THEN 'Not Uploaded'
+                        ELSE ISNULL(rda.Status, 'Pending Review')
+                    END AS Status,
+                    ISNULL(docs.RawPath, '') AS FilePath
+                FROM (
+                    SELECT
+                        N'Drivers License'       AS DocumentName,
+                        N'DriverLicensePhoto'    AS DocumentColumn,
+                        ISNULL(DriverLicensePhoto, '') AS RawPath
+                    FROM dbo.Users WHERE UserID = @UserID
+                    UNION ALL
+                    SELECT
+                        N'OR/CR',
+                        N'ORCRPhoto',
+                        ISNULL(ORCRPhoto, '')
+                    FROM dbo.Users WHERE UserID = @UserID
+                    UNION ALL
+                    SELECT
+                        N'Insurance Certificate',
+                        N'InsurancePhoto',
+                        ISNULL(InsurancePhoto, '')
+                    FROM dbo.Users WHERE UserID = @UserID
+                    UNION ALL
+                    SELECT
+                        N'NBI Clearance',
+                        N'NBIClearancePhoto',
+                        ISNULL(NBIClearancePhoto, '')
+                    FROM dbo.Users WHERE UserID = @UserID
+                ) AS docs
+                LEFT JOIN (
+                    SELECT DocColumn, Status,
+                           ROW_NUMBER() OVER (PARTITION BY DocColumn ORDER BY UpdatedAt DESC) AS rn
+                    FROM dbo.RiderDocApprovals
+                    WHERE UserID = @UserID
+                ) AS rda ON LTRIM(RTRIM(rda.DocColumn)) = LTRIM(RTRIM(docs.DocumentColumn)) AND rda.rn = 1";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -163,46 +200,41 @@ namespace TasteNet.Users.Rider
 
                     foreach (DataRow row in dt.Rows)
                     {
-                        string filePath = row["FilePath"].ToString();
+                        string rawPath = row["FilePath"].ToString(); // raw DB value
+                        string status = row["Status"].ToString();   // from RiderDocApprovals
                         string webPath = "";
 
-                        if (!string.IsNullOrEmpty(filePath) && filePath != "Not Uploaded")
+                        if (!string.IsNullOrEmpty(rawPath))
                         {
-                            if (filePath.StartsWith("http"))
+                            if (rawPath.StartsWith("http"))
                             {
-                                // Already an absolute URL - use as-is
-                                webPath = filePath;
+                                webPath = rawPath;
                             }
                             else
                             {
-                                // DB may store any of:
-                                //   Full Windows path : "C:\Users\georg\...\Uploads\Riders\abc.jpg"
-                                //   Tilde-relative    : "~/Uploads/Riders/abc.jpg"
-                                //   Old tilde path    : "~/UploadedRiders/abc.jpg"
-                                // In all cases, extract just the filename and search known web folders.
                                 string fileName = System.IO.Path.GetFileName(
-                                    filePath.Replace("/", "\\"));
+                                    rawPath.Replace("/", "\\"));
 
-                                string physicalUploadsRiders = Server.MapPath("~/Uploads/Riders/" + fileName);
-                                string physicalUploadedRiders = Server.MapPath("~/UploadedRiders/" + fileName);
+                                string physicalUploads = Server.MapPath("~/Uploads/Riders/" + fileName);
+                                string physicalUploaded = Server.MapPath("~/UploadedRiders/" + fileName);
 
-                                if (System.IO.File.Exists(physicalUploadsRiders))
+                                if (System.IO.File.Exists(physicalUploads))
                                     webPath = appRoot + "/Uploads/Riders/" + fileName;
-                                else if (System.IO.File.Exists(physicalUploadedRiders))
+                                else if (System.IO.File.Exists(physicalUploaded))
                                     webPath = appRoot + "/UploadedRiders/" + fileName;
                                 else
-                                    // File recorded in DB but not present on this server
-                                    // (e.g. uploaded on a different developer machine).
-                                    // Leave webPath empty so the View button is disabled.
-                                    webPath = "";
+                                    webPath = ""; // file not on this machine — View disabled but Status kept
                             }
                         }
 
+                        // IMPORTANT: Status comes from DB (RiderDocApprovals), NOT from whether
+                        // the file exists on disk. A file uploaded on another machine still has
+                        // its correct approval status.
                         documents.Add(new DocumentItem
                         {
                             DocumentName = row["DocumentName"].ToString(),
                             DocumentColumn = row["DocumentColumn"].ToString(),
-                            Status = row["Status"].ToString(),
+                            Status = status,
                             FilePath = webPath
                         });
                     }
@@ -218,38 +250,57 @@ namespace TasteNet.Users.Rider
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
                 DocumentItem doc = (DocumentItem)e.Item.DataItem;
+                bool isRejected = doc.Status.ToLower() == "rejected";
+                bool hasFile = !string.IsNullOrEmpty(doc.FilePath) && doc.FilePath != "Not Uploaded";
 
                 // Wire up Upload button
                 Button btnUpload = (Button)e.Item.FindControl("btnUpload");
                 if (btnUpload != null)
-                {
                     btnUpload.CommandArgument = doc.DocumentColumn;
-                }
 
-                // Wire up View button — plain HTML via Literal, no postback
+                // Wire up View button
                 Literal litViewBtn = (Literal)e.Item.FindControl("litViewBtn");
                 if (litViewBtn != null)
                 {
-                    bool hasFile = !string.IsNullOrEmpty(doc.FilePath)
-                                   && doc.FilePath != "Not Uploaded";
-
-                    if (hasFile)
+                    if (hasFile && !isRejected)
                     {
-                        string safePath = doc.FilePath.Replace("\\", "/").Replace("'", "\'");
-                        string safeName = doc.DocumentName.Replace("'", "\'");
-                        litViewBtn.Text = "<button type=\"button\" class=\"btn-icon btn-view\" " +
-                                          "onclick=\"viewDocument(\'" + safePath + "\', \'" + safeName + "\');\"> " +
-                                          "<i class=\"fas fa-eye\"></i> View</button>";
+                        string safePath = doc.FilePath.Replace("\\", "/");
+                        string safeName = doc.DocumentName;
+                        litViewBtn.Text = "<button type='button' class='btn-icon btn-view' " +
+                                          "onclick='viewDocument(&quot;" + safePath + "&quot;, &quot;" + safeName + "&quot;);'>" +
+                                          "<i class='fas fa-eye'></i> View</button>";
                     }
                     else
                     {
-                        litViewBtn.Text = "<button type=\"button\" class=\"btn-icon btn-view\" " +
-                                          "disabled style=\"opacity:0.5;cursor:not-allowed;\">" +
-                                          "<i class=\"fas fa-eye\"></i> View</button>";
+                        string tip = isRejected ? "title='Document rejected â please re-upload'" : "";
+                        litViewBtn.Text = "<button type='button' class='btn-icon btn-view' " +
+                                          "disabled " + tip + " style='opacity:0.5;cursor:not-allowed;'>" +
+                                          "<i class='fas fa-eye'></i> View</button>";
+                    }
+                }
+
+                // Wire up Choose File button
+                Literal litChooseBtn = (Literal)e.Item.FindControl("litChooseBtn");
+                if (litChooseBtn != null)
+                {
+                    string safeCol = doc.DocumentColumn;
+                    if (isRejected)
+                    {
+                        litChooseBtn.Text = "<button type='button' class='btn-file btn-file-reupload' " +
+                                            "onclick='triggerAspFileUpload(&quot;" + safeCol + "&quot;, this)' " +
+                                            "title='Document rejected â click to re-upload'>" +
+                                            "<i class='fas fa-redo'></i> Re-upload</button>";
+                    }
+                    else
+                    {
+                        litChooseBtn.Text = "<button type='button' class='btn-file' " +
+                                            "onclick='triggerAspFileUpload(&quot;" + safeCol + "&quot;, this)'>" +
+                                            "<i class='fas fa-cloud-upload-alt'></i> Choose File</button>";
                     }
                 }
             }
         }
+
 
         protected void btnSavePersonalInfo_Click(object sender, EventArgs e)
         {
@@ -381,6 +432,14 @@ namespace TasteNet.Users.Rider
             Button btn = (Button)sender;
             string documentColumn = btn.CommandArgument;
 
+            // Validate documentColumn against whitelist to prevent SQL injection
+            string[] validColumns = { "DriverLicensePhoto", "ORCRPhoto", "InsurancePhoto", "NBIClearancePhoto" };
+            if (!Array.Exists(validColumns, c => c == documentColumn))
+            {
+                ShowNotification("Invalid document type.", "error");
+                return;
+            }
+
             // Find the asp:FileUpload in the same repeater item as the clicked button
             RepeaterItem item = (RepeaterItem)btn.NamingContainer;
             FileUpload fuDocument = (FileUpload)item.FindControl("fuDocument");
@@ -417,7 +476,18 @@ namespace TasteNet.Users.Rider
 
                 string relativePath = "~/Uploads/Riders/" + fileName;
 
+                // Reset approval status to pending when rider uploads a new document
                 string query = $"UPDATE Users SET {documentColumn} = @FilePath WHERE UserID = @UserID";
+                // Delete any existing approval record so it shows as Pending Review for the admin
+                using (SqlConnection connReset = new SqlConnection(connectionString))
+                using (SqlCommand cmdReset = new SqlCommand(
+                    "DELETE FROM dbo.RiderDocApprovals WHERE UserID = @uid AND DocColumn = @col", connReset))
+                {
+                    cmdReset.Parameters.AddWithValue("@uid", currentUserID);
+                    cmdReset.Parameters.AddWithValue("@col", documentColumn);
+                    connReset.Open();
+                    cmdReset.ExecuteNonQuery();
+                }
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -562,9 +632,41 @@ namespace TasteNet.Users.Rider
         protected string GetStatusClass(string status)
         {
             if (string.IsNullOrEmpty(status)) return "status-pending";
-            if (status == "Verified") return "status-verified";
-            if (status == "Pending Review") return "status-pending";
-            return "status-pending";
+            switch (status.ToLower())
+            {
+                case "approved":
+                case "verified": return "status-verified";
+                case "rejected": return "status-rejected";
+                case "pending":
+                case "pending review": return "status-pending";
+                default: return "status-pending";
+            }
+        }
+
+        protected string GetStatusIcon(string status)
+        {
+            if (string.IsNullOrEmpty(status)) return "fa-clock";
+            switch (status.ToLower())
+            {
+                case "approved":
+                case "verified": return "fa-check-circle";
+                case "rejected": return "fa-times-circle";
+                default: return "fa-clock";
+            }
+        }
+
+        protected string GetStatusLabel(string status)
+        {
+            if (string.IsNullOrEmpty(status)) return "Pending Review";
+            switch (status.ToLower())
+            {
+                case "approved": return "Approved";
+                case "verified": return "Verified";
+                case "rejected": return "Rejected";
+                case "pending review": return "Pending Review";
+                case "not uploaded": return "Not Uploaded";
+                default: return status;
+            }
         }
 
         private void ShowNotification(string message, string type)

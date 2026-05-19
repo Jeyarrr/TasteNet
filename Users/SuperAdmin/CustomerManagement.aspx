@@ -842,7 +842,7 @@
                             <tbody>
                     </HeaderTemplate>
                     <ItemTemplate>
-                        <tr>
+                        <tr data-user-id='<%# Eval("RawUserID") %>' data-orders='<%# Eval("RecentOrdersJson") %>'>
                             <td><span class="customer-id"><%# Eval("CustomerID") %></span></td>
                             <td>
                                 <div class="customer-name">
@@ -891,7 +891,7 @@
                          </tr>
                     </ItemTemplate>
                     <AlternatingItemTemplate>
-                        <tr style="background-color: #fefaf5;">
+                        <tr style="background-color: #fefaf5;" data-user-id='<%# Eval("RawUserID") %>' data-orders='<%# Eval("RecentOrdersJson") %>'>
                             <td><span class="customer-id"><%# Eval("CustomerID") %></span></td>
                             <td>
                                 <div class="customer-name">
@@ -1091,10 +1091,12 @@
                 const status = statusText.toLowerCase();
                 const totalOrders = parseInt(cells[5]?.textContent) || 0;
                 const totalSpent = parseFloat(cells[6]?.textContent.replace('₱', '').replace(/,/g, '')) || 0;
+                const rawUserId = parseInt(row.getAttribute('data-user-id')) || 0;
 
                 return {
                     element: row,
                     id: id,
+                    rawUserId: rawUserId,
                     fullName: fullName,
                     username: username,
                     email: email,
@@ -1236,6 +1238,7 @@
             if (customer.status === 'active') {
                 actionButton.innerHTML = '<i class="fas fa-ban"></i> Block Customer';
                 actionButton.className = 'btn btn--primary';
+                actionButton.style.display = '';
                 actionButton.onclick = function () {
                     if (confirm('Are you sure you want to block this customer?')) {
                         toggleBlockCustomer(customerId);
@@ -1243,14 +1246,7 @@
                     }
                 };
             } else {
-                actionButton.innerHTML = '<i class="fas fa-check"></i> Unblock Customer';
-                actionButton.className = 'btn btn--success';
-                actionButton.onclick = function () {
-                    if (confirm('Are you sure you want to unblock this customer?')) {
-                        toggleBlockCustomer(customerId);
-                        closeModal();
-                    }
-                };
+                actionButton.style.display = 'none';
             }
 
             loadRecentOrders(customerId);
@@ -1283,20 +1279,32 @@
 
         function loadRecentOrders(customerId) {
             const recentOrdersDiv = document.getElementById('recentOrders');
-            const recentOrders = [
-                { id: `ORD-${customerId}-001`, date: 'Today', amount: '₱1,250', status: 'Delivered' },
-                { id: `ORD-${customerId}-002`, date: 'Yesterday', amount: '₱850', status: 'Processing' },
-                { id: `ORD-${customerId}-003`, date: '2 days ago', amount: '₱2,150', status: 'Delivered' }
-            ];
+            const customer = allCustomers.find(c => c.id === customerId);
+
+            if (!customer) {
+                recentOrdersDiv.innerHTML = '<p style="text-align:center;color:var(--muted-text);padding:20px;">No data found.</p>';
+                return;
+            }
+
+            const ordersJson = customer.element.getAttribute('data-orders');
+            let orders = [];
+            try { orders = JSON.parse(ordersJson); } catch (e) { orders = []; }
+
+            if (!orders || orders.length === 0) {
+                recentOrdersDiv.innerHTML = '<p style="text-align:center;color:var(--muted-text);padding:20px;">No orders found for this customer.</p>';
+                return;
+            }
 
             let html = '<table class="recent-orders-table">';
             html += '<thead><tr><th>Order ID</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
-            recentOrders.forEach(order => {
+            orders.forEach(order => {
+                const statusClass = order.status === 'Completed' ? 'status-badge--active' :
+                    order.status === 'Cancelled' ? 'status-badge--blocked' : 'status-badge--active';
                 html += `<tr>`;
                 html += `<td><strong>${order.id}</strong></td>`;
                 html += `<td>${order.date}</td>`;
-                html += `<td style="color: var(--primary-maroon); font-weight: 600;">${order.amount}</td>`;
-                html += `<td><span class="status-badge status-badge--active">${order.status}</span></td>`;
+                html += `<td style="color:var(--primary-maroon);font-weight:600;">${order.amount}</td>`;
+                html += `<td><span class="status-badge ${statusClass}">${order.status}</span></td>`;
                 html += `</tr>`;
             });
             html += '</tbody></table>';

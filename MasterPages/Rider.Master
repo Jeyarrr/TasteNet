@@ -29,6 +29,7 @@
             background: #f8f9fc;
             overflow: hidden;
             position: relative;
+            isolation: isolate;
         }
         
         .sidebar {
@@ -46,9 +47,6 @@
             z-index: 100;
             transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
-            will-change: width;
-            transform: translateZ(0);
-            backface-visibility: hidden;
         }
         
         .sidebar.collapsed {
@@ -414,8 +412,6 @@
             height: 100vh;
             overflow-y: auto;
             transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: margin-left;
-            transform: translateZ(0);
         }
         
         .sidebar.collapsed ~ .main-content {
@@ -447,11 +443,9 @@
         @keyframes contentFadeIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
         
@@ -691,15 +685,7 @@
                     <i class="fa-solid fa-user"></i>
                     <span>Profile</span>
                 </a>
-                <a href="/Users/Rider/Settings.aspx" class="menu-item" id="link-settings" data-tooltip="Settings">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="/Users/Rider/Notifications.aspx" class="menu-item" id="link-notifications" data-tooltip="Notifications">
-                    <i class="fa-solid fa-bell"></i>
-                    <span>Notifications</span>
-                    <span class="notification-badge" id="notificationBadge">3</span>
-                </a>
+                
             </div>
             
             <div class="master-footer">

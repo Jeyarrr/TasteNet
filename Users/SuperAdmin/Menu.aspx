@@ -1696,7 +1696,7 @@
                     <span class="stat-card__label">Categories</span>
                     <div class="stat-icon icon-items"><i class="fas fa-tags"></i></div>
                 </div>
-                <div class="stat-card__value" id="totalCategories">3</div>
+                <div class="stat-card__value" id="totalCategories">5</div>
                 <div class="stat-card__subtitle">Food categories</div>
             </div>
         </div>
@@ -1713,6 +1713,12 @@
             </button>
             <button type="button" class="category-tab" data-category="Special Meals">
                 <i class="fas fa-star"></i> Special Meals
+            </button>
+            <button type="button" class="category-tab" data-category="Beverage">
+                <i class="fas fa-glass-water"></i> Beverage
+            </button>
+            <button type="button" class="category-tab" data-category="Addons">
+                <i class="fas fa-plus-circle"></i> Addons
             </button>
         </div>
 
@@ -1831,6 +1837,8 @@
                         <option value="Silog">🍳 Silog</option>
                         <option value="Sizzling Specials">🔥 Sizzling Specials</option>
                         <option value="Special Meals">⭐ Special Meals</option>
+                        <option value="Beverage">🥤 Beverage</option>
+                        <option value="Addons">➕ Addons</option>
                     </select>
                 </div>
 
@@ -1938,13 +1946,17 @@
         var foodTypeIcons = {
             'Silog': 'fa-egg',
             'Sizzling Specials': 'fa-fire',
-            'Special Meals': 'fa-star'
+            'Special Meals': 'fa-star',
+            'Beverage': 'fa-glass-water',
+            'Addons': 'fa-plus-circle'
         };
 
         var CATEGORIES = [
             { key: 'Silog', label: 'Silog', icon: 'fa-egg' },
             { key: 'Sizzling Specials', label: 'Sizzling Specials', icon: 'fa-fire' },
-            { key: 'Special Meals', label: 'Special Meals', icon: 'fa-star' }
+            { key: 'Special Meals', label: 'Special Meals', icon: 'fa-star' },
+            { key: 'Beverage', label: 'Beverage', icon: 'fa-glass-water' },
+            { key: 'Addons', label: 'Addons', icon: 'fa-plus-circle' }
         ];
 
         function showNotification(message, type) {
@@ -1980,7 +1992,7 @@
             document.getElementById('totalMenus').textContent = total;
             document.getElementById('activeMenus').textContent = active;
             document.getElementById('hiddenMenus').textContent = hidden;
-            document.getElementById('totalCategories').textContent = '3';
+            document.getElementById('totalCategories').textContent = CATEGORIES.length;
         }
 
         function formatDate(dateString) {
@@ -2272,7 +2284,9 @@
             saveBtn.classList.add('btn--success');
             showNotification(hiddenMenuId ? '"' + foodName + '" updated!' : '"' + foodName + '" added!', 'success');
             setTimeout(function () {
-                document.getElementById('<%= btnSaveMenu.ClientID %>').click();
+                var btn = document.getElementById('<%= btnSaveMenu.ClientID %>');
+                btn._allowSubmit = true;
+                btn.click();
             }, 600);
         }
 
@@ -2452,7 +2466,34 @@
                         }
                     });
                 }
+                // Intercept Enter inside the edit modal — route through validation instead of
+                // letting the browser fire the hidden ASP.NET submit button directly.
+                if (e.key === 'Enter') {
+                    var editModal = document.getElementById('editModal');
+                    if (editModal && editModal.style.display === 'flex') {
+                        var tag = e.target.tagName;
+                        // Allow Enter in textareas; block it elsewhere in the modal
+                        if (tag !== 'TEXTAREA') {
+                            e.preventDefault();
+                            saveEditChanges();
+                        }
+                    }
+                }
             });
+
+            // Also block the hidden btnSaveMenu from being triggered by any means other
+            // than the explicit .click() call inside saveEditChanges().
+            var hiddenSaveBtn = document.getElementById('<%= btnSaveMenu.ClientID %>');
+            if (hiddenSaveBtn) {
+                hiddenSaveBtn.addEventListener('click', function (e) {
+                    // Allow only if validation gate has already passed (flag set below)
+                    if (!hiddenSaveBtn._allowSubmit) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                    }
+                    hiddenSaveBtn._allowSubmit = false;
+                }, true);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {

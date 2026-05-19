@@ -2,7 +2,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <%-- Leaflet.js — free map (OpenStreetMap), no API key needed --%>
+    <%-- Leaflet.js — free map (OpenStreetMap tiles, no API key) --%>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -1611,6 +1611,118 @@
             transform: translate(-50%, -50%) !important;
             z-index: 99999 !important;
         }
+
+        /* ── Order Items List inside delivery card ───────────────────────── */
+        .order-items-section {
+            margin: 14px 0 4px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .order-items-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 14px;
+            background: var(--accent-pink);
+            cursor: pointer;
+            user-select: none;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-maroon);
+            border: none;
+            width: 100%;
+            text-align: left;
+            transition: background var(--transition-fast);
+        }
+
+        .order-items-toggle:hover { background: #f3dde1; }
+
+        .order-items-toggle i.toggle-arrow {
+            transition: transform var(--transition-fast);
+            font-size: 11px;
+        }
+
+        .order-items-toggle.open i.toggle-arrow {
+            transform: rotate(180deg);
+        }
+
+        .order-items-body {
+            display: none;
+            background: #fff;
+        }
+
+        .order-items-body.open { display: block; }
+
+        .order-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 9px 14px;
+            border-bottom: 1px dashed var(--border-light);
+            gap: 8px;
+        }
+
+        .order-item-row:last-child { border-bottom: none; }
+
+        .order-item-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .order-item-note {
+            font-size: 10px;
+            color: var(--muted-text);
+            font-style: italic;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .order-item-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .order-item-qty {
+            font-size: 11px;
+            color: var(--muted-text);
+            font-weight: 500;
+        }
+
+        .order-item-subtotal {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-maroon);
+            display: block;
+        }
+
+        /* Fix Pin button pulse when in drag mode */
+        #pinFixBanner { display: none; }
+        #pinFixBanner.active { display: flex !important; }
+
+        #fixPinBtn:hover { background: #d97706 !important; }
+
+        /* Make draggable cursor obvious when fixing pin */
+        .leaflet-marker-draggable { cursor: grab !important; }
+        .leaflet-marker-draggable:active { cursor: grabbing !important; }
+
+        /* Saved-pin indicator badge on the map modal title */
+        .pin-saved-badge {
+            display: inline-block;
+            background: #2d9d78;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 99px;
+            margin-left: 8px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
     </style>
 </asp:Content>
 
@@ -1646,6 +1758,26 @@
 
         <div id="mapFrame" style="width:100%;height:340px;background:var(--bg-lighter);"></div>
 
+        <%-- Pin correction banner (shown when in drag-to-fix mode) --%>
+        <div id="pinFixBanner" style="
+            display:none;
+            background:#fef3c7;border-top:1px solid #f59e0b;
+            padding:8px 14px;font-size:12px;color:#92400e;
+            display:none;align-items:center;gap:8px;flex-wrap:wrap;">
+            <i class="fas fa-hand-point-up"></i>
+            <span style="flex:1;">Drag the <strong style="color:#2d9d78;">green pin</strong> to the correct location, then tap <strong>Save Pin</strong>.</span>
+            <button type="button" id="savePinBtn" style="
+                background:#2d9d78;color:#fff;border:none;border-radius:6px;
+                padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;">
+                <i class="fas fa-check"></i> Save Pin
+            </button>
+            <button type="button" id="cancelFixBtn" style="
+                background:#e5e7eb;color:#374151;border:none;border-radius:6px;
+                padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;">
+                Cancel
+            </button>
+        </div>
+
         <div class="map-modal-footer">
             <button type="button" class="map-open-gmaps-btn" id="openGoogleMapsBtn">
                 <i class="fas fa-external-link-alt"></i>
@@ -1653,7 +1785,14 @@
             </button>
             <button type="button" class="map-track-btn" id="trackLocationBtn">
                 <i class="fas fa-crosshairs"></i>
-                Track My Location
+                Use My Location
+            </button>
+            <button type="button" id="fixPinBtn" style="
+                background:#f59e0b;color:#fff;border:none;border-radius:8px;
+                padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;
+                display:flex;align-items:center;gap:6px;">
+                <i class="fas fa-map-pin"></i>
+                Fix Pin
             </button>
             <button type="button" class="map-close-btn" id="mapModalCloseBtn">
                 Close
@@ -1822,32 +1961,8 @@
                     
                     <div class="delivery-details-section">
                         <div class="detail-row">
-                            <span class="detail-label">Distance</span>
-                            <span class="detail-value" style="display:flex;align-items:center;gap:6px;">
-                                <input type="number" id="distanceInput" min="0.1" step="0.1"
-                                       placeholder="0.0"
-                                       style="width:75px;padding:5px 8px;
-                                              border:1.5px solid var(--border-light);
-                                              border-radius:var(--radius-sm);
-                                              font-family:'Poppins',sans-serif;
-                                              font-size:14px;font-weight:600;
-                                              color:var(--text-dark);
-                                              background:#fff;
-                                              text-align:right;
-                                              outline:none;
-                                              box-sizing:border-box;" />
-                                <span style="font-size:13px;font-weight:600;color:var(--muted-text);">km</span>
-                            </span>
-                        </div>
-                        <div class="detail-row">
                             <span class="detail-label">Delivery Fee</span>
                             <span class="detail-value highlight" id="deliveryFee">—</span>
-                        </div>
-                        <div class="detail-row" style="border-bottom:none;padding-top:4px;">
-                            <span class="detail-label" style="font-size:11px;font-style:italic;">
-                                Base &#8369;<span id="feeBase">30</span> + &#8369;<span id="feePerKm">10</span>/km
-                            </span>
-                            <span id="feeBreakdown" style="font-size:11px;color:var(--muted-text);">—</span>
                         </div>
                     </div>
                 </div>
@@ -1861,7 +1976,25 @@
                         <div class="contact-number" id="customerContact">—</div>
                     </div>
                 </div>
-                
+
+                <%-- ── Order Items (populated by JS on Accept) ── --%>
+                <div class="order-items-section" id="activeOrderItemsSection" style="margin:14px 0 4px;">
+                    <button type="button" class="order-items-toggle" onclick="toggleOrderItems(this)">
+                        <span>
+                            <i class="fas fa-utensils" style="margin-right:6px;"></i>
+                            Order Items
+                            <span id="activeItemCount" style="
+                                background:var(--primary-maroon);color:#fff;
+                                border-radius:99px;font-size:10px;
+                                padding:1px 7px;margin-left:6px;font-weight:700;">0</span>
+                        </span>
+                        <i class="fas fa-chevron-down toggle-arrow"></i>
+                    </button>
+                    <div class="order-items-body open" id="activeOrderItemsBody">
+                        <%-- rows injected by acceptDelivery() --%>
+                    </div>
+                </div>
+
                 <div class="action-buttons">
                     <button type="button" class="action-btn btn-navigate" id="navigateBtn">
                         <i class="fas fa-directions"></i>
@@ -1872,8 +2005,8 @@
                         Mark as Delivered
                     </button>
                     <button type="button" class="action-btn btn-call" id="callCustomerBtn">
-                        <i class="fas fa-phone-alt"></i>
-                        Call Customer
+                        <i class="fas fa-address-book"></i>
+                        Contact Customer
                     </button>
                 </div>
             </div>
@@ -1893,7 +2026,7 @@
 
         <div class="deliveries-section" id="deliveriesSection" style="display: none;">
             <div class="section-title">
-                <span>Available Deliveries</span>
+                <span>My Assigned Deliveries</span>
                 <a href="#" class="view-all-link">
                     View All 
                     <i class="fas fa-arrow-right"></i>
@@ -1955,6 +2088,12 @@
                                         ₱<%# Eval("TotalAmount", "{0:N2}") %>
                                     </span>
                                 </div>
+                                <div class="info-row">
+                                    <span class="info-label">Delivery Fee:</span>
+                                    <span class="info-value highlight">
+                                        <%# (Eval("DeliveryFee") == DBNull.Value || Eval("DeliveryFee") == null) ? "—" : "₱" + Convert.ToDecimal(Eval("DeliveryFee")).ToString("N2") %>
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="delivery-actions">
@@ -1963,11 +2102,14 @@
                                         data-order='<%# Eval("OrderNumber") %>'
                                         data-address='<%# Eval("DeliveryAddress") %>'
                                         data-amount='<%# Eval("TotalAmount", "₱{0:N2}") %>'
+                                        data-deliveryfee='<%# (Eval("DeliveryFee") == DBNull.Value || Eval("DeliveryFee") == null) ? "—" : "₱" + Convert.ToDecimal(Eval("DeliveryFee")).ToString("N2") %>'
                                         data-status='<%# Eval("Status") %>'
                                         data-priority='<%# Eval("Priority") %>'
                                         data-created='<%# Eval("CreatedAt", "{0:MMM dd, yyyy hh:mm tt}") %>'
                                         data-customer='<%# Eval("CustomerUsername") ?? Eval("CreatedBy") %>'
-                                        data-phone='<%# string.IsNullOrEmpty(Eval("CustomerPhone")?.ToString()) ? "—" : Eval("CustomerPhone").ToString() %>'>
+                                        data-phone='<%# string.IsNullOrEmpty(Eval("CustomerPhone")?.ToString()) ? "—" : Eval("CustomerPhone").ToString() %>'
+                                        data-itemcount='<%# Eval("ItemCount") %>'
+                                        data-items='<%# Server.HtmlEncode(Eval("ItemsHtml").ToString()) %>'>
                                     <i class="fas fa-check"></i>
                                     Accept
                                 </button>
@@ -1987,7 +2129,7 @@
                                    Visible='<%# rptDeliveries.Items.Count == 0 %>'
                                    style="text-align:center;padding:40px;color:var(--muted-text);grid-column:1/-1;">
                             <i class="fas fa-inbox" style="font-size:48px;margin-bottom:12px;display:block;"></i>
-                            No delivery tickets available right now.
+                            No deliveries assigned to you right now.
                         </asp:Panel>
                     </FooterTemplate>
                 </asp:Repeater>
@@ -2038,11 +2180,14 @@
                     order: sessionStorage.getItem('rider_orderNumber') || '',
                     address: sessionStorage.getItem('rider_address') || '',
                     amount: sessionStorage.getItem('rider_amount') || '',
+                    deliveryFee: sessionStorage.getItem('rider_deliveryFee') || '—',
                     status: sessionStorage.getItem('rider_status') || '',
                     priority: sessionStorage.getItem('rider_priority') || '',
                     created: sessionStorage.getItem('rider_created') || '',
                     customer: sessionStorage.getItem('rider_customer') || '—',
-                    phone: sessionStorage.getItem('rider_phone') || '—'
+                    phone: sessionStorage.getItem('rider_phone') || '—',
+                    itemCount: sessionStorage.getItem('rider_itemCount') || '0',
+                    itemsHtml: sessionStorage.getItem('rider_itemsHtml') || ''
                 };
             }
             // ─────────────────────────────────────────────────────────────────────
@@ -2070,11 +2215,14 @@
                         order: acceptBtn.dataset.order,
                         address: acceptBtn.dataset.address,
                         amount: acceptBtn.dataset.amount,
+                        deliveryFee: acceptBtn.dataset.deliveryfee || '—',
                         status: acceptBtn.dataset.status,
                         priority: acceptBtn.dataset.priority,
                         created: acceptBtn.dataset.created,
                         customer: acceptBtn.dataset.customer || '—',
-                        phone: acceptBtn.dataset.phone || '—'
+                        phone: acceptBtn.dataset.phone || '—',
+                        itemCount: acceptBtn.dataset.itemcount || '0',
+                        itemsHtml: acceptBtn.dataset.items || ''
                     };
 
                     acceptDelivery(deliveryData, deliveryCard);
@@ -2088,24 +2236,63 @@
                 }
             });
 
-            // ── Map Modal (Leaflet + OpenStreetMap + OSRM — 100% free, no API key) ──
-            var STORE_ADDRESS = 'Blk 84, Lot 10 Bautista St, Zone 9, Dasmariñas, 4114 Cavite, Philippines';
-            // Fixed store coordinates (pre-geocoded so no API call needed for origin)
-            var STORE_LAT = 14.3265574, STORE_LNG = 120.9373766;
+            // ── Map Modal — Leaflet + OpenStreetMap (100% free, no API key) ───
+            var STORE_LAT = 14.3298;
+            var STORE_LNG = 120.9407;
+            var STORE_ADDRESS = 'Zone 9, Blk 84, Lot 10 Bautista St, Zone 9, Dasmariñas, 4114 Cavite, Philippines';
+            var BIAS_LAT = 14.3298;   // location bias center for Photon
+            var BIAS_LNG = 120.9407;
 
+            // ── DOM refs ──────────────────────────────────────────────────────
             var mapModal = document.getElementById('mapModal');
             var mapModalOverlay = document.getElementById('mapModalOverlay');
             var mapDistanceVal = document.getElementById('mapDistanceValue');
             var mapDurationVal = document.getElementById('mapDurationValue');
             var openGoogleMapsBtn = document.getElementById('openGoogleMapsBtn');
+            var trackLocationBtn = document.getElementById('trackLocationBtn');
+            var fixPinBtn = document.getElementById('fixPinBtn');
+            var savePinBtn = document.getElementById('savePinBtn');
+            var cancelFixBtn = document.getElementById('cancelFixBtn');
+            var pinFixBanner = document.getElementById('pinFixBanner');
 
+            // ── State ─────────────────────────────────────────────────────────
             var leafletMap = null;
             var routeLayer = null;
             var markersLayer = null;
+            var storeMarker = null;
+            var customerMarker = null;   // ← kept so Fix Pin can drag it
+            var riderMarker = null;
+            var riderCircle = null;
+            var _watchId = null;
+            var _isTracking = false;
+            var _riderLat = null;
+            var _riderLng = null;
+            var _destLat = null;
+            var _destLng = null;
+            var _currentAddr = '';
+            var _fixPinMode = false;
+            var _geocodeCache = {};
+            var PIN_KEY = 'tastenet_pins_v1';
 
+            // ── localStorage pin store ────────────────────────────────────────
+            function getSavedPin(addr) {
+                try { return (JSON.parse(localStorage.getItem(PIN_KEY) || '{}')[addr]) || null; }
+                catch (e) { return null; }
+            }
+            function savePin(addr, lat, lng) {
+                try {
+                    var s = JSON.parse(localStorage.getItem(PIN_KEY) || '{}');
+                    s[addr] = { lat: lat, lng: lng };
+                    localStorage.setItem(PIN_KEY, JSON.stringify(s));
+                    _geocodeCache[addr] = { lat: lat, lng: lng, source: 'saved' };
+                } catch (e) { }
+            }
+
+            // ── Leaflet init (once) ───────────────────────────────────────────
             function initLeafletMap() {
-                if (leafletMap) return; // already initialised
-                leafletMap = L.map('mapFrame').setView([STORE_LAT, STORE_LNG], 13);
+                if (leafletMap) return;
+                leafletMap = L.map('mapFrame', { scrollWheelZoom: false })
+                    .setView([STORE_LAT, STORE_LNG], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                     maxZoom: 19
@@ -2113,95 +2300,160 @@
                 markersLayer = L.layerGroup().addTo(leafletMap);
             }
 
-            // Geocode using Nominatim with progressive address simplification.
-            // Philippine subdivision addresses (e.g. "Blk 11 Lot 10, Isaiah St, Dexterville Classic, Sabang, Dasmariñas")
-            // are too granular for Nominatim — we strip from the front until we get a hit.
-            function geocodeAddress(address) {
-
-                // Split by comma into parts, e.g.:
-                // ["Blk 11 lot 10", "Isaiah st dexterville classic", "Sabang", "Dasmariñas"]
-                var parts = address.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
-
-                // Build candidate list from most-specific to least-specific:
-                // Each candidate drops one leading part and appends ", Philippines"
-                // e.g.:
-                //   "Blk 11 lot 10, Isaiah st dexterville classic, Sabang, Dasmariñas, Philippines"
-                //   "Isaiah st dexterville classic, Sabang, Dasmariñas, Philippines"
-                //   "Sabang, Dasmariñas, Philippines"
-                //   "Dasmariñas, Philippines"
-                //   "Dasmariñas, Cavite, Philippines"
-                var candidates = [];
-                for (var i = 0; i < parts.length; i++) {
-                    var slice = parts.slice(i).join(', ');
-                    var lc = slice.toLowerCase();
-                    if (lc.indexOf('philippines') === -1) slice += ', Philippines';
-                    candidates.push(slice);
-                }
-                // Final safety fallback: just the last part + Cavite
-                var lastPart = parts[parts.length - 1];
-                if (lastPart.toLowerCase().indexOf('cavite') === -1) {
-                    candidates.push(lastPart + ', Cavite, Philippines');
-                }
-
-                function tryNext(index) {
-                    if (index >= candidates.length) {
-                        throw new Error('Address not found after all attempts');
-                    }
-                    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1'
-                        + '&countrycodes=ph'
-                        + '&q=' + encodeURIComponent(candidates[index]);
-                    return fetch(url, { headers: { 'Accept-Language': 'en' } })
-                        .then(function (r) { return r.json(); })
-                        .then(function (data) {
-                            if (data && data.length > 0) {
-                                return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-                            }
-                            return tryNext(index + 1);
-                        });
-                }
-
-                return tryNext(0);
+            // ── Custom circle-with-icon marker ────────────────────────────────
+            function makeIcon(bg, glyph, size) {
+                size = size || 34;
+                return L.divIcon({
+                    className: '',
+                    html: '<div style="background:' + bg + ';width:' + size + 'px;height:' + size + 'px;'
+                        + 'border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);'
+                        + 'display:flex;align-items:center;justify-content:center;'
+                        + 'color:#fff;font-size:' + Math.round(size * 0.42) + 'px;">'
+                        + glyph + '</div>',
+                    iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -(size / 2)]
+                });
             }
 
-            // Draw route using OSRM (free routing engine) and return distance + duration
-            function drawRoute(destLat, destLng) {
-                var url = 'https://router.project-osrm.org/route/v1/driving/'
-                    + STORE_LNG + ',' + STORE_LAT + ';'
-                    + destLng + ',' + destLat
-                    + '?overview=full&geometries=geojson';
+            // ── Geocoder: Photon (location-biased) → Nominatim fallback ──────
+            function geocodeAddress(addr) {
+                if (_geocodeCache[addr]) return Promise.resolve(_geocodeCache[addr]);
 
-                return fetch(url)
+                var parts = addr.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
+                var addrPH = (addr.toLowerCase().indexOf('philippines') === -1)
+                    ? addr + ', Philippines' : addr;
+
+                // Pass 1: Photon with Dasmariñas bias
+                function tryPhoton() {
+                    return fetch('https://photon.komoot.io/api/?q=' + encodeURIComponent(addrPH)
+                        + '&limit=1&lat=' + BIAS_LAT + '&lon=' + BIAS_LNG + '&lang=en')
+                        .then(function (r) { return r.json(); })
+                        .then(function (d) {
+                            if (d.features && d.features.length) {
+                                var c = d.features[0].geometry.coordinates;
+                                return { lat: c[1], lng: c[0], source: 'photon' };
+                            }
+                            return tryNominatimStructured(0);
+                        })
+                        .catch(function () { return tryNominatimStructured(0); });
+                }
+
+                // Pass 2: Nominatim structured (city + country separately)
+                var structCandidates = [];
+                for (var i = Math.max(0, parts.length - 3); i < parts.length - 1; i++) {
+                    structCandidates.push({ street: parts.slice(0, i + 1).join(', '), city: parts[i + 1] });
+                }
+                structCandidates.push({ city: parts[parts.length - 1] });
+
+                function tryNominatimStructured(idx) {
+                    if (idx >= structCandidates.length) return tryNominatimFree(0);
+                    var c = structCandidates[idx];
+                    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ph'
+                        + (c.street ? '&street=' + encodeURIComponent(c.street) : '')
+                        + '&city=' + encodeURIComponent(c.city) + '&country=Philippines';
+                    return fetch(url, { headers: { 'Accept-Language': 'en' } })
+                        .then(function (r) { return r.json(); })
+                        .then(function (d) {
+                            if (d && d.length) return { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon), source: 'nominatim-structured' };
+                            return tryNominatimStructured(idx + 1);
+                        })
+                        .catch(function () { return tryNominatimStructured(idx + 1); });
+                }
+
+                // Pass 3: Nominatim free-text progressive
+                var freeCandidates = [];
+                for (var j = 0; j < parts.length; j++) {
+                    var sl = parts.slice(j).join(', ');
+                    if (sl.toLowerCase().indexOf('philippines') === -1) sl += ', Philippines';
+                    freeCandidates.push(sl);
+                }
+                if (parts[parts.length - 1].toLowerCase().indexOf('cavite') === -1)
+                    freeCandidates.push(parts[parts.length - 1] + ', Cavite, Philippines');
+
+                function tryNominatimFree(idx) {
+                    if (idx >= freeCandidates.length)
+                        return Promise.reject(new Error('Address not found'));
+                    var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ph'
+                        + '&q=' + encodeURIComponent(freeCandidates[idx]);
+                    return fetch(url, { headers: { 'Accept-Language': 'en' } })
+                        .then(function (r) { return r.json(); })
+                        .then(function (d) {
+                            if (d && d.length) return { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon), source: 'nominatim-free' };
+                            return tryNominatimFree(idx + 1);
+                        })
+                        .catch(function () { return tryNominatimFree(idx + 1); });
+                }
+
+                return tryPhoton().then(function (r) { _geocodeCache[addr] = r; return r; });
+            }
+
+            // ── OSRM route ────────────────────────────────────────────────────
+            function drawRoute(fLat, fLng, tLat, tLng) {
+                return fetch('https://router.project-osrm.org/route/v1/driving/'
+                    + fLng + ',' + fLat + ';' + tLng + ',' + tLat
+                    + '?overview=full&geometries=geojson')
                     .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (!data.routes || data.routes.length === 0) throw new Error('No route');
-
-                        var route = data.routes[0];
+                    .then(function (d) {
+                        if (!d.routes || !d.routes.length) throw new Error('No route');
+                        var route = d.routes[0];
                         var distKm = (route.distance / 1000).toFixed(1);
                         var durMins = Math.round(route.duration / 60);
                         var durText = durMins >= 60
                             ? Math.floor(durMins / 60) + ' hr ' + (durMins % 60) + ' min'
                             : durMins + ' min';
-
-                        // Draw the route polyline
                         if (routeLayer) leafletMap.removeLayer(routeLayer);
                         routeLayer = L.geoJSON(route.geometry, {
                             style: { color: '#6b0d1e', weight: 5, opacity: 0.85 }
                         }).addTo(leafletMap);
-
-                        // Fit map to the route bounds
-                        leafletMap.fitBounds(routeLayer.getBounds(), { padding: [30, 30] });
-
+                        leafletMap.fitBounds(routeLayer.getBounds(), { padding: [40, 40] });
                         return { distKm: distKm, durText: durText };
                     });
             }
 
+            // ── Update Google Maps button ─────────────────────────────────────
+            function wireGoogleMapsBtn(destLat, destLng, rawAddress) {
+                openGoogleMapsBtn.onclick = function () {
+                    var origin = (_riderLat !== null)
+                        ? (_riderLat + ',' + _riderLng)
+                        : (STORE_LAT + ',' + STORE_LNG);
+                    // If we have a saved/corrected pin use coords; otherwise raw address
+                    var dest = (destLat !== null)
+                        ? (destLat + ',' + destLng)
+                        : rawAddress;
+                    window.open('https://www.google.com/maps/dir/?api=1'
+                        + '&origin=' + encodeURIComponent(origin)
+                        + '&destination=' + encodeURIComponent(dest)
+                        + '&travelmode=driving', '_blank');
+                };
+            }
+
+            // ── Open modal ────────────────────────────────────────────────────
             function openMapModal(destinationAddress) {
                 if (!destinationAddress || destinationAddress === '—') {
                     showNotification('No delivery address found.', 'warning');
                     return;
                 }
+                _currentAddr = destinationAddress;
+                _destLat = null; _destLng = null;
+                customerMarker = null;
+                exitFixPinMode(false);
 
-                // Show modal with loading state
+                // Show/hide "Saved Pin" badge
+                var titleEl = document.querySelector('.map-modal-title');
+                var oldBadge = titleEl ? titleEl.querySelector('.pin-saved-badge') : null;
+                if (oldBadge) oldBadge.remove();
+
+                var saved = getSavedPin(destinationAddress);
+                if (saved) {
+                    _geocodeCache[destinationAddress] = { lat: saved.lat, lng: saved.lng, source: 'saved' };
+                    if (titleEl) {
+                        var badge = document.createElement('span');
+                        badge.className = 'pin-saved-badge';
+                        badge.textContent = '📍 Saved';
+                        titleEl.appendChild(badge);
+                    }
+                }
+
+                // Reset stats bar
                 mapDistanceVal.textContent = 'Calculating...';
                 mapDistanceVal.className = 'map-distance-value loading';
                 mapDurationVal.textContent = 'Calculating...';
@@ -2211,58 +2463,48 @@
                 mapModal.classList.add('active');
                 mapModalOverlay.classList.add('active');
 
-                // Init map after modal is visible (Leaflet needs visible container)
                 setTimeout(function () {
                     initLeafletMap();
-                    leafletMap.invalidateSize(); // recalculate map size for current container
+                    leafletMap.invalidateSize();
 
-                    // Clear old markers
+                    // Clear previous markers & route
                     markersLayer.clearLayers();
+                    customerMarker = null;
+                    if (routeLayer) { leafletMap.removeLayer(routeLayer); routeLayer = null; }
 
-                    // Add store marker
-                    var storeIcon = L.divIcon({
-                        className: '',
-                        html: '<div style="background:#6b0d1e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">&#x2302;</div>',
-                        iconSize: [32, 32], iconAnchor: [16, 16]
-                    });
-                    L.marker([STORE_LAT, STORE_LNG], { icon: storeIcon })
-                        .bindPopup('<strong>TasteNet Store</strong><br>' + STORE_ADDRESS)
+                    // Store origin marker
+                    storeMarker = L.marker([STORE_LAT, STORE_LNG], {
+                        icon: makeIcon('#6b0d1e', '&#x2302;')
+                    }).bindPopup('<strong>TasteNet Store</strong><br>' + STORE_ADDRESS)
                         .addTo(markersLayer);
 
-                    // Geocode customer address then draw route
+                    // Default Google Maps button to raw address (works even if geocode fails)
+                    wireGoogleMapsBtn(null, null, destinationAddress);
+
+                    // Geocode → place customer pin → draw route
                     geocodeAddress(destinationAddress)
                         .then(function (dest) {
-                            var custIcon = L.divIcon({
-                                className: '',
-                                html: '<div style="background:#2d9d78;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">&#x25CF;</div>',
-                                iconSize: [32, 32], iconAnchor: [16, 16]
-                            });
-                            L.marker([dest.lat, dest.lng], { icon: custIcon })
-                                .bindPopup('<strong>Customer</strong><br>' + destinationAddress)
+                            _destLat = dest.lat;
+                            _destLng = dest.lng;
+
+                            // Place draggable customer marker (dragging off by default)
+                            customerMarker = L.marker([dest.lat, dest.lng], {
+                                icon: makeIcon('#2d9d78', '&#x25CF;'),
+                                draggable: false,
+                                autoPan: true
+                            })
+                                .bindPopup('<strong>Customer</strong><br>'
+                                    + destinationAddress
+                                    + (dest.source === 'saved' ? '<br><em style="color:#2d9d78;">📍 Saved pin</em>' : ''))
+                                .openPopup()
                                 .addTo(markersLayer);
 
-                            // Set up "Open in Google Maps" — always reads live state at click time
-                            openGoogleMapsBtn.onclick = function () {
-                                var originParam;
-                                if (isTracking && riderMarker) {
-                                    var ll = riderMarker.getLatLng();
-                                    originParam = ll.lat + ',' + ll.lng;
-                                } else {
-                                    originParam = '14.3265574,120.9373766';
-                                }
-                                // Use the original address string as destination so Google Maps
-                                // resolves it with its own geocoder — not the simplified coords
-                                // from Nominatim which may have snapped to barangay/city level.
-                                window.open(
-                                    'https://www.google.com/maps/dir/?api=1'
-                                    + '&origin=' + encodeURIComponent(originParam)
-                                    + '&destination=' + encodeURIComponent(destinationAddress)
-                                    + '&travelmode=driving',
-                                    '_blank'
-                                );
-                            };
+                            // Update Google Maps btn with geocoded coords
+                            wireGoogleMapsBtn(dest.lat, dest.lng, destinationAddress);
 
-                            return drawRoute(dest.lat, dest.lng);
+                            var fromLat = _riderLat !== null ? _riderLat : STORE_LAT;
+                            var fromLng = _riderLng !== null ? _riderLng : STORE_LNG;
+                            return drawRoute(fromLat, fromLng, dest.lat, dest.lng);
                         })
                         .then(function (info) {
                             mapDistanceVal.textContent = info.distKm + ' km';
@@ -2271,19 +2513,22 @@
                             mapDurationVal.className = 'map-distance-value';
                         })
                         .catch(function () {
-                            mapDistanceVal.textContent = '—';
+                            mapDistanceVal.textContent = 'Unavailable';
                             mapDistanceVal.className = 'map-distance-value';
-                            mapDurationVal.textContent = '—';
+                            mapDurationVal.textContent = 'Unavailable';
                             mapDurationVal.className = 'map-distance-value';
-                            showNotification('Could not find the delivery address on the map.', 'warning');
+                            showNotification('Could not locate address. Try Fix Pin.', 'warning');
                         });
-                }, 100);
+                }, 120);
             }
 
+            // ── Close modal ───────────────────────────────────────────────────
             function closeMapModal() {
-                document.body.style.overflow = '';
+                exitFixPinMode(false);
+                if (_isTracking) stopTracking();
                 mapModal.classList.remove('active');
                 mapModalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
             }
 
             document.getElementById('mapModalCloseX').addEventListener('click', closeMapModal);
@@ -2292,76 +2537,89 @@
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && mapModal.classList.contains('active')) closeMapModal();
             });
-
-            // Re-render map on orientation change / window resize
             window.addEventListener('resize', function () {
-                if (leafletMap && mapModal.classList.contains('active')) {
+                if (leafletMap && mapModal.classList.contains('active'))
                     setTimeout(function () { leafletMap.invalidateSize(); }, 200);
-                }
             });
 
-            // ── Live Rider Location Tracking ──────────────────────────────────
-            var trackLocationBtn = document.getElementById('trackLocationBtn');
-            var riderMarker = null;
-            var riderAccuracyCircle = null;
-            var watchId = null;
-            var isTracking = false;
-            var currentDestLat = null, currentDestLng = null;
+            // ── Fix Pin (drag to correct) ─────────────────────────────────────
+            function enterFixPinMode() {
+                if (!customerMarker) {
+                    showNotification('Wait for the pin to load first.', 'warning');
+                    return;
+                }
+                _fixPinMode = true;
+                customerMarker.dragging.enable();
+                customerMarker.setOpacity(0.8);
+                pinFixBanner.style.display = 'flex';
+                fixPinBtn.style.display = 'none';
+                leafletMap.scrollWheelZoom.enable();
+                showNotification('Drag the green pin to the correct spot, then tap Save Pin.', 'info');
+            }
 
-            function updateRiderMarker(lat, lng, accuracy) {
-                var riderIcon = L.divIcon({
-                    className: '',
-                    html: '<div style="background:#3b82f6;color:white;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 8px rgba(59,130,246,0.5);border:3px solid white;"><i class=\"fas fa-motorcycle\"></i></div>',
-                    iconSize: [34, 34], iconAnchor: [17, 17]
-                });
+            function exitFixPinMode(doSave) {
+                if (!_fixPinMode) return;
+                _fixPinMode = false;
+                pinFixBanner.style.display = 'none';
+                fixPinBtn.style.display = '';
+
+                if (!customerMarker) return;
+                customerMarker.dragging.disable();
+                customerMarker.setOpacity(1);
+                leafletMap.scrollWheelZoom.disable();
+
+                if (doSave) {
+                    var ll = customerMarker.getLatLng();
+                    _destLat = ll.lat;
+                    _destLng = ll.lng;
+                    savePin(_currentAddr, ll.lat, ll.lng);
+                    wireGoogleMapsBtn(ll.lat, ll.lng, _currentAddr);
+                    showNotification('Pin saved! Will use this location next time.', 'success');
+
+                    // Redraw route from corrected pin
+                    var fromLat = _riderLat !== null ? _riderLat : STORE_LAT;
+                    var fromLng = _riderLng !== null ? _riderLng : STORE_LNG;
+                    mapDistanceVal.textContent = 'Calculating...';
+                    mapDurationVal.textContent = 'Calculating...';
+                    drawRoute(fromLat, fromLng, ll.lat, ll.lng)
+                        .then(function (info) {
+                            mapDistanceVal.textContent = info.distKm + ' km';
+                            mapDurationVal.textContent = info.durText;
+                        }).catch(function () { });
+                } else {
+                    // Revert to last good position
+                    if (_destLat !== null) customerMarker.setLatLng([_destLat, _destLng]);
+                }
+            }
+
+            fixPinBtn.addEventListener('click', function () { enterFixPinMode(); });
+            savePinBtn.addEventListener('click', function () { exitFixPinMode(true); });
+            cancelFixBtn.addEventListener('click', function () { exitFixPinMode(false); });
+
+            // ── Live Rider Tracking ───────────────────────────────────────────
+            function updateRiderOnMap(lat, lng, accuracy) {
+                _riderLat = lat; _riderLng = lng;
 
                 if (riderMarker) {
                     riderMarker.setLatLng([lat, lng]);
+                    if (riderCircle) riderCircle.setLatLng([lat, lng]).setRadius(accuracy);
                 } else {
-                    riderMarker = L.marker([lat, lng], { icon: riderIcon, zIndexOffset: 1000 })
-                        .bindPopup('<strong>📍 You (Rider)</strong><br>Live location')
-                        .addTo(markersLayer);
-                }
-
-                if (riderAccuracyCircle) {
-                    riderAccuracyCircle.setLatLng([lat, lng]).setRadius(accuracy);
-                } else {
-                    riderAccuracyCircle = L.circle([lat, lng], {
-                        radius: accuracy,
-                        color: '#3b82f6',
-                        fillColor: '#3b82f6',
-                        fillOpacity: 0.1,
-                        weight: 1
+                    riderMarker = L.marker([lat, lng], {
+                        icon: makeIcon('#3b82f6', '<i class="fas fa-motorcycle" style="font-size:13px;"></i>', 36),
+                        zIndexOffset: 1000
+                    }).bindPopup('<strong>You (Rider)</strong><br>Live location').addTo(markersLayer);
+                    riderCircle = L.circle([lat, lng], {
+                        radius: accuracy, color: '#3b82f6',
+                        fillColor: '#3b82f6', fillOpacity: 0.1, weight: 1
                     }).addTo(markersLayer);
                 }
 
-                // If a destination is set, re-draw route from rider's position
-                if (currentDestLat !== null) {
-                    var url = 'https://router.project-osrm.org/route/v1/driving/'
-                        + lng + ',' + lat + ';'
-                        + currentDestLng + ',' + currentDestLat
-                        + '?overview=full&geometries=geojson';
-
-                    fetch(url)
-                        .then(function (r) { return r.json(); })
-                        .then(function (data) {
-                            if (!data.routes || data.routes.length === 0) return;
-                            var route = data.routes[0];
-                            var distKm = (route.distance / 1000).toFixed(1);
-                            var durMins = Math.round(route.duration / 60);
-                            var durText = durMins >= 60
-                                ? Math.floor(durMins / 60) + ' hr ' + (durMins % 60) + ' min'
-                                : durMins + ' min';
-
-                            if (routeLayer) leafletMap.removeLayer(routeLayer);
-                            routeLayer = L.geoJSON(route.geometry, {
-                                style: { color: '#3b82f6', weight: 5, opacity: 0.85 }
-                            }).addTo(leafletMap);
-
-                            mapDistanceVal.textContent = distKm + ' km (from you)';
-                            mapDurationVal.textContent = durText;
-                        })
-                        .catch(function () { /* silent fail — keep old route */ });
+                if (_destLat !== null) {
+                    drawRoute(lat, lng, _destLat, _destLng)
+                        .then(function (info) {
+                            mapDistanceVal.textContent = info.distKm + ' km (from you)';
+                            mapDurationVal.textContent = info.durText;
+                        }).catch(function () { });
                 } else {
                     leafletMap.setView([lat, lng], 15);
                 }
@@ -2369,73 +2627,34 @@
 
             function startTracking() {
                 if (!navigator.geolocation) {
-                    showNotification('Geolocation is not supported by your browser.', 'warning');
+                    showNotification('Geolocation not supported.', 'warning');
                     return;
                 }
-                isTracking = true;
+                _isTracking = true;
                 trackLocationBtn.classList.add('tracking');
                 trackLocationBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Tracking...';
-                showNotification('Live location tracking started!', 'success');
-
-                watchId = navigator.geolocation.watchPosition(
-                    function (pos) {
-                        updateRiderMarker(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy);
-                    },
-                    function (err) {
-                        showNotification('Location error: ' + err.message, 'warning');
-                        stopTracking();
-                    },
+                showNotification('Live tracking started!', 'success');
+                _watchId = navigator.geolocation.watchPosition(
+                    function (pos) { updateRiderOnMap(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy); },
+                    function (err) { showNotification('GPS error: ' + err.message, 'warning'); stopTracking(); },
                     { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
                 );
             }
 
             function stopTracking() {
-                if (watchId !== null) {
-                    navigator.geolocation.clearWatch(watchId);
-                    watchId = null;
-                }
-                isTracking = false;
+                if (_watchId !== null) { navigator.geolocation.clearWatch(_watchId); _watchId = null; }
+                _isTracking = false;
+                _riderLat = null; _riderLng = null;
                 trackLocationBtn.classList.remove('tracking');
-                trackLocationBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Track My Location';
+                trackLocationBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Use My Location';
                 if (riderMarker) { markersLayer.removeLayer(riderMarker); riderMarker = null; }
-                if (riderAccuracyCircle) { markersLayer.removeLayer(riderAccuracyCircle); riderAccuracyCircle = null; }
-                showNotification('Location tracking stopped.', 'info');
+                if (riderCircle) { markersLayer.removeLayer(riderCircle); riderCircle = null; }
+                showNotification('Tracking stopped.', 'info');
             }
 
             trackLocationBtn.addEventListener('click', function () {
-                if (isTracking) {
-                    stopTracking();
-                } else {
-                    startTracking();
-                }
+                if (_isTracking) stopTracking(); else startTracking();
             });
-
-            // Stop tracking when modal is closed
-            var _origClose = closeMapModal;
-            closeMapModal = function () {
-                if (isTracking) stopTracking();
-                currentDestLat = null;
-                currentDestLng = null;
-                _origClose();
-            };
-
-            // Capture destination coords after geocoding so tracker can use them
-            var _origOpenMap = openMapModal;
-            openMapModal = function (destinationAddress) {
-                currentDestLat = null;
-                currentDestLng = null;
-                _origOpenMap(destinationAddress);
-            };
-
-            // Hook into geocodeAddress result to capture dest coords for live routing
-            var _origGeocode = geocodeAddress;
-            geocodeAddress = function (address) {
-                return _origGeocode(address).then(function (dest) {
-                    currentDestLat = dest.lat;
-                    currentDestLng = dest.lng;
-                    return dest;
-                });
-            };
             // ─────────────────────────────────────────────────────────────────
 
             navigateBtn.addEventListener('click', function () {
@@ -2443,38 +2662,16 @@
                     showNotification('No delivery address found.', 'warning');
                     return;
                 }
-                openMapModal(activeDelivery.address);
+                var dest = activeDelivery.address;
+                if (dest.toLowerCase().indexOf('philippines') === -1) dest += ', Philippines';
+                var origin = encodeURIComponent(STORE_ADDRESS);
+                window.open('https://www.google.com/maps/dir/?api=1'
+                    + '&origin=' + origin
+                    + '&destination=' + encodeURIComponent(dest)
+                    + '&travelmode=driving', '_blank');
             });
             // ─────────────────────────────────────────────────────────────────────
 
-            // ── Delivery Fee Calculation ─────────────────────────────────────────────
-            // Adjust these two constants to match your pricing structure
-            var FEE_BASE = 30;   // flat base fee in ₱
-            var FEE_PER_KM = 5;    // additional ₱ per km
-
-            // Keep the labels in the UI in sync with the constants
-            document.getElementById('feeBase').textContent = FEE_BASE;
-            document.getElementById('feePerKm').textContent = FEE_PER_KM;
-
-            var distanceInput = document.getElementById('distanceInput');
-            var feeBreakdown = document.getElementById('feeBreakdown');
-
-            function calculateDeliveryFee(km) {
-                if (!km || isNaN(km) || km <= 0) {
-                    deliveryFee.textContent = '—';
-                    feeBreakdown.textContent = '—';
-                    return;
-                }
-                var fee = FEE_BASE + (km * FEE_PER_KM);
-                deliveryFee.textContent = '₱' + fee.toFixed(2);
-                feeBreakdown.textContent = '₱' + FEE_BASE + ' + ₱' + (km * FEE_PER_KM).toFixed(2);
-                sessionStorage.setItem('rider_distance_km', km);
-                sessionStorage.setItem('rider_fee', deliveryFee.textContent);
-            }
-
-            distanceInput.addEventListener('input', function () {
-                calculateDeliveryFee(parseFloat(this.value));
-            });
             // ─────────────────────────────────────────────────────────────────────
 
             markDeliveredBtn.addEventListener('click', function () {
@@ -2482,10 +2679,37 @@
             });
 
             callCustomerBtn.addEventListener('click', function () {
-                if (activeDelivery) {
-                    showNotification(`Calling ${activeDelivery.contact}...`, 'info');
+                if (!activeDelivery) return;
+                var phone = activeDelivery.phone || '';
+                if (!phone || phone === '—') {
+                    showNotification('No contact number available.', 'warning');
+                    return;
+                }
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(phone).then(function () {
+                        showNotification('Contact number copied: ' + phone, 'success');
+                    }).catch(function () {
+                        fallbackCopy(phone);
+                    });
+                } else {
+                    fallbackCopy(phone);
                 }
             });
+
+            function fallbackCopy(text) {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification('Contact number copied: ' + text, 'success');
+                } catch (e) {
+                    showNotification('Could not copy. Number: ' + text, 'warning');
+                }
+                document.body.removeChild(ta);
+            }
 
             // ── Proof of Delivery setup ─────────────────────────────
             const proofUploadArea = document.getElementById('proofUploadArea');
@@ -2583,54 +2807,42 @@
                 sessionStorage.setItem('rider_orderNumber', deliveryData.order);
                 sessionStorage.setItem('rider_address', deliveryData.address);
                 sessionStorage.setItem('rider_amount', deliveryData.amount);
+                sessionStorage.setItem('rider_deliveryFee', deliveryData.deliveryFee || '—');
                 sessionStorage.setItem('rider_status', deliveryData.status);
                 sessionStorage.setItem('rider_priority', deliveryData.priority);
                 sessionStorage.setItem('rider_created', deliveryData.created);
                 sessionStorage.setItem('rider_customer', deliveryData.customer || '—');
                 sessionStorage.setItem('rider_phone', deliveryData.phone || '—');
+                sessionStorage.setItem('rider_itemCount', deliveryData.itemCount || '0');
+                sessionStorage.setItem('rider_itemsHtml', deliveryData.itemsHtml || '');
                 sessionStorage.setItem('rider_isOnline', 'true');
 
                 // Populate the active delivery panel with real DB data
                 activeDeliveryId.textContent = '#' + deliveryData.id;
                 pickupLocation.textContent = 'Order #' + deliveryData.order;
                 dropoffLocation.textContent = deliveryData.address;
-                deliveryFee.textContent = deliveryData.amount;
+                deliveryFee.textContent = deliveryData.deliveryFee || '—';
                 customerContact.innerHTML =
                     '<strong>' + (deliveryData.customer || '—') + '</strong>' +
                     '<span style="display:block;font-size:12px;color:var(--muted-text);margin-top:2px;">' +
                     '<i class="fas fa-phone" style="margin-right:4px;font-size:10px;"></i>' +
                     (deliveryData.phone || '—') + '</span>';
 
+                // ── Inject order items into the active delivery panel ──────────
+                var activeItemCount = document.getElementById('activeItemCount');
+                var activeItemsBody = document.getElementById('activeOrderItemsBody');
+                if (activeItemCount) activeItemCount.textContent = deliveryData.itemCount || '0';
+                if (activeItemsBody) {
+                    // itemsHtml was HTML-encoded by Server.HtmlEncode on the data-* attr — decode it
+                    var decoded = document.createElement('textarea');
+                    decoded.innerHTML = deliveryData.itemsHtml || '';
+                    activeItemsBody.innerHTML = decoded.value ||
+                        '<div class="order-item-row"><span class="order-item-name" style="color:var(--muted-text);font-style:italic;">No items found.</span></div>';
+                }
+                // ─────────────────────────────────────────────────────────────
+
                 activeDeliverySection.classList.add('active');
                 deliveriesSection.style.display = 'none';
-
-                // Auto-calculate distance from store to delivery address
-                distanceInput.value = '';
-                deliveryFee.textContent = '⏳ Calculating...';
-                feeBreakdown.textContent = '—';
-                sessionStorage.removeItem('rider_distance_km');
-                sessionStorage.removeItem('rider_fee');
-
-                geocodeAddress(deliveryData.address)
-                    .then(function (dest) {
-                        var routeUrl = 'https://router.project-osrm.org/route/v1/driving/'
-                            + STORE_LNG + ',' + STORE_LAT + ';'
-                            + dest.lng + ',' + dest.lat
-                            + '?overview=false';
-                        return fetch(routeUrl)
-                            .then(function (r) { return r.json(); })
-                            .then(function (data) {
-                                if (!data.routes || data.routes.length === 0) throw new Error('No route');
-                                var km = parseFloat((data.routes[0].distance / 1000).toFixed(1));
-                                distanceInput.value = km;
-                                calculateDeliveryFee(km);
-                            });
-                    })
-                    .catch(function () {
-                        deliveryFee.textContent = '—';
-                        feeBreakdown.textContent = '—';
-                        showNotification('Could not auto-calculate distance. Please enter it manually.', 'warning');
-                    });
 
                 // Animate card out
                 deliveryCard.style.opacity = '0.5';
@@ -2685,14 +2897,26 @@
                     return;
                 }
 
-                // ── GET request with querystring — most reliable, no ViewState needed ──
+                // ── POST with FormData — sends ticket number + proof photo ──────
                 const completeUrl = window.location.pathname + '?completeTicket=' + encodeURIComponent(ticketNumber);
 
+                const formData = new FormData();
+                // Attach the proof photo selected in the modal (field name must match
+                // Request.Files["proofPhoto"] in the code-behind)
+                const proofInput = document.getElementById('proofPhotoInput');
+                if (proofInput && proofInput.files && proofInput.files[0]) {
+                    formData.append('proofPhoto', proofInput.files[0]);
+                }
+
                 fetch(completeUrl, {
-                    method: 'GET',
-                    credentials: 'same-origin'
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: formData   // browser sets multipart/form-data + boundary automatically
                 })
-                    .then(r => r.text())
+                    .then(r => {
+                        if (r.status === 403) throw new Error('FORBIDDEN');
+                        return r.text();
+                    })
                     .then(response => {
                         if (response.trim() !== 'OK') {
                             showNotification('Could not update ticket. Please try again.', 'warning');
@@ -2704,22 +2928,31 @@
                         sessionStorage.removeItem('rider_orderNumber');
                         sessionStorage.removeItem('rider_address');
                         sessionStorage.removeItem('rider_amount');
+                        sessionStorage.removeItem('rider_deliveryFee');
                         sessionStorage.removeItem('rider_status');
                         sessionStorage.removeItem('rider_priority');
                         sessionStorage.removeItem('rider_created');
                         sessionStorage.removeItem('rider_customer');
                         sessionStorage.removeItem('rider_phone');
-                        sessionStorage.removeItem('rider_distance_km');
-                        sessionStorage.removeItem('rider_fee');
 
                         window.location.reload();
                     })
-                    .catch(() => {
-                        showNotification('Network error. Please try again.', 'warning');
+                    .catch(err => {
+                        if (err.message === 'FORBIDDEN')
+                            showNotification('This delivery is not assigned to you.', 'warning');
+                        else
+                            showNotification('Network error. Please try again.', 'warning');
                     });
                 // ─────────────────────────────────────────────────────────────
 
                 showNotification('Marking delivery as completed...', 'info');
+            }
+
+            // ── Toggle order items collapsible ──────────────────────────────
+            function toggleOrderItems(btn) {
+                btn.classList.toggle('open');
+                const body = btn.nextElementSibling;
+                body.classList.toggle('open');
             }
 
             // Flash animation when a stat value updates
@@ -2885,41 +3118,23 @@
                 activeDeliveryId.textContent = '#' + activeDelivery.id;
                 pickupLocation.textContent = 'Order #' + activeDelivery.order;
                 dropoffLocation.textContent = activeDelivery.address;
-                var cachedKm = sessionStorage.getItem('rider_distance_km');
-                if (cachedKm) {
-                    // Use cached distance if already calculated
-                    distanceInput.value = cachedKm;
-                    calculateDeliveryFee(parseFloat(cachedKm));
-                } else {
-                    // No cached distance — auto-calculate on restore
-                    distanceInput.value = '';
-                    deliveryFee.textContent = '⏳ Calculating...';
-                    feeBreakdown.textContent = '—';
-                    geocodeAddress(activeDelivery.address)
-                        .then(function (dest) {
-                            var routeUrl = 'https://router.project-osrm.org/route/v1/driving/'
-                                + STORE_LNG + ',' + STORE_LAT + ';'
-                                + dest.lng + ',' + dest.lat
-                                + '?overview=false';
-                            return fetch(routeUrl)
-                                .then(function (r) { return r.json(); })
-                                .then(function (data) {
-                                    if (!data.routes || data.routes.length === 0) throw new Error('No route');
-                                    var km = parseFloat((data.routes[0].distance / 1000).toFixed(1));
-                                    distanceInput.value = km;
-                                    calculateDeliveryFee(km);
-                                });
-                        })
-                        .catch(function () {
-                            deliveryFee.textContent = '—';
-                            feeBreakdown.textContent = '—';
-                        });
-                }
+                deliveryFee.textContent = activeDelivery.deliveryFee || '—';
                 customerContact.innerHTML =
                     '<strong>' + (activeDelivery.customer || '—') + '</strong>' +
                     '<span style="display:block;font-size:12px;color:var(--muted-text);margin-top:2px;">' +
                     '<i class="fas fa-phone" style="margin-right:4px;font-size:10px;"></i>' +
                     (activeDelivery.phone || '—') + '</span>';
+                // Restore order items (fixes items going blank/zero on tab switch)
+                var activeItemCount = document.getElementById('activeItemCount');
+                var activeItemsBody = document.getElementById('activeOrderItemsBody');
+                if (activeItemCount) activeItemCount.textContent = activeDelivery.itemCount || '0';
+                if (activeItemsBody) {
+                    var decoded = document.createElement('textarea');
+                    decoded.innerHTML = activeDelivery.itemsHtml || '';
+                    activeItemsBody.innerHTML = decoded.value ||
+                        '<div class="order-item-row"><span class="order-item-name" style="color:var(--muted-text);font-style:italic;">No items found.</span></div>';
+                }
+
                 activeDeliverySection.classList.add('active');
             }
 

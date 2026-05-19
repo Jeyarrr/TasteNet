@@ -54,6 +54,22 @@ namespace TasteNet.Users.SuperAdmin
                 return;
             }
 
+            if (action == "getDocStatus")
+            {
+                Response.ContentType = "application/json";
+                Response.Write(DoGetDocStatus());
+                Response.End();
+                return;
+            }
+
+            if (action == "setDocStatus")
+            {
+                Response.ContentType = "application/json";
+                Response.Write(DoSetDocStatus());
+                Response.End();
+                return;
+            }
+
             // Normal page load — GetRidersJson() is called inline from the ASPX markup
         }
 
@@ -84,38 +100,54 @@ namespace TasteNet.Users.SuperAdmin
 
         protected void LoadRiderOrders()
         {
+            // Rider ID is set by JS into hdnRiderIdForOrders before triggering this postback
+            int riderId = 0;
+            int.TryParse(hdnRiderIdForOrders.Value, out riderId);
+
             string period = ddlOrderPeriod.SelectedValue;
             string dateFilter;
             switch (period)
             {
                 case "today":
-                    dateFilter = "WHERE CAST(t.CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
+                    dateFilter = "AND CAST(t.CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
                     break;
                 case "weekly":
-                    dateFilter = "WHERE t.CreatedAt >= DATEADD(DAY, -7, GETDATE())";
+                    dateFilter = "AND t.CreatedAt >= DATEADD(DAY, -7, GETDATE())";
                     break;
-                default:
-                    dateFilter = "WHERE t.CreatedAt >= DATEADD(DAY, -30, GETDATE())";
+                default: // monthly
+                    dateFilter = "AND t.CreatedAt >= DATEADD(DAY, -30, GETDATE())";
                     break;
             }
 
-            string sql = @"
-                SELECT
-                    t.TicketNumber,
-                    t.OrderType,
-                    t.DeliveryAddress,
-                    t.TotalAmount,
-                    t.Status,
-                    t.CreatedAt
-                FROM Tickets t
-                " + dateFilter + @"
-                ORDER BY t.CreatedAt DESC";
+            string sql;
+            if (riderId > 0)
+            {
+                // Show ALL ticket statuses for this specific rider (Assigned + Completed + any others)
+                sql = @"
+                    SELECT
+                        t.TicketNumber,
+                        t.OrderType,
+                        t.DeliveryAddress,
+                        t.TotalAmount,
+                        t.Status,
+                        t.CreatedAt
+                    FROM Tickets t
+                    WHERE t.RiderID = @RiderID
+                    " + dateFilter + @"
+                    ORDER BY t.CreatedAt DESC";
+            }
+            else
+            {
+                sql = "SELECT TOP 0 TicketNumber, OrderType, DeliveryAddress, TotalAmount, Status, CreatedAt FROM Tickets";
+            }
 
             DataTable dt = new DataTable();
             using (var con = new SqlConnection(ConnStr))
             using (var cmd = new SqlCommand(sql, con))
             using (var da = new SqlDataAdapter(cmd))
             {
+                if (riderId > 0)
+                    cmd.Parameters.AddWithValue("@RiderID", riderId);
                 con.Open();
                 da.Fill(dt);
             }
@@ -517,16 +549,44 @@ namespace TasteNet.Users.SuperAdmin
         }
 
         // ── Build the riders JSON array injected into the page ────────────────
+        // Assigned  = all tickets linked to this rider (any non-cancelled status)
+        // Completed = tickets with Status = 'Completed'
+        // Rating    = from Users.Ratings (live average if you have a reviews table)
         protected string GetRidersJson()
         {
             var sb = new StringBuilder("[");
             bool first = true;
 
+            // One query: riders LEFT JOINed to live Ticket counts
+            const string sql = @"
+                SELECT
+                    u.UserID, u.Username, u.FullName, u.Email, u.Phone, u.Gender,
+                    u.ProfilePhoto, u.Vehicle, u.VehicleModel, u.VehicleYear,
+                    u.LicensePlate, u.VehicleColor, u.LicenseNumber, u.NBINumber,
+                    u.ORCRNumber, u.InsurancePolicy, u.InsuranceDate,
+                    u.DriverLicensePhoto, u.ORCRPhoto, u.InsurancePhoto, u.NBIClearancePhoto,
+                    u.RiderStatus, u.Ratings, u.DateJoined, u.CreatedAt,
+                    -- Live counts straight from Tickets
+                    ISNULL(tc.AssignedCount,  0) AS AssignedOrders,
+                    ISNULL(tc.CompletedCount, 0) AS CompletedOrders
+                FROM [DeliverySystem].[dbo].[Users] u
+                LEFT JOIN (
+                    SELECT
+                        RiderID,
+                        COUNT(*)                                                        AS AssignedCount,
+                        SUM(CASE WHEN UPPER(LTRIM(RTRIM(Status))) = 'COMPLETED'
+                                 THEN 1 ELSE 0 END)                                    AS CompletedCount
+                    FROM Tickets
+                    WHERE RiderID IS NOT NULL
+                    GROUP BY RiderID
+                ) tc ON tc.RiderID = u.UserID
+                WHERE u.UserType = 'Rider'
+                ORDER BY u.UserID";
+
             try
             {
                 using (var con = new SqlConnection(ConnStr))
-                using (var cmd = new SqlCommand(
-                    "SELECT TOP(1000) * FROM [DeliverySystem].[dbo].[Users] WHERE UserType = 'Rider' ORDER BY UserID", con))
+                using (var cmd = new SqlCommand(sql, con))
                 {
                     con.Open();
                     using (var dr = cmd.ExecuteReader())
@@ -559,7 +619,6 @@ namespace TasteNet.Users.SuperAdmin
                             if (!string.IsNullOrEmpty(profilePic) && !profilePic.StartsWith("http"))
                                 profilePic = appRoot + "/Uploads/Riders/" + Path.GetFileName(profilePic);
 
-                            // Resolve photo paths to absolute web URLs
                             string driverLicensePhoto = SafeStr(dr, "DriverLicensePhoto");
                             if (!string.IsNullOrEmpty(driverLicensePhoto) && !driverLicensePhoto.StartsWith("http"))
                                 driverLicensePhoto = appRoot + "/Uploads/Riders/" + Path.GetFileName(driverLicensePhoto);
@@ -584,7 +643,7 @@ namespace TasteNet.Users.SuperAdmin
                             }
                             catch { }
 
-                            // Emit assigned/completed/rating as bare numbers
+                            // Read live counts from the JOIN (never the stale Users columns)
                             int assigned = 0; int.TryParse(SafeStr(dr, "AssignedOrders"), out assigned);
                             int completed = 0; int.TryParse(SafeStr(dr, "CompletedOrders"), out completed);
 
@@ -638,6 +697,120 @@ namespace TasteNet.Users.SuperAdmin
                             .Replace("\"", "\\\"")
                             .Replace("\r", "")
                             .Replace("\n", "") + "\"";
+        }
+
+        // ── Get document approval statuses for a rider ────────────────────────
+        private string DoGetDocStatus()
+        {
+            try
+            {
+                string idStr = Request.QueryString["id"] ?? "";
+                if (!int.TryParse(idStr, out int riderId))
+                    return "{\"success\":false,\"message\":\"Invalid rider ID.\"}";
+
+                EnsureDocApprovalsTable();
+
+                string[] cols = { "DriverLicensePhoto", "ORCRPhoto", "InsurancePhoto", "NBIClearancePhoto" };
+                var sb = new System.Text.StringBuilder();
+                sb.Append("{\"success\":true,\"statuses\":{");
+                bool first = true;
+
+                using (var con = new SqlConnection(ConnStr))
+                {
+                    con.Open();
+                    foreach (var col in cols)
+                    {
+                        using (var cmd = new SqlCommand(
+                            "SELECT TOP 1 Status FROM dbo.RiderDocApprovals WHERE UserID=@uid AND DocColumn=@col ORDER BY UpdatedAt DESC", con))
+                        {
+                            cmd.Parameters.AddWithValue("@uid", riderId);
+                            cmd.Parameters.AddWithValue("@col", col);
+                            var val = cmd.ExecuteScalar();
+                            string statusVal = val != null ? val.ToString() : "pending";
+                            if (!first) sb.Append(",");
+                            first = false;
+                            sb.Append("\"" + col + "\":\"" + statusVal + "\"");
+                        }
+                    }
+                }
+
+                sb.Append("}}");
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
+            }
+        }
+
+        // ── Set document approval status ──────────────────────────────────────
+        private string DoSetDocStatus()
+        {
+            try
+            {
+                string idStr = Request.Form["riderId"] ?? "";
+                string docCol = Request.Form["docCol"] ?? "";
+                string newStatus = Request.Form["status"] ?? "";
+
+                if (!int.TryParse(idStr, out int riderId))
+                    return "{\"success\":false,\"message\":\"Invalid rider ID.\"}";
+
+                string[] validCols = { "DriverLicensePhoto", "ORCRPhoto", "InsurancePhoto", "NBIClearancePhoto" };
+                string[] validStatuses = { "approved", "rejected", "pending" };
+
+                if (System.Array.IndexOf(validCols, docCol) < 0)
+                    return "{\"success\":false,\"message\":\"Invalid document column.\"}";
+
+                if (System.Array.IndexOf(validStatuses, newStatus) < 0)
+                    return "{\"success\":false,\"message\":\"Invalid status.\"}";
+
+
+                EnsureDocApprovalsTable();
+
+                using (var con = new SqlConnection(ConnStr))
+                {
+                    con.Open();
+                    using (var cmd = new SqlCommand(
+                        "DELETE FROM dbo.RiderDocApprovals WHERE UserID=@uid AND DocColumn=@col", con))
+                    {
+                        cmd.Parameters.AddWithValue("@uid", riderId);
+                        cmd.Parameters.AddWithValue("@col", docCol);
+                        cmd.ExecuteNonQuery();
+                    }
+                    using (var cmd = new SqlCommand(
+                        "INSERT INTO dbo.RiderDocApprovals (UserID, DocColumn, Status, UpdatedAt) VALUES (@uid, LTRIM(RTRIM(@col)), LTRIM(RTRIM(@st)), GETDATE())", con))
+                    {
+                        cmd.Parameters.AddWithValue("@uid", riderId);
+                        cmd.Parameters.AddWithValue("@col", docCol);
+                        cmd.Parameters.AddWithValue("@st", newStatus);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return "{\"success\":true}";
+            }
+            catch (Exception ex)
+            {
+                return "{\"success\":false,\"message\":\"" + ex.Message.Replace("\"", "'") + "\"}";
+            }
+        }
+
+        // ── Create dbo.RiderDocApprovals table if it doesn't exist ────────────────
+        private void EnsureDocApprovalsTable()
+        {
+            string sql = "IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'RiderDocApprovals') " +
+                         "CREATE TABLE dbo.RiderDocApprovals (" +
+                         "    ID        INT IDENTITY(1,1) PRIMARY KEY," +
+                         "    UserID    INT NOT NULL," +
+                         "    DocColumn NVARCHAR(50) NOT NULL," +
+                         "    Status    NVARCHAR(20) NOT NULL DEFAULT 'pending'," +
+                         "    UpdatedAt DATETIME NOT NULL DEFAULT GETDATE()" +
+                         ")";
+            using (var con = new SqlConnection(ConnStr))
+            using (var cmd = new SqlCommand(sql, con))
+            {
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

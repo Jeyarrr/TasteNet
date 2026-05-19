@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Web.Script.Serialization;
 
 namespace TasteNet.Users.SuperAdmin
 {
@@ -21,12 +22,6 @@ namespace TasteNet.Users.SuperAdmin
         {
             List<CustomerRow> customers = new List<CustomerRow>();
 
-            // Uses your actual Users table columns:
-            // Phone, CreatedAt, IsActive (bit: 1=Active / 0=Blocked)
-            // TotalOrders and TotalSpent are set to 0 for now.
-            // Once you have an Orders table, replace the 0s with:
-            //   (SELECT COUNT(*) FROM Orders o WHERE o.UserID = u.UserID) AS TotalOrders
-            //   (SELECT ISNULL(SUM(o.TotalAmount),0) FROM Orders o WHERE o.UserID = u.UserID) AS TotalSpent
             string sql = @"
                 SELECT
                     u.UserID,
@@ -36,8 +31,8 @@ namespace TasteNet.Users.SuperAdmin
                     u.Phone,
                     u.CreatedAt,
                     u.IsActive,
-                    0 AS TotalOrders,
-                    0 AS TotalSpent
+                    (SELECT COUNT(*) FROM Tickets o WHERE o.CreatedBy = u.UserID) AS TotalOrders,
+                    (SELECT ISNULL(SUM(o.TotalAmount), 0) FROM Tickets o WHERE o.CreatedBy = u.UserID) AS TotalSpent
                 FROM Users u
                 WHERE u.UserType = 'Customer'
                 ORDER BY u.CreatedAt DESC";
@@ -51,13 +46,13 @@ namespace TasteNet.Users.SuperAdmin
                     int rowNum = 1;
                     while (dr.Read())
                     {
-                        // IsActive is a bit column: 1 = Active, 0 = Blocked
                         bool isActive = Convert.ToBoolean(dr["IsActive"]);
+                        int userId = Convert.ToInt32(dr["UserID"]);
 
                         customers.Add(new CustomerRow
                         {
                             CustomerID = "CUST-" + rowNum.ToString("D3"),
-                            RawUserID = Convert.ToInt32(dr["UserID"]),
+                            RawUserID = userId,
                             FullName = dr["FullName"].ToString(),
                             Username = dr["Username"].ToString(),
                             Email = dr["Email"].ToString(),
@@ -65,7 +60,8 @@ namespace TasteNet.Users.SuperAdmin
                             DateRegistered = Convert.ToDateTime(dr["CreatedAt"]),
                             Status = isActive ? "ACTIVE" : "BLOCKED",
                             TotalOrders = Convert.ToInt32(dr["TotalOrders"]),
-                            TotalSpent = Convert.ToDecimal(dr["TotalSpent"])
+                            TotalSpent = Convert.ToDecimal(dr["TotalSpent"]),
+                            RecentOrdersJson = GetRecentOrdersJson(userId)
                         });
                         rowNum++;
                     }
@@ -75,7 +71,6 @@ namespace TasteNet.Users.SuperAdmin
             rptCustomers.DataSource = customers;
             rptCustomers.DataBind();
 
-            // Compute stats from the loaded data
             int total = customers.Count;
             int active = customers.FindAll(c => c.Status == "ACTIVE").Count;
             int blocked = customers.FindAll(c => c.Status == "BLOCKED").Count;
@@ -88,14 +83,50 @@ namespace TasteNet.Users.SuperAdmin
             lblTotalRevenue.Text = "&#8369;" + revenue.ToString("N0");
         }
 
-        // Block / Unblock — flips IsActive bit in the DB
+        private string GetRecentOrdersJson(int userId)
+        {
+            var orders = new List<object>();
+
+            string sql = @"
+                SELECT TOP 5
+                    t.TicketNumber,
+                    t.CreatedAt,
+                    t.TotalAmount,
+                    t.Status
+                FROM Tickets t
+                WHERE t.CreatedBy = @UserID
+                ORDER BY t.CreatedAt DESC";
+
+            using (SqlConnection con = new SqlConnection(_connStr))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                con.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        orders.Add(new
+                        {
+                            id = dr["TicketNumber"].ToString(),
+                            date = Convert.ToDateTime(dr["CreatedAt"]).ToString("MMM dd, yyyy"),
+                            amount = "&#8369;" + Convert.ToDecimal(dr["TotalAmount"]).ToString("N0"),
+                            status = dr["Status"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return new JavaScriptSerializer().Serialize(orders);
+        }
+
         protected void btnToggleBlock_Click(object sender, EventArgs e)
         {
             System.Web.UI.WebControls.LinkButton btn =
                 (System.Web.UI.WebControls.LinkButton)sender;
 
             int userId = Convert.ToInt32(btn.CommandArgument);
-            int newIsActive = btn.CommandName == "BLOCK" ? 0 : 1;  // BLOCK → 0, UNBLOCK → 1
+            int newIsActive = btn.CommandName == "BLOCK" ? 0 : 1;
 
             using (SqlConnection con = new SqlConnection(_connStr))
             using (SqlCommand cmd = new SqlCommand(
@@ -110,7 +141,6 @@ namespace TasteNet.Users.SuperAdmin
             BindCustomerData();
         }
 
-        // Delete — removes the customer row from the DB
         protected void btnDelete_Click(object sender, EventArgs e)
         {
             System.Web.UI.WebControls.LinkButton btn =
@@ -129,19 +159,34 @@ namespace TasteNet.Users.SuperAdmin
 
             BindCustomerData();
         }
-    }
 
-    public class CustomerRow
-    {
-        public string CustomerID { get; set; }
-        public int RawUserID { get; set; }
-        public string FullName { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Contact { get; set; }   // maps to Phone
-        public DateTime DateRegistered { get; set; }   // maps to CreatedAt
-        public string Status { get; set; }   // "ACTIVE" or "BLOCKED" (derived from IsActive bit)
-        public int TotalOrders { get; set; }
-        public decimal TotalSpent { get; set; }
+        protected string GetStatusClass(object status)
+        {
+            return status != null && status.ToString() == "ACTIVE"
+                ? "status-badge--active"
+                : "status-badge--blocked";
+        }
+
+        protected string GetStatus(object status)
+        {
+            return status != null && status.ToString() == "ACTIVE"
+                ? "Active"
+                : "Blocked";
+        }
+
+        public class CustomerRow
+        {
+            public string CustomerID { get; set; }
+            public int RawUserID { get; set; }
+            public string FullName { get; set; }
+            public string Username { get; set; }
+            public string Email { get; set; }
+            public string Contact { get; set; }
+            public DateTime DateRegistered { get; set; }
+            public string Status { get; set; }
+            public int TotalOrders { get; set; }
+            public decimal TotalSpent { get; set; }
+            public string RecentOrdersJson { get; set; }
+        }
     }
 }

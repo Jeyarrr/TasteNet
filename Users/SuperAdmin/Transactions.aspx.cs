@@ -67,7 +67,6 @@ namespace TasteNet.Users.SuperAdmin
                     it.Quantity,
                     it.PreviousStock,
                     it.NewStock,
-                    it.ReferenceNumber,
                     it.Notes,
                     it.TransactionDate,
                     it.PerformedBy,
@@ -89,7 +88,6 @@ namespace TasteNet.Users.SuperAdmin
             if (!string.IsNullOrEmpty(txtSearch.Text))
             {
                 query += @" AND (CAST(it.TransactionID AS NVARCHAR(50)) LIKE @Search 
-                           OR it.ReferenceNumber LIKE @Search 
                            OR i.ItemName LIKE @Search)";
             }
 
@@ -218,7 +216,6 @@ namespace TasteNet.Users.SuperAdmin
                         it.Quantity,
                         it.PreviousStock,
                         it.NewStock,
-                        it.ReferenceNumber,
                         it.Notes,
                         it.TransactionDate,
                         i.ItemName,
@@ -264,7 +261,6 @@ namespace TasteNet.Users.SuperAdmin
                                     <div class='info-row'><span class='info-label'>Unit Cost:</span><span class='info-value'>₱{Convert.ToDecimal(reader["UnitCost"]):N2}</span></div>
                                     <div class='info-row'><span class='info-label'>Unit Price:</span><span class='info-value'>₱{Convert.ToDecimal(reader["UnitPrice"]):N2}</span></div>
                                     <div class='info-row'><span class='info-label'>Total Value:</span><span class='info-value'>₱{totalValue:N2}</span></div>
-                                    <div class='info-row'><span class='info-label'>Reference Number:</span><span class='info-value'>{reader["ReferenceNumber"] ?? "N/A"}</span></div>
                                 </div>
                                 <div class='info-section'>
                                     <h4><i class='fas fa-history'></i> Transaction Details</h4>
@@ -300,13 +296,12 @@ namespace TasteNet.Users.SuperAdmin
             html.Append("<h2>Transactions Report</h2>");
             html.Append($"<p>Generated on: {DateTime.Now:yyyy-MM-dd HH:mm:ss}</p>");
             html.Append("<table border='1' cellpadding='5' cellspacing='0'>");
-            html.Append("<tr style='background-color:#6b0d1e; color:white;'><th>Transaction ID</th><th>Reference #</th><th>Item Name</th><th>Type</th><th>Date</th><th>Quantity</th><th>Value</th><th>Status</th></tr>");
+            html.Append("<tr style='background-color:#6b0d1e; color:white;'><th>Transaction ID</th><th>Item Name</th><th>Type</th><th>Date</th><th>Quantity</th><th>Value</th><th>Status</th></tr>");
 
             foreach (DataRow row in dt.Rows)
             {
                 html.Append("<tr>");
                 html.Append($"<td>TXN-{Convert.ToInt32(row["TransactionID"]):000000}</td>");
-                html.Append($"<td>{row["ReferenceNumber"]}</td>");
                 html.Append($"<td>{row["ItemName"]}</td>");
                 html.Append($"<td>{row["TransactionType"]}</td>");
                 html.Append($"<td>{Convert.ToDateTime(row["TransactionDate"]):yyyy-MM-dd HH:mm}</td>");

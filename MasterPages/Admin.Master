@@ -29,6 +29,7 @@
             background: #f8f9fc;
             overflow: hidden;
             position: relative;
+            isolation: isolate;
         }
         
         .sidebar {
@@ -46,9 +47,6 @@
             z-index: 100;
             transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
-            will-change: width;
-            transform: translateZ(0);
-            backface-visibility: hidden;
         }
         
         .sidebar.collapsed {
@@ -491,8 +489,6 @@
             height: 100vh;
             overflow-y: auto;
             transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: margin-left;
-            transform: translateZ(0);
         }
         
         .sidebar.collapsed ~ .content {
@@ -528,11 +524,9 @@
         @keyframes contentFadeIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
         
@@ -635,11 +629,6 @@
                     <span>Inventory</span>
                 </a>
 
-                
-                 <a href="/Users/Admin/RecipeManager.aspx" class="menu-item" id="link-recipemanager" data-tooltip="RecipeManager">
-                  <i class="fa-solid fa-box"></i>
-                  <span>RecipeManager</span>
-                </a>
                 
                 <div class="menu-divider"></div>
                 

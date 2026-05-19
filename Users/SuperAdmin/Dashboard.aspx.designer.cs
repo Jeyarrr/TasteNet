@@ -69,6 +69,24 @@ namespace TasteNet.Users.SuperAdmin
         protected global::System.Web.UI.WebControls.HiddenField hdnQuotaPct;
 
         /// <summary>
+        /// hdnDateFrom control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnDateFrom;
+
+        /// <summary>
+        /// hdnDateTo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnDateTo;
+
+        /// <summary>
         /// ScriptManager1 control.
         /// </summary>
         /// <remarks>
@@ -112,6 +130,24 @@ namespace TasteNet.Users.SuperAdmin
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btn30Days;
+
+        /// <summary>
+        /// btnCustomRange control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCustomRange;
+
+        /// <summary>
+        /// hdnApplyRange control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnApplyRange;
 
         /// <summary>
         /// lblTotalOrders control.

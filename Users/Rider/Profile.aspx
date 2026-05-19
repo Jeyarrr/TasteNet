@@ -404,6 +404,25 @@
             border: 1px solid var(--warning-orange);
         }
 
+        .status-rejected {
+            background: var(--danger-red-light);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-red);
+        }
+
+        .btn-file-reupload {
+            background: var(--danger-red-light) !important;
+            color: var(--danger-red) !important;
+            border: 1px solid var(--danger-red) !important;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0%   { box-shadow: 0 0 0 0 rgba(220,53,69,0.4); }
+            70%  { box-shadow: 0 0 0 6px rgba(220,53,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+        }
+
         .document-actions {
             display: flex;
             gap: 10px;
@@ -696,14 +715,8 @@
                 <div class="profile-header-card">
                     <div class="profile-header-content">
                         <div class="profile-avatar">
-                            <asp:Image ID="imgProfile" runat="server" 
-                                ImageUrl='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) %>' 
-                                Visible='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) != null %>'
-                                AlternateText="Profile Photo" />
-                            <asp:Label ID="lblInitials" runat="server" 
-                                Text='<%# GetInitials(Eval("FullName")) %>'
-                                Visible='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) == null %>' 
-                                Font-Size="24px" Font-Bold="true" />
+                            <asp:Image ID="imgProfile" runat="server" ImageUrl='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) %>' Visible='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) != null %>' AlternateText="Profile Photo" />
+                            <asp:Label ID="lblInitials" runat="server" Text='<%# GetInitials(Eval("FullName")) %>' Visible='<%# GetProfilePhotoUrl(Eval("ProfilePhoto")) == null %>' Font-Size="24px" Font-Bold="true" />
                         </div>
                         <div class="profile-info">
                             <div class="profile-name"><%# Eval("FullName") %></div>
@@ -738,8 +751,7 @@
                                 <i class="fas fa-user-circle"></i>
                                 Full Name
                             </label>
-                            <asp:TextBox ID="txtFullName" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("FullName") %>' />
+                            <asp:TextBox ID="txtFullName" runat="server" CssClass="form-input" Text='<%# Eval("FullName") %>' />
                         </div>
 
                         <div class="form-group">
@@ -747,8 +759,7 @@
                                 <i class="fas fa-envelope"></i>
                                 Email Address
                             </label>
-                            <asp:TextBox ID="txtEmail" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("Email") %>' TextMode="Email" />
+                            <asp:TextBox ID="txtEmail" runat="server" CssClass="form-input" Text='<%# Eval("Email") %>' TextMode="Email" />
                         </div>
 
                         <div class="form-group">
@@ -756,8 +767,7 @@
                                 <i class="fas fa-phone"></i>
                                 Phone Number
                             </label>
-                            <asp:TextBox ID="txtPhone" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("Phone") %>' />
+                            <asp:TextBox ID="txtPhone" runat="server" CssClass="form-input" Text='<%# Eval("Phone") %>' />
                         </div>
 
                         <div class="form-group">
@@ -765,8 +775,7 @@
                                 <i class="fas fa-calendar-alt"></i>
                                 Date Joined
                             </label>
-                            <asp:TextBox ID="txtDateJoined" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("JoinDate") %>' Enabled="false" />
+                            <asp:TextBox ID="txtDateJoined" runat="server" CssClass="form-input" Text='<%# Eval("JoinDate") %>' Enabled="false" />
                         </div>
 
                         <div class="form-group full-width">
@@ -774,14 +783,12 @@
                                 <i class="fas fa-home"></i>
                                 Address
                             </label>
-                            <asp:TextBox ID="txtAddress" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("Address") %>' />
+                            <asp:TextBox ID="txtAddress" runat="server" CssClass="form-input" Text='<%# Eval("Address") %>' />
                         </div>
                     </div>
 
                     <div class="section-actions">
-                        <asp:Button ID="btnSavePersonalInfo" runat="server" CssClass="btn-primary" 
-                            Text="Save Changes" OnClick="btnSavePersonalInfo_Click" />
+                        <asp:Button ID="btnSavePersonalInfo" runat="server" CssClass="btn-primary" Text="Save Changes" OnClick="btnSavePersonalInfo_Click" />
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
@@ -804,8 +811,7 @@
                                 <i class="fas fa-car"></i>
                                 Vehicle Type
                             </label>
-                            <asp:TextBox ID="txtVehicle" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("Vehicle") %>' />
+                            <asp:TextBox ID="txtVehicle" runat="server" CssClass="form-input" Text='<%# Eval("Vehicle") %>' />
                         </div>
 
                         <div class="form-group">
@@ -813,8 +819,7 @@
                                 <i class="fas fa-industry"></i>
                                 Brand & Model
                             </label>
-                            <asp:TextBox ID="txtVehicleModel" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("VehicleModel") %>' />
+                            <asp:TextBox ID="txtVehicleModel" runat="server" CssClass="form-input" Text='<%# Eval("VehicleModel") %>' />
                         </div>
 
                         <div class="form-group">
@@ -822,8 +827,7 @@
                                 <i class="fas fa-id-badge"></i>
                                 License Plate
                             </label>
-                            <asp:TextBox ID="txtLicensePlate" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("LicensePlate") %>' />
+                            <asp:TextBox ID="txtLicensePlate" runat="server" CssClass="form-input" Text='<%# Eval("LicensePlate") %>' />
                         </div>
 
                         <div class="form-group">
@@ -831,8 +835,7 @@
                                 <i class="fas fa-calendar"></i>
                                 Year
                             </label>
-                            <asp:TextBox ID="txtVehicleYear" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("VehicleYear") %>' />
+                            <asp:TextBox ID="txtVehicleYear" runat="server" CssClass="form-input" Text='<%# Eval("VehicleYear") %>' />
                         </div>
 
                         <div class="form-group">
@@ -840,8 +843,7 @@
                                 <i class="fas fa-palette"></i>
                                 Color
                             </label>
-                            <asp:TextBox ID="txtVehicleColor" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("VehicleColor") %>' />
+                            <asp:TextBox ID="txtVehicleColor" runat="server" CssClass="form-input" Text='<%# Eval("VehicleColor") %>' />
                         </div>
 
                         <div class="form-group">
@@ -849,8 +851,7 @@
                                 <i class="fas fa-file-contract"></i>
                                 OR/CR Number
                             </label>
-                            <asp:TextBox ID="txtORCRNumber" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("ORCRNumber") %>' />
+                            <asp:TextBox ID="txtORCRNumber" runat="server" CssClass="form-input" Text='<%# Eval("ORCRNumber") %>' />
                         </div>
 
                         <div class="form-group">
@@ -858,8 +859,7 @@
                                 <i class="fas fa-shield-alt"></i>
                                 Insurance Policy
                             </label>
-                            <asp:TextBox ID="txtInsurancePolicy" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("InsurancePolicy") %>' />
+                            <asp:TextBox ID="txtInsurancePolicy" runat="server" CssClass="form-input" Text='<%# Eval("InsurancePolicy") %>' />
                         </div>
 
                         <div class="form-group">
@@ -867,14 +867,12 @@
                                 <i class="fas fa-calendar-alt"></i>
                                 Insurance Date
                             </label>
-                            <asp:TextBox ID="txtInsuranceDate" runat="server" CssClass="form-input" 
-                                Text='<%# Eval("InsuranceDate", "{0:yyyy-MM-dd}") %>' TextMode="Date" />
+                            <asp:TextBox ID="txtInsuranceDate" runat="server" CssClass="form-input" Text='<%# Eval("InsuranceDate", "{0:yyyy-MM-dd}") %>' TextMode="Date" />
                         </div>
                     </div>
 
                     <div class="section-actions">
-                        <asp:Button ID="btnSaveVehicleInfo" runat="server" CssClass="btn-primary" 
-                            Text="Update Vehicle Info" OnClick="btnSaveVehicleInfo_Click" />
+                        <asp:Button ID="btnSaveVehicleInfo" runat="server" CssClass="btn-primary" Text="Update Vehicle Info" OnClick="btnSaveVehicleInfo_Click" />
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
@@ -895,27 +893,22 @@
                         <div class="document-item">
                             <div class="document-info">
                                 <div class="document-name">
-                                    <i class="fas <%# GetDocumentIcon(Eval("DocumentName").ToString()) %>"></i>
+                                    <i class='<%# "fas " + GetDocumentIcon(Eval("DocumentName").ToString()) %>'></i>
                                     <%# Eval("DocumentName") %>
                                 </div>
-                                <span class="document-status <%# GetStatusClass(Eval("Status").ToString()) %>">
-                                    <i class="fas <%# Eval("Status").ToString() == "Verified" ? "fa-check-circle" : "fa-clock" %>"></i>
-                                    <%# Eval("Status") %>
+                                <span class='<%# "document-status " + GetStatusClass(Eval("Status").ToString()) %>'>
+                                    <i class='<%# "fas " + GetStatusIcon(Eval("Status").ToString()) %>'></i>
+                                    <%# GetStatusLabel(Eval("Status").ToString()) %>
                                 </span>
                             </div>
                             <div class="document-actions">
                                 <asp:Literal ID="litViewBtn" runat="server" />
                                 
                                 <div class="file-input-wrapper">
-                                    <asp:FileUpload ID="fuDocument" runat="server" CssClass="hidden-file-input"
-                                        Style="display:none;" accept=".jpg,.jpeg,.png,.pdf" />
-                                    <button type="button" class="btn-file"
-                                        onclick="triggerAspFileUpload('<%# Eval("DocumentColumn") %>', this)">
-                                        <i class="fas fa-cloud-upload-alt"></i> Choose File
-                                    </button>
+                                    <asp:FileUpload ID="fuDocument" runat="server" CssClass="hidden-file-input" Style="display:none;" accept=".jpg,.jpeg,.png,.pdf" />
+                                    <asp:Literal ID="litChooseBtn" runat="server" />
                                 </div>
-                                <asp:Button ID="btnUpload" runat="server" Text="Upload" CssClass="btn-icon btn-upload" 
-                                    CommandArgument='<%# Eval("DocumentColumn") %>' OnClick="UploadDocument" />
+                                <asp:Button ID="btnUpload" runat="server" Text="Upload" CssClass="btn-icon btn-upload" CommandArgument='<%# Eval("DocumentColumn") %>' OnClick="UploadDocument" />
                             </div>
                         </div>
                     </ItemTemplate>
@@ -939,8 +932,7 @@
                         Current Password
                     </label>
                     <div class="password-wrapper">
-                        <asp:TextBox ID="txtCurrentPassword" runat="server" CssClass="form-input" 
-                            TextMode="Password" placeholder="Enter current password" ClientIDMode="Static" />
+                        <asp:TextBox ID="txtCurrentPassword" runat="server" CssClass="form-input" TextMode="Password" placeholder="Enter current password" ClientIDMode="Static" />
                         <i class="fas fa-eye toggle-password" data-target="txtCurrentPassword"></i>
                     </div>
                 </div>
@@ -951,8 +943,7 @@
                         New Password
                     </label>
                     <div class="password-wrapper">
-                        <asp:TextBox ID="txtNewPassword" runat="server" CssClass="form-input" 
-                            TextMode="Password" placeholder="Enter new password" ClientIDMode="Static" />
+                        <asp:TextBox ID="txtNewPassword" runat="server" CssClass="form-input" TextMode="Password" placeholder="Enter new password" ClientIDMode="Static" />
                         <i class="fas fa-eye toggle-password" data-target="txtNewPassword"></i>
                     </div>
                     <div class="password-note">
@@ -966,15 +957,13 @@
                         Confirm New Password
                     </label>
                     <div class="password-wrapper">
-                        <asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-input" 
-                            TextMode="Password" placeholder="Confirm new password" ClientIDMode="Static" />
+                        <asp:TextBox ID="txtConfirmPassword" runat="server" CssClass="form-input" TextMode="Password" placeholder="Confirm new password" ClientIDMode="Static" />
                         <i class="fas fa-eye toggle-password" data-target="txtConfirmPassword"></i>
                     </div>
                 </div>
 
                 <div class="section-actions">
-                    <asp:Button ID="btnChangePassword" runat="server" CssClass="btn-primary" 
-                        Text="Update Password" OnClick="btnChangePassword_Click" />
+                    <asp:Button ID="btnChangePassword" runat="server" CssClass="btn-primary" Text="Update Password" OnClick="btnChangePassword_Click" />
                 </div>
             </div>
         </div>

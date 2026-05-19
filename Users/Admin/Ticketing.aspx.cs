@@ -16,8 +16,16 @@ namespace TasteNet.Users.Admin
         {
             get
             {
+                // Fix: If session expired, re-initialize and warn the user rather than silently blocking ticket creation
                 if (Session["ModalItems"] == null)
+                {
                     Session["ModalItems"] = new List<ModalMenuItem>();
+                    if (IsPostBack)
+                    {
+                        // Session was lost mid-use (e.g. timeout); notify the user
+                        ShowClientNotification("Your session expired and the cart was cleared. Please add items again.", "warning");
+                    }
+                }
                 return (List<ModalMenuItem>)Session["ModalItems"];
             }
             set { Session["ModalItems"] = value; }
@@ -47,6 +55,7 @@ namespace TasteNet.Users.Admin
                             COUNT(CASE WHEN Status = 'Open' THEN 1 END) AS OpenCount,
                             COUNT(CASE WHEN Status = 'In Progress' THEN 1 END) AS InProgressCount,
                             COUNT(CASE WHEN Status = 'Completed' THEN 1 END) AS CompletedCount,
+                            COUNT(CASE WHEN Status = 'Cancelled' THEN 1 END) AS CancelledCount,
                             COUNT(*) AS AllCount
                         FROM Tickets";
 
@@ -59,6 +68,7 @@ namespace TasteNet.Users.Admin
                             litOpenCount.Text = reader["OpenCount"].ToString();
                             litInProgressCount.Text = reader["InProgressCount"].ToString();
                             litCompletedCount.Text = reader["CompletedCount"].ToString();
+                            litCancelledCount.Text = reader["CancelledCount"].ToString();
                             litAllCount.Text = reader["AllCount"].ToString();
                         }
                     }
@@ -71,8 +81,38 @@ namespace TasteNet.Users.Admin
             }
         }
 
+        private void EnsureRiderIDColumn()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    string sql = @"
+                        IF NOT EXISTS (
+                            SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS 
+                            WHERE TABLE_NAME = 'Tickets' AND COLUMN_NAME = 'RiderID'
+                        )
+                        BEGIN
+                            ALTER TABLE Tickets ADD RiderID INT NULL 
+                            REFERENCES Users(UserID);
+                        END";
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        conn.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("EnsureRiderIDColumn ERROR: " + ex.Message);
+            }
+        }
+
         private void LoadTickets()
         {
+            EnsureRiderIDColumn();
+
             try
             {
                 string status = string.IsNullOrEmpty(hfSelectedStatus.Value) ? "Open" : hfSelectedStatus.Value;
@@ -242,6 +282,12 @@ namespace TasteNet.Users.Admin
                 ShowClientNotification("Ticket deleted successfully!", "success");
                 LoadTickets();
             }
+            else if (e.CommandName == "CancelTicket")
+            {
+                UpdateTicketStatus(ticketId, "Cancelled");
+                ShowClientNotification("Ticket cancelled.", "warning");
+                LoadTickets();
+            }
             else if (e.CommandName == "AssignRider")
             {
                 hfAssignTicketID.Value = ticketId.ToString();
@@ -338,9 +384,12 @@ namespace TasteNet.Users.Admin
             try
             {
                 string selectedText = ddlMenuItem.SelectedItem.Text;
-                string[] parts = selectedText.Split('-');
-                string itemName = parts[0].Trim();
-                string pricePart = parts[1].Trim().Replace("₱", "").Replace(",", "");
+                // Fix: Split on last " - ₱" to handle food names that contain dashes
+                int lastDashIdx = selectedText.LastIndexOf(" - ₱");
+                if (lastDashIdx < 0)
+                    throw new Exception("Unexpected menu item format: " + selectedText);
+                string itemName = selectedText.Substring(0, lastDashIdx).Trim();
+                string pricePart = selectedText.Substring(lastDashIdx + 4).Replace(",", "").Trim();
                 decimal price = decimal.Parse(pricePart);
 
                 int qty = 1;
@@ -415,73 +464,61 @@ namespace TasteNet.Users.Admin
 
         /// <summary>
         /// Generates a sequential ticket number in format: ORD-YYYYMMDD-XXX
-        /// Example: ORD-20260423-001, ORD-20260423-002, etc.
+        /// Must be called inside an open transaction to prevent race conditions.
         /// </summary>
-        private string GenerateTicketNumber()
+        private string GenerateTicketNumber(SqlConnection conn, SqlTransaction trans)
         {
             string today = DateTime.Now.ToString("yyyyMMdd");
-            int nextNumber = GetNextSequenceNumber("ORD", today);
+            int nextNumber = GetNextSequenceNumber(conn, trans, "TicketNumber", "ORD", today);
             return $"ORD-{today}-{nextNumber:D3}";
         }
 
         /// <summary>
         /// Generates a sequential order number in format: ON-YYYYMMDD-XXX
-        /// Example: ON-20260423-001, ON-20260423-002, etc.
+        /// Must be called inside an open transaction to prevent race conditions.
         /// </summary>
-        private string GenerateOrderNumber()
+        private string GenerateOrderNumber(SqlConnection conn, SqlTransaction trans)
         {
             string today = DateTime.Now.ToString("yyyyMMdd");
-            int nextNumber = GetNextSequenceNumber("ON", today);
+            int nextNumber = GetNextSequenceNumber(conn, trans, "OrderNumber", "ON", today);
             return $"ON-{today}-{nextNumber:D3}";
         }
 
         /// <summary>
-        /// Gets the next sequence number for a given prefix and date
+        /// Gets the next sequence number for a given prefix and date.
+        /// Must be called inside an open transaction to prevent race conditions.
         /// </summary>
-        /// <param name="prefix">Prefix like 'ORD' or 'ON'</param>
-        /// <param name="datePrefix">Date in YYYYMMDD format</param>
-        /// <returns>Next sequence number (1, 2, 3, etc.)</returns>
-        private int GetNextSequenceNumber(string prefix, string datePrefix)
+        private int GetNextSequenceNumber(SqlConnection conn, SqlTransaction trans, string fieldToCheck, string prefix, string datePrefix)
         {
             int nextNumber = 1;
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                string pattern = $"{prefix}-{datePrefix}-%";
+                // Fix: Use RIGHT(field, 3) instead of SUBSTRING with a fragile offset
+                string query = $@"
+                    SELECT TOP 1 
+                        CAST(RIGHT({fieldToCheck}, 3) AS INT) AS SeqNumber
+                    FROM Tickets WITH (UPDLOCK, HOLDLOCK)
+                    WHERE {fieldToCheck} LIKE @pattern
+                    ORDER BY {fieldToCheck} DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn, trans))
                 {
-                    string pattern = $"{prefix}-{datePrefix}-%";
-                    string query = @"
-                        SELECT TOP 1 
-                            CAST(SUBSTRING(TicketNumber, LEN(@pattern) - 2, 3) AS INT) AS SeqNumber
-                        FROM Tickets 
-                        WHERE TicketNumber LIKE @pattern
-                        ORDER BY TicketNumber DESC";
+                    cmd.Parameters.AddWithValue("@pattern", pattern);
+                    object result = cmd.ExecuteScalar();
 
-                    string fieldToCheck = (prefix == "ORD") ? "TicketNumber" : "OrderNumber";
-                    query = $@"
-                        SELECT TOP 1 
-                            CAST(SUBSTRING({fieldToCheck}, LEN(@pattern) - 2, 3) AS INT) AS SeqNumber
-                        FROM Tickets 
-                        WHERE {fieldToCheck} LIKE @pattern
-                        ORDER BY {fieldToCheck} DESC";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    if (result != null && result != DBNull.Value)
                     {
-                        cmd.Parameters.AddWithValue("@pattern", pattern);
-                        conn.Open();
-                        object result = cmd.ExecuteScalar();
-
-                        if (result != null && result != DBNull.Value)
-                        {
-                            nextNumber = Convert.ToInt32(result) + 1;
-                        }
+                        nextNumber = Convert.ToInt32(result) + 1;
                     }
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"GetNextSequenceNumber ERROR: {ex.Message}");
-                nextNumber = 1;
+                // Do not silently return 1 — rethrow so the caller can handle it
+                throw;
             }
 
             return nextNumber;
@@ -499,10 +536,6 @@ namespace TasteNet.Users.Admin
 
             try
             {
-                string ticketNumber = GenerateTicketNumber();
-                string orderNumber = GenerateOrderNumber();
-                System.Diagnostics.Debug.WriteLine($"Creating ticket: {ticketNumber}, Order: {orderNumber}");
-
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -510,10 +543,15 @@ namespace TasteNet.Users.Admin
                     {
                         try
                         {
+                            // Fix: Generate numbers INSIDE the transaction with UPDLOCK to prevent race conditions / duplicate keys
+                            string ticketNumber = GenerateTicketNumber(conn, trans);
+                            string orderNumber = GenerateOrderNumber(conn, trans);
+                            System.Diagnostics.Debug.WriteLine($"Creating ticket: {ticketNumber}, Order: {orderNumber}");
+
                             string ticketSql = @"
                                 INSERT INTO Tickets (TicketNumber, OrderNumber, OrderType, DeliveryAddress, Priority, Status, TotalAmount)
                                 VALUES (@num, @ordernum, @type, @addr, @priority, 'Open', @total);
-                                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                                SELECT CAST(SCOPE_IDENTITY() AS INT)";
 
                             using (SqlCommand cmd = new SqlCommand(ticketSql, conn, trans))
                             {
@@ -666,6 +704,7 @@ namespace TasteNet.Users.Admin
 
             try
             {
+                EnsureRiderIDColumn();
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     string sql = "UPDATE Tickets SET RiderID = @riderID WHERE TicketID = @ticketID";
@@ -707,6 +746,12 @@ namespace TasteNet.Users.Admin
         protected void btnFilterCompleted_Click(object sender, EventArgs e)
         {
             hfSelectedStatus.Value = "Completed";
+            LoadTickets();
+        }
+
+        protected void btnFilterCancelled_Click(object sender, EventArgs e)
+        {
+            hfSelectedStatus.Value = "Cancelled";
             LoadTickets();
         }
 
@@ -783,6 +828,8 @@ namespace TasteNet.Users.Admin
                     return "inprogress";
                 case "Completed":
                     return "completed";
+                case "Cancelled":
+                    return "cancelled";
                 default:
                     return "";
             }

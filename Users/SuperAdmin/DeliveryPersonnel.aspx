@@ -1582,6 +1582,53 @@
         .badge-active    { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#fff3e6; color:#d97706; display:inline-block; }
         .badge-pending   { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#fff3e6; color:#d97706; display:inline-block; }
         .badge-default   { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#f0f0f0;  color:#666;    display:inline-block; }
+        /* ── Document Approval Styles ─────────────────────────────────────── */
+        .doc-approval-card {
+            border-radius: 10px; overflow: hidden;
+            border: 2px solid var(--border-light);
+            background: var(--bg-lighter);
+            transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+        }
+        .doc-approval-card:hover { box-shadow: 0 6px 20px rgba(107,13,30,0.12); transform: translateY(-2px); }
+        .doc-approval-card__img {
+            height: 110px; overflow: hidden; background: var(--bg-light);
+            position: relative; cursor: pointer;
+        }
+        .doc-approval-card__img img { width:100%; height:100%; object-fit:cover; }
+        .doc-approval-badge {
+            position: absolute; top: 6px; left: 6px;
+            padding: 3px 8px; border-radius: 20px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .badge-approved  { background: var(--success-green-light); color: var(--success-green); border: 1px solid var(--success-green); }
+        .badge-pending   { background: var(--warning-orange-light); color: var(--warning-orange); border: 1px solid var(--warning-orange); }
+        .badge-rejected  { background: var(--danger-red-light);     color: var(--danger-red);     border: 1px solid var(--danger-red); }
+        .badge-unreviewed { background: var(--bg-light); color: var(--muted-text); border: 1px solid var(--border-light); }
+        .doc-approval-card__footer {
+            padding: 8px 10px;
+            font-size: 11px; font-weight: 600; color: var(--text-dark); text-align: center;
+        }
+        .doc-approval-card__footer span { display:block; font-size:10px; color:var(--muted-text); font-weight:400; margin-top:2px; }
+        .doc-approval-actions {
+            display: flex; gap: 5px; padding: 0 8px 8px; justify-content: center;
+        }
+        .btn-approve, .btn-reject {
+            flex: 1; padding: 5px 8px; border: none; border-radius: 6px;
+            font-size: 11px; font-weight: 600; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+            transition: all var(--transition-fast);
+        }
+        .btn-approve { background: var(--success-green-light); color: var(--success-green); border: 1px solid var(--success-green); }
+        .btn-approve:hover { background: var(--success-green); color: white; }
+        .btn-reject  { background: var(--danger-red-light);   color: var(--danger-red);   border: 1px solid var(--danger-red); }
+        .btn-reject:hover  { background: var(--danger-red);   color: white; }
+        .btn-approve:disabled, .btn-reject:disabled { opacity: 0.5; cursor: not-allowed; }
+        .doc-no-photo {
+            height: 110px; display: flex; align-items: center; justify-content: center;
+            color: var(--muted-text); font-size: 28px; background: var(--bg-light);
+        }
     </style>
 
     <div id="delivery-mgmt-wrapper">
@@ -1777,8 +1824,13 @@
                 </div>
 
                 <div class="rider-activity" style="margin-top: 20px;">
-                    <h4><i class="fas fa-file-alt"></i> Requirement Documents</h4>
-                    <div id="modalDocPhotos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:14px;"></div>
+                    <h4 style="display:flex;align-items:center;justify-content:space-between;">
+                        <span><i class="fas fa-file-alt"></i> Requirement Documents</span>
+                        <span id="pendingDocsCount" style="font-size:12px;font-weight:500;color:var(--warning-orange);display:none;">
+                            <i class="fas fa-clock"></i> <span id="pendingDocsNum">0</span> pending approval
+                        </span>
+                    </h4>
+                    <div id="modalDocPhotos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:14px;"></div>
                 </div>
 
                 <div class="rider-activity" style="margin-top: 20px;">
@@ -1789,11 +1841,7 @@
                                 style="display:none;" />
                             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
                                 <h4 style="margin:0;"><i class="fas fa-history"></i> Recent Deliveries</h4>
-                                <asp:DropDownList ID="ddlOrderPeriod" runat="server" AutoPostBack="true"
-                                    OnSelectedIndexChanged="ddlOrderPeriod_SelectedIndexChanged"
-                                    style="font-family:'Poppins',sans-serif;font-size:12px;font-weight:500;
-                                           padding:6px 12px;border-radius:8px;border:1.5px solid var(--border-light);
-                                           background:white;color:var(--text-dark);cursor:pointer;outline:none;">
+                                <asp:DropDownList ID="ddlOrderPeriod" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlOrderPeriod_SelectedIndexChanged" style="font-family:Poppins,sans-serif;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border-light);background:white;color:var(--text-dark);cursor:pointer;outline:none;">
                                     <asp:ListItem Value="today">Today</asp:ListItem>
                                     <asp:ListItem Value="weekly">This Week</asp:ListItem>
                                     <asp:ListItem Value="monthly" Selected="True">This Month</asp:ListItem>
@@ -1817,8 +1865,8 @@
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <tr style="background:white;" onmouseover="this.style.background='#fefaf5'" onmouseout="this.style.background='white'">
-                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;font-family:'Courier New',monospace;font-weight:700;font-size:12px;color:#6b0d1e;"><%# Eval("TicketNumber") %></td>
-                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title='<%# Eval("DeliveryAddress") %>'><%# string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) ? "—" : Eval("DeliveryAddress").ToString() %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;font-family:Courier New,monospace;font-weight:700;font-size:12px;color:#6b0d1e;"><%# Eval("TicketNumber") %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title='<%# Eval("DeliveryAddress") %>'><%# string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) ? "&mdash;" : Eval("DeliveryAddress").ToString() %></td>
                                         <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;">
                                             <span class='<%# GetStatusClass(Eval("Status")?.ToString()) %>'><%# Eval("Status") %></span>
                                         </td>
@@ -1828,8 +1876,8 @@
                                 </ItemTemplate>
                                 <AlternatingItemTemplate>
                                     <tr style="background:#f9f4ee;" onmouseover="this.style.background='#fefaf5'" onmouseout="this.style.background='#f9f4ee'">
-                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;font-family:'Courier New',monospace;font-weight:700;font-size:12px;color:#6b0d1e;"><%# Eval("TicketNumber") %></td>
-                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title='<%# Eval("DeliveryAddress") %>'><%# string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) ? "—" : Eval("DeliveryAddress").ToString() %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;font-family:Courier New,monospace;font-weight:700;font-size:12px;color:#6b0d1e;"><%# Eval("TicketNumber") %></td>
+                                        <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;color:#8a6d6d;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title='<%# Eval("DeliveryAddress") %>'><%# string.IsNullOrEmpty(Eval("DeliveryAddress")?.ToString()) ? "&mdash;" : Eval("DeliveryAddress").ToString() %></td>
                                         <td style="padding:11px 14px;border-bottom:1px solid #f9f4ee;">
                                             <span class='<%# GetStatusClass(Eval("Status")?.ToString()) %>'><%# Eval("Status") %></span>
                                         </td>
@@ -3029,10 +3077,8 @@
                 max-width: 300px;
             `;
 
-            notification.innerHTML = `
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                <span>${message}</span>
-            `;
+            var iconClass = (type === 'success') ? 'fa-check-circle' : 'fa-exclamation-circle';
+            notification.innerHTML = '<i class="fas ' + iconClass + '"></i><span>' + message + '</span>';
 
             document.body.appendChild(notification);
 
@@ -3147,7 +3193,7 @@
                         <div class="edit-cam-overlay"><i class="fas fa-camera"></i></div>
                     </div>
                     <input type="file" id="editProfileFileInput" accept="image/*" style="display:none;"
-                           onchange="(function(f){if(!f)return;editDocFiles.profile=f;var r=new FileReader();r.onload=function(e){var img=document.getElementById('editProfileImg');img.src=e.target.result;img.style.display='block';document.getElementById('editProfileIcon').style.display='none';};r.readAsDataURL(f);})(this.files[0])">
+                           onchange="handleEditProfileChange(this)">
                     <small style="color:var(--muted-text);font-size:11px;margin-top:6px;">Click to change photo</small>
                 </div>
                 <div class="rider-info-grid">
@@ -3217,7 +3263,7 @@
     <div id="photoLightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:20000;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
         <button onclick="closeLightbox()" style="position:absolute;top:18px;right:22px;background:rgba(255,255,255,0.15);border:none;color:white;font-size:26px;width:42px;height:42px;border-radius:50%;cursor:pointer;line-height:42px;text-align:center;">&times;</button>
         <img id="lightboxImg" src="" alt="" style="max-width:90vw;max-height:82vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,0.5);object-fit:contain;">
-        <span id="lightboxCaption" style="color:rgba(255,255,255,0.8);font-size:13px;font-family:'Poppins',sans-serif;letter-spacing:0.5px;"></span>
+        <span id="lightboxCaption" style="color:rgba(255,255,255,0.8);font-size:13px;font-family:Poppins,sans-serif;letter-spacing:0.5px;"></span>
     </div>
 
     <script type="text/javascript">
@@ -3234,42 +3280,183 @@
             if (e.target === this) closeLightbox();
         });
 
+        function handleEditProfileChange(input) {
+            var f = input.files[0];
+            if (!f) return;
+            editDocFiles.profile = f;
+            var r = new FileReader();
+            r.onload = function (e) {
+                var img = document.getElementById('editProfileImg');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                document.getElementById('editProfileIcon').style.display = 'none';
+            };
+            r.readAsDataURL(f);
+        }
+
         function renderDocumentPhotos(rider) {
             var docs = [
-                { key: 'driverLicensePhoto', label: "Driver's License" },
-                { key: 'orcrPhoto', label: 'OR/CR' },
-                { key: 'insurancePhoto', label: 'Insurance' },
-                { key: 'nbiClearancePhoto', label: 'NBI Clearance' }
+                { key: 'driverLicensePhoto', col: 'DriverLicensePhoto', label: "Driver's License" },
+                { key: 'orcrPhoto', col: 'ORCRPhoto', label: 'OR/CR' },
+                { key: 'insurancePhoto', col: 'InsurancePhoto', label: 'Insurance' },
+                { key: 'nbiClearancePhoto', col: 'NBIClearancePhoto', label: 'NBI Clearance' }
             ];
             var container = document.getElementById('modalDocPhotos');
-            container.innerHTML = '';
-            var anyPhoto = false;
+            container.innerHTML = '<p style="color:var(--muted-text);font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
 
-            docs.forEach(function (doc) {
-                var src = rider[doc.key];
-                if (!src) return;
-                anyPhoto = true;
-                var card = document.createElement('div');
-                card.style.cssText = 'cursor:pointer;border-radius:10px;overflow:hidden;border:2px solid var(--border-light);background:var(--bg-lighter);transition:box-shadow 0.2s,transform 0.2s;';
-                card.onmouseover = function () { this.style.boxShadow = '0 6px 20px rgba(107,13,30,0.15)'; this.style.transform = 'translateY(-3px)'; };
-                card.onmouseout = function () { this.style.boxShadow = ''; this.style.transform = ''; };
-                card.onclick = function () { openLightbox(src, doc.label); };
-                card.innerHTML =
-                    '<div style="height:110px;overflow:hidden;background:var(--bg-light);">' +
-                    '<img src="' + src + '" alt="' + doc.label + '" ' +
-                    'style="width:100%;height:100%;object-fit:cover;" ' +
-                    'onerror="this.parentElement.innerHTML=\'<div style=&quot;height:110px;display:flex;align-items:center;justify-content:center;color:var(--muted-text);&quot;><i class=&quot;fas fa-file-image&quot; style=&quot;font-size:32px;&quot;></i></div>\'">' +
-                    '</div>' +
-                    '<div style="padding:8px 10px;font-size:11px;font-weight:600;color:var(--text-dark);text-align:center;">' +
-                    doc.label +
-                    '<span style="display:block;font-size:10px;color:var(--muted-text);font-weight:400;margin-top:2px;">Click to view</span>' +
-                    '</div>';
-                container.appendChild(card);
-            });
+            fetch(pageUrl + '?action=getDocStatus&id=' + rider.id)
+                .then(function (r) { return r.json(); })
+                .then(function (result) {
+                    var statuses = (result && result.success) ? result.statuses : {};
+                    container.innerHTML = '';
 
-            if (!anyPhoto) {
-                container.innerHTML = '<p style="color:var(--muted-text);font-size:13px;grid-column:1/-1;margin:0;">No document photos uploaded.</p>';
+                    docs.forEach(function (doc) {
+                        var src = rider[doc.key] || '';
+                        var approvalStatus = statuses[doc.col] || (src ? 'pending' : 'none');
+
+                        // ── card wrapper ──────────────────────────────────────
+                        var card = document.createElement('div');
+                        card.className = 'doc-approval-card';
+
+                        // ── image area ────────────────────────────────────────
+                        var imgWrap = document.createElement('div');
+                        imgWrap.className = 'doc-approval-card__img';
+
+                        if (src) {
+                            imgWrap.style.cursor = 'pointer';
+                            imgWrap.dataset.src = src;
+                            imgWrap.dataset.label = doc.label;
+                            imgWrap.classList.add('doc-img-clickable');
+
+                            var img = document.createElement('img');
+                            img.src = src;
+                            img.alt = doc.label;
+                            img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                            img.onerror = function () {
+                                imgWrap.innerHTML = '<div class="doc-no-photo"><i class="fas fa-file-image"></i></div>';
+                            };
+                            imgWrap.appendChild(img);
+                        } else {
+                            imgWrap.innerHTML = '<div class="doc-no-photo"><i class="fas fa-file-image"></i></div>';
+                        }
+
+                        // ── status badge ──────────────────────────────────────
+                        var badge = document.createElement('span');
+                        badge.className = 'doc-approval-badge ' + (
+                            approvalStatus === 'approved' ? 'badge-approved' :
+                                approvalStatus === 'rejected' ? 'badge-rejected' :
+                                    src ? 'badge-pending' : 'badge-unreviewed');
+                        badge.innerHTML =
+                            approvalStatus === 'approved' ? '&#10003; Approved' :
+                                approvalStatus === 'rejected' ? '&#10007; Rejected' :
+                                    src ? 'Pending Review' : 'Not Uploaded';
+                        imgWrap.appendChild(badge);
+                        card.appendChild(imgWrap);
+
+                        // ── footer label ──────────────────────────────────────
+                        var footer = document.createElement('div');
+                        footer.className = 'doc-approval-card__footer';
+                        footer.textContent = doc.label;
+                        var sub = document.createElement('span');
+                        sub.textContent = src ? 'Click image to view' : 'No file uploaded';
+                        footer.appendChild(sub);
+                        card.appendChild(footer);
+
+                        // ── approve / reject buttons ──────────────────────────
+                        if (src) {
+                            var actions = document.createElement('div');
+                            actions.className = 'doc-approval-actions';
+
+                            var btnApprove = document.createElement('button');
+                            btnApprove.className = 'btn-approve';
+                            btnApprove.innerHTML = '<i class="fas fa-check"></i> Approve';
+                            btnApprove.disabled = (approvalStatus === 'approved');
+                            btnApprove.dataset.rider = rider.id;
+                            btnApprove.dataset.col = doc.col;
+                            btnApprove.dataset.action = 'approve';
+
+                            var btnReject = document.createElement('button');
+                            btnReject.className = 'btn-reject';
+                            btnReject.innerHTML = '<i class="fas fa-times"></i> Reject';
+                            btnReject.disabled = (approvalStatus === 'rejected');
+                            btnReject.dataset.rider = rider.id;
+                            btnReject.dataset.col = doc.col;
+                            btnReject.dataset.action = 'reject';
+
+                            actions.appendChild(btnApprove);
+                            actions.appendChild(btnReject);
+                            card.appendChild(actions);
+                        }
+
+                        container.appendChild(card);
+                    });
+
+                    // update pending count banner
+                    var pending = container.querySelectorAll('.badge-pending').length;
+                    var countEl = document.getElementById('pendingDocsCount');
+                    document.getElementById('pendingDocsNum').textContent = pending;
+                    countEl.style.display = pending > 0 ? 'inline-flex' : 'none';
+                })
+                .catch(function () {
+                    container.innerHTML = '<p style="color:var(--muted-text);font-size:13px;">Could not load approval status.</p>';
+                });
+        }
+
+        // Delegated click — image lightbox and approve/reject buttons
+        document.addEventListener('click', function (e) {
+            var imgEl = e.target.closest('.doc-img-clickable');
+            if (imgEl) {
+                openLightbox(imgEl.dataset.src, imgEl.dataset.label);
+                return;
             }
+            var actionBtn = e.target.closest('[data-action="approve"],[data-action="reject"]');
+            if (actionBtn) {
+                var act = actionBtn.dataset.action;
+                var rId = actionBtn.dataset.rider;
+                var dCol = actionBtn.dataset.col;
+                _setDocStatus(rId, dCol, act === 'approve' ? 'approved' : 'rejected', actionBtn);
+            }
+        });
+
+
+        function approveDoc(riderId, docCol, btn) { _setDocStatus(riderId, docCol, 'approved', btn); }
+        function rejectDoc(riderId, docCol, btn) { _setDocStatus(riderId, docCol, 'rejected', btn); }
+
+        function _setDocStatus(riderId, docCol, status, clickedBtn) {
+            var card = clickedBtn.closest('.doc-approval-card');
+            var btns = card.querySelectorAll('.btn-approve, .btn-reject');
+            btns.forEach(function (b) { b.disabled = true; });
+
+            var fd = new FormData();
+            fd.append('riderId', riderId);
+            fd.append('docCol', docCol);
+            fd.append('status', status);
+
+            fetch(pageUrl + '?action=setDocStatus', { method: 'POST', body: fd })
+                .then(function (r) { return r.json(); })
+                .then(function (result) {
+                    if (result && result.success) {
+                        var badge = card.querySelector('.doc-approval-badge');
+                        badge.className = 'doc-approval-badge ' + (status === 'approved' ? 'badge-approved' : 'badge-rejected');
+                        badge.innerHTML = status === 'approved' ? '&#10003; Approved' : '&#10007; Rejected';
+                        btns.forEach(function (b) {
+                            b.disabled = (status === 'approved' && b.classList.contains('btn-approve')) ||
+                                (status === 'rejected' && b.classList.contains('btn-reject'));
+                        });
+                        var pending = document.querySelectorAll('#modalDocPhotos .badge-pending').length;
+                        var countEl = document.getElementById('pendingDocsCount');
+                        document.getElementById('pendingDocsNum').textContent = pending;
+                        countEl.style.display = pending > 0 ? 'inline-flex' : 'none';
+                        showNotification(status === 'approved' ? 'Document approved!' : 'Document rejected.', status === 'approved' ? 'success' : 'error');
+                    } else {
+                        btns.forEach(function (b) { b.disabled = false; });
+                        showNotification('Failed to update approval status.', 'error');
+                    }
+                })
+                .catch(function () {
+                    btns.forEach(function (b) { b.disabled = false; });
+                    showNotification('Server error.', 'error');
+                });
         }
     </script>
 </asp:Content>

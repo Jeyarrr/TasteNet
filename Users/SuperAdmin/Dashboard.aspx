@@ -11,6 +11,8 @@
     <asp:HiddenField ID="hdnQuotaSaved"  runat="server" Value="0" />
     <asp:HiddenField ID="hdnQuotaTarget" runat="server" Value="0" />
     <asp:HiddenField ID="hdnQuotaPct"    runat="server" Value="0" />
+    <asp:HiddenField ID="hdnDateFrom"    runat="server" Value="" />
+    <asp:HiddenField ID="hdnDateTo"      runat="server" Value="" />
 
     <style>
         :root {
@@ -136,7 +138,28 @@
         .view-all-link:hover { background:var(--primary-maroon); color:white; }
         .no-data { text-align:center; color:var(--muted-text); padding:30px 0; font-size:14px; }
 
-        /* Quota Modal */
+        /* Date Range Picker */
+        .daterange-wrapper { position:relative; display:inline-block; }
+        .daterange-popup {
+            display:none; position:absolute; top:calc(100% + 8px); right:0;
+            background:white; border-radius:16px; padding:20px;
+            box-shadow:0 12px 40px rgba(107,13,30,.18); z-index:1000;
+            width:280px; border:1.5px solid #f3ebe0;
+            animation:slideUp .2s ease;
+        }
+        .daterange-popup.open { display:block; }
+        .daterange-popup h4 { margin:0 0 14px; font-size:14px; font-weight:700; color:var(--primary-maroon); }
+        .dr-row { margin-bottom:12px; }
+        .dr-label { font-size:11px; font-weight:600; color:var(--muted-text); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:.4px; }
+        .dr-input { width:100%; padding:9px 12px; border:2px solid #e8ddd5; border-radius:10px; font-size:13px; font-family:'Poppins',sans-serif; color:var(--text-dark); outline:none; transition:border-color .2s; box-sizing:border-box; }
+        .dr-input:focus { border-color:var(--primary-maroon); }
+        .dr-actions { display:flex; gap:8px; margin-top:16px; }
+        .dr-apply { flex:1; background:var(--primary-maroon); color:white; border:none; border-radius:10px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; transition:background .2s; }
+        .dr-apply:hover { background:#5a0b19; }
+        .dr-cancel { background:white; color:var(--muted-text); border:2px solid #e8ddd5; border-radius:10px; padding:10px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Poppins',sans-serif; transition:all .2s; }
+        .dr-cancel:hover { border-color:var(--primary-maroon); color:var(--text-dark); }
+        .chart-btn.custom-active { background:var(--primary-maroon); color:white; box-shadow:0 2px 6px rgba(107,13,30,.2); }
+        .custom-range-label { font-size:10px; display:block; opacity:.85; margin-top:1px; }
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(74,14,14,.45); z-index:9999; align-items:center; justify-content:center; }
         .modal-overlay.open { display:flex; }
         .modal-box { background:white; border-radius:24px; padding:32px; width:100%; max-width:460px; box-shadow:0 20px 60px rgba(107,13,30,.2); animation:slideUp .25s ease; }
@@ -251,6 +274,27 @@
                         <asp:Button ID="btnToday"  runat="server" Text="Daily"   CommandArgument="Daily"   CssClass="chart-btn"        OnClick="btnPeriod_Click" />
                         <asp:Button ID="btn7Days"  runat="server" Text="Weekly"  CommandArgument="Weekly"  CssClass="chart-btn"        OnClick="btnPeriod_Click" />
                         <asp:Button ID="btn30Days" runat="server" Text="Monthly" CommandArgument="Monthly" CssClass="chart-btn active" OnClick="btnPeriod_Click" />
+                        <%-- Custom Date Range --%>
+                        <div class="daterange-wrapper">
+                            <asp:Button ID="btnCustomRange" runat="server" CssClass="chart-btn" OnClick="btnCustomRange_Click"
+                                Text="Custom" ToolTip="Filter by custom date range" />
+                            <div class="daterange-popup" id="drPopup">
+                                <h4><i class="fas fa-calendar-range" style="margin-right:8px;"></i>Select Date Range</h4>
+                                <div class="dr-row">
+                                    <label class="dr-label" for="drFrom">From</label>
+                                    <input type="date" id="drFrom" class="dr-input" />
+                                </div>
+                                <div class="dr-row">
+                                    <label class="dr-label" for="drTo">To</label>
+                                    <input type="date" id="drTo" class="dr-input" />
+                                </div>
+                                <div class="dr-actions">
+                                    <button type="button" class="dr-cancel" onclick="closeDatePicker()">Cancel</button>
+                                    <button type="button" class="dr-apply" onclick="applyDateRange()">Apply</button>
+                                </div>
+                            </div>
+                        </div>
+                        <asp:HiddenField ID="hdnApplyRange" runat="server" Value="0" />
                     </div>
                 </div>
 
@@ -732,11 +776,98 @@
             }, 200);
         });
 
+        // ── Date Range Picker ─────────────────────────────────────────────────
+        function toggleDatePicker(e) {
+            if (e) e.stopPropagation();
+            var popup = document.getElementById('drPopup');
+            popup.classList.toggle('open');
+        }
+        function closeDatePicker() {
+            document.getElementById('drPopup').classList.remove('open');
+        }
+        function applyDateRange() {
+            var from = document.getElementById('drFrom').value;
+            var to   = document.getElementById('drTo').value;
+            if (!from || !to) { alert('Please select both From and To dates.'); return; }
+            if (from > to)    { alert('"From" date cannot be after "To" date.');  return; }
+
+            // Write into hidden fields so code-behind can read them
+            document.getElementById('<%= hdnDateFrom.ClientID %>').value   = from;
+            document.getElementById('<%= hdnDateTo.ClientID %>').value     = to;
+            document.getElementById('<%= hdnApplyRange.ClientID %>').value = '1';
+
+            // Update button label
+            var btn = document.getElementById('<%= btnCustomRange.ClientID %>');
+            var fmt = function(d){ var p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0]; };
+            btn.innerHTML = fmt(from) + ' – ' + fmt(to);
+            btn.classList.add('custom-active');
+
+            closeDatePicker();
+
+            // Allow exactly one postback, then reset the flag so the next click opens the picker
+            _applyingRange = true;
+            __doPostBack('<%= btnCustomRange.UniqueID %>', '');
+            // Reset immediately after — by the time the user can click again the postback is done
+            setTimeout(function() { _applyingRange = false; }, 500);
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(e) {
+            var popup = document.getElementById('drPopup');
+            var wrapper = popup ? popup.closest('.daterange-wrapper') : null;
+            if (popup && popup.classList.contains('open') && wrapper && !wrapper.contains(e.target)) {
+                closeDatePicker();
+            }
+        });
+
+        // ── Custom button: use event delegation so it survives UpdatePanel rerenders ──
+        var _applyingRange = false;
+        var _customBtnId   = '<%= btnCustomRange.ClientID %>';
+
+        // Delegated click on document — works even after UpdatePanel replaces the button DOM
+        document.addEventListener('click', function(e) {
+            var btn = document.getElementById(_customBtnId);
+            if (!btn || e.target !== btn) return;
+            if (_applyingRange) return; // let the one real postback through
+            e.preventDefault();
+            e.stopPropagation();
+            toggleDatePicker(e);
+        });
+
+        // Helper: initialise / restore picker state (called on first load AND after every postback)
+        function initCustomPicker() {
+            var today  = new Date().toISOString().split('T')[0];
+            var drFrom = document.getElementById('drFrom');
+            var drTo   = document.getElementById('drTo');
+
+            var fromHdn   = document.getElementById('<%= hdnDateFrom.ClientID %>');
+            var toHdn     = document.getElementById('<%= hdnDateTo.ClientID %>');
+            var period    = document.getElementById('<%= hdnPeriod.ClientID %>');
+            var customBtn = document.getElementById(_customBtnId);
+
+            if (period && period.value === 'Custom' && fromHdn && toHdn && fromHdn.value && toHdn.value && customBtn) {
+                // Restore date label on the button
+                var fmt = function (d) { var p = d.split('-'); return p[1] + '/' + p[2] + '/' + p[0]; };
+                customBtn.innerHTML = fmt(fromHdn.value) + ' – ' + fmt(toHdn.value);
+                customBtn.classList.add('custom-active');
+                // Pre-fill picker inputs with the last used dates
+                if (drFrom) drFrom.value = fromHdn.value;
+                if (drTo) drTo.value = toHdn.value;
+            } else {
+                // Default picker inputs to today
+                if (drFrom && !drFrom.value) drFrom.value = today;
+                if (drTo && !drTo.value) drTo.value = today;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initCustomPicker);
+
         if (typeof Sys !== 'undefined') {
             Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
                 initDashboardChart();
                 updateQuotaBar();
                 checkQuotaSaved();
+                initCustomPicker();
             });
         }
     </script>

@@ -17,6 +17,24 @@ namespace TasteNet.Users.SuperAdmin
             get { return string.IsNullOrEmpty(hdnPeriod.Value) ? "Monthly" : hdnPeriod.Value; }
         }
 
+        private DateTime SelectedDateFrom
+        {
+            get
+            {
+                DateTime d;
+                return DateTime.TryParse(hdnDateFrom.Value, out d) ? d.Date : DateTime.Today.AddDays(-30);
+            }
+        }
+
+        private DateTime SelectedDateTo
+        {
+            get
+            {
+                DateTime d;
+                return DateTime.TryParse(hdnDateTo.Value, out d) ? d.Date : DateTime.Today;
+            }
+        }
+
         private int SelectedDays
         {
             get
@@ -25,6 +43,7 @@ namespace TasteNet.Users.SuperAdmin
                 {
                     case "Daily": return 1;
                     case "Weekly": return 7;
+                    case "Custom": return (SelectedDateTo - SelectedDateFrom).Days + 1;
                     default: return 30;
                 }
             }
@@ -44,6 +63,19 @@ namespace TasteNet.Users.SuperAdmin
         {
             Button btn = (Button)sender;
             hdnPeriod.Value = btn.CommandArgument;
+            // Clear custom range when switching to preset periods
+            hdnDateFrom.Value = "";
+            hdnDateTo.Value = "";
+            LoadDashboard();
+        }
+
+        protected void btnCustomRange_Click(object sender, EventArgs e)
+        {
+            // Only load if the JS flagged an apply (hdnApplyRange = "1")
+            if (hdnApplyRange.Value != "1") return;
+
+            hdnPeriod.Value = "Custom";
+            hdnApplyRange.Value = "0";
             LoadDashboard();
         }
 
@@ -51,19 +83,16 @@ namespace TasteNet.Users.SuperAdmin
 
         protected void btnSaveQuota_Click(object sender, EventArgs e)
         {
+            DateTime s, en;
             using (SqlConnection con = new SqlConnection(connStr))
             {
                 con.Open();
-
-                SaveOrUpdateQuota(con, "Daily", txtDailyQuota.Text, DateTime.Today, DateTime.Today);
-                SaveOrUpdateQuota(con, "Weekly", txtWeeklyQuota.Text, DateTime.Today, DateTime.Today.AddDays(6));
-                SaveOrUpdateQuota(con, "Monthly", txtMonthlyQuota.Text, DateTime.Today, DateTime.Today.AddDays(29));
+                GetCurrentPeriodDates("Daily", out s, out en); SaveOrUpdateQuota(con, "Daily", txtDailyQuota.Text, s, en);
+                GetCurrentPeriodDates("Weekly", out s, out en); SaveOrUpdateQuota(con, "Weekly", txtWeeklyQuota.Text, s, en);
+                GetCurrentPeriodDates("Monthly", out s, out en); SaveOrUpdateQuota(con, "Monthly", txtMonthlyQuota.Text, s, en);
             }
-
             LoadDashboard();
             LoadQuotaModal();
-
-            // Pass success flag to JS to close modal and show toast
             hdnQuotaSaved.Value = "1";
         }
 
@@ -126,6 +155,7 @@ namespace TasteNet.Users.SuperAdmin
             btnToday.CssClass = SelectedPeriod == "Daily" ? "chart-btn active" : "chart-btn";
             btn7Days.CssClass = SelectedPeriod == "Weekly" ? "chart-btn active" : "chart-btn";
             btn30Days.CssClass = SelectedPeriod == "Monthly" ? "chart-btn active" : "chart-btn";
+            btnCustomRange.CssClass = SelectedPeriod == "Custom" ? "chart-btn custom-active" : "chart-btn";
         }
 
         // ── STAT CARDS ────────────────────────────────────────────────────────────────
@@ -151,15 +181,10 @@ namespace TasteNet.Users.SuperAdmin
                 string sqlUsers = "SELECT COUNT(*) FROM Users WHERE UserType = 'Customer' AND IsActive = 1";
                 lblActiveUsers.Text = ExecuteScalar(con, sqlUsers).ToString();
 
-                // Quota card — target amount for current period
-                string sqlActiveQuota = "SELECT ISNULL(TargetAmount,0) FROM Quotas WHERE QuotaType = @QuotaType";
-                decimal activeTarget = 0;
-                using (SqlCommand cmd = new SqlCommand(sqlActiveQuota, con))
-                {
-                    cmd.Parameters.AddWithValue("@QuotaType", SelectedPeriod);
-                    object res = cmd.ExecuteScalar();
-                    activeTarget = (res == null || res == DBNull.Value) ? 0 : Convert.ToDecimal(res);
-                }
+                // Quota card — use saved period dates so target matches what was set
+                string statPeriod = SelectedPeriod == "Custom" ? "Daily" : SelectedPeriod;
+                QuotaInfo qi = GetQuotaInfo(statPeriod);
+                decimal activeTarget = qi.Amount;
 
                 // Current sales for the same period (reuse dateFilter already set above)
                 string sqlCurrentSales = "SELECT ISNULL(SUM(TotalAmount),0) FROM Tickets " + dateFilter;
@@ -260,72 +285,130 @@ namespace TasteNet.Users.SuperAdmin
             hdnChartLabels.Value = "[" + string.Join(",", labels) + "]";
             hdnChartData.Value = "[" + string.Join(",", values) + "]";
 
-            // Quota target for dashed line on chart
-            // Daily   → each day's target is the daily quota
-            // Weekly  → total weekly quota spread across the 7 days shown
-            // Monthly → total monthly quota spread across the 30 days shown
-            decimal quotaTotal = GetQuotaTarget(SelectedPeriod);
-            decimal quotaPerDay = 0;
-            if (quotaTotal > 0)
-            {
-                switch (SelectedPeriod)
-                {
-                    case "Daily": quotaPerDay = quotaTotal; break;
-                    case "Weekly": quotaPerDay = Math.Round(quotaTotal / 7, 2); break;
-                    default: quotaPerDay = Math.Round(quotaTotal / 30, 2); break;
-                }
-            }
+            // Quota dashed line — per-day target based on actual saved period length
+            string quotaPeriod = SelectedPeriod == "Custom" ? "Daily" : SelectedPeriod;
+            QuotaInfo qi = GetQuotaInfo(quotaPeriod);
+            decimal quotaPerDay = qi.Amount > 0 ? Math.Round(qi.Amount / qi.PeriodDays, 2) : 0;
+
             hdnQuotaTarget.Value = quotaPerDay.ToString("F2");
-            lblQuotaPeriod.Text = SelectedPeriod + " target (₱"
-                                    + quotaTotal.ToString("N2") + " total, ₱"
-                                    + quotaPerDay.ToString("N2") + "/day)";
+            lblQuotaPeriod.Text = quotaPeriod + " target (₱"
+                                 + qi.Amount.ToString("N2") + " over "
+                                 + qi.PeriodDays + " day" + (qi.PeriodDays == 1 ? "" : "s")
+                                 + ", ₱" + quotaPerDay.ToString("N2") + "/day)";
         }
 
         // ── HELPERS ───────────────────────────────────────────────────────────────────
 
         private string GetPeriodLabel()
         {
-            switch (SelectedPeriod)
+            if (SelectedPeriod == "Custom")
+                return SelectedDateFrom.ToString("MMM dd") + " – " + SelectedDateTo.ToString("MMM dd, yyyy");
+
+            QuotaInfo q = GetQuotaInfo(SelectedPeriod);
+            if (!q.IsSet)
             {
-                case "Daily": return "today";
-                case "Weekly": return "last 7 days";
-                default: return "last 30 days";
+                switch (SelectedPeriod)
+                {
+                    case "Daily": return "today";
+                    case "Weekly": return "last 7 days";
+                    default: return "last 30 days";
+                }
             }
+            // Show the actual saved period dates, e.g. "May 01 – May 31, 2025"
+            return q.StartDate.ToString("MMM dd") + " – " + q.EndDate.ToString("MMM dd, yyyy");
         }
 
         private string GetDateFilter(string prefix)
         {
-            // prefix is either "WHERE" (standalone) or "AND t." (joined query)
             bool isWhere = prefix.Trim().ToUpper() == "WHERE";
-            string col = isWhere ? "CreatedAt" : "CreatedAt";
-            switch (SelectedPeriod)
+
+            // Custom range — use the picker dates directly
+            if (SelectedPeriod == "Custom")
             {
-                case "Daily":
-                    return isWhere
-                        ? "WHERE CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)"
-                        : "AND CAST(t.CreatedAt AS DATE) = CAST(GETDATE() AS DATE)";
-                case "Weekly":
-                    return isWhere
-                        ? "WHERE CreatedAt >= DATEADD(DAY, -7, GETDATE())"
-                        : "AND t.CreatedAt >= DATEADD(DAY, -7, GETDATE())";
-                default:
-                    return isWhere
-                        ? "WHERE CreatedAt >= DATEADD(DAY, -30, GETDATE())"
-                        : "AND t.CreatedAt >= DATEADD(DAY, -30, GETDATE())";
+                string from = SelectedDateFrom.ToString("yyyy-MM-dd");
+                string to = SelectedDateTo.ToString("yyyy-MM-dd");
+                return isWhere
+                    ? string.Format("WHERE CAST(CreatedAt AS DATE) BETWEEN '{0}' AND '{1}'", from, to)
+                    : string.Format("AND CAST(t.CreatedAt AS DATE) BETWEEN '{0}' AND '{1}'", from, to);
+            }
+
+            // Preset periods — use the actual StartDate/EndDate saved in the Quotas table
+            QuotaInfo q = GetQuotaInfo(SelectedPeriod);
+            string qFrom = q.StartDate.ToString("yyyy-MM-dd");
+            string qTo = q.EndDate.ToString("yyyy-MM-dd");
+
+            return isWhere
+                ? string.Format("WHERE CAST(CreatedAt AS DATE) BETWEEN '{0}' AND '{1}'", qFrom, qTo)
+                : string.Format("AND CAST(t.CreatedAt AS DATE) BETWEEN '{0}' AND '{1}'", qFrom, qTo);
+        }
+
+        // Holds a quota row's key fields
+        private class QuotaInfo
+        {
+            public decimal Amount { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
+            public bool IsSet { get; set; }
+
+            // How many days the quota spans (minimum 1)
+            public int PeriodDays
+            {
+                get { return Math.Max(1, (EndDate.Date - StartDate.Date).Days + 1); }
             }
         }
 
-        private decimal GetQuotaTarget(string period)
+        // Returns the correct start/end dates for a period based on TODAY — never stale
+        private void GetCurrentPeriodDates(string period, out DateTime start, out DateTime end)
         {
-            string sql = "SELECT ISNULL(TargetAmount,0) FROM Quotas WHERE QuotaType = @QuotaType";
+            switch (period)
+            {
+                case "Daily":
+                    start = DateTime.Today;
+                    end = DateTime.Today;
+                    break;
+                case "Weekly":
+                    int dow = (int)DateTime.Today.DayOfWeek; // 0=Sun … 6=Sat
+                    int daysToMon = (dow == 0) ? -6 : 1 - dow;
+                    start = DateTime.Today.AddDays(daysToMon);
+                    end = start.AddDays(6);
+                    break;
+                default: // Monthly
+                    start = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                    end = start.AddMonths(1).AddDays(-1);
+                    break;
+            }
+        }
+
+        private QuotaInfo GetQuotaInfo(string period)
+        {
+            // Always use today's correct period dates — never trust the DB dates
+            DateTime periodStart, periodEnd;
+            GetCurrentPeriodDates(period, out periodStart, out periodEnd);
+
+            string sql = "SELECT ISNULL(TargetAmount, 0) FROM Quotas WHERE QuotaType = @QuotaType";
+
             using (SqlConnection con = new SqlConnection(connStr))
             using (SqlCommand cmd = new SqlCommand(sql, con))
             {
                 con.Open();
                 cmd.Parameters.AddWithValue("@QuotaType", period);
                 object result = cmd.ExecuteScalar();
-                return (result == null || result == DBNull.Value) ? 0 : Convert.ToDecimal(result);
+                decimal amount = (result == null || result == DBNull.Value) ? 0 : Convert.ToDecimal(result);
+
+                return new QuotaInfo
+                {
+                    Amount = amount,
+                    StartDate = periodStart,
+                    EndDate = periodEnd,
+                    IsSet = amount > 0
+                };
             }
+        }
+
+        // Keep old helper for callers that only need the amount
+        private decimal GetQuotaTarget(string period)
+        {
+            return GetQuotaInfo(period).Amount;
         }
 
         protected string GetStatusCss(string status)

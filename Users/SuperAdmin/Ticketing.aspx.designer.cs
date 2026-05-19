@@ -78,6 +78,24 @@ namespace TasteNet.Users.SuperAdmin
         protected global::System.Web.UI.WebControls.Literal litCompletedCount;
 
         /// <summary>
+        /// btnFilterCancelled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnFilterCancelled;
+
+        /// <summary>
+        /// litCancelledCount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litCancelledCount;
+
+        /// <summary>
         /// btnFilterAll control.
         /// </summary>
         /// <remarks>
