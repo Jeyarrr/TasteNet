@@ -51,202 +51,31 @@ namespace TasteNet.Users.SuperAdmin
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl messageText;
 
         /// <summary>
-        /// txtSystemName control.
+        /// hfEditId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSystemName;
+        protected global::System.Web.UI.WebControls.HiddenField hfEditId;
 
         /// <summary>
-        /// fileLogo control.
+        /// hfEditMethod control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.FileUpload fileLogo;
+        protected global::System.Web.UI.WebControls.HiddenField hfEditMethod;
 
         /// <summary>
-        /// txtEmail control.
+        /// rptPaymentMethods control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtEmail;
-
-        /// <summary>
-        /// txtPhone control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPhone;
-
-        /// <summary>
-        /// txtAddress control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAddress;
-
-        /// <summary>
-        /// txtOpen control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOpen;
-
-        /// <summary>
-        /// txtClose control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtClose;
-
-        /// <summary>
-        /// btnSaveGeneral control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveGeneral;
-
-        /// <summary>
-        /// txtMinOrder control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtMinOrder;
-
-        /// <summary>
-        /// txtDelFee control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDelFee;
-
-        /// <summary>
-        /// txtCutoff control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCutoff;
-
-        /// <summary>
-        /// ddlAutoCancel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlAutoCancel;
-
-        /// <summary>
-        /// ddlPrepTime control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPrepTime;
-
-        /// <summary>
-        /// ddlDeliveryTime control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDeliveryTime;
-
-        /// <summary>
-        /// btnSaveOrder control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveOrder;
-
-        /// <summary>
-        /// chkCOD control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkCOD;
-
-        /// <summary>
-        /// chkGCash control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkGCash;
-
-        /// <summary>
-        /// chkPayMaya control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPayMaya;
-
-        /// <summary>
-        /// chkBankTransfer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkBankTransfer;
-
-        /// <summary>
-        /// txtPaymentInstructions control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPaymentInstructions;
-
-        /// <summary>
-        /// txtGCashDetails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtGCashDetails;
-
-        /// <summary>
-        /// txtBankDetails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtBankDetails;
+        protected global::System.Web.UI.WebControls.Repeater rptPaymentMethods;
 
         /// <summary>
         /// btnSavePayment control.
@@ -258,183 +87,84 @@ namespace TasteNet.Users.SuperAdmin
         protected global::System.Web.UI.WebControls.Button btnSavePayment;
 
         /// <summary>
-        /// adminEmail control.
+        /// txtEditMethodName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl adminEmail;
+        protected global::System.Web.UI.WebControls.TextBox txtEditMethodName;
 
         /// <summary>
-        /// btnEditAdmin control.
+        /// chkEditEnabled control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEditAdmin;
+        protected global::System.Web.UI.WebControls.CheckBox chkEditEnabled;
 
         /// <summary>
-        /// btnSystemControls control.
+        /// txtEditDisplayOrder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSystemControls;
+        protected global::System.Web.UI.WebControls.TextBox txtEditDisplayOrder;
 
         /// <summary>
-        /// btnAddAdmin control.
+        /// txtEditAccountDetails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddAdmin;
+        protected global::System.Web.UI.WebControls.TextBox txtEditAccountDetails;
 
         /// <summary>
-        /// ddlSessionTimeout control.
+        /// txtEditInstructions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSessionTimeout;
+        protected global::System.Web.UI.WebControls.TextBox txtEditInstructions;
 
         /// <summary>
-        /// chkAutoLogout control.
+        /// ddlEditStatus control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAutoLogout;
+        protected global::System.Web.UI.WebControls.DropDownList ddlEditStatus;
 
         /// <summary>
-        /// chkTwoFactor control.
+        /// fileEditQR control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkTwoFactor;
+        protected global::System.Web.UI.WebControls.FileUpload fileEditQR;
 
         /// <summary>
-        /// btnSaveSecurity control.
+        /// qrPreviewWrap control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveSecurity;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl qrPreviewWrap;
 
         /// <summary>
-        /// btnBackupDatabase control.
+        /// btnSaveEditMethod control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBackupDatabase;
-
-        /// <summary>
-        /// lastBackupDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lastBackupDate;
-
-        /// <summary>
-        /// btnRestoreDatabase control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRestoreDatabase;
-
-        /// <summary>
-        /// chkAutoBackup control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAutoBackup;
-
-        /// <summary>
-        /// chkMaintenanceMode control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkMaintenanceMode;
-
-        /// <summary>
-        /// btnViewLogs control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnViewLogs;
-
-        /// <summary>
-        /// totalOrders control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl totalOrders;
-
-        /// <summary>
-        /// dbSize control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dbSize;
-
-        /// <summary>
-        /// storageUsed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl storageUsed;
-
-        /// <summary>
-        /// storageBar control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl storageBar;
-
-        /// <summary>
-        /// storagePercent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl storagePercent;
-
-        /// <summary>
-        /// btnSaveSystem control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveSystem;
+        protected global::System.Web.UI.WebControls.Button btnSaveEditMethod;
     }
 }

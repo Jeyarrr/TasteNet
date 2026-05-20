@@ -56,6 +56,7 @@ namespace TasteNet.Users.Customer
 
                 if (!IsPostBack)
                 {
+                    LoadBarangayDropdowns();
                     LoadUserProfile();
                     LoadMenuItems();
                     BindCartRepeater();
@@ -77,7 +78,7 @@ namespace TasteNet.Users.Customer
             // Clear all fields first
             txtHouseNo.Text = "";
             txtStreet.Text = "";
-            txtBarangay.Text = "";
+            ddlBarangay.SelectedIndex = 0;
             txtCity.Text = "Dasmariñas";
 
             if (string.IsNullOrEmpty(fullAddress))
@@ -91,7 +92,13 @@ namespace TasteNet.Users.Customer
 
             if (parts.Length >= 1) txtHouseNo.Text = parts[0].Trim();
             if (parts.Length >= 2) txtStreet.Text = parts[1].Trim();
-            if (parts.Length >= 3) txtBarangay.Text = parts[2].Trim();
+            if (parts.Length >= 3)
+            {
+                string savedBarangay = parts[2].Trim();
+                var matchItem = ddlBarangay.Items.FindByValue(savedBarangay);
+                if (matchItem != null)
+                    ddlBarangay.SelectedValue = savedBarangay;
+            }
 
             // City is always Dasmariñas
             txtCity.Text = "Dasmariñas";
@@ -111,8 +118,8 @@ namespace TasteNet.Users.Customer
             if (!string.IsNullOrEmpty(txtStreet.Text))
                 addressParts.Add(txtStreet.Text.Trim());
 
-            if (!string.IsNullOrEmpty(txtBarangay.Text))
-                addressParts.Add(txtBarangay.Text.Trim());
+            if (!string.IsNullOrEmpty(ddlBarangay.SelectedValue))
+                addressParts.Add(ddlBarangay.SelectedValue.Trim());
 
             // City is always Dasmariñas
             addressParts.Add("Dasmariñas");
@@ -137,8 +144,8 @@ namespace TasteNet.Users.Customer
             if (!string.IsNullOrEmpty(txtNewStreet.Text))
                 addressParts.Add(txtNewStreet.Text.Trim());
 
-            if (!string.IsNullOrEmpty(txtNewBarangay.Text))
-                addressParts.Add(txtNewBarangay.Text.Trim());
+            if (!string.IsNullOrEmpty(ddlNewBarangay.SelectedValue))
+                addressParts.Add(ddlNewBarangay.SelectedValue.Trim());
 
             // City is always Dasmariñas
             addressParts.Add("Dasmariñas");
@@ -188,13 +195,87 @@ namespace TasteNet.Users.Customer
         {
             List<CartItemServer> cart = GetCart();
             decimal subtotal = cart.Sum(item => item.Price * item.Quantity);
-            decimal deliveryFee = subtotal >= 500 ? 0 : 50;
+
+            // Get barangay from profile dropdown (already loaded)
+            string barangay = ddlBarangay.SelectedValue;
+            decimal barangayFee = GetDeliveryFeeByBarangay(barangay);
+            decimal deliveryFee = subtotal >= 500 ? 0 : barangayFee;
+
             decimal total = subtotal + deliveryFee;
 
             litSubtotal.Text = subtotal.ToString("F2");
             litDeliveryFee.Text = deliveryFee == 0 ? "FREE" : "₱" + deliveryFee.ToString("F2");
             litTotal.Text = total.ToString("F2");
             btnCheckout.Text = $"Checkout - ₱{total:F2}";
+        }
+
+        // Looks up the delivery fee for a given barangay name from the DeliveryFees table.
+        // Returns a fallback of ₱50 if the barangay is not found or not selected.
+        private decimal GetDeliveryFeeByBarangay(string barangayName)
+        {
+            if (string.IsNullOrWhiteSpace(barangayName))
+                return 50m; // fallback default
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT Fee FROM DeliveryFees WHERE BarangayName = @BarangayName";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@BarangayName", barangayName.Trim());
+                        object result = cmd.ExecuteScalar();
+                        if (result != null && result != DBNull.Value)
+                            return Convert.ToDecimal(result);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error fetching delivery fee: " + ex.Message);
+            }
+
+            return 50m; // fallback default
+        }
+
+        // Populates the barangay dropdowns from the DeliveryFees table
+        private void LoadBarangayDropdowns()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT BarangayName, Fee FROM DeliveryFees ORDER BY BarangayName";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        var items = new System.Web.UI.WebControls.ListItemCollection();
+                        items.Add(new System.Web.UI.WebControls.ListItem("-- Select Barangay --", ""));
+
+                        while (reader.Read())
+                        {
+                            string name = reader["BarangayName"].ToString();
+                            decimal fee = Convert.ToDecimal(reader["Fee"]);
+                            items.Add(new System.Web.UI.WebControls.ListItem(
+                                $"{name} (₱{fee:F0} delivery fee)", name));
+                        }
+
+                        ddlBarangay.Items.Clear();
+                        foreach (System.Web.UI.WebControls.ListItem li in items)
+                            ddlBarangay.Items.Add(li);
+
+                        ddlNewBarangay.Items.Clear();
+                        foreach (System.Web.UI.WebControls.ListItem li in items)
+                            ddlNewBarangay.Items.Add(li);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error loading barangay list: " + ex.Message);
+            }
         }
 
         private void UpdateCartBadge()
@@ -411,7 +492,7 @@ namespace TasteNet.Users.Customer
                 // Validate new address fields
                 if (string.IsNullOrWhiteSpace(txtNewHouseNo.Text) ||
                     string.IsNullOrWhiteSpace(txtNewStreet.Text) ||
-                    string.IsNullOrWhiteSpace(txtNewBarangay.Text))
+                    string.IsNullOrWhiteSpace(ddlNewBarangay.SelectedValue))
                 {
                     ScriptManager.RegisterStartupScript(this, GetType(), "showError",
                         "showNotification('Please fill in all address fields (House No, Street, Barangay)!', true);", true);
@@ -425,7 +506,7 @@ namespace TasteNet.Users.Customer
                 // Validate profile address
                 if (string.IsNullOrWhiteSpace(txtHouseNo.Text) ||
                     string.IsNullOrWhiteSpace(txtStreet.Text) ||
-                    string.IsNullOrWhiteSpace(txtBarangay.Text))
+                    string.IsNullOrWhiteSpace(ddlBarangay.SelectedValue))
                 {
                     ScriptManager.RegisterStartupScript(this, GetType(), "showError",
                         "showNotification('Please update your delivery address in Profile Settings first!', true);", true);
@@ -452,7 +533,15 @@ namespace TasteNet.Users.Customer
                 string ticketNumber = "TKT-" + DateTime.Now.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
                 string orderNumber = "ON-" + DateTime.Now.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
                 decimal subtotal = cart.Sum(x => x.Price * x.Quantity);
-                decimal deliveryFee = subtotal >= 500 ? 0 : 50;
+
+                // Determine the barangay: prefer new address dropdown if in use, else profile dropdown
+                bool useNewAddress = useNewAddressCheckbox != null && useNewAddressCheckbox.Checked;
+                string barangayForFee = useNewAddress
+                    ? ddlNewBarangay.SelectedValue
+                    : ddlBarangay.SelectedValue;
+
+                decimal barangayFee = GetDeliveryFeeByBarangay(barangayForFee);
+                decimal deliveryFee = subtotal >= 500 ? 0 : barangayFee;
                 decimal totalAmount = subtotal + deliveryFee;
 
                 using (SqlConnection conn = new SqlConnection(connectionString))

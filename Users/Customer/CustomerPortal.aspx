@@ -3152,7 +3152,7 @@
                             
                             <div class="form-group">
                                 <label>Barangay</label>
-                                <asp:TextBox ID="txtBarangay" runat="server" CssClass="form-control" placeholder="e.g., Zone 9, Salitran 3"></asp:TextBox>
+                                <asp:DropDownList ID="ddlBarangay" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
                             
                             <div class="form-group">
@@ -3304,7 +3304,7 @@
                     </div>
                     <div class="cart-delivery-info">
                         <i class="fas fa-info-circle"></i>
-                        <span>Free delivery on orders over ₱500</span>
+                        <span>Delivery fee is based on your barangay. Free delivery on orders over ₱500.</span>
                     </div>
                 </div>
             </div>
@@ -3350,7 +3350,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Barangay *</label>
-                                <asp:TextBox ID="txtNewBarangay" runat="server" CssClass="form-control" placeholder="Enter barangay"></asp:TextBox>
+                                <asp:DropDownList ID="ddlNewBarangay" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
                             <div class="form-group">
                                 <label>City/Municipality</label>
@@ -3573,7 +3573,7 @@
                 </div>
                 <div class="cta-banner">
                     <h3 class="cta-title">Hungry? Order Now!</h3>
-                    <p class="cta-subtitle">Free delivery on orders over ₱500</p>
+                    <p class="cta-subtitle">Free delivery on orders over ₱500. Delivery fee varies by barangay.</p>
                     <a href="#menu" class="btn-cta-large">Order Now</a>
                     <div style="margin-top: 20px;">
                         <p><i class="fas fa-phone"></i> Call us for inquiries:</p>
@@ -4639,7 +4639,7 @@
                             <li>All orders are subject to availability and confirmation.</li>
                             <li>We accept <strong>Cash on Delivery (COD)</strong> and <strong>GCash</strong> payments.</li>
                             <li>Orders may only be cancelled while in "Open" or "Cooking" status.</li>
-                            <li>A delivery fee of ₱50 applies to orders below ₱500. Orders of ₱500 and above qualify for free delivery.</li>
+                            <li>A delivery fee based on your barangay applies to orders below ₱500. Orders of ₱500 and above qualify for free delivery.</li>
                         </ul>
                     </div>
                     <div class="policy-section">
