@@ -1126,6 +1126,40 @@
             color: var(--primary-maroon);
         }
 
+        .payment-option-disabled {
+            filter: grayscale(100%);
+            opacity: 0.45;
+            cursor: not-allowed !important;
+            pointer-events: none;
+            border-color: #ccc !important;
+            background: #f5f5f5 !important;
+        }
+
+        .payment-option-disabled:hover {
+            transform: none !important;
+            border-color: #ccc !important;
+            background: #f5f5f5 !important;
+            box-shadow: none !important;
+        }
+
+        .payment-option-disabled input[type="radio"] {
+            cursor: not-allowed !important;
+        }
+
+        .badge-unavailable {
+            display: inline-block;
+            background: #999;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
         .alert {
             padding: 12px;
             border-radius: 8px;
@@ -1686,7 +1720,6 @@
             justify-content: flex-end;
         }
 
-        /* ===== CUSTOM TOAST NOTIFICATIONS ===== */
         @keyframes tnSlideIn {
             from { opacity: 0; transform: translateX(120px) scale(0.92); }
             to   { opacity: 1; transform: translateX(0)     scale(1); }
@@ -2066,7 +2099,6 @@
             justify-content: center;
         }
 
-        /* When fewer than 6 items exist, auto-fit centers them */
         .menu-grid-container:has(.menu-container:first-child:nth-last-child(-n+5)) {
             grid-template-columns: repeat(auto-fit, minmax(180px, 210px));
             justify-content: center;
@@ -2922,7 +2954,6 @@
             .menu-container { max-width: 280px; margin: 0 auto; }
         }
 
-        /* ========== CUSTOM CONFIRM MODALS ========== */
         .custom-confirm-overlay {
             display: none;
             position: fixed;
@@ -3367,26 +3398,35 @@
                     <div class="checkout-section">
                         <h4><i class="fas fa-credit-card"></i> Payment Method</h4>
                         <div class="payment-options">
-                            <label class="payment-option">
-                                <input type="radio" name="paymentMethod" value="COD" checked />
-                                <div class="payment-option-content">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span>Cash on Delivery</span>
-                                    <small>Pay when you receive your order</small>
-                                </div>
-                            </label>
-                            <label class="payment-option">
-                                <input type="radio" name="paymentMethod" value="GCASH" />
-                                <div class="payment-option-content">
-                                    <i class="fas fa-mobile-alt"></i>
-                                    <span>GCash</span>
-                                    <small>Pay via GCash e-wallet</small>
-                                </div>
-                            </label>
+                            <asp:Repeater ID="rptPaymentMethods" runat="server">
+                                <ItemTemplate>
+                                    <label class='payment-option <%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "payment-option-disabled" : "" %>'
+                                           title='<%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "This payment method is currently unavailable." : "" %>'>
+                                        <input type="radio" name="paymentMethod"
+                                               value='<%# Eval("MethodName") %>'
+                                               <%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "disabled=\"disabled\"" : "" %> />
+                                        <div class="payment-option-content">
+                                            <i class='<%# GetPaymentIcon((string)Eval("MethodName")) %>'></i>
+                                            <span><%# Eval("MethodName") %></span>
+                                            <asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrEmpty((string)(Eval("AccountDetails") ?? "")) %>'>
+                                                <small><%# Eval("AccountDetails") %></small>
+                                            </asp:PlaceHolder>
+                                            <%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "<span class=\"badge-unavailable\">Unavailable</span>" : "" %>
+                                        </div>
+                                    </label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:PlaceHolder runat="server" Visible='<%# rptPaymentMethods.Items.Count == 0 %>'>
+                                        <div style="padding:12px 8px;color:#999;font-size:0.85rem;text-align:center;">
+                                            <i class="fas fa-exclamation-circle"></i> No payment methods available. Please contact support.
+                                        </div>
+                                    </asp:PlaceHolder>
+                                </FooterTemplate>
+                            </asp:Repeater>
                         </div>
-                        <div id="gcashInfo" class="gcash-info" style="display: none;">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i> You will be redirected to GCash payment page after confirming your order.
+                        <div id="paymentInfo" class="gcash-info" style="display: none;">
+                            <div class="alert alert-info" id="paymentInfoText">
+                                <i class="fas fa-info-circle"></i> <span id="paymentInfoMessage"></span>
                             </div>
                         </div>
                     </div>
@@ -3828,9 +3868,6 @@
             let _ordersPollingTimer = null;
 
             // ===== REAL-TIME ORDERS POLLING =====
-            // Polls every 15s while the Orders panel is open by triggering
-            // a hidden __doPostBack that refreshes the UpdatePanel containing orders.
-            // Falls back gracefully if UpdatePanel is not present.
             function startOrdersPolling() {
                 stopOrdersPolling();
                 _ordersPollingTimer = setInterval(function() {
@@ -3971,6 +4008,8 @@
                         }
                     });
                     document.body.style.overflow = 'hidden';
+                    // Ensure a payment method is always selected when modal opens
+                    setTimeout(selectFirstPaymentMethod, 50);
                 }
             }
             
@@ -4340,14 +4379,30 @@
             const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
             paymentRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
-                    const gcashInfo = document.getElementById('gcashInfo');
-                    if (this.value === 'GCASH') {
-                        gcashInfo.style.display = 'block';
+                    const infoDiv = document.getElementById('paymentInfo');
+                    const msgSpan = document.getElementById('paymentInfoMessage');
+                    if (!infoDiv || !msgSpan) return;
+                    const val = this.value.toUpperCase();
+                    if (val === 'GCASH' || val === 'MAYA' || val === 'PAYMAYA') {
+                        msgSpan.textContent = 'Please scan the QR code or send payment to the account details shown. Include your order ticket number as reference.';
+                        infoDiv.style.display = 'block';
+                    } else if (val === 'BANK TRANSFER' || val === 'BANK') {
+                        msgSpan.textContent = 'Please transfer the exact amount to the account provided and keep your transaction reference number.';
+                        infoDiv.style.display = 'block';
                     } else {
-                        gcashInfo.style.display = 'none';
+                        infoDiv.style.display = 'none';
                     }
                 });
             });
+            // Auto-select first enabled payment method on load and every time checkout opens
+            function selectFirstPaymentMethod() {
+                const alreadyChecked = document.querySelector('input[name="paymentMethod"]:checked');
+                if (!alreadyChecked) {
+                    const firstEnabled = document.querySelector('input[name="paymentMethod"]:not([disabled])');
+                    if (firstEnabled) firstEnabled.checked = true;
+                }
+            }
+            setTimeout(selectFirstPaymentMethod, 200);
             
             const mealCloseBtn = document.getElementById('mealCloseBtn');
             const closeMealModalBtn = document.getElementById('closeMealModalBtn');

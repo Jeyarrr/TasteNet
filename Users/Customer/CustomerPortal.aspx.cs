@@ -41,6 +41,16 @@ namespace TasteNet.Users.Customer
             public string SpecialRequest { get; set; }
         }
 
+        public class PaymentMethodItem
+        {
+            public int PaymentMethodId { get; set; }
+            public string MethodName { get; set; }
+            public string AccountDetails { get; set; }
+            public string Instructions { get; set; }
+            public string Status { get; set; }
+            public bool IsEnabled { get; set; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["UserID"] == null)
@@ -63,6 +73,9 @@ namespace TasteNet.Users.Customer
                     UpdateCartTotals();
                     LoadOrdersData();
                 }
+                // Always rebind payment methods on every request (including postbacks)
+                // so the repeater is never empty after a postback triggers the checkout modal
+                LoadPaymentMethods();
             }
             else
             {
@@ -240,6 +253,73 @@ namespace TasteNet.Users.Customer
         }
 
         // Populates the barangay dropdowns from the DeliveryFees table
+        // ============ PAYMENT METHODS ============
+
+        private void LoadPaymentMethods()
+        {
+            var methods = new List<PaymentMethodItem>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Table is: dbo.PaymentMethods (with S)
+                    // Status values in DB: Active / Inactive
+                    // IsEnabled: 1 = enabled, 0 = disabled
+                    string sql = @"SELECT PaymentMethodId, MethodName, IsEnabled,
+                                          DisplayOrder, AccountDetails, Instructions, Status
+                                   FROM PaymentMethods
+                                   ORDER BY DisplayOrder ASC";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            string acct = rdr["AccountDetails"] != DBNull.Value ? rdr["AccountDetails"].ToString() : "";
+                            string instr = rdr["Instructions"] != DBNull.Value ? rdr["Instructions"].ToString() : "";
+                            string status = rdr["Status"] != DBNull.Value ? rdr["Status"].ToString() : "Active";
+                            bool enabled = rdr["IsEnabled"] != DBNull.Value && Convert.ToBoolean(rdr["IsEnabled"]);
+
+                            methods.Add(new PaymentMethodItem
+                            {
+                                PaymentMethodId = Convert.ToInt32(rdr["PaymentMethodId"]),
+                                MethodName = rdr["MethodName"].ToString(),
+                                AccountDetails = acct,
+                                Instructions = instr,
+                                Status = status,
+                                IsEnabled = enabled
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("LoadPaymentMethods error: " + ex.Message);
+            }
+
+            rptPaymentMethods.DataSource = methods;
+            rptPaymentMethods.DataBind();
+        }
+
+        protected string GetPaymentIcon(string methodName)
+        {
+            if (string.IsNullOrEmpty(methodName)) return "fas fa-credit-card";
+            string name = methodName.ToUpper();
+            if (name.Contains("GCASH") || name.Contains("MAYA") || name.Contains("PAYMAYA"))
+                return "fas fa-mobile-alt";
+            if (name.Contains("COD") || name.Contains("CASH"))
+                return "fas fa-money-bill-wave";
+            if (name.Contains("BANK") || name.Contains("TRANSFER"))
+                return "fas fa-university";
+            if (name.Contains("CARD") || name.Contains("CREDIT") || name.Contains("DEBIT"))
+                return "fas fa-credit-card";
+            return "fas fa-wallet";
+        }
+
         private void LoadBarangayDropdowns()
         {
             try
@@ -601,7 +681,7 @@ namespace TasteNet.Users.Customer
                         UpdateCartTotals();
                         UpdateCartBadge();
 
-                        string paymentDisplay = paymentMethod == "COD" ? "Cash on Delivery" : "GCash";
+                        string paymentDisplay = paymentMethod.ToUpper() == "COD" ? "Cash on Delivery" : paymentMethod;
                         string successScript = $"closeCheckoutModal(); showOrderConfirmedAnimation('{ticketNumber}', '{totalAmount:F2}', '{paymentDisplay}');";
                         ClientScript.RegisterStartupScript(this.GetType(), "orderSuccess", successScript, true);
                     }
