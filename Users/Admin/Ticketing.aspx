@@ -43,7 +43,6 @@
     }
 
     .ticketing-container {
-        background: var(--soft-cream) !important;
         padding: 20px 30px !important;
         max-width: 1600px !important;
         margin: 0 auto !important;
@@ -914,7 +913,7 @@
                                     CommandArgument='<%# Eval("TicketID") %>'
                                     CssClass="ticket-action"
                                     ToolTip="Delete Ticket"
-                                    OnClientClick='return confirm("Delete <%# Eval("TicketNumber") %>? This action cannot be undone!");'>
+                                    OnClientClick='<%# "return confirmDelete(" + Eval("TicketID") + ");" %>'>
                                     <i class="fas fa-trash-alt"></i>
                                 </asp:LinkButton>
                             </div>
@@ -978,7 +977,7 @@
                                             CommandArgument='<%# Eval("TicketID") %>'
                                             CssClass="action-btn btn-cancel-ticket"
                                             Visible='<%# Eval("Status").ToString() == "Open" %>'
-                                            OnClientClick='<%# "return confirm(\"Cancel ticket " + Eval("TicketNumber") + "? This will mark it as Cancelled.\");" %>'>
+                                            OnClientClick='<%# "return confirmCancel(" + Eval("TicketID") + ");" %>'>
                                             <i class="fas fa-ban"></i> Cancel
                                         </asp:LinkButton>
 
@@ -1032,6 +1031,7 @@
                         <asp:DropDownList ID="ddlOrderType" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="DdlOrderType_SelectedIndexChanged">
                             <asp:ListItem Value="Dine-In">Dine-In</asp:ListItem>
                             <asp:ListItem Value="Takeout">Takeout</asp:ListItem>
+                            <%-- Delivery intentionally excluded: delivery orders are managed separately --%>
                         </asp:DropDownList>
                     </div>
                     
@@ -1098,11 +1098,19 @@
                 <div class="modal-footer">
                     <asp:Button ID="btnCreateTicket" runat="server" Text="Create Ticket" 
                         CssClass="action-btn btn-done" OnClick="BtnCreateTicket_Click" />
+                    <%-- Fix 13: Hidden reset button triggered by JS on modal open to clear stale cart --%>
+                    <asp:Button ID="btnResetCart" runat="server" Text="" OnClick="BtnResetCart_Click"
+                        style="display:none;" />
                     <button type="button" class="btn-cancel" onclick="closeModal()">
                         <i class="fas fa-times"></i> Cancel
                     </button>
                 </div>
             </ContentTemplate>
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="btnCreateTicket" EventName="Click" />
+                <asp:AsyncPostBackTrigger ControlID="btnAddItem" EventName="Click" />
+                <asp:AsyncPostBackTrigger ControlID="btnResetCart" EventName="Click" />
+            </Triggers>
         </asp:UpdatePanel>
     </div>
 </div>
@@ -1151,6 +1159,15 @@
 <script type="text/javascript">
     let modalShouldStayOpen = false;
 
+    // Safe confirm helpers — use ticketId so no server-side string quoting issues
+    function confirmDelete(ticketId) {
+        return confirm('Delete this ticket? This action cannot be undone!');
+    }
+
+    function confirmCancel(ticketId) {
+        return confirm('Cancel this ticket? This will mark it as Cancelled.');
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1167,10 +1184,18 @@
     });
 
     function openModalDirect() {
-        var modal = document.getElementById('ticketModal');
-        if (modal) {
-            modal.style.display = 'flex';
+        // Fix 13: Trigger server-side cart reset each time the modal opens,
+        // so stale items from a previous abandoned session are cleared.
+        var resetBtn = document.getElementById('<%= btnResetCart.ClientID %>');
+        if (resetBtn) {
             modalShouldStayOpen = true;
+            resetBtn.click();
+        } else {
+            var modal = document.getElementById('ticketModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modalShouldStayOpen = true;
+            }
         }
         return false;
     }

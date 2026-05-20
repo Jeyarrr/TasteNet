@@ -51,7 +51,6 @@
         }
 
         .profile-wrapper {
-            background: var(--soft-cream) !important;
             padding: 20px 30px;
             max-width: 1400px;
             margin: 0 auto;

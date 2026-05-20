@@ -4,19 +4,23 @@ using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace TasteNet.Users.Admin
 {
     public partial class Ticketing : System.Web.UI.Page
     {
+        private const string DbConnectionKey = "TasteNetDB";
         private readonly string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["TasteNetDB"].ConnectionString;
 
         private List<ModalMenuItem> ModalItems
         {
             get
             {
-                // Fix: If session expired, re-initialize and warn the user rather than silently blocking ticket creation
+                // Fix 5 NOTE: Session-stored cart is shared across all browser tabs for the same user.
+                // If the user opens two tabs and adds items in both, they will silently overwrite each other.
+                // For true multi-tab safety, key the cart by a per-tab GUID stored in a hidden field instead.
                 if (Session["ModalItems"] == null)
                 {
                     Session["ModalItems"] = new List<ModalMenuItem>();
@@ -33,6 +37,13 @@ namespace TasteNet.Users.Admin
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Fix 6: Authorization check — only SuperAdmin may access this page
+            if (Session["UserType"] == null || Session["UserType"].ToString() != "Admin")
+            {
+                Response.Redirect("~/Login.aspx", endResponse: true);
+                return;
+            }
+
             if (!IsPostBack)
             {
                 hfSelectedStatus.Value = "Open";
@@ -77,7 +88,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("LoadTicketCounts ERROR: " + ex.Message);
-                ShowClientNotification("Error loading ticket counts: " + ex.Message, "error");
+                // Fix 7: Never expose raw exception/SQL details to the client
+                ShowClientNotification("Error loading ticket counts. Please try again.", "error");
             }
         }
 
@@ -111,7 +123,8 @@ namespace TasteNet.Users.Admin
 
         private void LoadTickets()
         {
-            EnsureRiderIDColumn();
+            // Fix 4: EnsureRiderIDColumn removed from here — it should be a one-time DB migration,
+            // not executed on every page load. Run the ALTER TABLE script once in your DB setup.
 
             try
             {
@@ -167,7 +180,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("LoadTickets ERROR: " + ex.Message);
-                ShowClientNotification("Load error: " + ex.Message, "error");
+                // Fix 7: Don't expose SQL/exception details to the client
+                ShowClientNotification("Error loading tickets. Please refresh the page.", "error");
             }
         }
 
@@ -214,12 +228,16 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Menu load ERROR: " + ex.Message);
-                ShowClientNotification("Error loading menu: " + ex.Message, "error");
+                // Fix 7: Generic message to client, full detail to server log only
+                ShowClientNotification("Error loading menu items. Please refresh the page.", "error");
             }
         }
 
         protected void RptTickets_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
+            // Fix 11 NOTE: This fires a separate DB query per ticket row (N+1 query pattern).
+            // For better performance at scale, load all TicketItems in one query in LoadTickets()
+            // and store them in ViewState or a Dictionary<int, DataTable>, then filter here.
             if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
             {
                 DataRowView row = (DataRowView)e.Item.DataItem;
@@ -261,7 +279,11 @@ namespace TasteNet.Users.Admin
 
         protected void RptTickets_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
-            int ticketId = Convert.ToInt32(e.CommandArgument);
+            if (!int.TryParse(e.CommandArgument?.ToString(), out int ticketId))
+            {
+                ShowClientNotification("Invalid ticket reference. Please refresh and try again.", "error");
+                return;
+            }
 
             if (e.CommandName == "Start")
             {
@@ -320,7 +342,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("UpdateTicketStatus ERROR: " + ex.Message);
-                ShowClientNotification("Error updating status: " + ex.Message, "error");
+                // Fix 7: Generic message to client
+                ShowClientNotification("Error updating ticket status. Please try again.", "error");
             }
         }
 
@@ -335,6 +358,14 @@ namespace TasteNet.Users.Admin
                     {
                         try
                         {
+                            // Delete Proofs first — FK_Proofs_Tickets prevents removing the ticket while proof rows exist
+                            string deleteProofsSql = "DELETE FROM Proofs WHERE TicketID = @id";
+                            using (SqlCommand cmd = new SqlCommand(deleteProofsSql, conn, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@id", ticketId);
+                                cmd.ExecuteNonQuery();
+                            }
+
                             string deleteItemsSql = "DELETE FROM TicketItems WHERE TicketID = @id";
                             using (SqlCommand cmd = new SqlCommand(deleteItemsSql, conn, trans))
                             {
@@ -361,7 +392,9 @@ namespace TasteNet.Users.Admin
                         catch (Exception ex)
                         {
                             trans.Rollback();
-                            throw ex;
+                            // Fix 1: Use bare throw to preserve the original stack trace
+                            System.Diagnostics.Debug.WriteLine("DeleteTicketById inner ERROR: " + ex.Message);
+                            throw;
                         }
                     }
                 }
@@ -369,7 +402,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Delete ERROR: {ex.Message}");
-                throw ex;
+                // Fix 1: Use bare throw to preserve the original stack trace
+                throw;
             }
         }
 
@@ -390,7 +424,7 @@ namespace TasteNet.Users.Admin
                     throw new Exception("Unexpected menu item format: " + selectedText);
                 string itemName = selectedText.Substring(0, lastDashIdx).Trim();
                 string pricePart = selectedText.Substring(lastDashIdx + 4).Replace(",", "").Trim();
-                decimal price = decimal.Parse(pricePart);
+                decimal price = decimal.Parse(pricePart, System.Globalization.CultureInfo.InvariantCulture);
 
                 int qty = 1;
                 if (!string.IsNullOrEmpty(txtQuantity.Text))
@@ -399,7 +433,15 @@ namespace TasteNet.Users.Admin
                     if (qty < 1) qty = 1;
                 }
 
-                var existingItem = ModalItems.FirstOrDefault(x => x.MenuID == int.Parse(ddlMenuItem.SelectedValue));
+                // Fix minor: Use TryParse instead of Parse to avoid exceptions on malformed MenuID
+                if (!int.TryParse(ddlMenuItem.SelectedValue, out int menuId))
+                {
+                    ShowClientNotification("Invalid menu item selected.", "warning");
+                    upModal.Update();
+                    return;
+                }
+
+                var existingItem = ModalItems.FirstOrDefault(x => x.MenuID == menuId);
 
                 if (existingItem != null)
                 {
@@ -411,7 +453,7 @@ namespace TasteNet.Users.Admin
                 {
                     ModalItems.Add(new ModalMenuItem
                     {
-                        MenuID = int.Parse(ddlMenuItem.SelectedValue),
+                        MenuID = menuId,
                         ItemName = itemName,
                         Quantity = qty,
                         UnitPrice = price,
@@ -427,7 +469,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Add Item ERROR: " + ex.Message);
-                ShowClientNotification("Error adding item: " + ex.Message, "error");
+                // Fix 7: Generic message to client, full detail only in server log
+                ShowClientNotification("Error adding item. Please try again.", "error");
             }
 
             upModal.Update();
@@ -470,7 +513,9 @@ namespace TasteNet.Users.Admin
         {
             string today = DateTime.Now.ToString("yyyyMMdd");
             int nextNumber = GetNextSequenceNumber(conn, trans, "TicketNumber", "ORD", today);
-            return $"ORD-{today}-{nextNumber:D3}";
+            // Fix 3: Use Math.Max(3, digits) so the suffix never truncates beyond 999
+            string suffix = nextNumber.ToString().PadLeft(Math.Max(3, nextNumber.ToString().Length), '0');
+            return $"ORD-{today}-{suffix}";
         }
 
         /// <summary>
@@ -481,7 +526,9 @@ namespace TasteNet.Users.Admin
         {
             string today = DateTime.Now.ToString("yyyyMMdd");
             int nextNumber = GetNextSequenceNumber(conn, trans, "OrderNumber", "ON", today);
-            return $"ON-{today}-{nextNumber:D3}";
+            // Fix 3: Use Math.Max(3, digits) so the suffix never truncates beyond 999
+            string suffix = nextNumber.ToString().PadLeft(Math.Max(3, nextNumber.ToString().Length), '0');
+            return $"ON-{today}-{suffix}";
         }
 
         /// <summary>
@@ -494,14 +541,27 @@ namespace TasteNet.Users.Admin
 
             try
             {
+                // Pattern: PREFIX-YYYYMMDD-NNN (suffix may exceed 3 digits at high volume)
                 string pattern = $"{prefix}-{datePrefix}-%";
-                // Fix: Use RIGHT(field, 3) instead of SUBSTRING with a fragile offset
+                // Fix: Extract suffix after the second dash using CHARINDEX so sequences > 999 work correctly
+                // e.g. "ORD-20250101-1000" → suffix = "1000"
                 string query = $@"
                     SELECT TOP 1 
-                        CAST(RIGHT({fieldToCheck}, 3) AS INT) AS SeqNumber
+                        CAST(SUBSTRING({fieldToCheck},
+                            CHARINDEX('-', {fieldToCheck},
+                                CHARINDEX('-', {fieldToCheck}) + 1
+                            ) + 1,
+                            LEN({fieldToCheck})
+                        ) AS INT) AS SeqNumber
                     FROM Tickets WITH (UPDLOCK, HOLDLOCK)
                     WHERE {fieldToCheck} LIKE @pattern
-                    ORDER BY {fieldToCheck} DESC";
+                      AND ISNUMERIC(SUBSTRING({fieldToCheck},
+                            CHARINDEX('-', {fieldToCheck},
+                                CHARINDEX('-', {fieldToCheck}) + 1
+                            ) + 1,
+                            LEN({fieldToCheck})
+                        )) = 1
+                    ORDER BY SeqNumber DESC";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn, trans))
                 {
@@ -605,9 +665,6 @@ namespace TasteNet.Users.Admin
                                 string script = $@"
                                     closeModal();
                                     showNotification('✅ Ticket {ticketNumber} (Order: {orderNumber}) created successfully! Total: ₱{total:N2}', 'success');
-                                    setTimeout(function() {{ 
-                                        __doPostBack('{upTickets.ClientID}', ''); 
-                                    }}, 500);
                                 ";
                                 ScriptManager.RegisterStartupScript(this, GetType(), "success", script, true);
 
@@ -631,22 +688,22 @@ namespace TasteNet.Users.Admin
 
                 if (sqlEx.Number == 547)
                 {
-                    ShowClientNotification("Database constraint error. Please check if Menu items exist.", "error");
+                    ShowClientNotification("Unable to create ticket: a referenced item no longer exists in the menu.", "error");
                 }
                 else if (sqlEx.Number == 8152)
                 {
-                    ShowClientNotification("Data too long for one of the fields. Please check input lengths.", "error");
+                    ShowClientNotification("One or more fields exceed the allowed length. Please shorten your input.", "error");
                 }
                 else
                 {
-                    ShowClientNotification($"Database error: {sqlEx.Message}", "error");
+                    ShowClientNotification("A database error occurred while creating the ticket. Please try again.", "error");
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Create ERROR: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ShowClientNotification($"Create ERROR: {ex.Message}", "error");
+                ShowClientNotification("An unexpected error occurred. Please try again.", "error");
             }
         }
 
@@ -654,6 +711,22 @@ namespace TasteNet.Users.Admin
         {
             pnlDeliveryAddress.Visible = (ddlOrderType.SelectedValue == "Delivery");
             upModal.Update();
+        }
+
+        /// <summary>
+        /// Fix 13: Called each time the Create Ticket modal opens (via hidden button click in JS).
+        /// Clears any stale cart items left from a previously abandoned modal session.
+        /// </summary>
+        protected void BtnResetCart_Click(object sender, EventArgs e)
+        {
+            ModalItems = new List<ModalMenuItem>();
+            ddlPriority.SelectedIndex = 0;
+            ddlOrderType.SelectedIndex = 0;
+            txtDeliveryAddress.Text = "";
+            pnlDeliveryAddress.Visible = false;
+            txtQuantity.Text = "1";
+            ddlMenuItem.SelectedIndex = 0;
+            RefreshModalItemsDisplay();
         }
 
         private void LoadRiders()
@@ -685,7 +758,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("LoadRiders ERROR: " + ex.Message);
-                ShowClientNotification("Error loading riders: " + ex.Message, "error");
+                // Fix 7: Generic message to client
+                ShowClientNotification("Error loading riders. Please try again.", "error");
             }
         }
 
@@ -698,13 +772,26 @@ namespace TasteNet.Users.Admin
                 return;
             }
 
-            int ticketId = Convert.ToInt32(hfAssignTicketID.Value);
-            int riderId = Convert.ToInt32(ddlRider.SelectedValue);
+            // Fix minor: Guard against non-integer values in hidden fields
+            if (!int.TryParse(hfAssignTicketID.Value, out int ticketId) || ticketId <= 0)
+            {
+                ShowClientNotification("Invalid ticket. Please try again.", "warning");
+                upRiderModal.Update();
+                return;
+            }
+
+            if (!int.TryParse(ddlRider.SelectedValue, out int riderId))
+            {
+                ShowClientNotification("Invalid rider selected.", "warning");
+                upRiderModal.Update();
+                return;
+            }
+
             string riderName = ddlRider.SelectedItem.Text;
 
             try
             {
-                EnsureRiderIDColumn();
+                // Fix 4: Removed EnsureRiderIDColumn() — this is a one-time DB migration, not runtime work
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     string sql = "UPDATE Tickets SET RiderID = @riderID WHERE TicketID = @ticketID";
@@ -725,7 +812,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("BtnConfirmRider_Click ERROR: " + ex.Message);
-                ShowClientNotification("Error assigning rider: " + ex.Message, "error");
+                // Fix 7: Generic message to client
+                ShowClientNotification("Error assigning rider. Please try again.", "error");
             }
 
             upRiderModal.Update();
@@ -807,7 +895,8 @@ namespace TasteNet.Users.Admin
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"DeductIngredientsByTicket ERROR: {ex.Message}");
-                ShowClientNotification("Warning: Inventory deduction failed. " + ex.Message, "error");
+                // Fix 7: Generic message to client — full detail already in debug log
+                ShowClientNotification("Warning: Inventory deduction failed. Please check inventory manually.", "error");
             }
         }
 

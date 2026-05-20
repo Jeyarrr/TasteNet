@@ -52,7 +52,6 @@
             padding: 25px 35px;
             max-width: 1600px;
             margin: 0 auto;
-            background-color: var(--soft-cream);
             min-height: 100vh;
             transition: filter 0.3s ease;
         }

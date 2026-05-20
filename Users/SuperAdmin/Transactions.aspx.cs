@@ -96,9 +96,8 @@ namespace TasteNet.Users.SuperAdmin
                 if (ddlStatus.SelectedValue == "completed")
                     query += " AND it.TransactionType IN ('Purchase', 'Sale')";
                 else if (ddlStatus.SelectedValue == "pending")
-                    query += " AND it.TransactionType = 'Pending'";
-                else if (ddlStatus.SelectedValue == "return")
-                    query += " AND it.TransactionType = 'Return'";
+                    query += " AND it.TransactionType = 'Adjust'";
+
             }
 
             if (ddlType.SelectedValue != "all")
@@ -323,15 +322,13 @@ namespace TasteNet.Users.SuperAdmin
         public string GetStatus(string transactionType)
         {
             if (transactionType == "Purchase" || transactionType == "Sale") return "Completed";
-            if (transactionType == "Return") return "Return";
-            return "Pending";
+            return "Adjust";
         }
 
         public string GetStatusClass(string transactionType)
         {
             if (transactionType == "Purchase" || transactionType == "Sale") return "completed";
-            if (transactionType == "Return") return "return";
-            return "pending";
+            return "adjust";
         }
     }
 }

@@ -51,7 +51,6 @@
         html, body, form {
             margin: 0 !important;
             padding: 0 !important;
-            background-color: var(--soft-cream) !important;
             width: 100%;
             font-family: 'Poppins', sans-serif;
             color: var(--text-dark);
@@ -59,7 +58,6 @@
         }
 
         #delivery-mgmt-wrapper {
-            background: var(--soft-cream) !important;
             padding: 20px 30px;
             max-width: 1600px;
             margin: 0 auto;
@@ -535,32 +533,6 @@
             font-weight: 700;
             font-size: 13px;
             color: var(--success-green);
-        }
-
-        .rating-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .rating-stars {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            font-size: 12px;
-        }
-
-        .rating-stars i {
-            color: #ffcc00;
-        }
-
-        .rating-value {
-            font-weight: 600;
-            font-size: 12px;
-            color: #d97706;
         }
 
         .action-btns {
@@ -1676,7 +1648,7 @@
                     </div>
                 </div>
                 <div class="stat-card__value" id="onDeliveryRiders">2</div>
-                <div class="stat-card__trend">Currently delivering</div>
+                <div class="stat-card__trend" id="onDeliveryTrend">Currently delivering</div>
             </div>
 
             <div class="stat-card">
@@ -1702,13 +1674,8 @@
                 <option value="delivery">On Delivery</option>
                 <option value="offline">Offline</option>
             </select>
-            <select class="filter-select" id="vehicleFilter">
-                <option value="all">All Vehicles</option>
-                <option value="motorcycle">Motorcycle</option>
-                <option value="bicycle">Bicycle</option>
-            </select>
+
             <select class="filter-select" id="sortFilter">
-                <option value="rating">Sort by: Rating</option>
                 <option value="orders-desc">Sort by: Completed Orders (High to Low)</option>
                 <option value="orders-asc">Sort by: Completed Orders (Low to High)</option>
                 <option value="name-asc">Sort by: Name (A-Z)</option>
@@ -1730,7 +1697,6 @@
                             <th>Status</th>
                             <th>Assigned</th>
                             <th>Completed</th>
-                            <th>Rating</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -1815,10 +1781,6 @@
                         <div class="activity-stat">
                             <div class="activity-stat__value" id="modalCompletedDeliveries">0</div>
                             <div class="activity-stat__label">Completed Deliveries</div>
-                        </div>
-                        <div class="activity-stat">
-                            <div class="activity-stat__value" id="modalRating">0.0</div>
-                            <div class="activity-stat__label">Rating</div>
                         </div>
                     </div>
                 </div>
@@ -2030,8 +1992,6 @@
                                 <select id="newRiderVehicleType" class="form-control" required>
                                     <option value="">Select vehicle type</option>
                                     <option value="Motorcycle">Motorcycle</option>
-                                    <option value="Bicycle">Bicycle</option>
-                                    <option value="Car">Car</option>
                                     <option value="Scooter">Scooter</option>
                                 </select>
                             </div>
@@ -2151,11 +2111,10 @@
 
     <script type="text/javascript">
         // Data injected directly from code-behind on page load
-        // Normalise types: id→string, rating→number, assigned/completed→number
+        // Normalise types: id→string, assigned/completed→number
         let ridersData = (<%= GetRidersJson() %>).map(function (r) {
             return Object.assign(r, {
                 id: String(r.id),
-                rating: parseFloat(r.rating) || 0,
                 assigned: parseInt(r.assigned) || 0,
                 completed: parseInt(r.completed) || 0
             });
@@ -2177,17 +2136,7 @@
                 row.setAttribute('data-status', rider.status);
                 row.setAttribute('data-vehicle', rider.vehicle.toLowerCase());
                 row.setAttribute('data-orders', rider.completed);
-                row.setAttribute('data-rating', rider.rating);
                 row.setAttribute('data-date', rider.joinDate);
-
-                const fullStars = Math.floor(rider.rating);
-                const hasHalfStar = rider.rating % 1 >= 0.5;
-                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-                let starsHtml = '';
-                for (let i = 0; i < fullStars; i++) starsHtml += '<i class="fas fa-star"></i>';
-                if (hasHalfStar) starsHtml += '<i class="fas fa-star-half-alt"></i>';
-                for (let i = 0; i < emptyStars; i++) starsHtml += '<i class="far fa-star"></i>';
 
                 row.innerHTML = `
                     <td>
@@ -2220,14 +2169,6 @@
                     </td>
                     <td class="stat-number">${rider.assigned}</td>
                     <td class="completed-deliveries">${rider.completed.toLocaleString()}</td>
-                    <td>
-                        <div class="rating-container">
-                            <div class="rating-stars">
-                                ${starsHtml}
-                            </div>
-                            <div class="rating-value">${rider.rating.toFixed(1)}</div>
-                        </div>
-                    </td>
                     <td>
                         <div class="action-btns">
                             <button type="button" class="action-icon view" title="View Profile">
@@ -2281,7 +2222,6 @@
                 const status = row.dataset.status || 'available';
                 const assigned = parseInt(cells[5].textContent) || 0;
                 const completed = parseInt(cells[6].textContent.replace(/,/g, '')) || 0;
-                const rating = parseFloat(row.dataset.rating) || 0;
                 const date = row.dataset.date || '';
 
                 allRiders.push({
@@ -2295,7 +2235,6 @@
                     status: status,
                     assigned: assigned,
                     completed: completed,
-                    rating: rating,
                     date: date
                 });
             });
@@ -2366,9 +2305,7 @@
             const searchTerm = searchInput.value.toLowerCase().trim();
 
             const statusFilter = document.getElementById('statusFilter');
-            const vehicleFilter = document.getElementById('vehicleFilter');
             const selectedStatus = statusFilter.value;
-            const selectedVehicle = vehicleFilter.value;
 
             let hasVisibleRows = false;
             allRiders.forEach(rider => {
@@ -2380,9 +2317,7 @@
 
                 const statusMatch = selectedStatus === 'all' || rider.status === selectedStatus;
 
-                const vehicleMatch = selectedVehicle === 'all' || rider.vehicle === selectedVehicle;
-
-                const shouldShow = searchMatches && statusMatch && vehicleMatch;
+                const shouldShow = searchMatches && statusMatch;
 
                 rider.element.style.display = shouldShow ? '' : 'none';
                 if (shouldShow) hasVisibleRows = true;
@@ -2424,8 +2359,6 @@
                         return bData.completed - aData.completed;
                     case 'orders-asc':
                         return aData.completed - bData.completed;
-                    case 'rating':
-                        return bData.rating - aData.rating;
                     default:
                         return 0;
                 }
@@ -2458,7 +2391,6 @@
             document.getElementById('modalLastActivity').textContent = rider.lastActivity;
             document.getElementById('modalAssignedOrders').textContent = rider.assigned;
             document.getElementById('modalCompletedDeliveries').textContent = rider.completed.toLocaleString();
-            document.getElementById('modalRating').textContent = rider.rating.toFixed(1);
 
             const statusElement = document.getElementById('modalStatus');
             statusElement.textContent = getStatusText(rider.status);
@@ -2553,10 +2485,8 @@
 
             initializeRiderData();
             updateStats();
+            updateStatCards();
         }
-
-
-        // ── Edit Modal ────────────────────────────────────────────────────────
         const editDocFiles = { driverLicense: null, orcr: null, insurance: null, nbi: null, profile: null };
 
         function openEditModal(riderId) {
@@ -2585,7 +2515,6 @@
             document.getElementById('editInsuranceDate').value = rider.insuranceDate || '';
             document.getElementById('editAssignedOrders').textContent = rider.assigned;
             document.getElementById('editCompletedDeliveries').textContent = rider.completed.toLocaleString();
-            document.getElementById('editModalRating').textContent = rider.rating.toFixed(1);
             const sb = document.getElementById('editModalStatus');
             sb.textContent = getStatusText(rider.status);
             sb.className = 'info-value status ' + (rider.status === 'available' ? 'status-available' : rider.status === 'delivery' ? 'status-delivery' : 'status-offline');
@@ -2803,6 +2732,8 @@
             document.getElementById('availableRiders').textContent = availableRiders;
             document.getElementById('onDeliveryRiders').textContent = onDeliveryRiders;
             document.getElementById('offlineRiders').textContent = offlineRiders;
+
+            updateDeliveryTrend();
         }
 
         function showAddRiderModal() {
@@ -2952,7 +2883,6 @@
                             status: "available",
                             assigned: 0,
                             completed: 0,
-                            rating: 4.0,
                             lastActivity: 'Today, ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                             recentDeliveries: []
                         };
@@ -3125,6 +3055,29 @@
             document.getElementById('availableRiders').textContent = available;
             document.getElementById('onDeliveryRiders').textContent = onDelivery;
             document.getElementById('offlineRiders').textContent = offline;
+
+            updateDeliveryTrend();
+        }
+
+        function updateDeliveryTrend() {
+            var delivering = ridersData.filter(function (r) { return r.status === 'delivery'; });
+            var trendEl = document.getElementById('onDeliveryTrend');
+            if (!trendEl) return;
+
+            if (delivering.length === 0) {
+                trendEl.textContent = 'No riders currently delivering';
+                return;
+            }
+
+            var maxNames = 2;
+            var names = delivering.slice(0, maxNames).map(function (r) {
+                return r.name.split(' ')[0]; // first name only for brevity
+            });
+            var extra = delivering.length - maxNames;
+
+            var label = names.join(', ');
+            if (extra > 0) label += ' +' + extra + ' more';
+            trendEl.textContent = label;
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -3138,9 +3091,6 @@
 
             const statusFilter = document.getElementById('statusFilter');
             statusFilter.addEventListener('change', handleFilter);
-
-            const vehicleFilter = document.getElementById('vehicleFilter');
-            vehicleFilter.addEventListener('change', handleFilter);
 
             const sortFilter = document.getElementById('sortFilter');
             sortFilter.addEventListener('change', handleSort);
@@ -3224,8 +3174,6 @@
                             <select id="editVehicleType" class="edit-input">
                                 <option value="">Select</option>
                                 <option value="Motorcycle">Motorcycle</option>
-                                <option value="Bicycle">Bicycle</option>
-                                <option value="Car">Car</option>
                                 <option value="Scooter">Scooter</option>
                             </select>
                         </div>
@@ -3244,7 +3192,6 @@
                     <div class="activity-grid">
                         <div class="activity-stat"><div class="activity-stat__value" id="editAssignedOrders">0</div><div class="activity-stat__label">Assigned Orders</div></div>
                         <div class="activity-stat"><div class="activity-stat__value" id="editCompletedDeliveries">0</div><div class="activity-stat__label">Completed Deliveries</div></div>
-                        <div class="activity-stat"><div class="activity-stat__value" id="editModalRating">0.0</div><div class="activity-stat__label">Rating</div></div>
                     </div>
                 </div>
                 <div class="rider-activity" style="margin-top:20px;">

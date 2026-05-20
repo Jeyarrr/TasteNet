@@ -59,7 +59,6 @@
         }
 
         .dashboard-wrapper {
-            background: var(--soft-cream) !important;
             padding: 20px 30px;
             max-width: 1400px;
             margin: 0 auto;
@@ -2195,12 +2194,16 @@
             toggleSwitch.addEventListener('click', function () {
                 isOnline = !isOnline;
                 sessionStorage.setItem('rider_isOnline', isOnline ? 'true' : 'false');
+                // Sync availability to DB (available ↔ offline)
+                if (!activeDelivery) setRiderStatus(isOnline ? 'available' : 'offline');
                 updateUI();
             });
 
             goOnlineBtn.addEventListener('click', function () {
                 isOnline = !isOnline;
                 sessionStorage.setItem('rider_isOnline', isOnline ? 'true' : 'false');
+                // Sync availability to DB (available ↔ offline)
+                if (!activeDelivery) setRiderStatus(isOnline ? 'available' : 'offline');
                 updateUI();
             });
 
@@ -2799,6 +2802,17 @@
                 showNotification('Delivery completion cancelled', 'info');
             });
 
+            // ── Sync rider status to DB so admin dashboard reflects it ───────────
+            function setRiderStatus(status) {
+                fetch(window.location.pathname + '?setStatus=' + encodeURIComponent(status), {
+                    method: 'POST',
+                    credentials: 'same-origin'
+                }).catch(function () {
+                    // Silent fail — the UI is already updated; DB sync is best-effort
+                });
+            }
+            // ─────────────────────────────────────────────────────────────────────
+
             function acceptDelivery(deliveryData, deliveryCard) {
                 activeDelivery = deliveryData;
 
@@ -2816,6 +2830,10 @@
                 sessionStorage.setItem('rider_itemCount', deliveryData.itemCount || '0');
                 sessionStorage.setItem('rider_itemsHtml', deliveryData.itemsHtml || '');
                 sessionStorage.setItem('rider_isOnline', 'true');
+
+                // ── Sync status to DB so admin dashboard shows "On Delivery" ──────
+                setRiderStatus('delivery');
+                // ─────────────────────────────────────────────────────────────────
 
                 // Populate the active delivery panel with real DB data
                 activeDeliveryId.textContent = '#' + deliveryData.id;
@@ -2934,6 +2952,10 @@
                         sessionStorage.removeItem('rider_created');
                         sessionStorage.removeItem('rider_customer');
                         sessionStorage.removeItem('rider_phone');
+
+                        // ── Sync status back to available in DB ───────────────────
+                        setRiderStatus('available');
+                        // ─────────────────────────────────────────────────────────
 
                         window.location.reload();
                     })

@@ -551,7 +551,6 @@ namespace TasteNet.Users.SuperAdmin
         // ── Build the riders JSON array injected into the page ────────────────
         // Assigned  = all tickets linked to this rider (any non-cancelled status)
         // Completed = tickets with Status = 'Completed'
-        // Rating    = from Users.Ratings (live average if you have a reviews table)
         protected string GetRidersJson()
         {
             var sb = new StringBuilder("[");
@@ -565,7 +564,7 @@ namespace TasteNet.Users.SuperAdmin
                     u.LicensePlate, u.VehicleColor, u.LicenseNumber, u.NBINumber,
                     u.ORCRNumber, u.InsurancePolicy, u.InsuranceDate,
                     u.DriverLicensePhoto, u.ORCRPhoto, u.InsurancePhoto, u.NBIClearancePhoto,
-                    u.RiderStatus, u.Ratings, u.DateJoined, u.CreatedAt,
+                    u.RiderStatus, u.DateJoined, u.CreatedAt,
                     -- Live counts straight from Tickets
                     ISNULL(tc.AssignedCount,  0) AS AssignedOrders,
                     ISNULL(tc.CompletedCount, 0) AS CompletedOrders
@@ -600,9 +599,6 @@ namespace TasteNet.Users.SuperAdmin
                             if (status == "on delivery" || status == "delivering") status = "delivery";
                             else if (status == "active" || status == "online") status = "available";
                             else if (status != "available" && status != "delivery") status = "offline";
-
-                            double rating = 0;
-                            double.TryParse(SafeStr(dr, "Ratings"), out rating);
 
                             string joinDate = "";
                             try
@@ -674,7 +670,6 @@ namespace TasteNet.Users.SuperAdmin
                             // Numbers — NOT quoted
                             sb.AppendFormat("\"assigned\":{0},", assigned);
                             sb.AppendFormat("\"completed\":{0},", completed);
-                            sb.AppendFormat("\"rating\":{0},", rating.ToString("F1", System.Globalization.CultureInfo.InvariantCulture));
                             sb.Append("\"lastActivity\":\"\",\"recentDeliveries\":[]}");
                         }
                     }

@@ -44,11 +44,57 @@ namespace TasteNet.Users.Rider
                 return;
             }
 
+            // ── AJAX: update rider's RiderStatus (delivery ↔ available) ─────────
+            // Called via JS: POST Dashboard.aspx?setStatus=delivery  (or "available")
+            string newStatus = Request.QueryString["setStatus"];
+            if (!string.IsNullOrEmpty(newStatus))
+            {
+                HandleSetRiderStatus(newStatus);
+                return;
+            }
+
             if (!IsPostBack)
             {
                 LoadStats();
                 LoadDeliveryTickets();
             }
+        }
+
+        // ════════════════════════════════════════════════════════════════════════
+        //  Set Rider Status Handler (called via AJAX POST)
+        //  Accepts: ?setStatus=delivery  or  ?setStatus=available
+        // ════════════════════════════════════════════════════════════════════════
+        private void HandleSetRiderStatus(string requestedStatus)
+        {
+            Response.Clear();
+            Response.ContentType = "text/plain";
+
+            // Whitelist the allowed values to prevent arbitrary writes
+            string status = requestedStatus.Trim().ToLower();
+            if (status != "delivery" && status != "available" && status != "offline")
+            {
+                Response.StatusCode = 400;
+                Response.Write("INVALID_STATUS");
+                Response.End();
+                return;
+            }
+
+            const string sql = @"
+                UPDATE Users
+                SET    RiderStatus = @RiderStatus
+                WHERE  UserID      = @RiderID";
+
+            using (SqlConnection con = new SqlConnection(_connStr))
+            using (SqlCommand cmd = new SqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@RiderStatus", status);
+                cmd.Parameters.AddWithValue("@RiderID", CurrentRiderID);
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            Response.Write("OK");
+            Response.End();
         }
 
         // ════════════════════════════════════════════════════════════════════════

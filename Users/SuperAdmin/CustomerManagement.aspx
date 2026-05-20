@@ -46,7 +46,6 @@
         }
 
         #customer-wrapper {
-            background: var(--soft-cream);
             padding: 20px 30px;
             max-width: 1600px;
             margin: 0 auto;

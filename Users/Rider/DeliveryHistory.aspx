@@ -56,7 +56,6 @@
         }
 
         .history-wrapper {
-            background: var(--soft-cream) !important;
             padding: 25px 35px;
             max-width: 1400px;
             margin: 0 auto;

@@ -47,7 +47,6 @@
         }
 
         #full-page-wrapper {
-            background: var(--soft-cream);
             padding: 20px 30px;
             max-width: 1600px;
             margin: 0 auto;
@@ -943,18 +942,18 @@
                             </span>
                             <td>
                                 <label class="switch">
-                                    <asp:CheckBox ID="chkAvailable" runat="server" Checked='<%# Eval("Available") %>' 
+                                    <asp:CheckBox ID="CheckBox1" runat="server" Checked='<%# Eval("Available") %>' 
                                         AutoPostBack="true" OnCheckedChanged="chkAvailable_CheckedChanged" />
                                     <span class="slider"></span>
                                 </label>
                             </span>
                             <td>
                                 <div class="action-icons">
-                                    <asp:LinkButton ID="btnEdit" runat="server" CssClass="action-icon edit" CommandName="EditItem" 
+                                    <asp:LinkButton ID="LinkButton1" runat="server" CssClass="action-icon edit" CommandName="EditItem" 
                                         CommandArgument='<%# Eval("InventoryID") %>' ToolTip="Edit Ingredient">
                                         <i class="fas fa-edit"></i>
                                     </asp:LinkButton>
-                                    <asp:LinkButton ID="btnDelete" runat="server" CssClass="action-icon delete" CommandName="DeleteItem" 
+                                    <asp:LinkButton ID="LinkButton2" runat="server" CssClass="action-icon delete" CommandName="DeleteItem" 
                                         CommandArgument='<%# Eval("InventoryID") %>' ToolTip="Delete Ingredient">
                                         <i class="fas fa-trash"></i>
                                     </asp:LinkButton>
@@ -998,7 +997,7 @@
                     </div>
                     <div class="form-group">
                         <label>Quantity</label>
-                        <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" TextMode="Number" Step="1" />
+                        <asp:TextBox ID="txtQuantity" runat="server" CssClass="form-control" TextMode="Number" Step="any" />
                     </div>
                 </div>
                 <div class="form-row">
@@ -1068,28 +1067,28 @@
             document.getElementById(modalId).style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
-        
+
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             document.body.style.overflow = 'auto';
         }
-        
+
         function showToast(message, type) {
             var toast = document.createElement('div');
             toast.className = 'toast-notification';
             toast.style.backgroundColor = type === 'success' ? '#2d9d78' : type === 'error' ? '#b91c1c' : '#d97706';
             toast.innerHTML = '<i class="fas ' + (type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle') + '"></i><span>' + message + '</span>';
             document.body.appendChild(toast);
-            
-            setTimeout(function() {
+
+            setTimeout(function () {
                 toast.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(function() {
+                setTimeout(function () {
                     document.body.removeChild(toast);
                 }, 300);
             }, 3000);
         }
-        
-        window.onload = function() {
+
+        window.onload = function () {
             var messageLabel = document.getElementById('<%= lblMessage.ClientID %>');
             if (messageLabel && messageLabel.innerText) {
                 var parts = messageLabel.innerText.split('|');

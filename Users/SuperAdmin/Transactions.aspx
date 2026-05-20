@@ -46,7 +46,6 @@
         }
 
         #transactions-wrapper {
-            background: var(--soft-cream);
             padding: 20px 30px;
             max-width: 1600px;
             margin: 0 auto;
@@ -327,16 +326,10 @@
             color: var(--success-green);
         }
 
-        .status-badge--pending {
+        .status-badge--adjust {
             background: var(--warning-orange-light);
             color: var(--warning-orange);
         }
-
-        .status-badge--return {
-            background: var(--danger-red-light);
-            color: var(--danger-red);
-        }
-
         .type-badge {
             padding: 4px 12px;
             border-radius: var(--radius-sm);
@@ -702,14 +695,14 @@
             <asp:DropDownList ID="ddlStatus" runat="server" CssClass="filter-select" AutoPostBack="true" OnSelectedIndexChanged="ddlStatus_SelectedIndexChanged">
                 <asp:ListItem Text="All Status" Value="all" />
                 <asp:ListItem Text="Completed" Value="completed" />
-                <asp:ListItem Text="Pending" Value="pending" />
-                <asp:ListItem Text="Return" Value="return" />
+                <asp:ListItem Text="Adjust" Value="pending" />
+
             </asp:DropDownList>
             <asp:DropDownList ID="ddlType" runat="server" CssClass="filter-select" AutoPostBack="true" OnSelectedIndexChanged="ddlType_SelectedIndexChanged">
                 <asp:ListItem Text="All Types" Value="all" />
                 <asp:ListItem Text="Purchase" Value="Purchase" />
                 <asp:ListItem Text="Sale" Value="Sale" />
-                <asp:ListItem Text="Return" Value="Return" />
+
                 <asp:ListItem Text="Adjustment" Value="Adjustment" />
             </asp:DropDownList>
             <asp:TextBox ID="txtDate" runat="server" TextMode="Date" CssClass="filter-date" AutoPostBack="true" OnTextChanged="txtDate_TextChanged" />
