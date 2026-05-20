@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" CodeFile="SuperAdmin.master.cs" Inherits="TasteNet.MasterPages.SuperAdmin" %>
+﻿<%@ Master Language="C#" CodeBehind="SuperAdmin.master.cs" Inherits="TasteNet.MasterPages.SuperAdmin" %>
 
 <!DOCTYPE html>
 <html lang="en">

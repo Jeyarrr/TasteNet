@@ -196,6 +196,8 @@
     <Content Include="MasterPages\Rider.Master" />
     <Content Include="MasterPages\Admin.Master" />
     <Content Include="GoogleAuth.ashx" />
+    <None Include="Properties\PublishProfiles\tastenet2-001-site1 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\tastenet2-001-site1 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

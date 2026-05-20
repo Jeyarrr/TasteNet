@@ -52,10 +52,10 @@ namespace TasteNet.Users.Rider
                         u.[FullName],
                         u.[Phone],
                         r.[FullName] AS RiderName
-                    FROM [DeliverySystem].[dbo].[Tickets] t
-                    INNER JOIN [DeliverySystem].[dbo].[Users] u
+                    FROM Tickets t
+                    INNER JOIN Users u
                         ON t.[CreatedBy] = u.[UserID]
-                    INNER JOIN [DeliverySystem].[dbo].[Users] r
+                    INNER JOIN Users r
                         ON t.[RiderID] = r.[UserID]
                     WHERE t.[Status]    = 'Completed'
                       AND t.[OrderType] = 'Delivery'

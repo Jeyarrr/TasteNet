@@ -150,7 +150,6 @@ namespace TasteNet.Users.Rider
                 proofFile.SaveAs(fullPath);
 
                 // Store a root-relative web path (e.g. /Uploads/Proofs/POD_TKT-0001_<guid>.jpg)
-                // so it works correctly from any page and with ResolveUrl/GetProofHtml.
                 string appRoot = Request.ApplicationPath.TrimEnd('/');
                 proofPath = $"{appRoot}/Uploads/Proofs/{fileName}";
             }
@@ -214,12 +213,10 @@ namespace TasteNet.Users.Rider
                 WHERE  TicketNumber    = @TicketNumber
                   AND  RiderID = @RiderID;
 
-                -- 2. Insert proof-of-delivery row into [DeliverySystem].[dbo].[Proofs]
-                --    Columns: ProofID (identity), TicketID, ProofOfPayment (NULL - cashier handles),
-                --             ProofOfDelivery (path), CreatedAt
+                -- 2. Insert proof-of-delivery row into Proofs
                 IF @ProofPath IS NOT NULL
                 BEGIN
-                    INSERT INTO [DeliverySystem].[dbo].[Proofs] (TicketID, ProofOfDelivery, CreatedAt)
+                    INSERT INTO Proofs (TicketID, ProofOfDelivery, CreatedAt)
                     VALUES (@TicketID, @ProofPath, GETDATE());
                 END
 
@@ -319,10 +316,6 @@ namespace TasteNet.Users.Rider
         //  Only shows tickets assigned to THIS rider that are NOT yet completed.
         //  Also pulls the proof-of-delivery status from the Proofs table.
         // ════════════════════════════════════════════════════════════════════════
-        // ════════════════════════════════════════════════════════════════════════
-        //  Delivery Tickets Repeater — only tickets assigned to THIS rider,
-        //  not yet completed. Includes order items from TicketItems.
-        // ════════════════════════════════════════════════════════════════════════
         private void LoadDeliveryTickets()
         {
             // Step 1: load the tickets assigned to this rider
@@ -353,7 +346,7 @@ namespace TasteNet.Users.Rider
                        ON p.TicketID = t.TicketID
                 OUTER APPLY (
                     SELECT TOP 1 Fee
-                    FROM   [DeliverySystem].[dbo].[DeliveryFees] df2
+                    FROM   DeliveryFees df2
                     WHERE
                         CHARINDEX(
                             LTRIM(RTRIM(LOWER(df2.BarangayName))),
