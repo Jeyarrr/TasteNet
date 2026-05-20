@@ -1126,6 +1126,40 @@
             color: var(--primary-maroon);
         }
 
+        .payment-option-disabled {
+            filter: grayscale(100%);
+            opacity: 0.45;
+            cursor: not-allowed !important;
+            pointer-events: none;
+            border-color: #ccc !important;
+            background: #f5f5f5 !important;
+        }
+
+        .payment-option-disabled:hover {
+            transform: none !important;
+            border-color: #ccc !important;
+            background: #f5f5f5 !important;
+            box-shadow: none !important;
+        }
+
+        .payment-option-disabled input[type="radio"] {
+            cursor: not-allowed !important;
+        }
+
+        .badge-unavailable {
+            display: inline-block;
+            background: #999;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
         .alert {
             padding: 12px;
             border-radius: 8px;
@@ -1686,7 +1720,6 @@
             justify-content: flex-end;
         }
 
-        /* ===== CUSTOM TOAST NOTIFICATIONS ===== */
         @keyframes tnSlideIn {
             from { opacity: 0; transform: translateX(120px) scale(0.92); }
             to   { opacity: 1; transform: translateX(0)     scale(1); }
@@ -2063,6 +2096,12 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 25px;
             margin: 0 auto;
+            justify-content: center;
+        }
+
+        .menu-grid-container:has(.menu-container:first-child:nth-last-child(-n+5)) {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 210px));
+            justify-content: center;
         }
         
         .menu-container {
@@ -2425,43 +2464,54 @@
 
         .contact-map-content {
             display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0;
         }
 
         .map-container-large {
-            flex: 2;
-            min-width: 300px;
-            border-radius: 15px;
+            width: 100%;
+            border-radius: 15px 15px 0 0;
             overflow: hidden;
             border: 3px solid var(--accent-yellow);
+            border-bottom: none;
             transition: all 0.3s;
         }
         
         .map-container-large:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            border-color: #ffed4e;
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.3);
         }
 
         .map-wrapper-large {
             width: 100%;
-            height: 400px;
+            height: 520px;
         }
 
         .contact-info-sidebar {
-            flex: 1;
+            width: 100%;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid var(--accent-yellow);
+            border-radius: 0 0 15px 15px;
+            padding: 30px 40px;
+            border: 3px solid var(--accent-yellow);
+            border-top: none;
+            display: flex;
+            flex-direction: row;
+            gap: 60px;
+            align-items: flex-start;
             transition: all 0.3s;
         }
         
         .contact-info-sidebar:hover {
             background: rgba(0, 0, 0, 0.3);
-            transform: translateY(-5px);
-            border-color: #ffed4e;
+        }
+
+        .contact-info-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .contact-info-group + .contact-info-group {
+            border-left: 1px solid rgba(255, 215, 0, 0.3);
+            padding-left: 40px;
         }
 
         .phone-large {
@@ -2903,6 +2953,150 @@
             .menu-grid-container { grid-template-columns: 1fr; }
             .menu-container { max-width: 280px; margin: 0 auto; }
         }
+
+        .custom-confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .custom-confirm-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .custom-confirm-box {
+            background: linear-gradient(145deg, #7D0A22 0%, #5a0819 100%);
+            border: 2px solid var(--accent-yellow);
+            border-radius: 20px;
+            padding: 36px 40px 30px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.15);
+            transform: scale(0.92) translateY(10px);
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .custom-confirm-overlay.show .custom-confirm-box {
+            transform: scale(1) translateY(0);
+        }
+        .custom-confirm-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-yellow), transparent);
+        }
+        .custom-confirm-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 1.7rem;
+        }
+        .custom-confirm-icon.icon-warning {
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            color: var(--accent-yellow);
+        }
+        .custom-confirm-icon.icon-danger {
+            background: rgba(220, 53, 69, 0.15);
+            border: 2px solid rgba(220, 53, 69, 0.4);
+            color: #ff6b7a;
+        }
+        .custom-confirm-icon.icon-success {
+            background: rgba(40, 167, 69, 0.15);
+            border: 2px solid rgba(40, 167, 69, 0.4);
+            color: #5dd879;
+        }
+        .custom-confirm-box h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--accent-yellow);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .custom-confirm-box p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .custom-confirm-box p strong {
+            color: white;
+        }
+        .custom-confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .custom-confirm-actions .btn-confirm-cancel {
+            flex: 1;
+            padding: 11px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.85);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .custom-confirm-actions .btn-confirm-cancel:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.5);
+            color: white;
+        }
+        .custom-confirm-actions .btn-confirm-ok {
+            flex: 1;
+            padding: 11px 20px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-yellow {
+            background: var(--accent-yellow);
+            color: var(--primary-maroon);
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-yellow:hover {
+            background: #ffed4e;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+            transform: translateY(-1px);
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-danger:hover {
+            background: linear-gradient(135deg, #e84050, #dc3545);
+            box-shadow: 0 4px 15px rgba(220,53,69,0.4);
+            transform: translateY(-1px);
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-success {
+            background: linear-gradient(135deg, #28a745, #20883a);
+            color: white;
+        }
+        .custom-confirm-actions .btn-confirm-ok.ok-success:hover {
+            background: linear-gradient(135deg, #34c759, #28a745);
+            box-shadow: 0 4px 15px rgba(40,167,69,0.4);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -2989,7 +3183,7 @@
                             
                             <div class="form-group">
                                 <label>Barangay</label>
-                                <asp:TextBox ID="txtBarangay" runat="server" CssClass="form-control" placeholder="e.g., Zone 9, Salitran 3"></asp:TextBox>
+                                <asp:DropDownList ID="ddlBarangay" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
                             
                             <div class="form-group">
@@ -3049,8 +3243,8 @@
                                             <strong>Delivery to:</strong> <%# Eval("DeliveryAddress") %>
                                         </div>
                                         <div>
-                                            <asp:LinkButton ID="btnOrderReceived" runat="server" CommandName="Received" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-received" OnClientClick="return confirm('Mark this order as received? You will be asked to rate your meal.');"><i class="fas fa-check-circle"></i> Order Received</asp:LinkButton>
-                                            <asp:LinkButton ID="btnCancelOrder" runat="server" CommandName="Cancel" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-cancel" OnClientClick="return confirm('Cancel this order?');"><i class="fas fa-times"></i> Cancel</asp:LinkButton>
+                                            <asp:LinkButton ID="btnOrderReceived" runat="server" CommandName="Received" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-received" OnClientClick="return showCustomConfirm(event, 'confirmReceivedModal');"><i class="fas fa-check-circle"></i> Order Received</asp:LinkButton>
+                                            <asp:LinkButton ID="btnCancelOrder" runat="server" CommandName="Cancel" CommandArgument='<%# Eval("TicketNumber") %>' CssClass="btn-cancel" OnClientClick="return showCustomConfirm(event, 'confirmCancelModal');"><i class="fas fa-times"></i> Cancel</asp:LinkButton>
                                         </div>
                                     </div>
                                 </div>
@@ -3136,12 +3330,12 @@
                         <div class="cart-summary-row cart-total"><span>Total</span><span>₱<asp:Literal ID="litTotal" runat="server" /></span></div>
                     </div>
                     <div class="cart-actions">
-                        <asp:Button ID="btnClearCart" runat="server" Text="Clear Cart" CssClass="btn-clear-cart" OnClick="btnClearCart_Click" OnClientClick="return confirm('Clear your entire cart?');" />
+                        <asp:Button ID="btnClearCart" runat="server" Text="Clear Cart" CssClass="btn-clear-cart" OnClick="btnClearCart_Click" OnClientClick="return showCustomConfirm(event, 'confirmClearCartModal');" />
                         <asp:Button ID="btnCheckout" runat="server" Text="Checkout" CssClass="btn-checkout" OnClick="btnCheckout_Click" />
                     </div>
                     <div class="cart-delivery-info">
                         <i class="fas fa-info-circle"></i>
-                        <span>Free delivery on orders over ₱500</span>
+                        <span>Delivery fee is based on your barangay. Free delivery on orders over ₱500.</span>
                     </div>
                 </div>
             </div>
@@ -3187,7 +3381,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Barangay *</label>
-                                <asp:TextBox ID="txtNewBarangay" runat="server" CssClass="form-control" placeholder="Enter barangay"></asp:TextBox>
+                                <asp:DropDownList ID="ddlNewBarangay" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
                             <div class="form-group">
                                 <label>City/Municipality</label>
@@ -3204,26 +3398,35 @@
                     <div class="checkout-section">
                         <h4><i class="fas fa-credit-card"></i> Payment Method</h4>
                         <div class="payment-options">
-                            <label class="payment-option">
-                                <input type="radio" name="paymentMethod" value="COD" checked />
-                                <div class="payment-option-content">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span>Cash on Delivery</span>
-                                    <small>Pay when you receive your order</small>
-                                </div>
-                            </label>
-                            <label class="payment-option">
-                                <input type="radio" name="paymentMethod" value="GCASH" />
-                                <div class="payment-option-content">
-                                    <i class="fas fa-mobile-alt"></i>
-                                    <span>GCash</span>
-                                    <small>Pay via GCash e-wallet</small>
-                                </div>
-                            </label>
+                            <asp:Repeater ID="rptPaymentMethods" runat="server">
+                                <ItemTemplate>
+                                    <label class='payment-option <%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "payment-option-disabled" : "" %>'
+                                           title='<%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "This payment method is currently unavailable." : "" %>'>
+                                        <input type="radio" name="paymentMethod"
+                                               value='<%# Eval("MethodName") %>'
+                                               <%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "disabled=\"disabled\"" : "" %> />
+                                        <div class="payment-option-content">
+                                            <i class='<%# GetPaymentIcon((string)Eval("MethodName")) %>'></i>
+                                            <span><%# Eval("MethodName") %></span>
+                                            <asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrEmpty((string)(Eval("AccountDetails") ?? "")) %>'>
+                                                <small><%# Eval("AccountDetails") %></small>
+                                            </asp:PlaceHolder>
+                                            <%# (string)Eval("Status") == "Inactive" || (string)Eval("Status") == "Disabled" ? "<span class=\"badge-unavailable\">Unavailable</span>" : "" %>
+                                        </div>
+                                    </label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:PlaceHolder runat="server" Visible='<%# rptPaymentMethods.Items.Count == 0 %>'>
+                                        <div style="padding:12px 8px;color:#999;font-size:0.85rem;text-align:center;">
+                                            <i class="fas fa-exclamation-circle"></i> No payment methods available. Please contact support.
+                                        </div>
+                                    </asp:PlaceHolder>
+                                </FooterTemplate>
+                            </asp:Repeater>
                         </div>
-                        <div id="gcashInfo" class="gcash-info" style="display: none;">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i> You will be redirected to GCash payment page after confirming your order.
+                        <div id="paymentInfo" class="gcash-info" style="display: none;">
+                            <div class="alert alert-info" id="paymentInfoText">
+                                <i class="fas fa-info-circle"></i> <span id="paymentInfoMessage"></span>
                             </div>
                         </div>
                     </div>
@@ -3410,7 +3613,7 @@
                 </div>
                 <div class="cta-banner">
                     <h3 class="cta-title">Hungry? Order Now!</h3>
-                    <p class="cta-subtitle">Free delivery on orders over ₱500</p>
+                    <p class="cta-subtitle">Free delivery on orders over ₱500. Delivery fee varies by barangay.</p>
                     <a href="#menu" class="btn-cta-large">Order Now</a>
                     <div style="margin-top: 20px;">
                         <p><i class="fas fa-phone"></i> Call us for inquiries:</p>
@@ -3433,8 +3636,8 @@
                         <div class="map-wrapper-large">
                            <iframe 
                                 src="https://www.google.com/maps/embed?pb=!4v1770383773979!6m8!1m7!1s2PuvajbO79-J0wNyBbZLUg!2m2!1d14.32649854666237!2d120.9372845304983!3f91.56107397260273!4f3.452054794520592!5f0.4000000000000002" 
-                                width="100" 
-                                height="100" 
+                                width="100%" 
+                                height="100%" 
                                 style="border:0;" 
                                 allowfullscreen="" 
                                 loading="lazy" 
@@ -3457,6 +3660,13 @@
                             <div class="contact-details-large">
                                 <p>Blk 84, Lot 10 Bautista St, Zone 9</p>
                                 <p>Dasmariñas, 4114 Cavite</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-group">
+                            <h3><i class="fas fa-clock"></i> Operating Hours</h3>
+                            <div class="contact-details-large">
+                                <p>Monday – Sunday</p>
+                                <p>10:00 AM – 9:00 PM</p>
                             </div>
                         </div>
                     </div>
@@ -3658,9 +3868,6 @@
             let _ordersPollingTimer = null;
 
             // ===== REAL-TIME ORDERS POLLING =====
-            // Polls every 15s while the Orders panel is open by triggering
-            // a hidden __doPostBack that refreshes the UpdatePanel containing orders.
-            // Falls back gracefully if UpdatePanel is not present.
             function startOrdersPolling() {
                 stopOrdersPolling();
                 _ordersPollingTimer = setInterval(function() {
@@ -3801,6 +4008,8 @@
                         }
                     });
                     document.body.style.overflow = 'hidden';
+                    // Ensure a payment method is always selected when modal opens
+                    setTimeout(selectFirstPaymentMethod, 50);
                 }
             }
             
@@ -3985,7 +4194,6 @@
             function showOrderConfirmedAnimation(ticketNumber, total, paymentMethod) {
                 launchConfetti();
 
-                // Create overlay - FIXED: no top-to-middle animation, just pops up in center
                 const overlay = document.createElement('div');
                 overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.78);z-index:99999;display:flex;align-items:center;justify-content:center;';
 
@@ -4171,14 +4379,30 @@
             const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
             paymentRadios.forEach(radio => {
                 radio.addEventListener('change', function() {
-                    const gcashInfo = document.getElementById('gcashInfo');
-                    if (this.value === 'GCASH') {
-                        gcashInfo.style.display = 'block';
+                    const infoDiv = document.getElementById('paymentInfo');
+                    const msgSpan = document.getElementById('paymentInfoMessage');
+                    if (!infoDiv || !msgSpan) return;
+                    const val = this.value.toUpperCase();
+                    if (val === 'GCASH' || val === 'MAYA' || val === 'PAYMAYA') {
+                        msgSpan.textContent = 'Please scan the QR code or send payment to the account details shown. Include your order ticket number as reference.';
+                        infoDiv.style.display = 'block';
+                    } else if (val === 'BANK TRANSFER' || val === 'BANK') {
+                        msgSpan.textContent = 'Please transfer the exact amount to the account provided and keep your transaction reference number.';
+                        infoDiv.style.display = 'block';
                     } else {
-                        gcashInfo.style.display = 'none';
+                        infoDiv.style.display = 'none';
                     }
                 });
             });
+            // Auto-select first enabled payment method on load and every time checkout opens
+            function selectFirstPaymentMethod() {
+                const alreadyChecked = document.querySelector('input[name="paymentMethod"]:checked');
+                if (!alreadyChecked) {
+                    const firstEnabled = document.querySelector('input[name="paymentMethod"]:not([disabled])');
+                    if (firstEnabled) firstEnabled.checked = true;
+                }
+            }
+            setTimeout(selectFirstPaymentMethod, 200);
             
             const mealCloseBtn = document.getElementById('mealCloseBtn');
             const closeMealModalBtn = document.getElementById('closeMealModalBtn');
@@ -4470,7 +4694,7 @@
                             <li>All orders are subject to availability and confirmation.</li>
                             <li>We accept <strong>Cash on Delivery (COD)</strong> and <strong>GCash</strong> payments.</li>
                             <li>Orders may only be cancelled while in "Open" or "Cooking" status.</li>
-                            <li>A delivery fee of ₱50 applies to orders below ₱500. Orders of ₱500 and above qualify for free delivery.</li>
+                            <li>A delivery fee based on your barangay applies to orders below ₱500. Orders of ₱500 and above qualify for free delivery.</li>
                         </ul>
                     </div>
                     <div class="policy-section">
@@ -4624,7 +4848,93 @@
                 }
             }
 
+            // ========== CUSTOM CONFIRM MODAL ENGINE ==========
+            let _pendingTriggerElement = null;
+
+            function showCustomConfirm(event, modalId) {
+                event.preventDefault();
+                _pendingTriggerElement = event.currentTarget || event.target;
+                const modal = document.getElementById(modalId);
+                if (!modal) return false;
+                modal.style.display = 'flex';
+                requestAnimationFrame(() => modal.classList.add('show'));
+                document.body.style.overflow = 'hidden';
+                return false;
+            }
+
+            function closeCustomConfirm(modalId, confirmed) {
+                const modal = document.getElementById(modalId);
+                if (!modal) return;
+                modal.classList.remove('show');
+                setTimeout(() => { modal.style.display = 'none'; }, 280);
+                document.body.style.overflow = '';
+                if (confirmed && _pendingTriggerElement) {
+                    const el = _pendingTriggerElement;
+                    _pendingTriggerElement = null;
+                    el.onclick = null;
+                    el.click();
+                } else {
+                    _pendingTriggerElement = null;
+                }
+            }
+
+            document.querySelectorAll('.custom-confirm-overlay').forEach(function (overlay) {
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) closeCustomConfirm(overlay.id, false);
+                });
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.custom-confirm-overlay.show').forEach(function (m) {
+                        closeCustomConfirm(m.id, false);
+                    });
+                }
+            });
+
         </script>
+
+        <div id="confirmClearCartModal" class="custom-confirm-overlay" role="dialog" aria-modal="true">
+            <div class="custom-confirm-box">
+                <div class="custom-confirm-icon icon-warning">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h3>Clear Your Cart?</h3>
+                <p>All items in your cart will be <strong>removed</strong>. This action cannot be undone.</p>
+                <div class="custom-confirm-actions">
+                    <button class="btn-confirm-cancel" onclick="closeCustomConfirm('confirmClearCartModal', false)">Keep Items</button>
+                    <button class="btn-confirm-ok ok-danger" onclick="closeCustomConfirm('confirmClearCartModal', true)"><i class="fas fa-trash-alt"></i> Clear Cart</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmReceivedModal" class="custom-confirm-overlay" role="dialog" aria-modal="true">
+            <div class="custom-confirm-box">
+                <div class="custom-confirm-icon icon-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Order Received?</h3>
+                <p>Confirm that you've received your order. You'll be asked to <strong>rate your meal</strong> — your feedback helps us improve!</p>
+                <div class="custom-confirm-actions">
+                    <button class="btn-confirm-cancel" onclick="closeCustomConfirm('confirmReceivedModal', false)">Not Yet</button>
+                    <button class="btn-confirm-ok ok-success" onclick="closeCustomConfirm('confirmReceivedModal', true)"><i class="fas fa-check"></i> Yes, Received!</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="confirmCancelModal" class="custom-confirm-overlay" role="dialog" aria-modal="true">
+            <div class="custom-confirm-box">
+                <div class="custom-confirm-icon icon-danger">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h3>Cancel This Order?</h3>
+                <p>Are you sure you want to <strong>cancel</strong> this order? This cannot be undone once confirmed.</p>
+                <div class="custom-confirm-actions">
+                    <button class="btn-confirm-cancel" onclick="closeCustomConfirm('confirmCancelModal', false)">Keep Order</button>
+                    <button class="btn-confirm-ok ok-danger" onclick="closeCustomConfirm('confirmCancelModal', true)"><i class="fas fa-times"></i> Cancel Order</button>
+                </div>
+            </div>
+        </div>
 
     </form>
 </body>

@@ -177,13 +177,13 @@ namespace TasteNet.Users.Customer
         protected global::System.Web.UI.WebControls.TextBox txtStreet;
 
         /// <summary>
-        /// txtBarangay control.
+        /// ddlBarangay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtBarangay;
+        protected global::System.Web.UI.WebControls.DropDownList ddlBarangay;
 
         /// <summary>
         /// txtCity control.
@@ -402,13 +402,13 @@ namespace TasteNet.Users.Customer
         protected global::System.Web.UI.WebControls.TextBox txtNewStreet;
 
         /// <summary>
-        /// txtNewBarangay control.
+        /// ddlNewBarangay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNewBarangay;
+        protected global::System.Web.UI.WebControls.DropDownList ddlNewBarangay;
 
         /// <summary>
         /// txtNewCity control.
@@ -427,6 +427,15 @@ namespace TasteNet.Users.Customer
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtNewLandmark;
+
+        /// <summary>
+        /// rptPaymentMethods control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptPaymentMethods;
 
         /// <summary>
         /// txtCheckoutInstructions control.
