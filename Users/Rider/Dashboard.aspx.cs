@@ -27,9 +27,24 @@ namespace TasteNet.Users.Rider
         // ════════════════════════════════════════════════════════════════════════
         protected void Page_Load(object sender, EventArgs e)
         {
+            // ── Detect AJAX (fetch) requests so we never redirect them ───────────
+            bool isAjax = !string.IsNullOrEmpty(Request.QueryString["completeTicket"])
+                       || !string.IsNullOrEmpty(Request.QueryString["setStatus"]);
+
             // ── Auth guard: only Riders may access this dashboard ────────────────
             if (Session["UserID"] == null || Session["UserType"]?.ToString() != "Rider")
             {
+                if (isAjax)
+                {
+                    // Return 401 so the JS fetch() can detect an expired session
+                    // instead of silently following the redirect and returning HTML.
+                    Response.Clear();
+                    Response.ContentType = "text/plain";
+                    Response.StatusCode = 401;
+                    Response.Write("SESSION_EXPIRED");
+                    Response.End();
+                    return;
+                }
                 Response.Redirect("~/Login.aspx");
                 return;
             }
@@ -105,60 +120,71 @@ namespace TasteNet.Users.Rider
             Response.Clear();
             Response.ContentType = "text/plain";
 
-            // 1. Verify this ticket actually belongs to the logged-in rider
-            if (!TicketBelongsToRider(ticketNumber, CurrentRiderID))
+            try
             {
-                Response.StatusCode = 403;
-                Response.Write("FORBIDDEN");
-                Response.End();
-                return;
-            }
-
-            // 2. Get the internal TicketID (needed for Proofs table)
-            int ticketID = GetTicketID(ticketNumber);
-            if (ticketID == 0)
-            {
-                Response.StatusCode = 404;
-                Response.Write("NOTFOUND");
-                Response.End();
-                return;
-            }
-
-            // 3. Save proof-of-delivery photo (if uploaded)
-            string proofPath = null;
-            HttpPostedFile proofFile = Request.Files["proofPhoto"];
-            if (proofFile != null && proofFile.ContentLength > 0)
-            {
-                string allowedExt = ".jpg.jpeg.png.gif.webp";
-                string ext = Path.GetExtension(proofFile.FileName).ToLower();
-                if (!allowedExt.Contains(ext))
+                // 1. Verify this ticket actually belongs to the logged-in rider
+                if (!TicketBelongsToRider(ticketNumber, CurrentRiderID))
                 {
-                    Response.StatusCode = 400;
-                    Response.Write("INVALID_FILE_TYPE");
+                    Response.StatusCode = 403;
+                    Response.Write("FORBIDDEN");
                     Response.End();
                     return;
                 }
 
-                string uploadDir = Server.MapPath("~/Uploads/Proofs/");
-                if (!Directory.Exists(uploadDir))
-                    Directory.CreateDirectory(uploadDir);
+                // 2. Get the internal TicketID (needed for Proofs table)
+                int ticketID = GetTicketID(ticketNumber);
+                if (ticketID == 0)
+                {
+                    Response.StatusCode = 404;
+                    Response.Write("NOTFOUND");
+                    Response.End();
+                    return;
+                }
 
-                string safeTicket = System.Text.RegularExpressions.Regex
-                    .Replace(ticketNumber, @"[^a-zA-Z0-9_-]", "_");
-                string fileName = $"POD_{safeTicket}_{Guid.NewGuid():N}{ext}";
-                string fullPath = Path.Combine(uploadDir, fileName);
-                proofFile.SaveAs(fullPath);
+                // 3. Save proof-of-delivery photo (if uploaded)
+                string proofPath = null;
+                HttpPostedFile proofFile = Request.Files["proofPhoto"];
+                if (proofFile != null && proofFile.ContentLength > 0)
+                {
+                    string allowedExt = ".jpg.jpeg.png.gif.webp";
+                    string ext = Path.GetExtension(proofFile.FileName).ToLower();
+                    if (!allowedExt.Contains(ext))
+                    {
+                        Response.StatusCode = 400;
+                        Response.Write("INVALID_FILE_TYPE");
+                        Response.End();
+                        return;
+                    }
 
-                // Store a root-relative web path (e.g. /Uploads/Proofs/POD_TKT-0001_<guid>.jpg)
-                string appRoot = Request.ApplicationPath.TrimEnd('/');
-                proofPath = $"{appRoot}/Uploads/Proofs/{fileName}";
+                    string uploadDir = Server.MapPath("~/Uploads/Proofs/");
+                    if (!Directory.Exists(uploadDir))
+                        Directory.CreateDirectory(uploadDir);
+
+                    string safeTicket = System.Text.RegularExpressions.Regex
+                        .Replace(ticketNumber, @"[^a-zA-Z0-9_-]", "_");
+                    string fileName = $"POD_{safeTicket}_{Guid.NewGuid():N}{ext}";
+                    string fullPath = Path.Combine(uploadDir, fileName);
+                    proofFile.SaveAs(fullPath);
+
+                    // Store a root-relative web path (e.g. /Uploads/Proofs/POD_TKT-0001_<guid>.jpg)
+                    string appRoot = Request.ApplicationPath.TrimEnd('/');
+                    proofPath = $"{appRoot}/Uploads/Proofs/{fileName}";
+                }
+
+                // 4. Mark ticket complete + insert proof row + update rider counters
+                CompleteTicketInDb(ticketNumber, ticketID, CurrentRiderID, proofPath);
+
+                Response.Write("OK");
+                Response.End();
             }
-
-            // 4. Mark ticket complete + insert proof row + update rider counters
-            CompleteTicketInDb(ticketNumber, ticketID, CurrentRiderID, proofPath);
-
-            Response.Write("OK");
-            Response.End();
+            catch (Exception ex)
+            {
+                // Log the real error and return a plain-text message the JS can show
+                System.Diagnostics.Trace.TraceError("HandleCompleteTicket error: " + ex.ToString());
+                Response.StatusCode = 500;
+                Response.Write("SERVER_ERROR: " + ex.Message);
+                Response.End();
+            }
         }
 
         // ════════════════════════════════════════════════════════════════════════
