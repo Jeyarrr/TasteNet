@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Register | TasteNet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -18,11 +19,14 @@
             background: url('Images/landingpage.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 12px;
             position: relative;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -37,7 +41,7 @@
         }
 
         .register-card {
-            width: 100%;
+            width: calc(100% - 24px);
             max-width: 520px;
             background: #4b0000;
             padding: 20px 24px;
@@ -49,7 +53,8 @@
             transition: all 0.3s ease;
             animation: glowPulse 1.5s infinite alternate;
             position: relative;
-            margin: 0 auto;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         @keyframes glowPulse {
@@ -606,51 +611,64 @@
             margin: 6px 0;
         }
 
+        /* Small mobile */
+        @media (max-width: 380px) {
+            .register-card {
+                padding: 14px 14px;
+            }
+            .input-box input, .input-box select {
+                height: 38px;
+                font-size: 11px;
+            }
+            .mobile-prefix {
+                font-size: 11px;
+                left: 12px;
+            }
+            .gender-category-list label {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            .privacy-notice-card span {
+                font-size: 10px;
+            }
+        }
+
+        /* Mobile */
         @media (max-width: 550px) {
             .register-card {
-                max-width: 100%;
                 padding: 16px 18px;
                 border-radius: 24px;
             }
-            
             .triple-row, .double-row {
                 flex-direction: column;
                 gap: 6px;
             }
-            
             .triple-row .input-box, .double-row .input-box {
                 min-width: 100%;
             }
-            
             .gender-category-list {
                 flex-direction: column;
                 gap: 6px;
             }
-            
             .otp-input-group {
                 flex-direction: column;
                 gap: 8px;
             }
-            
             .otp-input-group .btn-verify {
                 width: 100%;
                 min-width: auto;
             }
-            
             .resend-section {
                 flex-direction: column;
                 gap: 6px;
             }
-            
             h2 {
                 font-size: 1.3em;
                 margin-bottom: 8px;
             }
-            
             .logo img {
                 width: 50px;
             }
-            
             .back-button {
                 width: 32px;
                 height: 32px;
@@ -658,27 +676,22 @@
                 left: -5px;
                 top: -5px;
             }
-            
             .section-title {
                 font-size: 12px;
                 margin: 8px 0 4px 0;
             }
-            
             .input-box input, .input-box select {
                 height: 40px;
                 font-size: 12px;
             }
-            
             .btn-register {
                 padding: 6px 20px;
                 font-size: 13px;
                 min-width: 120px;
             }
-            
             .form-container {
                 max-height: 420px;
             }
-            
             .privacy-notice-card {
                 padding: 8px 12px;
                 gap: 8px;
@@ -688,28 +701,30 @@
             }
         }
 
-        @media (max-width: 380px) {
+        /* Desktop — wider card, roomier padding */
+        @media (min-width: 768px) {
             .register-card {
-                padding: 14px 14px;
+                width: 560px;
+                max-width: 560px;
+                padding: 28px 36px;
             }
-            
+            .form-container {
+                max-height: 480px;
+            }
             .input-box input, .input-box select {
-                height: 38px;
-                font-size: 11px;
+                height: 44px;
+                font-size: 14px;
             }
-            
-            .mobile-prefix {
-                font-size: 11px;
-                left: 12px;
+            h2 {
+                font-size: 1.5em;
             }
-            
-            .gender-category-list label {
-                padding: 6px 8px;
-                font-size: 12px;
+            .logo img {
+                width: 70px;
             }
-            
-            .privacy-notice-card span {
-                font-size: 10px;
+            .btn-register {
+                padding: 9px 28px;
+                font-size: 15px;
+                min-width: 150px;
             }
         }
     </style>

@@ -4,21 +4,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Login | TasteNet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://accounts.google.com/gsi/client" async="async" defer="defer"></script>
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 12px;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
             background: url('Images/landingpage.jpg') no-repeat center center fixed;
             background-size: cover;
-            height: 100vh;
+            min-height: 100vh;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -33,23 +37,27 @@
         }
 
         .login-card {
-            width: 360px;
+            width: calc(100% - 24px);
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
             background: #4b0000;
-            padding: 25px 20px;
+            padding: clamp(20px, 5vw, 36px) clamp(16px, 4vw, 32px);
             border-radius: 18px;
             text-align: center;
             color: #fff;
             border: 2px solid #ffc107;
-            box-shadow: 0 0 6px #ffc107, 
-                        0 0 12px #ffc107, 
+            box-shadow: 0 0 6px #ffc107,
+                        0 0 12px #ffc107,
                         0 0 24px rgba(255, 193, 7, 0.3),
                         inset 0 0 6px rgba(255, 193, 7, 0.2);
             transition: all 0.3s ease;
             animation: glowPulse 1.5s infinite alternate;
+            box-sizing: border-box;
         }
 
         .logo img {
-            width: 80px;
+            width: clamp(60px, 18vw, 90px);
             margin-bottom: 8px;
             border-radius: 50%;
             border: solid #FFD41D;
@@ -59,20 +67,20 @@
             margin-top: 0;
             margin-bottom: 18px;
             font-weight: 600;
-            font-size: 1.6em;
+            font-size: clamp(1.3em, 4vw, 1.6em);
             font-family: 'Poppins', sans-serif;
             letter-spacing: 0.5px;
         }
 
         .input-box {
-            width: 85%;
+            width: 90%;
             margin: 0 auto 15px auto;
             position: relative;
         }
 
         .input-box input {
             width: 100%;
-            height: 45px;
+            height: 46px;
             padding: 0 40px 0 15px;
             border-radius: 25px;
             border: none;
@@ -80,7 +88,6 @@
             font-size: 15px;
             font-family: 'Poppins', sans-serif;
             box-sizing: border-box;
-            line-height: 45px;
             font-weight: 400;
             letter-spacing: 0.3px;
             background: #fff;
@@ -119,12 +126,14 @@
         }
 
         .remember-forgot {
-            width: 85%;
+            width: 90%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: nowrap;
+            gap: 8px;
             margin: 8px auto 15px auto;
-            font-size: 13.5px;
+            font-size: 13px;
             font-family: 'Poppins', sans-serif;
         }
 
@@ -132,6 +141,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-shrink: 0;
         }
 
         .remember-me input[type="checkbox"] {
@@ -139,13 +149,7 @@
             height: 16px;
             cursor: pointer;
             accent-color: #ffc107;
-            transform: scale(1);
-            transition: all 0.2s ease;
-        }
-
-        .remember-me input[type="checkbox"]:hover {
-            transform: scale(1.05);
-            filter: brightness(1.2);
+            flex-shrink: 0;
         }
 
         .remember-me label {
@@ -153,8 +157,9 @@
             color: #fff;
             font-weight: 500;
             transition: color 0.3s ease;
-            font-size: 13.5px;
+            font-size: 13px;
             font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
         }
 
         .remember-me:hover label {
@@ -173,6 +178,7 @@
             display: inline-block;
             font-size: 13px;
             font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
         }
 
         .forgot-password:hover,
@@ -188,8 +194,8 @@
             margin-top: 10px;
             background: transparent;
             border: 2px solid #ffc107;
-            padding: 10px 10px;
-            width: 45%;
+            padding: 11px 10px;
+            width: clamp(140px, 50%, 180px);
             color: #ffc107;
             font-size: 15px;
             font-family: 'Poppins', sans-serif;
@@ -220,9 +226,9 @@
             margin-top: 5px;
             background: #fff;
             border: 2px solid #ffc107;
-            padding: 10px 16px;
-            width: auto;
-            min-width: 220px;
+            padding: 11px 16px;
+            width: 90%;
+            max-width: 280px;
             font-size: 14px;
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
@@ -234,9 +240,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             color: #333;
             white-space: nowrap;
+            box-sizing: border-box;
         }
 
         .google-btn:hover {
@@ -262,17 +269,18 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
-        @keyframes glowPulse{
-            from{ box-shadow: 0 0 5px #ffc107; }
-            to{ box-shadow: 0 0 12px #ffc107, 0 0 24px rgba(255, 193, 7, 0.8); }
+        @keyframes glowPulse {
+            from { box-shadow: 0 0 5px #ffc107; }
+            to   { box-shadow: 0 0 12px #ffc107, 0 0 24px rgba(255, 193, 7, 0.8); }
         }
-        
+
         .error-message {
-            color: #ffc107 !important; 
-            background-color: transparent !important; 
-            padding: 0px 0 !important;
+            color: #ffc107 !important;
+            background-color: transparent !important;
+            padding: 0 !important;
             border-radius: 0 !important;
             margin: 6px 0 !important;
             display: block;
@@ -291,24 +299,61 @@
             line-height: 1.4;
         }
 
-        .extra-text br { display: block; }
-
         .or-text {
-            margin: 4px 0;
+            margin: 6px 0;
             font-size: 12px;
             color: #ffc107;
             font-weight: 500;
         }
 
         .social-login {
-            margin-top: 0px;
             display: flex;
             justify-content: center;
         }
 
-        @media (max-width: 400px) {
-            .btn-login, .google-btn { width: 70%; }
-            .google-btn { font-size: 12px; gap: 8px; }
+        /* Tablet */
+        @media (min-width: 480px) {
+            .input-box,
+            .remember-forgot {
+                width: 85%;
+            }
+        }
+
+        /* Desktop — make the card comfortably wide */
+        @media (min-width: 768px) {
+            .login-card {
+                width: 440px;
+                max-width: 440px;
+                padding: 36px 40px;
+            }
+
+            .logo img {
+                width: 90px;
+            }
+
+            h2 {
+                font-size: 1.7em;
+            }
+
+            .input-box,
+            .remember-forgot {
+                width: 88%;
+            }
+
+            .input-box input {
+                height: 50px;
+                font-size: 15px;
+            }
+
+            .btn-login {
+                width: 160px;
+                padding: 12px 10px;
+            }
+
+            .google-btn {
+                max-width: 300px;
+                padding: 12px 20px;
+            }
         }
     </style>
 </head>

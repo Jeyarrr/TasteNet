@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Forgot Password | TasteNet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -14,15 +15,18 @@
 
         body {
             margin: 0;
-            padding: 0;
+            padding: 12px;
             font-family: 'Poppins', 'Segoe UI', sans-serif;
             background: url('Images/landingpage.jpg') no-repeat center center fixed;
             background-size: cover;
-            height: 100vh;
+            min-height: 100vh;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -37,19 +41,22 @@
         }
 
         .forgot-card {
-            width: 360px;
+            width: calc(100% - 24px);
+            max-width: 400px;
             background: #4b0000;
             padding: 20px 20px 24px 20px;
             border-radius: 18px;
             text-align: center;
             color: #fff;
             border: 2px solid #ffc107;
-            box-shadow: 0 0 6px #ffc107, 
-                        0 0 12px #ffc107, 
+            box-shadow: 0 0 6px #ffc107,
+                        0 0 12px #ffc107,
                         0 0 24px rgba(255, 193, 7, 0.3),
                         inset 0 0 6px rgba(255, 193, 7, 0.2);
             transition: all 0.3s ease;
             animation: glowPulse 1.5s infinite alternate;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .logo img {
@@ -283,6 +290,33 @@
 
         .input-box:last-of-type {
             margin-bottom: 8px;
+        }
+
+        /* Desktop */
+        @media (min-width: 768px) {
+            .forgot-card {
+                width: 440px;
+                max-width: 440px;
+                padding: 32px 36px;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .logo img {
+                width: 85px;
+            }
+
+            .input-box input {
+                height: 48px;
+                font-size: 15px;
+            }
+
+            .btn-submit, .btn-resend {
+                height: 46px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
