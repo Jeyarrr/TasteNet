@@ -1786,6 +1786,14 @@
             padding: 80px 20px 60px;
         }
 
+        /* Fix: background-attachment:fixed breaks on iOS/Android — falls back to scroll */
+        @media (max-width: 768px) {
+            .hero-container {
+                background-attachment: scroll;
+                min-height: 100svh;
+            }
+        }
+
         .hero-content { 
             max-width: 900px; 
             width: 100%; 
@@ -2954,6 +2962,119 @@
             .menu-container { max-width: 280px; margin: 0 auto; }
         }
 
+        /* ── MOBILE HAMBURGER NAVBAR ── */
+        .hamburger-btn {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4.5px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.2s;
+            overflow: visible;
+        }
+        .hamburger-btn:hover { background: rgba(255, 215, 0, 0.15); }
+        .hbar {
+            width: 19px;
+            height: 2px;
+            background: var(--accent-yellow);
+            border-radius: 2px;
+            transition: all 0.25s ease;
+            display: block;
+        }
+        .hamburger-btn.open .hbar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .hamburger-btn.open .hbar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger-btn.open .hbar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+        .mobile-nav-drawer {
+            display: none;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            background: rgba(10, 2, 2, 0.97);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), border-top 0.3s;
+            z-index: 998;
+        }
+        .mobile-nav-drawer.open {
+            max-height: 280px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        .mobile-drawer-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 22px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.18s;
+            cursor: pointer;
+            text-decoration: none !important;
+        }
+        .mobile-drawer-link:hover,
+        .mobile-drawer-link.active {
+            background: rgba(255, 215, 0, 0.08);
+            color: var(--accent-yellow);
+            padding-left: 28px;
+        }
+        .mobile-drawer-link i {
+            font-size: 0.9rem;
+            width: 18px;
+            text-align: center;
+            opacity: 0.75;
+        }
+        .mobile-drawer-link.active i { opacity: 1; }
+
+        @media (max-width: 768px) {
+            /* Hide desktop horizontal nav links */
+            .nav-links { display: none !important; }
+            /* Show hamburger button */
+            .hamburger-btn { display: flex !important; }
+            /* Show mobile drawer */
+            .mobile-nav-drawer { display: block; }
+            /* Compact navbar */
+            .navbar { padding: 8px 12px !important; min-height: 56px; }
+            /* Slightly smaller brand name */
+            .brand-name { font-size: 1.3rem; }
+            /* Tighten icon gap */
+            .nav-icons { gap: 0px; }
+            /* Hero text adjustments */
+            .hero-content h1 { font-size: 2rem; }
+            .hero-tagline { font-size: 1.2rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .hero-description { font-size: 1rem; }
+            /* About section */
+            .about-title { font-size: 2rem; }
+            .about-section { padding: 50px 5%; }
+            .content-box { padding: 25px 20px; }
+            /* Contact sidebar stack */
+            .contact-info-sidebar { flex-direction: column; gap: 20px; padding: 20px; }
+            .contact-info-group + .contact-info-group { border-left: none; padding-left: 0; border-top: 1px solid rgba(255,215,0,0.2); padding-top: 20px; }
+            .map-wrapper-large { height: 300px; }
+            /* Footer */
+            .footer-container { flex-direction: column; gap: 20px; }
+            .footer-bottom-content { flex-direction: column; text-align: center; }
+            /* Steps */
+            .compact-steps-grid { flex-direction: column; align-items: center; }
+            .compact-step-card { max-width: 100%; }
+            /* Cart modal */
+            .cart-modal-content { width: 100%; right: 0; border-radius: 15px 15px 0 0; top: auto; bottom: 0; }
+            /* Back to top */
+            .back-to-top { bottom: 20px; right: 15px; width: 42px; height: 42px; }
+        }
+
         .custom-confirm-overlay {
             display: none;
             position: fixed;
@@ -3481,21 +3602,48 @@
 
         <nav class="navbar" id="mainNavbar">
             <div class="logo-container" data-section="home">
-                <img src='<%= ResolveUrl("~/Images/LOGO.png") %>' alt="TasteNet Logo" class="logo-img" />
+                <img src='<%= ResolveUrl("~/Images/LOGO.png") %>' alt="Caballeros Logo" class="logo-img" />
                 <span class="brand-name">Caballeros</span>
             </div>
+
+            <%-- Desktop nav links — hidden on mobile via CSS --%>
             <ul class="nav-links">
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About Us</a></li>
                 <li><a href="#menu" class="nav-link">Menu</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
+
             <div class="nav-icons">
                 <a href="#" id="cartIcon" class="cart-icon-wrapper" data-tooltip="Shopping Cart">
                     <i class="fas fa-shopping-basket"></i>
                     <span class="cart-badge" id="cartBadge">0</span>
                 </a>
-                <a href="#" id="profileIcon" data-tooltip="My Account"><i class="fas fa-user-circle"></i></a>
+                <a href="#" id="profileIcon" data-tooltip="My Account">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+                <%-- Hamburger button — visible on mobile only --%>
+                <button type="button" class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+                    <span class="hbar"></span>
+                    <span class="hbar"></span>
+                    <span class="hbar"></span>
+                </button>
+            </div>
+
+            <%-- Mobile slide-down drawer --%>
+            <div class="mobile-nav-drawer" id="mobileNavDrawer" role="navigation" aria-label="Main menu">
+                <a href="#home" class="mobile-drawer-link active" onclick="closeMobileDrawer()">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="#about" class="mobile-drawer-link" onclick="closeMobileDrawer()">
+                    <i class="fas fa-info-circle"></i> About Us
+                </a>
+                <a href="#menu" class="mobile-drawer-link" onclick="closeMobileDrawer()">
+                    <i class="fas fa-utensils"></i> Menu
+                </a>
+                <a href="#contact" class="mobile-drawer-link" onclick="closeMobileDrawer()">
+                    <i class="fas fa-phone"></i> Contact
+                </a>
             </div>
         </nav>
 
@@ -3753,9 +3901,12 @@
                     }
                 });
             }
-            
+
+            // Fix 1: Run immediately so hero is never stuck invisible on page load/redirect
+            checkScrollReveal();
             window.addEventListener('scroll', checkScrollReveal);
             window.addEventListener('load', checkScrollReveal);
+            document.addEventListener('DOMContentLoaded', checkScrollReveal);
 
             const navbar = document.getElementById('mainNavbar');
             window.addEventListener('scroll', function() {
@@ -3917,7 +4068,7 @@
                             }
                         })
                         .catch(function() {}); // silent fail
-                }, 15000); // poll every 15 seconds
+                }, 60000); // poll every 60 seconds (reduced from 15s to prevent constant page activity)
             }
 
             function stopOrdersPolling() {
@@ -4578,6 +4729,67 @@
                 });
             }
 
+            // ── Mobile hamburger drawer ──
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+
+            function closeMobileDrawer() {
+                if (!hamburgerBtn || !mobileNavDrawer) return;
+                hamburgerBtn.classList.remove('open');
+                mobileNavDrawer.classList.remove('open');
+                hamburgerBtn.setAttribute('aria-expanded', 'false');
+            }
+
+            if (hamburgerBtn && mobileNavDrawer) {
+                hamburgerBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    const isOpen = mobileNavDrawer.classList.contains('open');
+                    if (isOpen) {
+                        closeMobileDrawer();
+                    } else {
+                        hamburgerBtn.classList.add('open');
+                        mobileNavDrawer.classList.add('open');
+                        hamburgerBtn.setAttribute('aria-expanded', 'true');
+                    }
+                });
+
+                // Close when tapping anywhere outside the navbar
+                document.addEventListener('click', function (e) {
+                    const navbar = document.getElementById('mainNavbar');
+                    if (navbar && !navbar.contains(e.target)) {
+                        closeMobileDrawer();
+                    }
+                });
+
+                // Close drawer when a section link is tapped (smooth scroll)
+                document.querySelectorAll('.mobile-drawer-link').forEach(function (link) {
+                    link.addEventListener('click', function (e) {
+                        const href = this.getAttribute('href');
+                        if (href && href.startsWith('#')) {
+                            e.preventDefault();
+                            closeMobileDrawer();
+                            const target = document.getElementById(href.substring(1));
+                            if (target) {
+                                window.scrollTo({ top: target.offsetTop - 56, behavior: 'smooth' });
+                            }
+                        }
+                    });
+                });
+
+                // Highlight active drawer link on scroll
+                window.addEventListener('scroll', function () {
+                    const sections = ['home', 'about', 'menu', 'contact'];
+                    let current = '';
+                    sections.forEach(function (id) {
+                        const s = document.getElementById(id);
+                        if (s && window.scrollY >= s.offsetTop - 80) current = id;
+                    });
+                    document.querySelectorAll('.mobile-drawer-link').forEach(function (link) {
+                        const href = link.getAttribute('href');
+                        link.classList.toggle('active', href === '#' + current);
+                    });
+                });
+            }
 
         </script>
 

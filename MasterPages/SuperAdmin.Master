@@ -123,42 +123,7 @@
         }
         
         .collapse-btn-circle {
-            width: 28px;
-            height: 28px;
-            background: #ffc107;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: none;
-            color: #4a0e0e;
-            font-size: 12px;
-            transition: all 0.2s cubic-bezier(0.34, 1.2, 0.64, 1);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            flex-shrink: 0;
-        }
-        
-        .sidebar.collapsed .collapse-btn-circle {
-            position: absolute;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffc107;
-            width: 32px;
-            height: 32px;
-            font-size: 14px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .sidebar.collapsed .collapse-btn-circle:hover {
-            transform: translateX(-50%) scale(1.05);
-        }
-        
-        .collapse-btn-circle:hover {
-            background: #ffd700;
-            transform: scale(1.02);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+            display: none;
         }
         
         .menu { 
@@ -449,24 +414,7 @@
             white-space: nowrap;
         }
         
-        .logout-icon {
-            color: rgba(255,255,255,0.6);
-            cursor: pointer;
-            transition: all 0.25s ease;
-            text-decoration: none;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        
-        .logout-icon:hover {
-            color: #ffc107;
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 4px rgba(255, 193, 7, 0.5));
-        }
-        
-        .sidebar.collapsed .logout-icon {
-            display: none;
-        }
+
         
         .content {
             margin-left: 260px;
@@ -531,8 +479,7 @@
             
             .sidebar .logo-text,
             .sidebar .menu-item span,
-            .sidebar .user-details,
-            .sidebar .logout-icon {
+            .sidebar .user-details {
                 display: none;
             }
             
@@ -546,10 +493,6 @@
                 justify-content: center;
             }
             
-            .sidebar.collapsed .collapse-btn-circle {
-                bottom: 16px;
-            }
-            
             .sidebar .master-footer {
                 padding: 12px 0;
                 display: flex;
@@ -559,10 +502,6 @@
             
             .sidebar .user-info {
                 justify-content: center;
-            }
-            
-            .content {
-                margin-left: 70px;
             }
         }
         
@@ -602,9 +541,6 @@
                     <img src="/Images/LOGO.png" alt="Logo" onerror="this.src='https://via.placeholder.com/38';" loading="lazy" />
                     <span class="logo-text">Caballeros Tastenet</span>
                 </div>
-                <button type="button" class="collapse-btn-circle" id="collapseBtn">
-                    <i class="fa-solid fa-chevron-left" id="chevronIcon"></i>
-                </button>
             </div>
             
             <div class="menu" id="nav-menu">
@@ -657,6 +593,13 @@
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
                 </a>
+
+                <div class="menu-divider"></div>
+
+                <a href="/Login.aspx" class="menu-item" id="link-logout" data-tooltip="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
             </div>
             
             <div class="master-footer">
@@ -668,9 +611,7 @@
                         <div class="user-name">Evelyn Caballero</div>
                         <div class="user-role">Super Admin</div>
                     </div>
-                    <a href="/Login.aspx" class="logout-icon">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </a>
+
                 </div>
             </div>
         </div>
