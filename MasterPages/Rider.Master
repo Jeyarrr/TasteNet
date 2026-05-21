@@ -122,9 +122,7 @@
             visibility: hidden;
         }
         
-        .collapse-btn-circle {
-            display: none;
-        }
+
         
         .menu { 
             padding: 0 12px;
@@ -369,7 +367,7 @@
             }
         }
         
-        .main-content {
+        .content {
             margin-left: 260px;
             padding: 0;
             background: #f8f9fc;
@@ -379,29 +377,29 @@
             transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .sidebar.collapsed ~ .main-content {
+        .sidebar.collapsed ~ .content {
             margin-left: 70px;
         }
         
-        .main-content::-webkit-scrollbar {
+        .content::-webkit-scrollbar {
             width: 6px;
         }
         
-        .main-content::-webkit-scrollbar-track {
+        .content::-webkit-scrollbar-track {
             background: #e2e8f0;
             border-radius: 10px;
         }
         
-        .main-content::-webkit-scrollbar-thumb {
+        .content::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 10px;
         }
         
-        .main-content::-webkit-scrollbar-thumb:hover {
+        .content::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
         
-        .main-content {
+        .content {
             animation: contentFadeIn 0.3s ease;
         }
         
@@ -514,7 +512,7 @@
         }
         
         @media screen and (max-width: 768px) {
-            .main-content {
+            .content {
                 padding: 0;
                 margin-left: 70px;
             }
@@ -553,7 +551,7 @@
                 justify-content: center;
             }
             
-            .main-content {
+            .content {
                 margin-left: 70px;
             }
         }
@@ -601,6 +599,7 @@
                          onerror="this.src='https://via.placeholder.com/38?text=TN';" loading="lazy" />
                     <span class="logo-text">Caballeros Tastenet</span>
                 </div>
+
             </div>
             
             <div class="menu" id="nav-menu">
@@ -644,7 +643,7 @@
             </div>
         </div>
         
-        <main class="main-content" id="mainContent">
+        <main class="content" id="mainContent">
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server" />
         </main>
     </form>
@@ -781,8 +780,6 @@
             const collapseBtn = document.getElementById('collapseBtn');
             const chevronIcon = document.getElementById('chevronIcon');
 
-            if (!sidebar || !collapseBtn) return;
-
             function collapseSidebar() {
                 if (sidebar && !sidebar.classList.contains('collapsed')) {
                     requestAnimationFrame(() => {
@@ -872,7 +869,7 @@
                             return;
                         }
 
-                        if ((currentPage === '/' || currentPage === '/users/rider/default.aspx') &&
+                        if ((currentPage === '/' || currentPage === '/users/rider/default.aspx' || currentPage === '/default.aspx') &&
                             linkPath.includes('dashboard')) {
                             link.classList.add('active');
                             return;
