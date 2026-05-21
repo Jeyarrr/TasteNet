@@ -1,5 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPages/Rider.Master" AutoEventWireup="true" CodeBehind="Profile.aspx.cs" Inherits="TasteNet.Users.Rider.Profile" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -617,83 +618,289 @@
             to { transform: translateX(100%); opacity: 0; }
         }
 
-        /* Responsive */
+        /* ── Responsive ── */
+
+        /* Tablet (≤992px) */
         @media (max-width: 992px) {
             .profile-wrapper {
                 padding: 20px;
             }
-            
+
             .page-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 15px;
             }
-            
+
             .header-title h1 {
                 font-size: 24px;
             }
-            
+
             .profile-header-content {
                 flex-direction: column;
                 text-align: center;
                 gap: 15px;
             }
-            
+
+            .profile-id {
+                justify-content: center;
+            }
+
+            .profile-status {
+                margin: 0 auto;
+            }
+
             .personal-info-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .full-width {
                 grid-column: span 1;
             }
+
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
+        /* Mobile (≤768px) */
         @media (max-width: 768px) {
-            .profile-wrapper {
-                padding: 15px;
-            }
-            
-            .content-section {
-                padding: 20px;
-            }
-            
-            .section-actions {
-                flex-direction: column;
-            }
-            
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .document-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .document-actions {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .password-form {
-                max-width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
             .profile-wrapper {
                 padding: 12px;
             }
-            
-            .section-title {
+
+            /* Viewport meta safety: make inputs not cause auto-zoom on iOS */
+            .form-input {
                 font-size: 16px;
             }
-            
+
+            .profile-header-card,
+            .content-section {
+                padding: 18px 16px;
+                border-radius: var(--radius-lg);
+            }
+
+            /* Profile avatar centered with touch-friendly sizing */
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 24px;
+                margin: 0 auto;
+            }
+
+            .profile-name {
+                font-size: 18px;
+            }
+
+            /* Section header stacks on small screens */
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .section-title {
+                font-size: 15px;
+            }
+
             .section-title i {
                 width: 32px;
                 height: 32px;
+                font-size: 13px;
+            }
+
+            /* Grids collapse to single column */
+            .personal-info-grid,
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+
+            /* Buttons full-width & touch-friendly */
+            .section-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
                 font-size: 14px;
+            }
+
+            /* Document items stack */
+            .document-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .document-info {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .document-name {
+                font-size: 13px;
+            }
+
+            .document-actions {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            /* Make action buttons touch-friendly */
+            .btn-icon {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+
+            .btn-file {
+                padding: 10px 14px;
+            }
+
+            /* Password form full width */
+            .password-form {
+                max-width: 100%;
+            }
+
+            /* Modal fits mobile screen */
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 18px 14px;
+            }
+
+            .modal-body iframe {
+                height: 300px;
+            }
+
+            .modal-body img {
+                max-height: 300px;
+            }
+
+            /* Toast notifications stay in viewport */
+            div[style*="position: fixed"][style*="top: 20px"] {
+                right: 10px !important;
+                left: 10px !important;
+                max-width: calc(100vw - 20px) !important;
+            }
+        }
+
+        /* Small phones (≤480px) */
+        @media (max-width: 480px) {
+            .profile-wrapper {
+                padding: 10px 8px;
+            }
+
+            .page-header {
+                margin-bottom: 16px;
+            }
+
+            .header-title h1 {
+                font-size: 20px;
+            }
+
+            .header-title p {
+                font-size: 12px;
+            }
+
+            .profile-header-card,
+            .content-section {
+                padding: 14px 12px;
+                margin-bottom: 14px;
+                border-radius: var(--radius-md);
+            }
+
+            .profile-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 20px;
+            }
+
+            .profile-name {
+                font-size: 16px;
+            }
+
+            .profile-id {
+                font-size: 12px;
+            }
+
+            .profile-status {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .form-input {
+                padding: 11px 12px;
+            }
+
+            .form-label {
+                font-size: 11px;
+            }
+
+            .section-title {
+                font-size: 14px;
+                gap: 8px;
+            }
+
+            .section-title i {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+
+            /* Document status badge wraps gracefully */
+            .document-status {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+
+            /* Stack document actions vertically if really tight */
+            .document-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-icon,
+            .btn-file {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Password toggle easier to tap */
+            .toggle-password {
+                font-size: 18px;
+                right: 12px;
+            }
+
+            /* Password note font */
+            .password-note {
+                font-size: 10px;
+            }
+
+            /* Modal */
+            .modal-content {
+                margin: 5% auto;
+                width: 98%;
+                padding: 14px 10px;
+            }
+
+            .modal-header h3 {
+                font-size: 15px;
+            }
+
+            .modal-body iframe {
+                height: 240px;
             }
         }
     </style>
@@ -984,10 +1191,12 @@
     <script>
         function showNotification(message, type) {
             const notification = document.createElement('div');
+            const isMobile = window.innerWidth <= 600;
             notification.style.cssText = `
                 position: fixed;
-                top: 20px;
-                right: 20px;
+                top: ${isMobile ? '10px' : '20px'};
+                right: ${isMobile ? '10px' : '20px'};
+                ${isMobile ? 'left: 10px;' : ''}
                 padding: 14px 20px;
                 background: ${type === 'success' ? '#2d9d78' :
                     type === 'info' ? '#3b82f6' :
@@ -1000,8 +1209,9 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                max-width: 350px;
+                max-width: ${isMobile ? 'calc(100vw - 20px)' : '350px'};
                 font-family: 'Poppins', sans-serif;
+                font-size: 14px;
             `;
             notification.innerHTML = `
                 <i class="fas ${type === 'success' ? 'fa-check-circle' :

@@ -1815,7 +1815,7 @@
                 <i class="fas fa-camera-retro"></i>
                 <span>Tap to take or upload a photo</span>
             </div>
-            <img id="proofPreview" class="proof-preview" src="" alt="Proof of delivery preview" style="display:none;" />
+            <img id="proofPreview" class="proof-preview" alt="Proof of delivery preview" style="display:none;" />
             <button type="button" class="proof-retake-btn" id="proofRetakeBtn" style="display:none;">
                 <i class="fas fa-redo"></i> Retake Photo
             </button>
@@ -2915,59 +2915,112 @@
                     return;
                 }
 
-                // ── POST with FormData — sends ticket number + proof photo ──────
-                const completeUrl = window.location.pathname + '?completeTicket=' + encodeURIComponent(ticketNumber);
-
-                const formData = new FormData();
-                // Attach the proof photo selected in the modal (field name must match
-                // Request.Files["proofPhoto"] in the code-behind)
                 const proofInput = document.getElementById('proofPhotoInput');
-                if (proofInput && proofInput.files && proofInput.files[0]) {
-                    formData.append('proofPhoto', proofInput.files[0]);
+                const file = proofInput && proofInput.files && proofInput.files[0]
+                    ? proofInput.files[0]
+                    : null;
+
+                // ── Compress image on mobile before uploading ─────────────────────
+                // Camera photos can be 5–10 MB; compress to max 1200px / 0.82 quality
+                function compressAndSend(blob) {
+                    const completeUrl = window.location.pathname
+                        + '?completeTicket=' + encodeURIComponent(ticketNumber);
+
+                    const formData = new FormData();
+                    if (blob) {
+                        // Keep original file name / mime type
+                        const mimeType = file ? file.type : 'image/jpeg';
+                        const fileName = file ? file.name : 'proof.jpg';
+                        formData.append('proofPhoto', blob, fileName);
+                    }
+
+                    showNotification('Uploading proof and completing delivery...', 'info');
+
+                    fetch(completeUrl, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        body: formData
+                    })
+                        .then(r => {
+                            // ── Handle session-expired (server returns 401 instead of redirect) ──
+                            if (r.status === 401) {
+                                showNotification('Your session has expired. Please log in again.', 'error');
+                                setTimeout(() => { window.location.href = '/Login.aspx'; }, 2000);
+                                return null;
+                            }
+                            if (r.status === 403) throw new Error('FORBIDDEN');
+                            if (r.status === 400) throw new Error('INVALID_FILE');
+                            if (r.status === 404) throw new Error('TICKET_NOT_FOUND');
+                            if (!r.ok) {
+                                return r.text().then(t => { throw new Error('SERVER_ERROR: ' + t); });
+                            }
+                            return r.text();
+                        })
+                        .then(response => {
+                            if (response === null) return; // already handled (401)
+
+                            if (response.trim() !== 'OK') {
+                                showNotification('Could not update ticket: ' + response.trim(), 'warning');
+                                return;
+                            }
+
+                            // Clear sessionStorage before reload so panel does not restore
+                            ['rider_ticketNumber', 'rider_orderNumber', 'rider_address',
+                                'rider_amount', 'rider_deliveryFee', 'rider_status',
+                                'rider_priority', 'rider_created', 'rider_customer',
+                                'rider_phone', 'rider_itemCount', 'rider_itemsHtml']
+                                .forEach(k => sessionStorage.removeItem(k));
+
+                            // Sync status back to available in DB
+                            setRiderStatus('available');
+
+                            window.location.reload();
+                        })
+                        .catch(err => {
+                            // Make sure body scroll is restored if something went wrong
+                            document.body.style.overflow = '';
+
+                            if (err.message === 'FORBIDDEN')
+                                showNotification('This delivery is not assigned to you.', 'warning');
+                            else if (err.message === 'INVALID_FILE')
+                                showNotification('Invalid file type. Please upload a JPG or PNG photo.', 'warning');
+                            else if (err.message === 'TICKET_NOT_FOUND')
+                                showNotification('Ticket not found. Please refresh the page.', 'warning');
+                            else if (err.message.startsWith('SERVER_ERROR'))
+                                showNotification('Server error — please try again or contact support.', 'error');
+                            else
+                                showNotification('Network error. Please check your connection and try again.', 'warning');
+                        });
                 }
 
-                fetch(completeUrl, {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    body: formData   // browser sets multipart/form-data + boundary automatically
-                })
-                    .then(r => {
-                        if (r.status === 403) throw new Error('FORBIDDEN');
-                        return r.text();
-                    })
-                    .then(response => {
-                        if (response.trim() !== 'OK') {
-                            showNotification('Could not update ticket. Please try again.', 'warning');
-                            return;
+                // ── Compress if file is large (camera photo) ─────────────────────
+                if (file && file.size > 1.5 * 1024 * 1024) {
+                    const img = new Image();
+                    const objectUrl = URL.createObjectURL(file);
+                    img.onload = function () {
+                        URL.revokeObjectURL(objectUrl);
+                        const maxDim = 1200;
+                        let w = img.width, h = img.height;
+                        if (w > maxDim || h > maxDim) {
+                            if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+                            else { w = Math.round(w * maxDim / h); h = maxDim; }
                         }
-
-                        // Clear sessionStorage before reload so panel does not restore
-                        sessionStorage.removeItem('rider_ticketNumber');
-                        sessionStorage.removeItem('rider_orderNumber');
-                        sessionStorage.removeItem('rider_address');
-                        sessionStorage.removeItem('rider_amount');
-                        sessionStorage.removeItem('rider_deliveryFee');
-                        sessionStorage.removeItem('rider_status');
-                        sessionStorage.removeItem('rider_priority');
-                        sessionStorage.removeItem('rider_created');
-                        sessionStorage.removeItem('rider_customer');
-                        sessionStorage.removeItem('rider_phone');
-
-                        // ── Sync status back to available in DB ───────────────────
-                        setRiderStatus('available');
-                        // ─────────────────────────────────────────────────────────
-
-                        window.location.reload();
-                    })
-                    .catch(err => {
-                        if (err.message === 'FORBIDDEN')
-                            showNotification('This delivery is not assigned to you.', 'warning');
-                        else
-                            showNotification('Network error. Please try again.', 'warning');
-                    });
-                // ─────────────────────────────────────────────────────────────
-
-                showNotification('Marking delivery as completed...', 'info');
+                        const canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        canvas.toBlob(function (blob) {
+                            compressAndSend(blob || file);
+                        }, file.type || 'image/jpeg', 0.82);
+                    };
+                    img.onerror = function () {
+                        URL.revokeObjectURL(objectUrl);
+                        compressAndSend(file); // fallback: send original
+                    };
+                    img.src = objectUrl;
+                } else {
+                    compressAndSend(file); // small file or no file — send as-is
+                }
+                // ─────────────────────────────────────────────────────────────────
             }
 
             // ── Toggle order items collapsible ──────────────────────────────
