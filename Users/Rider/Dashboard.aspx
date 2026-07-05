@@ -59,6 +59,7 @@
         }
 
         .dashboard-wrapper {
+            background: var(--soft-cream) !important;
             padding: 20px 30px;
             max-width: 1400px;
             margin: 0 auto;
@@ -1815,7 +1816,7 @@
                 <i class="fas fa-camera-retro"></i>
                 <span>Tap to take or upload a photo</span>
             </div>
-            <img id="proofPreview" class="proof-preview" alt="Proof of delivery preview" style="display:none;" />
+            <img id="proofPreview" class="proof-preview" src="" alt="Proof of delivery preview" style="display:none;" />
             <button type="button" class="proof-retake-btn" id="proofRetakeBtn" style="display:none;">
                 <i class="fas fa-redo"></i> Retake Photo
             </button>
@@ -1959,7 +1960,7 @@
                     </div>
                     
                     <div class="delivery-details-section">
-                        <div class="detail-row">
+                        <div class="detail-row" style="border-bottom:none;">
                             <span class="detail-label">Delivery Fee</span>
                             <span class="detail-value highlight" id="deliveryFee">—</span>
                         </div>
@@ -2004,8 +2005,8 @@
                         Mark as Delivered
                     </button>
                     <button type="button" class="action-btn btn-call" id="callCustomerBtn">
-                        <i class="fas fa-address-book"></i>
-                        Contact Customer
+                        <i class="fas fa-phone-alt"></i>
+                        Call Customer
                     </button>
                 </div>
             </div>
@@ -2090,7 +2091,7 @@
                                 <div class="info-row">
                                     <span class="info-label">Delivery Fee:</span>
                                     <span class="info-value highlight">
-                                        <%# (Eval("DeliveryFee") == DBNull.Value || Eval("DeliveryFee") == null) ? "—" : "₱" + Convert.ToDecimal(Eval("DeliveryFee")).ToString("N2") %>
+                                        <%# Eval("DeliveryFee") != DBNull.Value ? "₱" + string.Format("{0:N2}", Eval("DeliveryFee")) : "—" %>
                                     </span>
                                 </div>
                             </div>
@@ -2101,7 +2102,7 @@
                                         data-order='<%# Eval("OrderNumber") %>'
                                         data-address='<%# Eval("DeliveryAddress") %>'
                                         data-amount='<%# Eval("TotalAmount", "₱{0:N2}") %>'
-                                        data-deliveryfee='<%# (Eval("DeliveryFee") == DBNull.Value || Eval("DeliveryFee") == null) ? "—" : "₱" + Convert.ToDecimal(Eval("DeliveryFee")).ToString("N2") %>'
+                                        data-fee='<%# Eval("DeliveryFee") != DBNull.Value ? "₱" + string.Format("{0:N2}", Eval("DeliveryFee")) : "—" %>'
                                         data-status='<%# Eval("Status") %>'
                                         data-priority='<%# Eval("Priority") %>'
                                         data-created='<%# Eval("CreatedAt", "{0:MMM dd, yyyy hh:mm tt}") %>'
@@ -2179,7 +2180,6 @@
                     order: sessionStorage.getItem('rider_orderNumber') || '',
                     address: sessionStorage.getItem('rider_address') || '',
                     amount: sessionStorage.getItem('rider_amount') || '',
-                    deliveryFee: sessionStorage.getItem('rider_deliveryFee') || '—',
                     status: sessionStorage.getItem('rider_status') || '',
                     priority: sessionStorage.getItem('rider_priority') || '',
                     created: sessionStorage.getItem('rider_created') || '',
@@ -2194,16 +2194,12 @@
             toggleSwitch.addEventListener('click', function () {
                 isOnline = !isOnline;
                 sessionStorage.setItem('rider_isOnline', isOnline ? 'true' : 'false');
-                // Sync availability to DB (available ↔ offline)
-                if (!activeDelivery) setRiderStatus(isOnline ? 'available' : 'offline');
                 updateUI();
             });
 
             goOnlineBtn.addEventListener('click', function () {
                 isOnline = !isOnline;
                 sessionStorage.setItem('rider_isOnline', isOnline ? 'true' : 'false');
-                // Sync availability to DB (available ↔ offline)
-                if (!activeDelivery) setRiderStatus(isOnline ? 'available' : 'offline');
                 updateUI();
             });
 
@@ -2218,7 +2214,7 @@
                         order: acceptBtn.dataset.order,
                         address: acceptBtn.dataset.address,
                         amount: acceptBtn.dataset.amount,
-                        deliveryFee: acceptBtn.dataset.deliveryfee || '—',
+                        fee: acceptBtn.dataset.fee || '—',
                         status: acceptBtn.dataset.status,
                         priority: acceptBtn.dataset.priority,
                         created: acceptBtn.dataset.created,
@@ -2240,11 +2236,11 @@
             });
 
             // ── Map Modal — Leaflet + OpenStreetMap (100% free, no API key) ───
-            var STORE_LAT = 14.3298;
-            var STORE_LNG = 120.9407;
-            var STORE_ADDRESS = 'Zone 9, Blk 84, Lot 10 Bautista St, Zone 9, Dasmariñas, 4114 Cavite, Philippines';
-            var BIAS_LAT = 14.3298;   // location bias center for Photon
-            var BIAS_LNG = 120.9407;
+            var STORE_LAT = 14.3265574;
+            var STORE_LNG = 120.9373766;
+            var STORE_ADDRESS = 'Blk 84, Lot 10 Bautista St, Zone 9, Dasmariñas, Cavite, Philippines';
+            var BIAS_LAT = 14.3294;   // location bias center for Photon
+            var BIAS_LNG = 120.9367;
 
             // ── DOM refs ──────────────────────────────────────────────────────
             var mapModal = document.getElementById('mapModal');
@@ -2665,16 +2661,8 @@
                     showNotification('No delivery address found.', 'warning');
                     return;
                 }
-                var dest = activeDelivery.address;
-                if (dest.toLowerCase().indexOf('philippines') === -1) dest += ', Philippines';
-                var origin = encodeURIComponent(STORE_ADDRESS);
-                window.open('https://www.google.com/maps/dir/?api=1'
-                    + '&origin=' + origin
-                    + '&destination=' + encodeURIComponent(dest)
-                    + '&travelmode=driving', '_blank');
+                openMapModal(activeDelivery.address);
             });
-            // ─────────────────────────────────────────────────────────────────────
-
             // ─────────────────────────────────────────────────────────────────────
 
             markDeliveredBtn.addEventListener('click', function () {
@@ -2682,37 +2670,10 @@
             });
 
             callCustomerBtn.addEventListener('click', function () {
-                if (!activeDelivery) return;
-                var phone = activeDelivery.phone || '';
-                if (!phone || phone === '—') {
-                    showNotification('No contact number available.', 'warning');
-                    return;
-                }
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(phone).then(function () {
-                        showNotification('Contact number copied: ' + phone, 'success');
-                    }).catch(function () {
-                        fallbackCopy(phone);
-                    });
-                } else {
-                    fallbackCopy(phone);
+                if (activeDelivery) {
+                    showNotification(`Calling ${activeDelivery.contact}...`, 'info');
                 }
             });
-
-            function fallbackCopy(text) {
-                var ta = document.createElement('textarea');
-                ta.value = text;
-                ta.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
-                document.body.appendChild(ta);
-                ta.select();
-                try {
-                    document.execCommand('copy');
-                    showNotification('Contact number copied: ' + text, 'success');
-                } catch (e) {
-                    showNotification('Could not copy. Number: ' + text, 'warning');
-                }
-                document.body.removeChild(ta);
-            }
 
             // ── Proof of Delivery setup ─────────────────────────────
             const proofUploadArea = document.getElementById('proofUploadArea');
@@ -2802,17 +2763,6 @@
                 showNotification('Delivery completion cancelled', 'info');
             });
 
-            // ── Sync rider status to DB so admin dashboard reflects it ───────────
-            function setRiderStatus(status) {
-                fetch(window.location.pathname + '?setStatus=' + encodeURIComponent(status), {
-                    method: 'POST',
-                    credentials: 'same-origin'
-                }).catch(function () {
-                    // Silent fail — the UI is already updated; DB sync is best-effort
-                });
-            }
-            // ─────────────────────────────────────────────────────────────────────
-
             function acceptDelivery(deliveryData, deliveryCard) {
                 activeDelivery = deliveryData;
 
@@ -2821,7 +2771,7 @@
                 sessionStorage.setItem('rider_orderNumber', deliveryData.order);
                 sessionStorage.setItem('rider_address', deliveryData.address);
                 sessionStorage.setItem('rider_amount', deliveryData.amount);
-                sessionStorage.setItem('rider_deliveryFee', deliveryData.deliveryFee || '—');
+                sessionStorage.setItem('rider_fee', deliveryData.fee || '—');
                 sessionStorage.setItem('rider_status', deliveryData.status);
                 sessionStorage.setItem('rider_priority', deliveryData.priority);
                 sessionStorage.setItem('rider_created', deliveryData.created);
@@ -2831,15 +2781,11 @@
                 sessionStorage.setItem('rider_itemsHtml', deliveryData.itemsHtml || '');
                 sessionStorage.setItem('rider_isOnline', 'true');
 
-                // ── Sync status to DB so admin dashboard shows "On Delivery" ──────
-                setRiderStatus('delivery');
-                // ─────────────────────────────────────────────────────────────────
-
                 // Populate the active delivery panel with real DB data
                 activeDeliveryId.textContent = '#' + deliveryData.id;
                 pickupLocation.textContent = 'Order #' + deliveryData.order;
                 dropoffLocation.textContent = deliveryData.address;
-                deliveryFee.textContent = deliveryData.deliveryFee || '—';
+                deliveryFee.textContent = deliveryData.amount;
                 customerContact.innerHTML =
                     '<strong>' + (deliveryData.customer || '—') + '</strong>' +
                     '<span style="display:block;font-size:12px;color:var(--muted-text);margin-top:2px;">' +
@@ -2861,6 +2807,9 @@
 
                 activeDeliverySection.classList.add('active');
                 deliveriesSection.style.display = 'none';
+
+                // Set delivery fee directly from repeater data
+                deliveryFee.textContent = deliveryData.fee || '—';
 
                 // Animate card out
                 deliveryCard.style.opacity = '0.5';
@@ -2915,112 +2864,55 @@
                     return;
                 }
 
+                // ── POST with FormData — sends ticket number + proof photo ──────
+                const completeUrl = window.location.pathname + '?completeTicket=' + encodeURIComponent(ticketNumber);
+
+                const formData = new FormData();
+                // Attach the proof photo selected in the modal (field name must match
+                // Request.Files["proofPhoto"] in the code-behind)
                 const proofInput = document.getElementById('proofPhotoInput');
-                const file = proofInput && proofInput.files && proofInput.files[0]
-                    ? proofInput.files[0]
-                    : null;
+                if (proofInput && proofInput.files && proofInput.files[0]) {
+                    formData.append('proofPhoto', proofInput.files[0]);
+                }
 
-                // ── Compress image on mobile before uploading ─────────────────────
-                // Camera photos can be 5–10 MB; compress to max 1200px / 0.82 quality
-                function compressAndSend(blob) {
-                    const completeUrl = window.location.pathname
-                        + '?completeTicket=' + encodeURIComponent(ticketNumber);
-
-                    const formData = new FormData();
-                    if (blob) {
-                        // Keep original file name / mime type
-                        const mimeType = file ? file.type : 'image/jpeg';
-                        const fileName = file ? file.name : 'proof.jpg';
-                        formData.append('proofPhoto', blob, fileName);
-                    }
-
-                    showNotification('Uploading proof and completing delivery...', 'info');
-
-                    fetch(completeUrl, {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        body: formData
+                fetch(completeUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    body: formData   // browser sets multipart/form-data + boundary automatically
+                })
+                    .then(r => {
+                        if (r.status === 403) throw new Error('FORBIDDEN');
+                        return r.text();
                     })
-                        .then(r => {
-                            // ── Handle session-expired (server returns 401 instead of redirect) ──
-                            if (r.status === 401) {
-                                showNotification('Your session has expired. Please log in again.', 'error');
-                                setTimeout(() => { window.location.href = '/Login.aspx'; }, 2000);
-                                return null;
-                            }
-                            if (r.status === 403) throw new Error('FORBIDDEN');
-                            if (r.status === 400) throw new Error('INVALID_FILE');
-                            if (r.status === 404) throw new Error('TICKET_NOT_FOUND');
-                            if (!r.ok) {
-                                return r.text().then(t => { throw new Error('SERVER_ERROR: ' + t); });
-                            }
-                            return r.text();
-                        })
-                        .then(response => {
-                            if (response === null) return; // already handled (401)
-
-                            if (response.trim() !== 'OK') {
-                                showNotification('Could not update ticket: ' + response.trim(), 'warning');
-                                return;
-                            }
-
-                            // Clear sessionStorage before reload so panel does not restore
-                            ['rider_ticketNumber', 'rider_orderNumber', 'rider_address',
-                                'rider_amount', 'rider_deliveryFee', 'rider_status',
-                                'rider_priority', 'rider_created', 'rider_customer',
-                                'rider_phone', 'rider_itemCount', 'rider_itemsHtml']
-                                .forEach(k => sessionStorage.removeItem(k));
-
-                            // Sync status back to available in DB
-                            setRiderStatus('available');
-
-                            window.location.reload();
-                        })
-                        .catch(err => {
-                            // Make sure body scroll is restored if something went wrong
-                            document.body.style.overflow = '';
-
-                            if (err.message === 'FORBIDDEN')
-                                showNotification('This delivery is not assigned to you.', 'warning');
-                            else if (err.message === 'INVALID_FILE')
-                                showNotification('Invalid file type. Please upload a JPG or PNG photo.', 'warning');
-                            else if (err.message === 'TICKET_NOT_FOUND')
-                                showNotification('Ticket not found. Please refresh the page.', 'warning');
-                            else if (err.message.startsWith('SERVER_ERROR'))
-                                showNotification('Server error — please try again or contact support.', 'error');
-                            else
-                                showNotification('Network error. Please check your connection and try again.', 'warning');
-                        });
-                }
-
-                // ── Compress if file is large (camera photo) ─────────────────────
-                if (file && file.size > 1.5 * 1024 * 1024) {
-                    const img = new Image();
-                    const objectUrl = URL.createObjectURL(file);
-                    img.onload = function () {
-                        URL.revokeObjectURL(objectUrl);
-                        const maxDim = 1200;
-                        let w = img.width, h = img.height;
-                        if (w > maxDim || h > maxDim) {
-                            if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-                            else { w = Math.round(w * maxDim / h); h = maxDim; }
+                    .then(response => {
+                        if (response.trim() !== 'OK') {
+                            showNotification('Could not update ticket. Please try again.', 'warning');
+                            return;
                         }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        canvas.toBlob(function (blob) {
-                            compressAndSend(blob || file);
-                        }, file.type || 'image/jpeg', 0.82);
-                    };
-                    img.onerror = function () {
-                        URL.revokeObjectURL(objectUrl);
-                        compressAndSend(file); // fallback: send original
-                    };
-                    img.src = objectUrl;
-                } else {
-                    compressAndSend(file); // small file or no file — send as-is
-                }
-                // ─────────────────────────────────────────────────────────────────
+
+                        // Clear sessionStorage before reload so panel does not restore
+                        sessionStorage.removeItem('rider_ticketNumber');
+                        sessionStorage.removeItem('rider_orderNumber');
+                        sessionStorage.removeItem('rider_address');
+                        sessionStorage.removeItem('rider_amount');
+                        sessionStorage.removeItem('rider_status');
+                        sessionStorage.removeItem('rider_priority');
+                        sessionStorage.removeItem('rider_created');
+                        sessionStorage.removeItem('rider_customer');
+                        sessionStorage.removeItem('rider_phone');
+                        sessionStorage.removeItem('rider_fee');
+
+                        window.location.reload();
+                    })
+                    .catch(err => {
+                        if (err.message === 'FORBIDDEN')
+                            showNotification('This delivery is not assigned to you.', 'warning');
+                        else
+                            showNotification('Network error. Please try again.', 'warning');
+                    });
+                // ─────────────────────────────────────────────────────────────
+
+                showNotification('Marking delivery as completed...', 'info');
             }
 
             // ── Toggle order items collapsible ──────────────────────────────
@@ -3193,23 +3085,12 @@
                 activeDeliveryId.textContent = '#' + activeDelivery.id;
                 pickupLocation.textContent = 'Order #' + activeDelivery.order;
                 dropoffLocation.textContent = activeDelivery.address;
-                deliveryFee.textContent = activeDelivery.deliveryFee || '—';
+                deliveryFee.textContent = sessionStorage.getItem('rider_fee') || '—';
                 customerContact.innerHTML =
                     '<strong>' + (activeDelivery.customer || '—') + '</strong>' +
                     '<span style="display:block;font-size:12px;color:var(--muted-text);margin-top:2px;">' +
                     '<i class="fas fa-phone" style="margin-right:4px;font-size:10px;"></i>' +
                     (activeDelivery.phone || '—') + '</span>';
-                // Restore order items (fixes items going blank/zero on tab switch)
-                var activeItemCount = document.getElementById('activeItemCount');
-                var activeItemsBody = document.getElementById('activeOrderItemsBody');
-                if (activeItemCount) activeItemCount.textContent = activeDelivery.itemCount || '0';
-                if (activeItemsBody) {
-                    var decoded = document.createElement('textarea');
-                    decoded.innerHTML = activeDelivery.itemsHtml || '';
-                    activeItemsBody.innerHTML = decoded.value ||
-                        '<div class="order-item-row"><span class="order-item-name" style="color:var(--muted-text);font-style:italic;">No items found.</span></div>';
-                }
-
                 activeDeliverySection.classList.add('active');
             }
 
